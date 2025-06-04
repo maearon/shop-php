@@ -1,0 +1,101 @@
+### docker-compose.override.yml (phù hợp local dev, ghi đè production khi phát triển)
+version: "3.9"
+
+services:
+  frontend:
+    volumes:
+      - ./apps/frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    ports:
+      - "3000:3000"
+
+  backend:
+    volumes:
+      - ./apps/backend:/app
+      - /app/bin
+      - /app/obj
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    command: dotnet watch run --project ./apps/backend
+    ports:
+      - "5000:5000"
+
+  fluentd:
+    volumes:
+      - ./tools/fluentd/dev:/fluentd/etc
+
+
+### .github/workflows/ci.yml (GitHub Actions CI/CD pipeline)
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: appdb
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        run: |
+          cd apps/frontend
+          npm ci
+
+      - name: Build frontend
+        run: |
+          cd apps/frontend
+          npm run build
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore backend dependencies
+        run: |
+          cd apps/backend
+          dotnet restore
+
+      - name: Build backend
+        run: |
+          cd apps/backend
+          dotnet build --no-restore --configuration Release
+
+      - name: Run backend tests
+        run: |
+          cd apps/backend
+          dotnet test
+
+      - name: Docker Build & Push (Optional)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker build -t yourname/frontend ./apps/frontend
+          docker build -t yourname/backend ./apps/backend
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push yourname/frontend
+          docker push yourname/backend

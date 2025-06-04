@@ -1,0 +1,82 @@
+### 🐳 Dockerfiles for your monorepo structure
+
+# --- apps/web (React frontend - Next.js)
+# File: apps/web/Dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY . .
+RUN npm install && npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+
+
+# --- apps/editor (Optional React editor)
+# File: apps/editor/Dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY . .
+RUN npm install && npm run build
+EXPOSE 3001
+CMD ["npm", "start"]
+
+
+# --- apps/api-gateway (ASP.NET Core API Gateway)
+# File: apps/api-gateway/Dockerfile
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base-gateway
+WORKDIR /app
+EXPOSE 5000
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-gateway
+WORKDIR /src
+COPY . .
+RUN dotnet publish -c Release -o /app
+
+FROM base-gateway AS final-gateway
+COPY --from=build-gateway /app .
+ENTRYPOINT ["dotnet", "ApiGateway.dll"]
+
+
+# --- apps/api-service (ASP.NET Core main backend)
+# File: apps/api-service/Dockerfile
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base-service
+WORKDIR /app
+EXPOSE 5001
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-service
+WORKDIR /src
+COPY . .
+RUN dotnet publish -c Release -o /app
+
+FROM base-service AS final-service
+COPY --from=build-service /app .
+ENTRYPOINT ["dotnet", "ApiService.dll"]
+
+
+# --- services/deployer (Go microservice for deploy)
+# File: services/deployer/Dockerfile
+FROM golang:1.22-alpine
+WORKDIR /app
+COPY . .
+RUN go build -o deployer
+EXPOSE 4000
+CMD ["./deployer"]
+
+
+# --- services/builder (Node.js build service)
+# File: services/builder/Dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY . .
+RUN npm install
+EXPOSE 4001
+CMD ["npm", "run", "start"]
+
+
+# --- services/stripe-service (Payment service)
+# File: services/stripe-service/Dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY . .
+RUN npm install
+EXPOSE 4002
+CMD ["npm", "run", "start"]

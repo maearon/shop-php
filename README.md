@@ -1,127 +1,117 @@
+🛍️ Shop Microservices Monorepo
+Monorepo chứa toàn bộ mã nguồn hệ thống ecommerce mô phỏng adidas.com/us sử dụng kiến trúc microservices.
+
+🧱 Kiến trúc thư mục
+bash
+Sao chép
+Chỉnh sửa
 ```
 monorepo/
 ├── apps/
-│   ├── web/                        # React frontend (Next.js)
-│   ├── editor/                     # (Optional) React editor interface
-│   ├── api-gateway/                # ASP.NET Core API Gateway
-│   └── api-service/               # ASP.NET Core API (main backend)
+│   ├── web/               # React frontend (Next.js)
+│   ├── editor/            # (Optional) React editor interface
+│   ├── api-gateway/       # ASP.NET Core API Gateway
+│   └── api-service/       # ASP.NET Core API (main backend)
+│
 ├── services/
-│   ├── deployer/                   # Go microservice to handle deploy
-│   ├── builder/                    # Node.js build service
-│   └── stripe-service/            # Payment service (Node.js/Express or Go)
+│   ├── deployer/          # Go service for deployment logic
+│   ├── builder/           # Node.js build service
+│   └── stripe-service/    # Stripe payment (Node.js)
+│
 ├── libs/
-│   └── shared/                     # Shared code (DTOs, validation, etc.)
+│   └── shared/prisma/     # Prisma schemas, DTOs
+│
 ├── infra/
-│   ├── docker/                     # Docker Compose dev setup
-│   ├── github/                     # GitHub Actions workflows
-│   └── k8s/                        # (Optional) Kubernetes manifests
+│   ├── docker/            # Dockerfiles
+│   ├── github/            # GitHub Actions CI/CD
+│   └── k8s/               # (Optional) Kubernetes manifests
+│
 ├── nginx/
-│   └── default.conf                # Proxy config for dev
-├── .github/workflows/             # CI/CD pipelines
-├── docker-compose.yml             # Local dev stack
+│   └── default.conf       # Nginx reverse proxy for dev
+│
+├── docker-compose.yml     # Dev environment
+├── .env                   # Environment variables
 └── README.md
 ```
-Tuyệt vời. Cấu trúc monorepo template bạn đã tạo rất sát với production-level architecture của một hệ thống microservice hiện đại. Dưới đây là đánh giá nhanh và đề xuất bổ sung để biến repo của bạn thành template hoàn chỉnh để clone/triển khai luôn:
+🚀 Công nghệ sử dụng
+Frontend: React (Next.js), TailwindCSS
 
-✅ Hiện tại bạn đã có:
-🌐 apps/ – Frontend + API
-web/ + editor/: Giao diện React
+Backend: ASP.NET Core 9
 
-api-gateway/: Gateway ASP.NET Core
+Payment: Stripe API
 
-api-service/: Backend ASP.NET Core chính
+Deployment: Docker, GitHub Actions
 
-⚙️ services/ – Các microservice hỗ trợ
-deployer/: service Go deploy
+Queue/Message Broker: RabbitMQ
 
-builder/: builder Node.js
+Database: PostgreSQL, Redis
 
-stripe-service/: dịch vụ thanh toán
+Monitoring: Fluentd + Seq + Elasticsearch (optional)
 
-🔁 libs/shared/ – Shared code/libs
-DTOs, validation, prisma schema dùng chung
-
-🛠️ infra/ – DevOps
-docker/: Dockerfile, compose
-
-github/: CI/CD
-
-k8s/: future Kubernetes manifests
-
-🌐 nginx/ – Reverse proxy cho local
-🔧 Gợi ý bổ sung để biến repo này thành "production-ready template":
-1. Docker hóa tất cả service
-Mỗi service cần có:
-
-Dockerfile
-
-Biến môi trường .env
-
-Health check trong docker-compose.yml
-
-2. Tách rõ các service deploy lên đâu
-```
-Service	                                                    Deploy	            Platform
-web (React)	                                                Vercel	            ✅ Free
-api-gateway, api-service, stripe-service, builder, deployer	Render Web Service	✅ Free
-postgres	                                                Neon	            ✅ Free
-redis	                                                    Upstash	            ✅ Free
-rabbitmq	                                                CloudAMQP	        ✅ Free
-seq, fluentd, elasticsearch	                                Log	                (có thể fake/local nếu Free không đủ)
-```
-
-3. CI/CD
-Trong .github/workflows/main.yml cần:
-
-Build & push Docker image (cho từng folder apps/services)
-
-Deploy lên Render qua render.yaml (mỗi service 1 file)
-
-Gợi ý CI cho monorepo: sử dụng paths để chỉ build khi folder thay đổi
-
-yaml
+🛠️ Cài đặt và chạy local
+bash
 Sao chép
 Chỉnh sửa
 ```
-on:
-  push:
-    paths:
-      - 'apps/api-service/**'
+# Clone repo
+git clone https://github.com/maearon/shop-php.git
+cd shop-php
+
+# Copy file env mẫu
+cp .env.example .env
+
+# Khởi động hệ thống
+docker-compose up --build
 ```
-4. Tạo file render.yaml mẫu
-yaml
-Sao chép
-Chỉnh sửa
-```
-services:
-  - type: web
-    name: api-service
-    env: docker
-    plan: free
-    branch: master
-    dockerfilePath: ./apps/api-service/Dockerfile
-    buildCommand: ""
-    startCommand: "dotnet api-service.dll"
-    healthCheckPath: /health
-    autoDeploy: true
-```
-5. Stripe service dùng ngôn ngữ nào?
-Stripe chính hãng có SDK tốt nhất với:
+Truy cập:
 
-Node.js (Express/Fastify): phổ biến nhất, hỗ trợ webhook nhanh
+http://localhost → React frontend
 
-Go: nhẹ, dùng nếu bạn cần hiệu suất cao
+http://localhost/api → API Gateway
 
-✅ Node.js là lựa chọn tốt nhất cho Stripe Service nếu bạn ưu tiên dễ triển khai và sample code nhiều.
+http://localhost/editor → Admin Editor UI
 
-6. Tên repo & Public template
-Đặt tên repo gợi nhớ: adidas-clone-microservices
+⚙️ Các service chính
+Service	Port	Mô tả
+web	3000	Giao diện người dùng chính
+editor	3001	UI quản lý nội dung (tùy chọn)
+api-gateway	5000	ASP.NET Core API Gateway
+api-service	5001	ASP.NET Core API chính
+stripe-service	3002	Payment Gateway
+builder	3003	Service biên dịch frontend
+deployer	3004	Service triển khai Go (CI/CD hooks)
+postgres	5432	Cơ sở dữ liệu chính
+redis	6379	Redis cache
+rabbitmq	5672/15672	Message queue
+seq	5341	Log management
 
-Trong GitHub → Repo Settings → Template repository ✅
+🧪 CI/CD
+Sử dụng GitHub Actions để:
 
-Thêm file: docs/deploy-guide.md, docs/architecture.png (ảnh sơ đồ bạn đang dùng)
+Kiểm tra code format
 
-Nếu bạn đồng ý, tôi có thể:
-✅ Viết sẵn toàn bộ các file Dockerfile, docker-compose.yml, render.yaml, CI/CD, hướng dẫn deploy cho bạn ngay trong repo hiện tại.
+Build các service
 
-Bạn có muốn tôi bắt đầu sinh code cụ thể cho từng phần không?
+Deploy từng microservice (Render, Vercel...)
+
+☁️ Deployment gợi ý
+Layer	Platform	Ghi chú
+Frontend	Vercel	Tự động từ apps/web
+API Gateway	Render.com	.NET Core
+Services	Render, Railway, Fly.io	Tuỳ loại service
+DB	Neon.tech	PostgreSQL Free
+Redis	Upstash	Free Plan
+Queue	CloudAMQP	Free tier
+Logs	Seq + Fluentd	Tùy chọn giám sát log
+
+🧰 Dev Tips
+Dùng Dev Containers nếu muốn run bằng VS Code.
+
+Có thể mở rộng bằng K8s manifests trong infra/k8s/.
+
+Thêm adminer/pgadmin để quản lý DB dễ hơn trong dev.
+
+👨‍💻 Maintainer
+Nguyễn Đức Mạnh
+
+GitHub: @maearon
