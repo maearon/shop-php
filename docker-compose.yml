@@ -1,0 +1,112 @@
+# 📦 Docker Compose - Fullstack Adidas Clone (Dev Environment)
+
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:80"
+    depends_on:
+      - user-api
+      - product-api
+      - cart-api
+      - order-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  user-api:
+    build: ./services/user
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - postgres
+
+  product-api:
+    build: ./services/product
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - postgres
+
+  cart-api:
+    build: ./services/cart
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - postgres
+      - redis
+
+  order-api:
+    build: ./services/order
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - postgres
+
+  stripe-service:
+    build: ./services/stripe
+    environment:
+      - STRIPE_API_KEY=sk_test_...
+    depends_on:
+      - order-api
+
+  builder:
+    build: ./services/builder
+    depends_on:
+      - rabbitmq
+
+  deployer:
+    build: ./services/deployer
+    depends_on:
+      - rabbitmq
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: adidas_db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  fluentd:
+    build: ./infra/fluentd
+    volumes:
+      - ./logs:/fluentd/log
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.10
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+
+  seq:
+    image: datalust/seq:latest
+    ports:
+      - "5341:80"
+    environment:
+      - ACCEPT_EULA=Y
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8080
+    depends_on:
+      - api-gateway
