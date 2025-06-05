@@ -25,4 +25,12 @@ echo "✅ Database seeded"
 
 cd ../..
 
+# Install web app dependencies
+echo "📦 Installing web app dependencies..."
+cd apps/web
+npm install
+echo "✅ Web app dependencies installed"
+
+cd ../..
+
 echo "🎉 Setup complete! You can now run 'npm run dev' to start the services."

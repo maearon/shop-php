@@ -6,6 +6,7 @@
   "workspaces": ["apps/*", "libs/*"],
   "scripts": {
     "setup": "chmod +x setup.sh && ./setup.sh",
+    "setup-shared": "cd libs/shared && npm install && npm run db:generate",
     "dev": "docker compose up",
     "build": "docker compose build",
     "prod": "docker compose -f docker-compose.prod.yml up",
