@@ -1,12 +1,24 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Text;
 using Serilog;
 using Auth0.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using SampleMvcApp.Support;
+using System.Net;
+
+using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//To use MVC we have to explicitly declare we are using it. Doing so will prevent a System.InvalidOperationException.
+builder.Services.AddControllersWithViews();
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
@@ -71,7 +83,14 @@ builder.Services.AddHttpClient("SearchService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["Services:Search:BaseUrl"] ?? "http://search:3004");
 });
+builder.Services.AddAuth0WebAppAuthentication(options =>
+{
+    options.Domain = builder.Configuration["Auth0:Domain"];
+    options.ClientId = builder.Configuration["Auth0:ClientId"];
+});
 
+// Configure the HTTP request pipeline.
+builder.Services.ConfigureSameSiteNoneCookies();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -83,6 +102,18 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseStaticFiles();
+app.UseCookiePolicy();
+
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -144,6 +175,10 @@ app.MapPost("/api/search", async (HttpContext context, IHttpClientFactory httpCl
 });
 
 app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapDefaultControllerRoute();
+});
 
 app.Run();
 
