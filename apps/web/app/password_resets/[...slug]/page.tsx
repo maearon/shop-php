@@ -21,7 +21,7 @@ const Edit = ({params}: {params: {slug: string[]}}) =>{
   { reset_token: params.slug[0], email: decodeURIComponent(params.slug[1]) } 
   : { reset_token: '', email: '' };
   const dispatch = useDispatch()
-  const myRef = useRef() as MutableRefObject<HTMLInputElement>
+  const myRef = useRef<HTMLInputElement>(null)
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
@@ -51,7 +51,7 @@ const Edit = ({params}: {params: {slug: string[]}}) =>{
         flashMessage(...response.flash as [message_type: string, message: string])
       }
       if (response.error) { // Case (2+3)
-        myRef.current.blur()
+        // myRef.current.blur()
         setState({
           ...state,
           errorMessage: response.error,

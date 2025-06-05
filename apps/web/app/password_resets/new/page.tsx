@@ -12,7 +12,7 @@ const initialState = {
 const New: NextPage = () => {
   const router = useRouter()
   const [state, setState] = useState(initialState)
-  const myRef = useRef() as MutableRefObject<HTMLInputElement>
+  const myRef = useRef<HTMLInputElement>(null)
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
@@ -36,7 +36,7 @@ const New: NextPage = () => {
         }
       }
     ).then(response => {
-      myRef.current.blur()
+      // myRef.current.blur()
       flashMessage('success', 'The password reset email has been sent, please check your email')
       // flashMessage(...response.flash as [message_type: string, message: string])
       // if (response.flash[0] === "info") {

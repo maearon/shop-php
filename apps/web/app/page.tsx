@@ -30,7 +30,7 @@ const Home: NextPage = () => {
   const [content, setContent] = useState('')
   const [image, setImage] = useState(null)
   const [imageName, setImageName] = useState('')
-  const inputEl = useRef() as MutableRefObject<HTMLInputElement>
+  const inputEl = useRef<HTMLInputElement>(null)
   const [errors, setErrors] = useState<ErrorMessageType>({});
   const userData = useAppSelector(selectUser)
   const dispatch = useDispatch()
@@ -226,14 +226,14 @@ const Home: NextPage = () => {
     .then((response: any) => response.json().then((data: CreateResponse) => {
       if (data.flash) {
         setFeeds()
-        inputEl.current.blur()
+        // inputEl.current.blur()
         flashMessage(...data.flash)
         setContent('')
         setImage(null)
         setErrors({})
       }
       if (data.error) {
-        inputEl.current.blur()
+        // inputEl.current.blur()
       }
     })
     )

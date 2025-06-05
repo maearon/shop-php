@@ -55,7 +55,7 @@ const Edit = ({params}: {params: {id: string}}) => {
   const [password_confirmation, setPasswordConfirmation] = useState('')
   const [errors, setErrors] = useState([] as string[])
   const [gravatar, setGravatar] = useState('')
-  const inputEl = useRef() as MutableRefObject<HTMLInputElement>
+  // const inputEl = useRef() as MutableRefObject<HTMLInputElement>
 
   const getUserInfo= useCallback(async () => { 
     userApi.edit(id as string
@@ -100,7 +100,7 @@ const Edit = ({params}: {params: {id: string}}) => {
       }
     ).then(response => {
       // setTimeout(function(){
-      inputEl.current.blur()
+      // inputEl.current.blur()
       // console.log('Form data', values)
       // console.log('submitProps', submitProps)
       submitProps.setSubmitting(false)
@@ -236,7 +236,7 @@ const Edit = ({params}: {params: {id: string}}) => {
             Load saved data
           </button>
           <button type='reset'>Reset</button>
-          <input ref={inputEl} type="submit" name="commit" value={formik.isSubmitting ? "Loading..." : "Save changes"} className="btn btn-primary" data-disable-with="Save changes" disabled={!formik.isValid || formik.isSubmitting} />
+          <input type="submit" name="commit" value={formik.isSubmitting ? "Loading..." : "Save changes"} className="btn btn-primary" data-disable-with="Save changes" disabled={!formik.isValid || formik.isSubmitting} />
         </Form>
             )
           }

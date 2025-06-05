@@ -18,7 +18,7 @@ const initialState = {
 const New: NextPage = () => {
   const router = useRouter()
   const [state, setState] = useState(initialState)
-  const myRef = useRef() as MutableRefObject<HTMLInputElement>
+  const myRef = useRef<HTMLInputElement>(null)
   const [errors, setErrors] = useState<ErrorMessageType>({});
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
@@ -43,7 +43,7 @@ const New: NextPage = () => {
       }
     ).then(response => {
       if (response.user) {
-        myRef.current.blur()
+        // myRef.current.blur()
         setState({
           ...state,
           errors: {},
@@ -53,7 +53,7 @@ const New: NextPage = () => {
         // window.location.assign('https://mail.google.com/mail/u/0')  
       }
       if (response.errors) {
-        myRef.current.blur()
+        // myRef.current.blur()
         setState({
           ...state,
           errors: response.errors,

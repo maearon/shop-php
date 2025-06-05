@@ -32,7 +32,7 @@ const New: NextPage = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberme] = useState(true)
-  const inputEl = useRef() as MutableRefObject<HTMLInputElement>
+  const inputEl = useRef<HTMLInputElement>(null)
   const [errors, setErrors] = useState<ErrorMessageType>({});
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(true)
@@ -75,7 +75,7 @@ const New: NextPage = () => {
     )
     .then(response => {
       if (response.user) {
-        inputEl.current.blur()
+        // inputEl.current.blur()
         if (rememberMe) {
           localStorage.setItem("token", response.tokens.access.token)
           localStorage.setItem("remember_token", response.tokens.access.token)

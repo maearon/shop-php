@@ -28,8 +28,8 @@ const Home: NextPage = () => {
   const [content, setContent] = useState('')
   const [image, setImage] = useState(null)
   const [imageName, setImageName] = useState('')
-  const inputEl = useRef() as MutableRefObject<HTMLInputElement>
-  const inputImage = useRef() as MutableRefObject<HTMLInputElement>
+  // const inputEl = useRef<HTMLInputElement>(null)
+  // const inputImage = useRef() as MutableRefObject<HTMLInputElement>
   const [errors, setErrors] = useState([] as string[])
   const userData = useAppSelector(selectUser)
 
@@ -156,15 +156,15 @@ const Home: NextPage = () => {
       
       if (data.flash) {
         setFeeds()
-        inputEl.current.blur()
+        // inputEl.current.blur()
         flashMessage(...data.flash)
         setContent('')
         setImage(null)
-        inputImage.current.value = ''
+        // inputImage.current.value = ''
         setErrors([])
       }
       if (data.error) {
-        inputEl.current.blur()
+        // inputEl.current.blur()
         // setErrors(data.error)
       }
 
@@ -256,7 +256,7 @@ const Home: NextPage = () => {
                 />
                 <ErrorMessage name='comments' component={TextError} /> */}
             </div>
-            <input ref={inputEl} type="submit" name="commit" value="Share" className="btn btn-primary" data-disable-with="Post" />
+            <input type="submit" name="commit" value="Share" className="btn btn-primary" data-disable-with="Post" />
             {/* <span className="image">
               <input
               ref={inputImage}
