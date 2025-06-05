@@ -10,14 +10,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SampleMvcApp.Support;
+// using AdidasApi.Support;
 using System.Net;
-
+using System.IO;
 using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//To use MVC we have to explicitly declare we are using it. Doing so will prevent a System.InvalidOperationException.
+// Use MVC explicitly
 builder.Services.AddControllersWithViews();
 
 // Configure Serilog
@@ -28,7 +28,7 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// Add services to the container.
+// Add Swagger & Controllers
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -52,6 +52,23 @@ builder.Services.AddAuth0WebAppAuthentication(options =>
     options.ClientSecret = builder.Configuration["Auth0:ClientSecret"] ?? "your_auth0_client_secret";
 });
 
+// JWT Authentication (optional, in case you want to combine with API tokens)
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"] ?? "super-secret-key"))
+        };
+    });
+
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -63,61 +80,49 @@ builder.Services.AddCors(options =>
     });
 });
 
-// HTTP Clients for microservices
+// HTTP Clients for Microservices
 builder.Services.AddHttpClient("UsersService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["Services:Users:BaseUrl"] ?? "http://users:3001");
 });
-
 builder.Services.AddHttpClient("OrdersService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["Services:Orders:BaseUrl"] ?? "http://orders:3002");
 });
-
 builder.Services.AddHttpClient("PaymentsService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["Services:Payments:BaseUrl"] ?? "http://payments:3003");
 });
-
 builder.Services.AddHttpClient("SearchService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["Services:Search:BaseUrl"] ?? "http://search:3004");
 });
-builder.Services.AddAuth0WebAppAuthentication(options =>
-{
-    options.Domain = builder.Configuration["Auth0:Domain"];
-    options.ClientId = builder.Configuration["Auth0:ClientId"];
-});
 
-// Configure the HTTP request pipeline.
 builder.Services.ConfigureSameSiteNoneCookies();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
-app.UseCors("AllowAll");
-
-if (!app.Environment.IsDevelopment())
+else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
+app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseCookiePolicy();
-
 app.UseRouting();
+app.UseCors("AllowAll");
+app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Health check endpoint
+// Health check
 app.MapGet("/health", () => new { Status = "Healthy", Service = "API Gateway" });
 
 // Proxy endpoints
@@ -125,26 +130,24 @@ app.MapPost("/api/users", async (HttpContext context, IHttpClientFactory httpCli
 {
     var client = httpClientFactory.CreateClient("UsersService");
     var requestContent = await new StreamReader(context.Request.Body).ReadToEndAsync();
-    var response = await client.PostAsync("/users", new StringContent(
-        requestContent,
-        Encoding.UTF8, 
-        "application/json"));
-    
-    return Results.Content(await response.Content.ReadAsStringAsync(), 
-        response.Content.Headers.ContentType?.ToString(), (int)response.StatusCode);
+    var response = await client.PostAsync("/users", new StringContent(requestContent, Encoding.UTF8, "application/json"));
+
+    return Results.Content(await response.Content.ReadAsStringAsync(),
+        response.Content.Headers.ContentType?.ToString(),
+        (int)response.StatusCode);
 });
 
 app.MapGet("/api/users/{id}", async (string id, IHttpClientFactory httpClientFactory) =>
 {
     var client = httpClientFactory.CreateClient("UsersService");
     var response = await client.GetAsync($"/users/{id}");
-    
+
     if (response.IsSuccessStatusCode)
     {
         var content = await response.Content.ReadAsStringAsync();
         return Results.Content(content, "application/json");
     }
-    
+
     return Results.NotFound();
 });
 
@@ -152,29 +155,26 @@ app.MapPost("/api/orders", async (HttpContext context, IHttpClientFactory httpCl
 {
     var client = httpClientFactory.CreateClient("OrdersService");
     var requestContent = await new StreamReader(context.Request.Body).ReadToEndAsync();
-    var response = await client.PostAsync("/orders", new StringContent(
-        requestContent,
-        Encoding.UTF8, 
-        "application/json"));
-    
-    return Results.Content(await response.Content.ReadAsStringAsync(), 
-        response.Content.Headers.ContentType?.ToString(), (int)response.StatusCode);
+    var response = await client.PostAsync("/orders", new StringContent(requestContent, Encoding.UTF8, "application/json"));
+
+    return Results.Content(await response.Content.ReadAsStringAsync(),
+        response.Content.Headers.ContentType?.ToString(),
+        (int)response.StatusCode);
 });
 
 app.MapPost("/api/search", async (HttpContext context, IHttpClientFactory httpClientFactory) =>
 {
     var client = httpClientFactory.CreateClient("SearchService");
     var requestContent = await new StreamReader(context.Request.Body).ReadToEndAsync();
-    var response = await client.PostAsync("/search", new StringContent(
-        requestContent,
-        Encoding.UTF8, 
-        "application/json"));
-    
-    return Results.Content(await response.Content.ReadAsStringAsync(), 
-        response.Content.Headers.ContentType?.ToString(), (int)response.StatusCode);
+    var response = await client.PostAsync("/search", new StringContent(requestContent, Encoding.UTF8, "application/json"));
+
+    return Results.Content(await response.Content.ReadAsStringAsync(),
+        response.Content.Headers.ContentType?.ToString(),
+        (int)response.StatusCode);
 });
 
 app.MapControllers();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapDefaultControllerRoute();
@@ -182,18 +182,20 @@ app.UseEndpoints(endpoints =>
 
 app.Run();
 
-// DbContext
+// ===============================
+// DbContext & Models Definitions
+// ===============================
+
 public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
-    
-    public DbSet<Product> Products { get; set; }
-    public DbSet<User> Users { get; set; }
-    public DbSet<Order> Orders { get; set; }
-    public DbSet<Payment> Payments { get; set; }
+
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<Payment> Payments => Set<Payment>();
 }
 
-// Models
 public class Product
 {
     public int Id { get; set; }

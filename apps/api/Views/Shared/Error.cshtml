@@ -1,14 +1,26 @@
-﻿@{
-    ViewData["Title"] = "Error";
+@* IActionResult Error *@
+@model Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary
+@{
+    ViewData["Title"] = "Lỗi hệ thống";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<h1 class="text-danger">Có lỗi xảy ra.</h1>
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>Development environment should not be enabled in deployed applications</strong>, as it can result in sensitive information from exceptions being displayed to end users. For local debugging, development environment can be enabled by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>, and restarting the application.
-</p>
+<p class="text-muted">Rất tiếc, đã xảy ra lỗi trong quá trình xử lý yêu cầu của bạn.</p>
+
+@if (Model != null && Model.ErrorCount > 0)
+{
+    <div>
+        <h4>Chi tiết lỗi:</h4>
+        <ul>
+            @foreach (var error in Model.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+else
+{
+    <p>Vui lòng thử lại sau hoặc liên hệ với quản trị viên.</p>
+}

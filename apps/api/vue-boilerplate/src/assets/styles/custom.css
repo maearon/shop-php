@@ -1,0 +1,102 @@
+/* Custom styles for the application */
+
+/* User info section */
+.user_info {
+    margin-bottom: 20px;
+  }
+  
+  .user_info h1 {
+    font-size: 1.4em;
+    margin-bottom: 3px;
+  }
+  
+  .user_info span {
+    display: block;
+    margin-bottom: 3px;
+    line-height: 1;
+  }
+  
+  /* Stats section */
+  .stats {
+    margin-bottom: 20px;
+    padding: 0;
+  }
+  
+  .stat {
+    margin-right: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  /* Micropost form */
+  .micropost_form {
+    margin-bottom: 20px;
+  }
+  
+  .micropost_form textarea {
+    height: 100px;
+    margin-bottom: 10px;
+  }
+  
+  .micropost_form .image {
+    margin-top: 10px;
+  }
+  
+  /* Pagination styles */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+  }
+  
+  .pagination li {
+    margin: 0 5px;
+  }
+  
+  .pagination li a {
+    padding: 5px 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 3px;
+    color: #007bff;
+  }
+  
+  .pagination li.active a {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  
+  .pagination li.disabled a {
+    color: #6c757d;
+    pointer-events: none;
+    cursor: default;
+  }
+  
+  /* Jumbotron */
+  .jumbotron {
+    padding: 4rem 2rem;
+    margin-bottom: 2rem;
+    background-color: #e9ecef;
+    border-radius: 0.3rem;
+    text-align: center;
+  }
+  
+  .jumbotron h1 {
+    font-size: 3.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+  }
+  
+  .jumbotron h2 {
+    font-size: 1.5rem;
+    font-weight: 300;
+  }
+  
+  /* Logo */
+  .logo {
+    display: block;
+    margin: 0 auto;
+  }
+  
