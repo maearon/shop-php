@@ -14,6 +14,11 @@ namespace AdidasApi.Data
         public DbSet<Micropost> Microposts { get; set; }
         public DbSet<Relationship> Relationships { get; set; }
 
+        public DbSet<Product> Products => Set<Product>();
+        public DbSet<User> Users => Set<User>();
+        public DbSet<Order> Orders => Set<Order>();
+        public DbSet<Payment> Payments => Set<Payment>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
