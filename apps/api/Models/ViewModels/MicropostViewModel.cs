@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace DotNetBoilerplate.Models.ViewModels
+namespace AdidasApi.Models.ViewModels
 {
     public class MicropostViewModel
     {

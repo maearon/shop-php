@@ -1,12 +1,12 @@
-using DotNetBoilerplate.Data;
-using DotNetBoilerplate.Models;
-using DotNetBoilerplate.Models.ViewModels;
+using AdidasApi.Data;
+using AdidasApi.Models;
+using AdidasApi.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
-namespace DotNetBoilerplate.Controllers
+namespace AdidasApi.Controllers
 {
     public class HomeController : Controller
     {

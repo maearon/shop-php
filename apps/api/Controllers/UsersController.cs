@@ -1,11 +1,11 @@
-using DotNetBoilerplate.Data;
-using DotNetBoilerplate.Models;
+using AdidasApi.Data;
+using AdidasApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace DotNetBoilerplate.Controllers
+namespace AdidasApi.Controllers
 {
     public class UsersController : Controller
     {

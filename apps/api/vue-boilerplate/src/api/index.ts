@@ -2,9 +2,9 @@ import axios, { type AxiosResponse } from "axios"
 
 let BASE_URL = ""
 if (process.env.NODE_ENV === "development") {
-  BASE_URL = "https://dotnetboilerplate.onrender.com/api"
+  BASE_URL = "https://adidasapi.onrender.com/api"
 } else {
-  BASE_URL = "https://dotnetboilerplate.onrender.com/api"
+  BASE_URL = "https://adidasapi.onrender.com/api"
 }
 
 axios.defaults.xsrfCookieName = "CSRF-TOKEN"

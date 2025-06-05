@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace DotNetBoilerplate.Migrations
+namespace AdidasApi.Migrations
 {
     /// <inheritdoc />
     public partial class InitOrFixModel : Migration

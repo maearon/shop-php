@@ -1,6 +1,6 @@
-using DotNetBoilerplate.Models;
-using DotNetBoilerplate.Models.ViewModels;
-using DotNetBoilerplate.Services;
+using AdidasApi.Models;
+using AdidasApi.Models.ViewModels;
+using AdidasApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using System.Text.Encodings.Web;
 
-namespace DotNetBoilerplate.Controllers
+namespace AdidasApi.Controllers
 {
     public class AccountController : Controller
     {

@@ -1,6 +1,6 @@
-@DotNetBoilerplate_HostAddress = http://localhost:5217
+@AdidasApi_HostAddress = http://localhost:5217
 
-GET {{DotNetBoilerplate_HostAddress}}/weatherforecast/
+GET {{AdidasApi_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-namespace DotNetBoilerplate.Services
+namespace AdidasApi.Services
 {
     public class EmailSender : IEmailSender
     {

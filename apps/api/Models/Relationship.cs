@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DotNetBoilerplate.Models
+namespace AdidasApi.Models
 {
     public class Relationship
     {

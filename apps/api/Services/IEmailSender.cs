@@ -1,4 +1,4 @@
-namespace DotNetBoilerplate.Services
+namespace AdidasApi.Services
 {
     public interface IEmailSender
     {

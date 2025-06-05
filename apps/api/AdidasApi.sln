@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36109.1 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBoilerplate", "DotNetBoilerplate.csproj", "{8C6AEA70-6EFD-AD8E-0B7C-E6366E98670F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdidasApi", "AdidasApi.csproj", "{8C6AEA70-6EFD-AD8E-0B7C-E6366E98670F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

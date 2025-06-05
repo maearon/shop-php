@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace DotNetBoilerplate.Models.ViewModels
+namespace AdidasApi.Models.ViewModels
 {
     public class RegisterViewModel
     {

@@ -1,5 +1,5 @@
-using DotNetBoilerplate.Data;
-using DotNetBoilerplate.Models;
+using AdidasApi.Data;
+using AdidasApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
-namespace DotNetBoilerplate.Controllers.Api
+namespace AdidasApi.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,4 +1,4 @@
-﻿using DotNetBoilerplate.Models;
+﻿using AdidasApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text;
 
-namespace DotNetBoilerplate.Controllers.Api
+namespace AdidasApi.Controllers.Api
 {
     [ApiController]
     [AllowAnonymous]

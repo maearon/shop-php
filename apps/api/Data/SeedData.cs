@@ -1,8 +1,8 @@
-using DotNetBoilerplate.Models;
+using AdidasApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace DotNetBoilerplate.Data
+namespace AdidasApi.Data
 {
     public static class SeedData
     {

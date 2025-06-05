@@ -75,7 +75,7 @@
                     "name": "https",
                     "version": "V11"
                   },
-                  "host": "dotnetboilerplate.onrender.com",
+                  "host": "adidasapi.onrender.com",
                   "path": "/up"
                 },
                 "id": "0f56128d-d8d7-4e1a-b52e-5aae8e2a9791",

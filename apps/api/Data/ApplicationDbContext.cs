@@ -1,8 +1,8 @@
-using DotNetBoilerplate.Models;
+using AdidasApi.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace DotNetBoilerplate.Data
+namespace AdidasApi.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
