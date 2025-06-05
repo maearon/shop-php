@@ -1,6 +1,6 @@
 import type React from "react"
-import { UserProvider } from "@auth0/nextjs-auth0/client"
 import "./globals.css"
+import Header from "@/components/Header"
 
 export const metadata = {
   title: "Adidas Vietnam - Official Store",
@@ -15,7 +15,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <UserProvider>{children}</UserProvider>
+        <Header />
+        {children}
       </body>
     </html>
   )

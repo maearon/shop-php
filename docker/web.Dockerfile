@@ -1,30 +1,30 @@
 FROM node:18-alpine AS base
 WORKDIR /app
 
-# Install dependencies
-FROM base AS deps
-# Copy shared library first
+# Install dependencies for shared library
+FROM base AS deps-shared
 COPY libs/shared/package*.json ./libs/shared/
-COPY libs/shared/prisma ./libs/shared/prisma/
-# Copy web app package files
-COPY apps/web/package*.json ./apps/web/
-# Install shared dependencies and generate Prisma client
 WORKDIR /app/libs/shared
-RUN npm install
-RUN npm run db:generate
-# Install web app dependencies
-WORKDIR /app/apps/web
-RUN npm install
+RUN npm install --only=production
 
-# Build the app
-FROM base AS builder
-# Copy shared library
+# Install dependencies for web app
+FROM base AS deps-web
+COPY apps/web/package*.json ./apps/web/
+WORKDIR /app/apps/web
+RUN npm install --only=production
+
+# Build the shared library
+FROM base AS builder-shared
 COPY libs/shared ./libs/shared/
 WORKDIR /app/libs/shared
 RUN npm install
 RUN npm run db:generate
-# Copy and build web app
-WORKDIR /app
+
+# Build the web app
+FROM base AS builder-web
+# Copy shared library from previous stage
+COPY --from=builder-shared /app/libs/shared ./libs/shared/
+# Copy web app
 COPY apps/web ./apps/web/
 WORKDIR /app/apps/web
 RUN npm install
@@ -36,13 +36,13 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy shared Prisma client
-COPY --from=builder /app/libs/shared/node_modules/.prisma ./libs/shared/node_modules/.prisma/
-COPY --from=builder /app/libs/shared/node_modules/@prisma ./libs/shared/node_modules/@prisma/
+COPY --from=builder-shared /app/libs/shared/node_modules/.prisma ./node_modules/.prisma/
+COPY --from=builder-shared /app/libs/shared/node_modules/@prisma ./node_modules/@prisma/
 
 # Copy built app
-COPY --from=builder /app/apps/web/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/static
+COPY --from=builder-web /app/apps/web/public ./public
+COPY --from=builder-web --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=builder-web --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/static
 
 USER nextjs
 EXPOSE 3000
