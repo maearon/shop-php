@@ -3,8 +3,11 @@ mkdir go-boilerplate
 cd go-boilerplate
 go get -u github.com/gin-gonic/gin
 https://gin-gonic.com/en/docs/quickstart/ <--- github.com/gin-gonic/gin v1.10.1
-go mod tidy
-go run main.go
+maearon@maearon:~/code/shop-php/apps/payments$ go env -w GOPROXY=https://proxy.golang.org,direct
+maearon@maearon:~/code/shop-php/apps/payments$ go env -w GOSUMDB=sum.golang.org
+maearon@maearon:~/code/shop-php/apps/payments$ rm go.sum
+maearon@maearon:~/code/shop-php/apps/payments$ go clean -modcache
+maearon@maearon:~/code/shop-php/apps/payments$ go mod tidy
 ```
 ```
 I have a Go project in the go-boilerplate folder using GORM and PostgreSQL.
