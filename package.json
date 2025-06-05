@@ -1,0 +1,19 @@
+{
+  "name": "adidas-ecommerce-monorepo",
+  "version": "1.0.0",
+  "description": "Production-ready e-commerce monorepo with microservices",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "docker compose up",
+    "build": "docker compose build",
+    "prod": "docker compose -f docker-compose.prod.yml up",
+    "clean": "docker compose down -v",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3"
+  }
+}

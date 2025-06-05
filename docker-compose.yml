@@ -1,83 +1,194 @@
-version: '3.9'
+version: '3.8'
 
 services:
-  frontend:
+  # Frontend
+  web:
     build:
-      context: ./apps/frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/web.Dockerfile
     ports:
-      - '3000:3000'
-    depends_on:
-      - backend
+      - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:5000
+      - NEXT_PUBLIC_AUTH0_DOMAIN=${AUTH0_DOMAIN}
+      - NEXT_PUBLIC_AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
+    depends_on:
+      - api
+    networks:
+      - adidas-network
 
-  backend:
+  # API Gateway
+  api:
     build:
-      context: ./apps/backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/api.Dockerfile
     ports:
-      - '5000:5000'
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=${DATABASE_URL}
+      - Auth0__Domain=${AUTH0_DOMAIN}
+      - Auth0__ClientId=${AUTH0_CLIENT_ID}
+      - Auth0__ClientSecret=${AUTH0_CLIENT_SECRET}
+      - Redis__ConnectionString=${REDIS_URL}
+      - RabbitMQ__ConnectionString=${RABBITMQ_URL}
     depends_on:
       - postgres
       - redis
       - rabbitmq
+    networks:
+      - adidas-network
+
+  # Users Service
+  users:
+    build:
+      context: .
+      dockerfile: docker/users.Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=${DATABASE_URL}
+      - AUTH0_DOMAIN=${AUTH0_DOMAIN}
+      - AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
+      - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
+      - REDIS_URL=${REDIS_URL}
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - adidas-network
+
+  # Orders Service
+  orders:
+    build:
+      context: .
+      dockerfile: docker/orders.Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=${DATABASE_URL}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - REDIS_URL=${REDIS_URL}
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - adidas-network
+
+  # Payments Service
+  payments:
+    build:
+      context: .
+      dockerfile: docker/payments.Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - adidas-network
+
+  # Search Service
+  search:
+    build:
+      context: .
+      dockerfile: docker/search.Dockerfile
+    ports:
+      - "3004:3004"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
+      - REDIS_URL=${REDIS_URL}
+    depends_on:
+      - postgres
+      - redis
       - elasticsearch
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Postgres=Host=postgres;Port=5432;Database=app_db;Username=postgres;Password=postgres
-      - Redis__Host=redis
-      - RabbitMQ__Host=rabbitmq
-      - ElasticSearch__Uri=http://elasticsearch:9200
-      - Seq__ServerUrl=http://seq:5341
+    networks:
+      - adidas-network
 
+  # Legacy PHP Service
+  legacy:
+    build:
+      context: .
+      dockerfile: docker/legacy.Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - postgres
+    networks:
+      - adidas-network
+
+  # Database
   postgres:
-    image: postgres:16
-    restart: always
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
     environment:
-      POSTGRES_DB: app_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - '5432:5432'
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - adidas-network
 
+  # Redis Cache
   redis:
-    image: redis:7
+    image: redis:7-alpine
     ports:
-      - '6379:6379'
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - adidas-network
 
+  # RabbitMQ
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3-management-alpine
     ports:
-      - '5672:5672'
-      - '15672:15672'
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - adidas-network
 
+  # Elasticsearch
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.10
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    ports:
+      - "9200:9200"
     environment:
       - discovery.type=single-node
-    ports:
-      - '9200:9200'
-
-  fluentd:
-    image: fluent/fluentd:v1.16-debian-1
-    build:
-      context: ./tools/fluentd
-      dockerfile: Dockerfile
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
-      - ./tools/fluentd/conf:/fluentd/etc
-    ports:
-      - '24224:24224'
-      - '24224:24224/udp'
-
-  seq:
-    image: datalust/seq:latest
-    ports:
-      - '5341:80'
-    environment:
-      - ACCEPT_EULA=Y
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - adidas-network
 
 volumes:
-  pgdata:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  elasticsearch_data:
+
+networks:
+  adidas-network:
+    driver: bridge
