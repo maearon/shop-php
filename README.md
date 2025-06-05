@@ -41,6 +41,9 @@ This monorepo contains multiple microservices:
 
 1. Clone the repository:
 \`\`\`bash
+git rm -r --cached .
+git add .
+git commit -m "Update .gitignore and re-add files"
 git clone <repository-url>
 cd shop-php
 \`\`\`

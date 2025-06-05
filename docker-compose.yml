@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Frontend
   web:
@@ -33,7 +31,6 @@ services:
       - Redis__ConnectionString=${REDIS_URL}
       - RabbitMQ__ConnectionString=${RABBITMQ_URL}
     depends_on:
-      - postgres
       - redis
       - rabbitmq
     networks:
@@ -54,7 +51,6 @@ services:
       - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
       - REDIS_URL=${REDIS_URL}
     depends_on:
-      - postgres
       - redis
     networks:
       - adidas-network
@@ -72,7 +68,6 @@ services:
       - RABBITMQ_URL=${RABBITMQ_URL}
       - REDIS_URL=${REDIS_URL}
     depends_on:
-      - postgres
       - redis
       - rabbitmq
     networks:
@@ -91,7 +86,6 @@ services:
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
       - RABBITMQ_URL=${RABBITMQ_URL}
     depends_on:
-      - postgres
       - rabbitmq
     networks:
       - adidas-network
@@ -108,7 +102,6 @@ services:
       - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
       - REDIS_URL=${REDIS_URL}
     depends_on:
-      - postgres
       - redis
       - elasticsearch
     networks:
@@ -122,26 +115,7 @@ services:
     ports:
       - "8080:80"
     environment:
-      - DB_HOST=postgres
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-    depends_on:
-      - postgres
-    networks:
-      - adidas-network
-
-  # Database
-  postgres:
-    image: postgres:15-alpine
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - DATABASE_URL=${DATABASE_URL}
     networks:
       - adidas-network
 
@@ -162,8 +136,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
@@ -184,7 +158,6 @@ services:
       - adidas-network
 
 volumes:
-  postgres_data:
   redis_data:
   rabbitmq_data:
   elasticsearch_data:

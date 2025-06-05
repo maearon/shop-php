@@ -4,12 +4,12 @@ WORKDIR /app
 # Install dependencies
 FROM base AS deps
 COPY apps/web/package*.json ./
-RUN npm ci --only=production
+RUN npm install --only=production
 
 # Build the app
 FROM base AS builder
 COPY apps/web/package*.json ./
-RUN npm ci
+RUN npm install
 COPY apps/web .
 RUN npm run build
 

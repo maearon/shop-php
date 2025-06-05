@@ -37,32 +37,57 @@ func main() {
 
 	// Initialize Stripe
 	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
+	if stripe.Key == "" {
+		stripe.Key = "sk_test_dummy_key" // fallback for development
+	}
 
 	// Initialize database
 	var err error
-	db, err = sql.Open("postgres", os.Getenv("DATABASE_URL"))
-	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
+	dbURL := os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		dbURL = "postgres://localhost/adidas_ecommerce?sslmode=disable"
 	}
-	defer db.Close()
+
+	db, err = sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Printf("Failed to connect to database: %v", err)
+		// Don't exit, continue without database for now
+	} else {
+		defer db.Close()
+		if err := db.Ping(); err != nil {
+			log.Printf("Database ping failed: %v", err)
+		} else {
+			log.Println("Database connected successfully")
+		}
+	}
 
 	// Initialize RabbitMQ
-	rabbitConn, err = amqp.Dial(os.Getenv("RABBITMQ_URL"))
-	if err != nil {
-		log.Fatal("Failed to connect to RabbitMQ:", err)
+	rabbitURL := os.Getenv("RABBITMQ_URL")
+	if rabbitURL == "" {
+		rabbitURL = "amqp://guest:guest@localhost:5672"
 	}
-	defer rabbitConn.Close()
 
-	rabbitChannel, err = rabbitConn.Channel()
+	rabbitConn, err = amqp.Dial(rabbitURL)
 	if err != nil {
-		log.Fatal("Failed to open RabbitMQ channel:", err)
-	}
-	defer rabbitChannel.Close()
+		log.Printf("Failed to connect to RabbitMQ: %v", err)
+		// Don't exit, continue without RabbitMQ for now
+	} else {
+		defer rabbitConn.Close()
 
-	// Declare queues
-	_, err = rabbitChannel.QueueDeclare("payment_events", true, false, false, false, nil)
-	if err != nil {
-		log.Fatal("Failed to declare queue:", err)
+		rabbitChannel, err = rabbitConn.Channel()
+		if err != nil {
+			log.Printf("Failed to open RabbitMQ channel: %v", err)
+		} else {
+			defer rabbitChannel.Close()
+
+			// Declare queues
+			_, err = rabbitChannel.QueueDeclare("payment_events", true, false, false, false, nil)
+			if err != nil {
+				log.Printf("Failed to declare queue: %v", err)
+			} else {
+				log.Println("RabbitMQ connected successfully")
+			}
+		}
 	}
 
 	// Initialize Gin router
@@ -106,6 +131,11 @@ func createPaymentIntent(c *gin.Context) {
 		return
 	}
 
+	// Default currency if not provided
+	if req.Currency == "" {
+		req.Currency = "vnd"
+	}
+
 	params := &stripe.PaymentIntentParams{
 		Amount:   stripe.Int64(req.Amount),
 		Currency: stripe.String(req.Currency),
@@ -121,14 +151,16 @@ func createPaymentIntent(c *gin.Context) {
 		return
 	}
 
-	// Store payment in database
-	_, err = db.Exec(`
-        INSERT INTO payments (id, order_id, stripe_payment_intent_id, amount, currency, status)
-        VALUES ($1, $2, $3, $4, $5, $6)
-    `, pi.ID, req.OrderID, pi.ID, req.Amount, req.Currency, "pending")
+	// Store payment in database if available
+	if db != nil {
+		_, err = db.Exec(`
+			INSERT INTO payments (id, order_id, stripe_payment_intent_id, amount, currency, status, created_at, updated_at)
+			VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+		`, pi.ID, req.OrderID, pi.ID, float64(req.Amount)/100, req.Currency, "pending")
 
-	if err != nil {
-		log.Printf("Error storing payment: %v", err)
+		if err != nil {
+			log.Printf("Error storing payment: %v", err)
+		}
 	}
 
 	c.JSON(200, PaymentResponse{
@@ -154,7 +186,11 @@ func handleStripeWebhook(c *gin.Context) {
 		return
 	}
 
-	eventType := event["type"].(string)
+	eventType, ok := event["type"].(string)
+	if !ok {
+		c.JSON(400, gin.H{"error": "Invalid event type"})
+		return
+	}
 
 	switch eventType {
 	case "payment_intent.succeeded":
@@ -168,50 +204,88 @@ func handleStripeWebhook(c *gin.Context) {
 
 func handlePaymentSuccess(event map[string]interface{}) {
 	// Update payment status and publish event
-	data := event["data"].(map[string]interface{})
-	object := data["object"].(map[string]interface{})
-	paymentIntentID := object["id"].(string)
-
-	_, err := db.Exec("UPDATE payments SET status = 'completed' WHERE stripe_payment_intent_id = $1", paymentIntentID)
-	if err != nil {
-		log.Printf("Error updating payment status: %v", err)
+	data, ok := event["data"].(map[string]interface{})
+	if !ok {
+		log.Println("Invalid event data")
 		return
 	}
 
-	// Publish payment success event
-	eventData := map[string]interface{}{
-		"event":             "payment_completed",
-		"payment_intent_id": paymentIntentID,
+	object, ok := data["object"].(map[string]interface{})
+	if !ok {
+		log.Println("Invalid event object")
+		return
 	}
 
-	eventJSON, _ := json.Marshal(eventData)
-	rabbitChannel.Publish("", "payment_events", false, false, amqp.Publishing{
-		ContentType: "application/json",
-		Body:        eventJSON,
-	})
+	paymentIntentID, ok := object["id"].(string)
+	if !ok {
+		log.Println("Invalid payment intent ID")
+		return
+	}
+
+	// Update database if available
+	if db != nil {
+		_, err := db.Exec("UPDATE payments SET status = 'completed', updated_at = NOW() WHERE stripe_payment_intent_id = $1", paymentIntentID)
+		if err != nil {
+			log.Printf("Error updating payment status: %v", err)
+			return
+		}
+	}
+
+	// Publish payment success event if RabbitMQ is available
+	if rabbitChannel != nil {
+		eventData := map[string]interface{}{
+			"event":             "payment_completed",
+			"payment_intent_id": paymentIntentID,
+		}
+
+		eventJSON, _ := json.Marshal(eventData)
+		rabbitChannel.Publish("", "payment_events", false, false, amqp.Publishing{
+			ContentType: "application/json",
+			Body:        eventJSON,
+		})
+	}
 }
 
 func handlePaymentFailure(event map[string]interface{}) {
 	// Handle payment failure
-	data := event["data"].(map[string]interface{})
-	object := data["object"].(map[string]interface{})
-	paymentIntentID := object["id"].(string)
-
-	_, err := db.Exec("UPDATE payments SET status = 'failed' WHERE stripe_payment_intent_id = $1", paymentIntentID)
-	if err != nil {
-		log.Printf("Error updating payment status: %v", err)
+	data, ok := event["data"].(map[string]interface{})
+	if !ok {
+		log.Println("Invalid event data")
 		return
 	}
 
-	// Publish payment failure event
-	eventData := map[string]interface{}{
-		"event":             "payment_failed",
-		"payment_intent_id": paymentIntentID,
+	object, ok := data["object"].(map[string]interface{})
+	if !ok {
+		log.Println("Invalid event object")
+		return
 	}
 
-	eventJSON, _ := json.Marshal(eventData)
-	rabbitChannel.Publish("", "payment_events", false, false, amqp.Publishing{
-		ContentType: "application/json",
-		Body:        eventJSON,
-	})
+	paymentIntentID, ok := object["id"].(string)
+	if !ok {
+		log.Println("Invalid payment intent ID")
+		return
+	}
+
+	// Update database if available
+	if db != nil {
+		_, err := db.Exec("UPDATE payments SET status = 'failed', updated_at = NOW() WHERE stripe_payment_intent_id = $1", paymentIntentID)
+		if err != nil {
+			log.Printf("Error updating payment status: %v", err)
+			return
+		}
+	}
+
+	// Publish payment failure event if RabbitMQ is available
+	if rabbitChannel != nil {
+		eventData := map[string]interface{}{
+			"event":             "payment_failed",
+			"payment_intent_id": paymentIntentID,
+		}
+
+		eventJSON, _ := json.Marshal(eventData)
+		rabbitChannel.Publish("", "payment_events", false, false, amqp.Publishing{
+			ContentType: "application/json",
+			Body:        eventJSON,
+		})
+	}
 }

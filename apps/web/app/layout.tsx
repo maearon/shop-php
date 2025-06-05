@@ -1,14 +1,10 @@
 import type React from "react"
-import "@/app/globals.css"
-import { Inter } from "next/font/google"
-import Header from "@/components/layout/Header"
-import Footer from "@/components/layout/Footer"
-
-const inter = Inter({ subsets: ["latin"] })
+import { UserProvider } from "@auth0/nextjs-auth0/client"
+import "./globals.css"
 
 export const metadata = {
-  title: "adidas Vietnam - Trang chủ chính thức",
-  description: "Khám phá bộ sưu tập adidas chính hãng. Giày dép, quần áo & phụ kiện thể thao cho nam, nữ và trẻ em.",
+  title: "Adidas Vietnam - Official Store",
+  description: "Discover the latest adidas collection. Shoes, clothing & accessories for men, women and kids.",
 }
 
 export default function RootLayout({
@@ -17,11 +13,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="vi">
-      <body className={inter.className}>
-        <Header />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+    <html lang="en">
+      <body>
+        <UserProvider>{children}</UserProvider>
       </body>
     </html>
   )

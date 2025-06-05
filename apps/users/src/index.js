@@ -2,17 +2,15 @@ const express = require("express")
 const cors = require("cors")
 const helmet = require("helmet")
 const rateLimit = require("express-rate-limit")
-const { Pool } = require("pg")
+const { PrismaClient } = require("@prisma/client")
 const Redis = require("redis")
 require("dotenv").config()
 
 const app = express()
 const PORT = process.env.PORT || 3001
 
-// Database connection
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-})
+// Initialize Prisma
+const prisma = new PrismaClient()
 
 // Redis connection
 const redis = Redis.createClient({
@@ -47,13 +45,23 @@ app.get("/users/:id", async (req, res) => {
       return res.json(JSON.parse(cached))
     }
 
-    const result = await pool.query("SELECT id, email, name, created_at FROM users WHERE id = $1", [id])
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        username: true,
+        displayName: true,
+        avatarUrl: true,
+        bio: true,
+        created_at: true,
+      },
+    })
 
-    if (result.rows.length === 0) {
+    if (!user) {
       return res.status(404).json({ error: "User not found" })
     }
-
-    const user = result.rows[0]
 
     // Cache for 5 minutes
     await redis.setEx(`user:${id}`, 300, JSON.stringify(user))
@@ -67,14 +75,25 @@ app.get("/users/:id", async (req, res) => {
 
 app.post("/users", async (req, res) => {
   try {
-    const { email, name, auth0_id } = req.body
+    const { email, name, username, displayName, auth0_id } = req.body
 
-    const result = await pool.query(
-      "INSERT INTO users (email, name, auth0_id) VALUES ($1, $2, $3) RETURNING id, email, name, created_at",
-      [email, name, auth0_id],
-    )
-
-    const user = result.rows[0]
+    const user = await prisma.user.create({
+      data: {
+        email,
+        name,
+        username: username || email.split("@")[0],
+        displayName: displayName || name,
+        // auth0_id, // Add this field to schema if needed
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        username: true,
+        displayName: true,
+        created_at: true,
+      },
+    })
 
     // Cache the new user
     await redis.setEx(`user:${user.id}`, 300, JSON.stringify(user))
@@ -82,6 +101,9 @@ app.post("/users", async (req, res) => {
     res.status(201).json(user)
   } catch (error) {
     console.error("Error creating user:", error)
+    if (error.code === "P2002") {
+      return res.status(400).json({ error: "User already exists" })
+    }
     res.status(500).json({ error: "Internal server error" })
   }
 })

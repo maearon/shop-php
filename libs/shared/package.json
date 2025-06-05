@@ -1,0 +1,21 @@
+{
+  "name": "@adidas/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and Prisma client for Adidas monorepo",
+  "main": "index.js",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.1",
+    "prisma": "^5.7.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.6.2",
+    "@types/node": "^20.10.5"
+  }
+}

@@ -3,14 +3,19 @@
   "version": "1.0.0",
   "description": "Production-ready e-commerce monorepo with microservices",
   "private": true,
-  "workspaces": ["apps/*"],
+  "workspaces": ["apps/*", "libs/*"],
   "scripts": {
+    "setup": "chmod +x setup.sh && ./setup.sh",
     "dev": "docker compose up",
     "build": "docker compose build",
     "prod": "docker compose -f docker-compose.prod.yml up",
     "clean": "docker compose down -v",
     "test": "npm run test --workspaces",
-    "lint": "npm run lint --workspaces"
+    "lint": "npm run lint --workspaces",
+    "db:generate": "cd libs/shared && npm run db:generate",
+    "db:push": "cd libs/shared && npm run db:push",
+    "db:seed": "cd libs/shared && npm run db:seed",
+    "db:studio": "cd libs/shared && npm run db:studio"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

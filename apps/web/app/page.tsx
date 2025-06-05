@@ -1,7 +1,7 @@
 import { UserProvider } from "@auth0/nextjs-auth0/client"
-import HeroBanner from "@/components/HeroBanner"
-import ProductGrid from "@/components/ProductGrid"
-import SocialLinks from "@/components/SocialLinks"
+import HeroBanner from "@/components/ui/HeroBanner"
+import ProductGrid from "@/components/product/ProductGrid"
+import SocialLinks from "@/components/ui/SocialLinks"
 
 export default function Home() {
   return (
