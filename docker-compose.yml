@@ -30,9 +30,17 @@ services:
       - Auth0__ClientSecret=${AUTH0_CLIENT_SECRET}
       - Redis__ConnectionString=${REDIS_URL}
       - RabbitMQ__ConnectionString=${RABBITMQ_URL}
+      - Services__Users__BaseUrl=http://users:3001
+      - Services__Orders__BaseUrl=http://orders:3002
+      - Services__Payments__BaseUrl=http://payments:3003
+      - Services__Search__BaseUrl=http://search:3004
     depends_on:
       - redis
       - rabbitmq
+      - users
+      - orders
+      - payments
+      - search
     networks:
       - adidas-network
 

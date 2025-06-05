@@ -28,16 +28,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(provider =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("Redis");
+    var connectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
     return ConnectionMultiplexer.Connect(connectionString);
 });
 
 // Auth0 Authentication
 builder.Services.AddAuth0WebAppAuthentication(options =>
 {
-    options.Domain = builder.Configuration["Auth0:Domain"];
-    options.ClientId = builder.Configuration["Auth0:ClientId"];
-    options.ClientSecret = builder.Configuration["Auth0:ClientSecret"];
+    options.Domain = builder.Configuration["Auth0:Domain"] ?? "your-domain.auth0.com";
+    options.ClientId = builder.Configuration["Auth0:ClientId"] ?? "your_auth0_client_id";
+    options.ClientSecret = builder.Configuration["Auth0:ClientSecret"] ?? "your_auth0_client_secret";
 });
 
 // CORS
@@ -54,22 +54,22 @@ builder.Services.AddCors(options =>
 // HTTP Clients for microservices
 builder.Services.AddHttpClient("UsersService", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["Services:Users:BaseUrl"]);
+    client.BaseAddress = new Uri(builder.Configuration["Services:Users:BaseUrl"] ?? "http://users:3001");
 });
 
 builder.Services.AddHttpClient("OrdersService", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["Services:Orders:BaseUrl"]);
+    client.BaseAddress = new Uri(builder.Configuration["Services:Orders:BaseUrl"] ?? "http://orders:3002");
 });
 
 builder.Services.AddHttpClient("PaymentsService", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["Services:Payments:BaseUrl"]);
+    client.BaseAddress = new Uri(builder.Configuration["Services:Payments:BaseUrl"] ?? "http://payments:3003");
 });
 
 builder.Services.AddHttpClient("SearchService", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["Services:Search:BaseUrl"]);
+    client.BaseAddress = new Uri(builder.Configuration["Services:Search:BaseUrl"] ?? "http://search:3004");
 });
 
 var app = builder.Build();
@@ -93,9 +93,11 @@ app.MapGet("/health", () => new { Status = "Healthy", Service = "API Gateway" })
 app.MapPost("/api/users", async (HttpContext context, IHttpClientFactory httpClientFactory) =>
 {
     var client = httpClientFactory.CreateClient("UsersService");
+    var requestContent = await new StreamReader(context.Request.Body).ReadToEndAsync();
     var response = await client.PostAsync("/users", new StringContent(
-        await new StreamReader(context.Request.Body).ReadToEndAsync(),
-        Encoding.UTF8, "application/json"));
+        requestContent,
+        Encoding.UTF8, 
+        "application/json"));
     
     return Results.Content(await response.Content.ReadAsStringAsync(), 
         response.Content.Headers.ContentType?.ToString(), (int)response.StatusCode);
@@ -118,9 +120,11 @@ app.MapGet("/api/users/{id}", async (string id, IHttpClientFactory httpClientFac
 app.MapPost("/api/orders", async (HttpContext context, IHttpClientFactory httpClientFactory) =>
 {
     var client = httpClientFactory.CreateClient("OrdersService");
+    var requestContent = await new StreamReader(context.Request.Body).ReadToEndAsync();
     var response = await client.PostAsync("/orders", new StringContent(
-        await new StreamReader(context.Request.Body).ReadToEndAsync(),
-        Encoding.UTF8, "application/json"));
+        requestContent,
+        Encoding.UTF8, 
+        "application/json"));
     
     return Results.Content(await response.Content.ReadAsStringAsync(), 
         response.Content.Headers.ContentType?.ToString(), (int)response.StatusCode);
@@ -129,9 +133,11 @@ app.MapPost("/api/orders", async (HttpContext context, IHttpClientFactory httpCl
 app.MapPost("/api/search", async (HttpContext context, IHttpClientFactory httpClientFactory) =>
 {
     var client = httpClientFactory.CreateClient("SearchService");
+    var requestContent = await new StreamReader(context.Request.Body).ReadToEndAsync();
     var response = await client.PostAsync("/search", new StringContent(
-        await new StreamReader(context.Request.Body).ReadToEndAsync(),
-        Encoding.UTF8, "application/json"));
+        requestContent,
+        Encoding.UTF8, 
+        "application/json"));
     
     return Results.Content(await response.Content.ReadAsStringAsync(), 
         response.Content.Headers.ContentType?.ToString(), (int)response.StatusCode);
