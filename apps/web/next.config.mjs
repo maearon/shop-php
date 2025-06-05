@@ -1,28 +1,43 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    staleTimes: {
-      dynamic: 30,
-    },
+    reactCompiler: true,
   },
-  // serverExternalPackages: ["@node-rs/argon2"],
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "ueqc3xu8r8.ufs.sh",
-        pathname: `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/*`,
+        protocol: 'https',
+        hostname: 'secure.gravatar.com',
+        port: '',
+        pathname: '/avatar/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost:3001',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'youtube.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ruby-rails-boilerplate-3s9t.onrender.com',
+        port: '',
+        pathname: '/**',
       },
     ],
   },
-  rewrites: () => {
-    return [
-      {
-        source: "/hashtag/:tag",
-        destination: "/search?q=%23:tag",
-      },
-    ];
-  },
+  env: {  
+    CLIENT_ID: process.env.CLIENT_ID,  
+    REDIRECT_URI: process.env.REDIRECT_URI, 
+    SCOPE: process.env.SCOPE,
+    CLIENT_SECRET: process.env.CLIENT_SECRET,
+    API_KEY: process.env.API_KEY
+  ,}
 };
 
 export default nextConfig;
