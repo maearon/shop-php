@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Production-ready e-commerce monorepo with microservices",
   "private": true,
-  "workspaces": ["apps/*", "libs/*"],
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
   "scripts": {
     "setup": "chmod +x setup.sh && ./setup.sh",
     "setup-shared": "cd libs/shared && npm install && npm run db:generate",

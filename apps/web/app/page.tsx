@@ -12,6 +12,13 @@ import flashMessage from '../components/shared/flashMessages'
 import { useAppSelector } from '../redux/hooks'
 import { fetchUser, selectUser } from '../redux/session/sessionSlice'
 import { useDispatch } from 'react-redux';
+import HeroBanner from "@/components/home/HeroBanner"
+import FeaturedProducts from "@/components/home/FeaturedProducts"
+import CategoryGrid from "@/components/home/CategoryGrid"
+import PromoSection from "@/components/home/PromoSection"
+import Newsletter from "@/components/home/Newsletter"
+import SocialProof from "@/components/home/SocialProof"
+
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const REDIRECT_URI = process.env.REDIRECT_URI;
@@ -255,165 +262,15 @@ const Home: NextPage = () => {
     }
   }
 
-  return loading ? (
-    <>
-    <Skeleton height={304} />
-    <Skeleton circle={true} height={60} width={60} />
-    </>
-  ) : userData.error ? (
-    <h2>{userData.error}</h2>
-  ) : userData.value.email ? (
-    <div className="row">
-      <aside className="col-md-4">
-        <section className="user_info">
-          <Image
-            className={"gravatar"}
-            src={"https://secure.gravatar.com/avatar/"+gravatar+"?s=50"}
-            alt={userData.value.name} 
-            width={50}
-            height={50}
-            priority
-          />
-          <h1>{userData.value.name}</h1>
-          <span><Link href={"/users/"+userData.value.id}>view my profile</Link></span>
-          <span>{micropost} post{micropost !== 1 ? 's' : ''}</span>
-        </section>
-
-        <section className="stats">
-          <div className="stats">
-            <Link href={"/users/"+userData.value.id+"/following"}>
-              <strong id="following" className="stat">
-                {following}
-              </strong> following
-            </Link>
-            <Link href={"/users/"+userData.value.id+"/followers"}>
-              <strong id="followers" className="stat">
-                {followers}
-              </strong> followers
-            </Link>
-          </div>
-        </section>
-
-        <section className="micropost_form">
-          <form
-          encType="multipart/form-data"
-          action="/microposts"
-          acceptCharset="UTF-8"
-          method="post"
-          onSubmit={handleSubmit}
-          >
-            {Object.keys(errors).length !== 0 &&
-              <ShowErrors errorMessage={errors} />
-            }
-            <div className="field">
-                <label htmlFor="micropost[content]">Youtube URL:</label>
-                <textarea
-                placeholder="Compose new url https://www.youtube.com/embed/abPmZCZZrFA?si=CJdRW8sNd5laZsfJ..."
-                name="micropost[content]"
-                id="micropost_content"
-                value={content}
-                onChange={handleContentInput}
-                >
-                </textarea>
-            </div>
-            <input ref={inputEl} type="submit" name="commit" value="Share" className="btn btn-primary" data-disable-with="Post" />
-          </form>
-        </section>
-      </aside>
-
-      <div className="col-md-8">
-        {feedItems.length > 0 &&
-        <>
-        <ol className="microposts">
-          { feedItems.map((i:any, t) => (
-              <li key={t} id= {'micropost-'+i.id} >
-                <Link href={'/users/'+i.user_id}>
-                  <Image
-                    className={"gravatar"}
-                    src={"https://secure.gravatar.com/avatar/"+i.gravatar_id+"?s="+i.size}
-                    alt={i.user_name}
-                    width={i.size}
-                    height={i.size}
-                    priority
-                  />
-                </Link>
-                <span className="user"><Link href={'/users/'+i.user_id}>{i.user_name}</Link></span>
-                
-                <span className="content">
-                  <b>{i.title}</b>
-                  <Link target="_blank" href={"https://www.youtube.com/results?search_query="+i.channelTitle}> ({i.channelTitle})</Link>
-                  <div className="videoWrapper">
-                    <iframe
-                      src={"https://www.youtube.com/embed/"+i.videoId} allow="autoplay; encrypted-media" allowFullScreen>
-                    </iframe>
-                  </div>
-                  <p>{i.description}</p>
-                  { i.image &&
-                    <Image
-                      src={''+i.image+''}
-                      alt="Example User"
-                      width={50}
-                      height={50}
-                      priority
-                    />
-                  }
-                  <div className="btn btn-primary" onClick={() => handleRate(i.videoId, "like")}>
-                    Like
-                  </div>
-                  <div className="btn btn-primary" onClick={() => handleRate(i.videoId, "dislike")}>
-                    Dislike
-                  </div>
-                </span>
-                <span className="timestamp">
-                {'Shared '+i.timestamp+' ago. '}
-                {userData.value.id === i.user_id &&
-                  <Link href={'#/microposts/'+i.id} onClick={() => removeMicropost(i.id)}>delete</Link>
-                }
-                </span>
-              </li>
-          ))}
-        </ol>
-
-        <Pagination
-          activePage={page}
-          itemsCountPerPage={5}
-          totalItemsCount={total_count}
-          pageRangeDisplayed={5}
-          onChange={handlePageChange}
-        />
-        </>
-        }
-      </div>
-  </div>
-  ) : (
-    <>
-    <div className="center jumbotron">
-        <h1>Welcome to the Funny Movies App</h1>
-        <h2>
-        This is the home page for the <Link href="https://funny-movies-pied.vercel.app">funny movies application</Link>.
-        </h2>
-        <span className="content">
-        <b>SƠN TÙNG M-TP | SKY DECADE | Nắng Ấm Ngang Qua</b>
-        <Link target="_blank" href="https://www.youtube.com/results?search_query=Sơn Tùng M-TP Official"> (Sơn Tùng M-TP Official)</Link>
-          <div className="videoWrapper">
-            <iframe src="https://www.youtube.com/embed/Zuk5zGv5Un4?autoplay=1" allow="autoplay; encrypted-media" allowFullScreen></iframe>
-          </div>
-          <div className="btn btn-primary" onClick={() => handleRate("Zuk5zGv5Un4", "like")}>Like</div>
-          <div className="btn btn-primary" onClick={() => handleRate("Zuk5zGv5Un4", "dislike")}>Dislike</div>
-        </span>
-        <Link href="/signup" className="btn btn-lg btn-primary">Sign up now!</Link>
-    </div>
-    <Link href="https://nextjs.org/" target="_blank">
-      <Image
-        className={styles.logo}
-        src="/next.svg"
-        alt="Next.js logo"
-        width={180}
-        height={38}
-        priority
-      />
-    </Link>
-    </>
+  return (
+    <main>
+      <HeroBanner />
+      <FeaturedProducts />
+      <CategoryGrid />
+      <PromoSection />
+      <Newsletter />
+      <SocialProof />
+    </main>
   )
 }
 
