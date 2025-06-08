@@ -24,7 +24,7 @@ export default function OrderPage({ params }: OrderPageProps) {
         color: "Đen",
         quantity: 1,
         price: 4200000,
-        image: "/placeholder.svg?height=100&width=100",
+        image: "/placeholder.png?height=100&width=100",
       },
     ],
     shippingAddress: {
@@ -128,7 +128,7 @@ export default function OrderPage({ params }: OrderPageProps) {
                   >
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
                       <img
-                        src={item.image || "/placeholder.svg"}
+                        src={item.image || "/placeholder.png"}
                         alt={item.name}
                         className="h-full w-full object-cover"
                       />

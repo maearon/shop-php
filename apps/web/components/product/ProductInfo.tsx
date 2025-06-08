@@ -50,7 +50,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       size: selectedSize,
       color: selectedColor,
       quantity,
-      image: "/placeholder.svg?height=100&width=100", // In a real app, this would be the product image
+      image: "/placeholder.png?height=100&width=100", // In a real app, this would be the product image
     })
 
     toast({

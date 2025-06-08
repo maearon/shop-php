@@ -16,6 +16,44 @@ services:
       - adidas-network
 
   # API Gateway
+  # This service acts as the API gateway for the microservices architecture.
+  # It handles incoming requests, routes them to the appropriate microservice,
+  # and manages authentication and authorization.
+  # The API Gateway is built using ASP.NET Core and serves as the entry point for the frontend application.
+  # It communicates with various microservices such as Users, Orders, Payments, and Search.
+  # The API Gateway also integrates with Redis for caching, RabbitMQ for message queuing,
+  # and Auth0 for authentication.     
+
+  # API java spring boot Service
+  api-java:
+    build:  
+      context: .
+      dockerfile: docker/api-java.Dockerfile
+    ports:
+      - "8080:8080"
+    environment:  
+      - SPRING_PROFILES_ACTIVE=dev
+      - DATABASE_URL=${DATABASE_URL}
+      - AUTH0_DOMAIN=${AUTH0_DOMAIN}
+      - AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
+      - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
+      - REDIS_URL=${REDIS_URL}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - SERVICES_USERS_BASE_URL=http://users:3001
+      - SERVICES_ORDERS_BASE_URL=http://orders:3002
+      - SERVICES_PAYMENTS_BASE_URL=http://payments:3003
+      - SERVICES_SEARCH_BASE_URL=http://search:3004
+    depends_on:
+      - redis
+      - rabbitmq
+      - users
+      - orders
+      - payments
+      - search
+    networks:
+      - adidas-network        
+  
+  # API dotnet Core Service
   api:
     build:
       context: .
@@ -121,7 +159,7 @@ services:
       context: .
       dockerfile: docker/legacy.Dockerfile
     ports:
-      - "8080:80"
+      - "8081:80"
     environment:
       - DATABASE_URL=${DATABASE_URL}
     networks:

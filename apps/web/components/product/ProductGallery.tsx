@@ -12,7 +12,7 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(0)
 
   // If no images provided, use placeholder
-  const displayImages = images?.length > 0 ? images : ["/placeholder.svg?height=800&width=800"]
+  const displayImages = images?.length > 0 ? images : ["/placeholder.png?height=800&width=800"]
 
   return (
     <div className="grid grid-cols-12 gap-4">
@@ -29,7 +29,7 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
           >
             <div className="relative h-full w-full">
               <Image
-                src={image || "/placeholder.svg"}
+                src={image || "/placeholder.png"}
                 alt={`Product thumbnail ${index + 1}`}
                 fill
                 className="object-cover"
@@ -43,7 +43,7 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
       <div className="col-span-10">
         <div className="relative aspect-square overflow-hidden rounded-lg">
           <Image
-            src={displayImages[selectedImage] || "/placeholder.svg"}
+            src={displayImages[selectedImage] || "/placeholder.png"}
             alt="Product image"
             fill
             className="object-cover"

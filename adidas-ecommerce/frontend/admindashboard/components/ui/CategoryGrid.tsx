@@ -5,22 +5,22 @@ export default function CategoryGrid() {
   const categories = [
     {
       title: "Giày Nam",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "/placeholder.png?height=400&width=400",
       href: "/men/shoes",
     },
     {
       title: "Giày Nữ",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "/placeholder.png?height=400&width=400",
       href: "/women/shoes",
     },
     {
       title: "Quần áo thể thao",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "/placeholder.png?height=400&width=400",
       href: "/clothing",
     },
     {
       title: "Phụ kiện",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "/placeholder.png?height=400&width=400",
       href: "/accessories",
     },
   ]

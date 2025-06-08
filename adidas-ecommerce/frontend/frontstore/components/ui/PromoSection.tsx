@@ -21,7 +21,7 @@ export default function PromoSection() {
           <div className="relative aspect-video rounded-lg overflow-hidden">
             <div
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: "url('/placeholder.svg?height=600&width=800')" }}
+              style={{ backgroundImage: "url('/placeholder.png?height=600&width=800')" }}
             />
           </div>
         </div>

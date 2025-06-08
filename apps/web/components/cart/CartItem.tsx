@@ -32,7 +32,7 @@ export default function CartItem({ item }: CartItemProps) {
   return (
     <div className="flex items-center gap-4 p-4 border rounded-lg">
       <div className="relative w-20 h-20">
-        <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover rounded" />
+        <Image src={item.image || "/placeholder.png"} alt={item.name} fill className="object-cover rounded" />
       </div>
 
       <div className="flex-1">

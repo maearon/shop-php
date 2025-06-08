@@ -147,7 +147,7 @@ export default function Header() {
                               className="w-full p-3 hover:bg-gray-50 flex items-center space-x-3 text-left"
                             >
                               <img
-                                src={product.image || "/placeholder.svg"}
+                                src={product.image || "/placeholder.png"}
                                 alt={product.name}
                                 className="w-12 h-12 object-cover rounded"
                               />
