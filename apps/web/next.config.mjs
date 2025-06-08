@@ -8,7 +8,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ["placeholder.png"],
+    domains: ["placeholder.png","blob.v0.dev"],
     unoptimized: true,
     remotePatterns: [
       {
