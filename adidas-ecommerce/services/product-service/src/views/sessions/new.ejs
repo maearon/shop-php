@@ -1,0 +1,32 @@
+<h1>Log in</h1>
+
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <form action="/login" accept-charset="UTF-8" method="post">
+      <input
+        type="hidden"
+        name="authenticity_token"
+        value="Qwf51n5oU/Segprpe1kqQ8lZ3ltylHDgcPQHzLZB5Klups7z0Ewwj/9LU4zgt/h77hjzyTddnZNSTuuC8ejJpg=="
+      />
+
+      <label for="session_email">Email</label>
+      <input class="form-control" type="email" name="session[email]" id="session_email" />
+
+      <label for="session_password">Password</label>
+      <a href="/password_resets/new">(forgot password)</a>
+      <input class="form-control" type="password" name="session[password]" id="session_password" />
+
+      <label class="checkbox inline" for="session_remember_me">
+        <input name="session[remember_me]" type="hidden" value="0" /><input
+          type="checkbox"
+          value="1"
+          name="session[remember_me]"
+          id="session_remember_me"
+        />
+        <span>Remember me on this computer</span>
+      </label>
+      <input type="submit" name="commit" value="Log in" class="btn btn-primary" data-disable-with="Log in" />
+    </form>
+    <p>New user? <a href="/signup">Sign up now!</a></p>
+  </div>
+</div>

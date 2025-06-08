@@ -1,0 +1,83 @@
+@using OrderService.Models
+@using Microsoft.AspNetCore.Identity
+@model (ApplicationUser User, List<Micropost> Microposts)
+@{
+    ViewData["Title"] = Model.User.Name;
+}
+
+<div class="row">
+    <aside class="col-md-4">
+        <section class="user_info">
+            <h1>@Model.User.Name</h1>
+            <p>@Model.User.Email</p>
+            <p>Member since: @Model.User.CreatedAt.ToString("MMMM yyyy")</p>
+        </section>
+        <section class="stats">
+            <div class="row">
+                <div class="col-6">
+                    <a asp-controller="Users" asp-action="Following" asp-route-id="@Model.User.Id">
+                        <strong id="following" class="stat">@ViewBag.FollowingCount</strong> following
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a asp-controller="Users" asp-action="Followers" asp-route-id="@Model.User.Id">
+                        <strong id="followers" class="stat">@ViewBag.FollowersCount</strong> followers
+                    </a>
+                </div>
+            </div>
+        </section>
+        @if (User.Identity.IsAuthenticated && Model.User.Id != UserManager.GetUserId(User))
+        {
+            <section class="follow_form">
+                @if (ViewBag.IsFollowing)
+                {
+                    <form asp-controller="Relationships" asp-action="Delete" method="post">
+                        <input type="hidden" name="followedId" value="@Model.User.Id" />
+                        <button type="submit" class="btn btn-primary">Unfollow</button>
+                    </form>
+                }
+                else
+                {
+                    <form asp-controller="Relationships" asp-action="Create" method="post">
+                        <input type="hidden" name="followedId" value="@Model.User.Id" />
+                        <button type="submit" class="btn btn-outline-primary">Follow</button>
+                    </form>
+                }
+            </section>
+        }
+    </aside>
+    <div class="col-md-8">
+        <h3>Microposts (@ViewBag.MicropostsCount)</h3>
+        @if (Model.Microposts.Any())
+        {
+            <div class="microposts">
+                @foreach (var micropost in Model.Microposts)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <p class="card-text">@micropost.Content</p>
+                            @if (!string.IsNullOrEmpty(micropost.ImagePath))
+                            {
+                                <img src="~/uploads/@micropost.ImagePath" alt="Micropost image" class="img-fluid mb-2" style="max-height: 200px;" />
+                            }
+                            <p class="card-text"><small class="text-muted">Posted @micropost.CreatedAt.ToString("g")</small></p>
+                            
+                            @if (micropost.UserId == UserManager.GetUserId(User))
+                            {
+                                <form asp-controller="Microposts" asp-action="Delete" asp-route-id="@micropost.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this micropost?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p>No microposts yet.</p>
+        }
+    </div>
+</div>
+
+@inject UserManager<ApplicationUser> UserManager

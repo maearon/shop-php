@@ -1,0 +1,177 @@
+<!-- <div class="center jumbotron">
+  <h1><%= locals.title %></h1>
+
+  <h2>
+    This is the home page for the
+    <a href="https://www.railstutorial.org/">Ruby on Rails Tutorial</a>
+    sample application.
+  </h2>
+
+  <a class="btn btn-lg btn-primary" href="/signup">Sign up now!</a>
+</div>
+
+<a href="https://rubyonrails.org/"
+  ><img
+    alt="Rails logo"
+    width="200"
+    src="/images/rails.svg"
+/></a> -->
+<div class="row">
+  <aside class="col-md-4">
+    <section class="user_info">
+      <a href="/users/1"
+        ><img
+          alt="Example User"
+          class="gravatar"
+          src="https://secure.gravatar.com/avatar/bebfcf57d6d8277d806a9ef3385c078d?s=50"
+      /></a>
+      <h1>Example User</h1>
+      <span><a href="/users/1">view my profile</a></span>
+      <span>70 microposts</span>
+    </section>
+    <section class="stats">
+      <div class="stats">
+        <a href="/users/1/following">
+          <strong id="following" class="stat"> 46 </strong>
+          following
+        </a>
+        <a href="/users/1/followers">
+          <strong id="followers" class="stat"> 36 </strong>
+          followers
+        </a>
+      </div>
+    </section>
+    <section class="micropost_form">
+      <form enctype="multipart/form-data" action="/microposts" accept-charset="UTF-8" method="post">
+        <input
+          type="hidden"
+          name="authenticity_token"
+          value="WEE_nE-lfCw0ho1FpJC0FdG_xVoArBoPtsmalYB_OIzHypSn7tTcufM9qGlQMGoABg-4fZMhEXuFHP6FaCzNQA"
+        />
+
+        <div class="field">
+          <textarea placeholder="Compose new micropost..." name="micropost[content]" id="micropost_content"></textarea>
+        </div>
+        <input type="submit" name="commit" value="Post" class="btn btn-primary" data-disable-with="Post" />
+        <span class="image">
+          <input accept="image/jpeg,image/gif,image/png" type="file" name="micropost[image]" id="micropost_image" />
+        </span>
+      </form>
+      <script type="text/javascript">
+        $('#micropost_image').bind('change', function () {
+          const size_in_megabytes = this.files[0].size / 1024 / 1024;
+          if (size_in_megabytes > 5) {
+            alert('Maximum file size is 5MB. Please choose a smaller file.');
+            $('#micropost_image').val('');
+          }
+        });
+      </script>
+    </section>
+  </aside>
+  <div class="col-md-8">
+    <h3>Micropost Feed <%= locals.title %></h3>
+    <ol class="microposts">
+      <li id="micropost-487">
+        <a href="/users/1"
+          ><img
+            alt="Example User"
+            class="gravatar"
+            src="https://secure.gravatar.com/avatar/bebfcf57d6d8277d806a9ef3385c078d?s=50"
+        /></a>
+        <span class="user"><a href="/users/1">Example User</a></span>
+        <span class="content"> sd </span>
+        <span class="timestamp">
+          Posted 25 days ago.
+          <a data-confirm="You sure?" rel="nofollow" data-method="delete" href="/microposts/487">delete</a>
+        </span>
+      </li>
+      <li id="micropost-452">
+        <a href="/users/1"
+          ><img
+            alt="Example User"
+            class="gravatar"
+            src="https://secure.gravatar.com/avatar/bebfcf57d6d8277d806a9ef3385c078d?s=50"
+        /></a>
+        <span class="user"><a href="/users/1">Example User</a></span>
+        <span class="content"> sadsad </span>
+        <span class="timestamp">
+          Posted 4 months ago.
+          <a data-confirm="You sure?" rel="nofollow" data-method="delete" href="/microposts/452">delete</a>
+        </span>
+      </li>
+      <li id="micropost-451">
+        <a href="/users/1"
+          ><img
+            alt="Example User"
+            class="gravatar"
+            src="https://secure.gravatar.com/avatar/bebfcf57d6d8277d806a9ef3385c078d?s=50"
+        /></a>
+        <span class="user"><a href="/users/1">Example User</a></span>
+        <span class="content"> sdsad </span>
+        <span class="timestamp">
+          Posted 4 months ago.
+          <a data-confirm="You sure?" rel="nofollow" data-method="delete" href="/microposts/451">delete</a>
+        </span>
+      </li>
+      <li id="micropost-450">
+        <a href="/users/1"
+          ><img
+            alt="Example User"
+            class="gravatar"
+            src="https://secure.gravatar.com/avatar/bebfcf57d6d8277d806a9ef3385c078d?s=50"
+        /></a>
+        <span class="user"><a href="/users/1">Example User</a></span>
+        <span class="content"> sadsadsad </span>
+        <span class="timestamp">
+          Posted 4 months ago.
+          <a data-confirm="You sure?" rel="nofollow" data-method="delete" href="/microposts/450">delete</a>
+        </span>
+      </li>
+      <li id="micropost-449">
+        <a href="/users/1"
+          ><img
+            alt="Example User"
+            class="gravatar"
+            src="https://secure.gravatar.com/avatar/bebfcf57d6d8277d806a9ef3385c078d?s=50"
+        /></a>
+        <span class="user"><a href="/users/1">Example User</a></span>
+        <span class="content"> dsf </span>
+        <span class="timestamp">
+          Posted 4 months ago.
+          <a data-confirm="You sure?" rel="nofollow" data-method="delete" href="/microposts/449">delete</a>
+        </span>
+      </li>
+    </ol>
+    <ul class="pagination">
+      <li class="page active">
+        <a href="javascript:void(0)">1</a>
+      </li>
+
+      <li class="page">
+        <a rel="next" href="/?page=2">2</a>
+      </li>
+
+      <li class="page">
+        <a href="/?page=3">3</a>
+      </li>
+
+      <li class="page">
+        <a href="/?page=4">4</a>
+      </li>
+
+      <li class="page">
+        <a href="/?page=5">5</a>
+      </li>
+
+      <li class="page gap disabled"><a href="javascript:void(0)">…</a></li>
+
+      <li class="next">
+        <a rel="next" href="/?page=2">Next ›</a>
+      </li>
+
+      <li class="last">
+        <a href="/?page=24">Last »</a>
+      </li>
+    </ul>
+  </div>
+</div>

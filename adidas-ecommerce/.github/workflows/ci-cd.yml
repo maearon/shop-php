@@ -1,0 +1,203 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, staging, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Setup environment
+      run: |
+        cp .env.example .env
+        npm run setup:env
+    
+    - name: Start services for testing
+      run: |
+        npm run setup:network
+        npm run setup:volumes
+        npm run dev:detach
+    
+    - name: Wait for services to be ready
+      run: |
+        sleep 120
+        npm run health
+    
+    - name: Run database migrations
+      run: npm run migrate
+    
+    - name: Seed test data
+      run: npm run seed
+    
+    - name: Run tests
+      run: npm run test
+    
+    - name: Stop services
+      run: npm run down
+      if: always()
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
+    
+    strategy:
+      matrix:
+        service: 
+          - frontstore
+          - admindashboard
+          - gateway
+          - auth-service
+          - order-service
+          - product-service
+          - cart-service
+          - payment-service
+          - image-service
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.service }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+    
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ${{ matrix.service == 'frontstore' && './frontend/frontstore/Dockerfile' || matrix.service == 'admindashboard' && './frontend/admindashboard/Dockerfile' || matrix.service == 'gateway' && './gateway/Dockerfile' || format('./services/{0}/Dockerfile', matrix.service) }}
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging'
+    environment: staging
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Deploy to Staging
+      run: npm run deploy:staging
+      env:
+        RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        STAGING_SERVICE_ID: ${{ secrets.STAGING_SERVICE_ID }}
+        DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+        JWT_SECRET: 6a31ee167b28ab32ab171795d2eff778
+        STRIPE_SECRET_KEY: ${{ secrets.STAGING_STRIPE_SECRET_KEY }}
+    
+    - name: Health check after deployment
+      run: |
+        sleep 60
+        curl -f ${{ secrets.STAGING_URL }}/health || exit 1
+        curl -f ${{ secrets.STAGING_URL }}:3000/api/health || exit 1
+
+  deploy-production:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Create deployment backup
+      run: |
+        echo "Creating backup of current deployment..."
+        echo "BACKUP_COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
+        echo "BACKUP_TIMESTAMP=$(date +%Y%m%d_%H%M%S)" >> $GITHUB_ENV
+    
+    - name: Deploy to Production
+      id: deploy
+      run: npm run deploy:production
+      env:
+        RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        PRODUCTION_SERVICE_ID: ${{ secrets.PRODUCTION_SERVICE_ID }}
+        DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+        JWT_SECRET: 6a31ee167b28ab32ab171795d2eff778
+        STRIPE_SECRET_KEY: ${{ secrets.PRODUCTION_STRIPE_SECRET_KEY }}
+    
+    - name: Health check after deployment
+      id: health_check
+      run: |
+        sleep 120
+        curl -f ${{ secrets.PRODUCTION_URL }}/health || exit 1
+        curl -f ${{ secrets.PRODUCTION_URL }}:3000/api/health || exit 1
+        curl -f ${{ secrets.PRODUCTION_URL }}:3001/api/health || exit 1
+    
+    - name: Rollback on failure
+      if: failure()
+      run: |
+        echo "Deployment failed, initiating rollback..."
+        npm run rollback
+      env:
+        RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        PRODUCTION_SERVICE_ID: ${{ secrets.PRODUCTION_SERVICE_ID }}
+        BACKUP_COMMIT_SHA: ${{ env.BACKUP_COMMIT_SHA }}
+    
+    - name: Notify deployment status
+      if: always()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}

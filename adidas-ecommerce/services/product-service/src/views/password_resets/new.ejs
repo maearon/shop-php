@@ -1,0 +1,17 @@
+<h1>Forgot password</h1>
+
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <form action="/password_resets" accept-charset="UTF-8" method="post">
+      <input
+        type="hidden"
+        name="authenticity_token"
+        value="3NbgEjqcPXXer6qpoxT-eQ2dJ5cQo-qII5VaMnot3eScZXVsUTBZW3ngAevSP_fVNcbD3Yb6tIMO2BelCcCpLA"
+      />
+      <label for="password_reset_email">Email</label>
+      <input class="form-control" type="email" name="password_reset[email]" id="password_reset_email" />
+
+      <input type="submit" name="commit" value="Submit" class="btn btn-primary" data-disable-with="Submit" />
+    </form>
+  </div>
+</div>

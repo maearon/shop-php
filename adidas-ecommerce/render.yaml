@@ -1,0 +1,79 @@
+services:
+  - type: web
+    name: adidas-api-gateway
+    env: docker
+    dockerfilePath: ./docker/api.Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        fromDatabase:
+          name: adidas-postgres
+          property: connectionString
+      - key: Auth0__Domain
+        sync: false
+      - key: Auth0__ClientId
+        sync: false
+      - key: Auth0__ClientSecret
+        sync: false
+
+  - type: web
+    name: adidas-users-service
+    env: docker
+    dockerfilePath: ./docker/users.Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: adidas-postgres
+          property: connectionString
+
+  - type: web
+    name: adidas-orders-service
+    env: docker
+    dockerfilePath: ./docker/orders.Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: adidas-postgres
+          property: connectionString
+
+  - type: web
+    name: adidas-payments-service
+    env: docker
+    dockerfilePath: ./docker/payments.Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: adidas-postgres
+          property: connectionString
+      - key: STRIPE_SECRET_KEY
+        sync: false
+
+  - type: web
+    name: adidas-search-service
+    env: docker
+    dockerfilePath: ./docker/search.Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: adidas-postgres
+          property: connectionString
+
+  - type: web
+    name: adidas-legacy-service
+    env: docker
+    dockerfilePath: ./docker/legacy.Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: adidas-postgres
+          property: connectionString
+
+databases:
+  - name: adidas-postgres
+    databaseName: adidas_ecommerce
+    user: adidas_user

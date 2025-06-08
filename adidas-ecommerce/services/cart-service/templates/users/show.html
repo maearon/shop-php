@@ -1,0 +1,91 @@
+{{define "content"}}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <img src="{{.User.GravatarURL}}" alt="{{.User.Name}}" class="rounded-circle mb-3" width="100" height="100">
+                <h3>{{.User.Name}}</h3>
+                <p class="text-muted">{{.User.Email}}</p>
+                
+                {{if .CurrentUser}}
+                    {{if ne .CurrentUser.ID .User.ID}}
+                        {{if .IsFollowing}}
+                            <form action="/relationships/{{.RelationshipID}}" method="POST" style="display: inline;">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-outline-primary">Unfollow</button>
+                            </form>
+                        {{else}}
+                            <form action="/relationships" method="POST" style="display: inline;">
+                                <input type="hidden" name="followed_id" value="{{.User.ID}}">
+                                <button type="submit" class="btn btn-primary">Follow</button>
+                            </form>
+                        {{end}}
+                    {{else}}
+                        <a href="/users/{{.User.ID}}/edit" class="btn btn-primary">Edit Profile</a>
+                    {{end}}
+                {{end}}
+                
+                <div class="stats mt-3">
+                    <div class="row text-center">
+                        <div class="col">
+                            <strong>{{.User.MicropostsCount}}</strong><br>
+                            <small>Microposts</small>
+                        </div>
+                        <div class="col">
+                            <a href="/users/{{.User.ID}}/following" class="text-decoration-none">
+                                <strong>{{.User.FollowingCount}}</strong><br>
+                                <small>Following</small>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="/users/{{.User.ID}}/followers" class="text-decoration-none">
+                                <strong>{{.User.FollowersCount}}</strong><br>
+                                <small>Followers</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        {{if and .CurrentUser (eq .CurrentUser.ID .User.ID)}}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Compose new micropost</h5>
+                <form action="/microposts" method="POST">
+                    <div class="mb-3">
+                        <textarea class="form-control" name="content" rows="3" placeholder="What's happening?" maxlength="140" required></textarea>
+                        <div class="form-text">140 characters remaining</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post</button>
+                </form>
+            </div>
+        </div>
+        {{end}}
+        
+        <h4>Microposts ({{.User.MicropostsCount}})</h4>
+        {{if .Microposts}}
+            {{range .Microposts}}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p class="card-text">{{.Content}}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">{{.CreatedAt.Format "Jan 2, 2006 at 3:04pm"}}</small>
+                        {{if and $.CurrentUser (eq $.CurrentUser.ID $.User.ID)}}
+                        <form action="/microposts/{{.ID}}" method="POST" style="display: inline;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                        </form>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        {{else}}
+            <p>No microposts yet.</p>
+        {{end}}
+    </div>
+</div>
+{{end}}

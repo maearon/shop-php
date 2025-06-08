@@ -1,0 +1,317 @@
+version: '3.8'
+
+services:
+  # Databases & Infrastructure
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: verceldb
+      POSTGRES_USER: default
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-z9GYTlrXa8Qx}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - adidas-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U default"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - adidas-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  rabbitmq:
+    build:
+      context: .
+      dockerfile: docker/rabbitmq.Dockerfile
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-password}
+    ports:
+      - "15672:15672"  # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - adidas-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  elasticsearch:
+    build:
+      context: .
+      dockerfile: docker/elasticsearch.Dockerfile
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"  # For debugging
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - adidas-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # API Gateway - Changed port to avoid conflict
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/gateway.Dockerfile
+    ports:
+      - "8080:80"  # Changed from 80:80 to avoid conflict
+      - "8443:443"
+    depends_on:
+      - auth-service
+      - order-service
+      - product-service
+      - cart-service
+      - payment-service
+      - image-service
+    networks:
+      - adidas-network
+    environment:
+      - NGINX_ENV=${NODE_ENV:-development}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Backend Services
+  auth-service:
+    build:
+      context: .
+      dockerfile: docker/auth-service.Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${NODE_ENV:-development}
+      - DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require&pgbouncer=true&connect_timeout=15
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=6a31ee167b28ab32ab171795d2eff778
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - adidas-network
+    volumes:
+      - ./services/auth-service:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  order-service:
+    build:
+      context: .
+      dockerfile: docker/order-service.Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${NODE_ENV:-Development}
+      - ConnectionStrings__DefaultConnection=Host=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech;Database=verceldb;Username=default;Password=z9GYTlrXa8Qx;Ssl Mode=Require;Trust Server Certificate=true
+      - Redis__ConnectionString=redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - adidas-network
+    volumes:
+      - ./services/order-service:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/up"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  product-service:
+    build:
+      context: .
+      dockerfile: docker/product-service.Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require&pgbouncer=true&connect_timeout=15
+      - REDIS_URL=redis://redis:6379
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - adidas-network
+    volumes:
+      - ./services/product-service:/app
+      - /app/node_modules
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  cart-service:
+    build:
+      context: .
+      dockerfile: docker/cart-service.Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      - GO_ENV=${NODE_ENV:-development}
+      - DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require&pgbouncer=true&connect_timeout=15
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - adidas-network
+    volumes:
+      - ./services/cart-service:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: docker/payment-service.Dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      - PYTHON_ENV=${NODE_ENV:-development}
+      - DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require&pgbouncer=true&connect_timeout=15
+      - REDIS_URL=redis://redis:6379
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - adidas-network
+    volumes:
+      - ./services/payment-service:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  image-service:
+    build:
+      context: .
+      dockerfile: docker/image-service.Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      - RAILS_ENV=${NODE_ENV:-development}
+      - DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require&pgbouncer=true&connect_timeout=15
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - adidas-network
+    volumes:
+      - ./services/image-service:/app
+      - image_uploads:/app/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/up"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend Applications
+  frontstore:
+    build:
+      context: .
+      dockerfile: docker/frontstore.Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - NEXT_PUBLIC_API_URL=http://localhost:8080/api  # Updated to use gateway port
+      - NEXT_PUBLIC_GATEWAY_URL=http://gateway
+    depends_on:
+      gateway:
+        condition: service_healthy
+    networks:
+      - adidas-network
+    volumes:
+      - ./frontend/frontstore:/app
+      - /app/node_modules
+      - /app/.next
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  admindashboard:
+    build:
+      context: .
+      dockerfile: docker/admindashboard.Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - NEXT_PUBLIC_API_URL=http://localhost:8080/api  # Updated to use gateway port
+      - NEXT_PUBLIC_GATEWAY_URL=http://gateway
+    depends_on:
+      gateway:
+        condition: service_healthy
+    networks:
+      - adidas-network
+    volumes:
+      - ./frontend/admindashboard:/app
+      - /app/node_modules
+      - /app/.next
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  elasticsearch_data:
+  image_uploads:
+
+networks:
+  adidas-network:
+    driver: bridge

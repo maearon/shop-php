@@ -1,0 +1,17 @@
+@using OrderService.Models.ViewModels
+@model MicropostViewModel
+
+<form asp-controller="Microposts" asp-action="Create" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group mb-3">
+        <textarea asp-for="Content" class="form-control" placeholder="Compose new micropost..."></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <input asp-for="Image" class="form-control" />
+        <span asp-validation-for="Image" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Post</button>
+    </div>
+</form>

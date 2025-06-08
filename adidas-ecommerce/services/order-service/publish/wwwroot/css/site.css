@@ -1,0 +1,116 @@
+html {
+    font-size: 14px;
+  }
+  
+  @media (min-width: 768px) {
+    html {
+      font-size: 16px;
+    }
+  }
+  
+  .btn:focus,
+  .btn:active:focus,
+  .btn-link.nav-link:focus,
+  .form-control:focus,
+  .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  }
+  
+  html {
+    position: relative;
+    min-height: 100%;
+  }
+  
+  body {
+    margin-bottom: 60px;
+  }
+  
+  /* User index */
+  .users {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Microposts */
+  .microposts {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .microposts .user {
+    margin-top: 5em;
+    padding-top: 0;
+  }
+  
+  .content {
+    display: block;
+    margin-left: 60px;
+  }
+  
+  .timestamp {
+    color: #777;
+    display: block;
+    margin-left: 60px;
+  }
+  
+  /* Stats */
+  .stats {
+    overflow: auto;
+    margin-top: 0;
+    padding: 0;
+  }
+  
+  .stats a {
+    float: left;
+    padding: 0 10px;
+    text-align: center;
+    width: 50%;
+    border-left: 1px solid #eee;
+    color: #337ab7;
+    text-decoration: none;
+  }
+  
+  .stats a:first-child {
+    border: 0;
+  }
+  
+  .stats a:hover {
+    text-decoration: none;
+    color: #23527c;
+  }
+  
+  .stats strong {
+    display: block;
+  }
+  
+  /* Footer */
+  footer {
+    margin-top: 45px;
+    padding-top: 5px;
+    border-top: 1px solid #eaeaea;
+    color: #777;
+  }
+  
+  footer a {
+    color: #555;
+  }
+  
+  footer a:hover {
+    color: #222;
+  }
+  
+  footer small {
+    float: left;
+  }
+  
+  footer ul {
+    float: right;
+    list-style: none;
+  }
+  
+  footer ul li {
+    float: left;
+    margin-left: 15px;
+  }
+  

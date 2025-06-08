@@ -1,0 +1,41 @@
+{{define "content"}}
+<h1>All users</h1>
+
+<div class="row">
+    {{range .Users}}
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{.Name}}</h5>
+                <p class="card-text">{{.Email}}</p>
+                <a href="/users/{{.ID}}" class="btn btn-primary">View Profile</a>
+            </div>
+        </div>
+    </div>
+    {{end}}
+</div>
+
+{{if .Pagination}}
+<nav aria-label="User pagination">
+    <ul class="pagination justify-content-center">
+        {{if .Pagination.HasPrev}}
+            <li class="page-item">
+                <a class="page-link" href="?page={{.Pagination.PrevPage}}">Previous</a>
+            </li>
+        {{end}}
+        
+        {{range .Pagination.Pages}}
+            <li class="page-item {{if .Current}}active{{end}}">
+                <a class="page-link" href="?page={{.Number}}">{{.Number}}</a>
+            </li>
+        {{end}}
+        
+        {{if .Pagination.HasNext}}
+            <li class="page-item">
+                <a class="page-link" href="?page={{.Pagination.NextPage}}">Next</a>
+            </li>
+        {{end}}
+    </ul>
+</nav>
+{{end}}
+{{end}}

@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title><%= locals.title %></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-param" content="authenticity_token" />
+    <meta
+      name="csrf-token"
+      content="lMiubBA+5OhK7OKxNcRVkDhq3E8PxHHD3/anCfdemhuPqZEIettLRe0rADJjumoTHYQipGjdzQewz5YczigDRQ=="
+    />
+
+    <link
+      rel="stylesheet"
+      media="all"
+      href="https://mysterious-atoll-47182.herokuapp.com/assets/application-957e878abe033d4baa1104d1a928d12f137ef6d3f879096753ca81675fc9c050.css"
+      data-turbolinks-track="reload"
+    />
+    <script
+      src="https://mysterious-atoll-47182.herokuapp.com/packs/js/application-6634062aff8ca9c36b8b.js"
+      data-turbolinks-track="reload"
+      http-equiv="Content-Security-Policy"
+    ></script>
+    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+    <!--[if lt IE 9]>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <%- include('_header.ejs') %>
+    <div class="container">
+      <% if(1 === 1) { %>
+        <div class="alert alert-info">Please check your email to activate your account.</div>
+      <% } %> 
+      <%- body %> 
+      <%- include('_footer.ejs') %>
+    </div>
+  </body>
+</html>

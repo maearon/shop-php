@@ -1,0 +1,34 @@
+@using OrderService.Models
+@using OrderService.Models.ViewModels
+@model (List<Micropost> Microposts, MicropostViewModel MicropostViewModel)
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <h3>User Info</h3>
+            <partial name="_UserInfo" model="ViewBag.CurrentUser" />
+        </section>
+        <section class="mt-4">
+            <h3>Stats</h3>
+            <partial name="_Stats" model="ViewBag.CurrentUser" />
+        </section>
+        <section class="mt-4">
+            <h3>Micropost Form</h3>
+            <partial name="_MicropostForm" model="Model.MicropostViewModel" />
+        </section>
+    </div>
+    <div class="col-md-8">
+        <h3>Micropost Feed</h3>
+        @if (Model.Microposts.Any())
+        {
+            <partial name="_Feed" model="Model.Microposts" />
+        }
+        else
+        {
+            <p>No microposts yet.</p>
+        }
+    </div>
+</div>

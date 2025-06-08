@@ -1,0 +1,44 @@
+@using OrderService.Models
+
+@model List<ApplicationUser>  
+@{  
+    ViewData["Title"] = "All users";  
+}  
+
+<h1>All users</h1>  
+
+<div class="users">  
+    @foreach (var user in Model)  
+    {  
+        <div class="card mb-3">  
+            <div class="card-body">  
+                <h5 class="card-title">  
+                    <a asp-controller="Users" asp-action="Show" asp-route-id="@user.Id">@user.Name</a>  
+                </h5>  
+                <p class="card-text">@user.Email</p>  
+
+                @if (User.IsInRole("Admin") && !User.FindFirstValue(ClaimTypes.NameIdentifier).Equals(user.Id))  
+                {  
+                    <a asp-controller="Users" asp-action="Delete" asp-route-id="@user.Id"   
+                       class="btn btn-danger btn-sm"  
+                       onclick="return confirm('Are you sure you want to delete this user?');">  
+                        Delete  
+                    </a>  
+                }  
+            </div>  
+        </div>  
+    }  
+</div>  
+
+<nav aria-label="Page navigation">  
+    <ul class="pagination">  
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)  
+        {  
+            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">  
+                <a class="page-link" asp-controller="Users" asp-action="Index" asp-route-page="@i">@i</a>  
+            </li>  
+        }  
+    </ul>  
+</nav>  
+
+@using System.Security.Claims
