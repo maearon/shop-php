@@ -11,44 +11,44 @@ interface Props {
 
 export default function MenPage({ onNavigate }: Props) {
   const categoryTiles = [
-    { title: "SNEAKERS", image: "/placeholder.svg?height=200&width=300" },
-    { title: "TOPS", image: "/placeholder.svg?height=200&width=300" },
-    { title: "HOODIES & SWEATSHIRTS", image: "/placeholder.svg?height=200&width=300" },
-    { title: "PANTS", image: "/placeholder.svg?height=200&width=300" },
+    { title: "SNEAKERS", image: "/placeholder.png?height=200&width=300" },
+    { title: "TOPS", image: "/placeholder.png?height=200&width=300" },
+    { title: "HOODIES & SWEATSHIRTS", image: "/placeholder.png?height=200&width=300" },
+    { title: "PANTS", image: "/placeholder.png?height=200&width=300" },
   ]
 
   const promoTiles = [
     {
       title: "SAMBA",
       description: "Retro cool. Timeless as ever.",
-      image: "/placeholder.svg?height=250&width=300",
+      image: "/placeholder.png?height=250&width=300",
       cta: "SHOP NOW",
     },
     {
       title: "DROPSET 3",
       description: "Rooted in Strength.",
-      image: "/placeholder.svg?height=250&width=300",
+      image: "/placeholder.png?height=250&width=300",
       cta: "SHOP NOW",
     },
     {
       title: "CRAFT LITE SHORTS",
       description: "Engineered to elevate your game.",
-      image: "/placeholder.svg?height=250&width=300",
+      image: "/placeholder.png?height=250&width=300",
       cta: "SHOP NOW",
     },
     {
       title: "ULTRABOOST 22",
       description: "Step it forward with feel-good gear. #1 supportive shoe made for runners by you.",
-      image: "/placeholder.svg?height=250&width=300",
+      image: "/placeholder.png?height=250&width=300",
       cta: "SHOP NOW",
     },
   ]
 
   const topPicks = [
-    { id: 1, name: "Samba OG Shoes", price: "$100", image: "/placeholder.svg?height=300&width=250" },
-    { id: 2, name: "Ultraboost 1.0 Shoes", price: "$190", image: "/placeholder.svg?height=300&width=250" },
-    { id: 3, name: "Ultraboost 1.0 Shoes", price: "$190", image: "/placeholder.svg?height=300&width=250" },
-    { id: 4, name: "Gazelle Indoor Shoes", price: "$100", image: "/placeholder.svg?height=300&width=250" },
+    { id: 1, name: "Samba OG Shoes", price: "$100", image: "/placeholder.png?height=300&width=250" },
+    { id: 2, name: "Ultraboost 1.0 Shoes", price: "$190", image: "/placeholder.png?height=300&width=250" },
+    { id: 3, name: "Ultraboost 1.0 Shoes", price: "$190", image: "/placeholder.png?height=300&width=250" },
+    { id: 4, name: "Gazelle Indoor Shoes", price: "$100", image: "/placeholder.png?height=300&width=250" },
   ]
 
   return (
@@ -102,7 +102,7 @@ export default function MenPage({ onNavigate }: Props) {
           {/* Left panel */}
           <div
             className="relative bg-cover bg-center"
-            style={{ backgroundImage: "url('/placeholder.svg?height=400&width=400')" }}
+            style={{ backgroundImage: "url('/placeholder.png?height=400&width=400')" }}
           >
             <div className="absolute inset-0 bg-black bg-opacity-20"></div>
             <div className="absolute bottom-8 left-8 text-white">
@@ -117,7 +117,7 @@ export default function MenPage({ onNavigate }: Props) {
           {/* Center panel */}
           <div
             className="relative bg-cover bg-center"
-            style={{ backgroundImage: "url('/placeholder.svg?height=400&width=400')" }}
+            style={{ backgroundImage: "url('/placeholder.png?height=400&width=400')" }}
           >
             <div className="absolute inset-0 bg-black bg-opacity-20"></div>
           </div>
@@ -125,7 +125,7 @@ export default function MenPage({ onNavigate }: Props) {
           {/* Right panel */}
           <div
             className="relative bg-cover bg-center"
-            style={{ backgroundImage: "url('/placeholder.svg?height=400&width=400')" }}
+            style={{ backgroundImage: "url('/placeholder.png?height=400&width=400')" }}
           >
             <div className="absolute inset-0 bg-black bg-opacity-20"></div>
           </div>
@@ -183,7 +183,7 @@ export default function MenPage({ onNavigate }: Props) {
               <CardContent className="p-0">
                 <div className="relative mb-4">
                   <img
-                    src={product.image || "/placeholder.svg"}
+                    src={product.image || "/placeholder.png"}
                     alt={product.name}
                     className="w-full h-64 object-cover"
                   />

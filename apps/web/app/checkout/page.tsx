@@ -266,7 +266,7 @@ export default function CheckoutPage() {
                   <CardContent className="flex p-4">
                     <div className="w-20 h-20 mr-4">
                       <img
-                        src={item.image || "/placeholder.svg"}
+                        src={item.image || "/placeholder.png"}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />

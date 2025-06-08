@@ -97,7 +97,7 @@ export default function CartPage() {
                 <Card key={item.id} className="mb-4 border rounded-none">
                   <div className="flex p-4">
                     <div className="w-1/4 pr-4">
-                      <img src={item.image || "/placeholder.svg"} alt={item.name} className="w-full h-auto" />
+                      <img src={item.image || "/placeholder.png"} alt={item.name} className="w-full h-auto" />
                     </div>
                     <div className="w-3/4 flex flex-col justify-between">
                       <div className="flex justify-between">

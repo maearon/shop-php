@@ -115,7 +115,7 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
             {generateMockProducts("mixed", "recent", 4).map((product) => (
               <div key={product.id} className="space-y-2">
                 <img
-                  src={product.image || "/placeholder.svg"}
+                  src={product.image || "/placeholder.png"}
                   alt={product.name}
                   className="w-full h-48 object-cover"
                 />
@@ -244,7 +244,7 @@ function generateMockProducts(type: string, subcategory: string, count: number) 
       id: i,
       name: name,
       price: price,
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
       colors: Math.floor(Math.random() * 5) + 1,
       isNew: Math.random() > 0.8,
       isSale: Math.random() > 0.9,

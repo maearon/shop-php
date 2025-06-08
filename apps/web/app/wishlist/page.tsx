@@ -87,7 +87,7 @@ export default function WishlistPage() {
               <Card key={item.id} className="border-none shadow-none">
                 <CardContent className="p-0">
                   <div className="relative mb-4">
-                    <img src={item.image || "/placeholder.svg"} alt={item.name} className="w-full h-64 object-cover" />
+                    <img src={item.image || "/placeholder.png"} alt={item.name} className="w-full h-64 object-cover" />
                     <div className="absolute top-4 right-4">
                       <WishButton item={item} />
                     </div>

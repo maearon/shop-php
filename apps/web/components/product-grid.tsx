@@ -34,7 +34,7 @@ export default function ProductGrid({ products, columns = 3 }: ProductGridProps)
           <div className="group cursor-pointer">
             <div className="relative mb-3">
               <img
-                src={product.image || "/placeholder.svg"}
+                src={product.image || "/placeholder.png"}
                 alt={product.name}
                 className="w-full h-64 object-cover group-hover:opacity-90 transition-opacity"
               />

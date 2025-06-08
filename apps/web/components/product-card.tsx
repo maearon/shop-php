@@ -43,7 +43,7 @@ export default function ProductCard({ product, showAddToBag = false }: ProductCa
       <Card className="border-none shadow-none cursor-pointer hover:shadow-lg transition-shadow">
         <CardContent className="p-0">
           <div className="relative mb-4">
-            <img src={product.image || "/placeholder.svg"} alt={product.name} className="w-full h-64 object-cover" />
+            <img src={product.image || "/placeholder.png"} alt={product.name} className="w-full h-64 object-cover" />
             <div className="absolute top-4 right-4" onClick={(e) => e.preventDefault()}>
               <WishButton item={product} />
             </div>

@@ -6,44 +6,44 @@ import ProductCard from "@/components/product-card"
 
 export default function MenPage() {
   const categoryTiles = [
-    { title: "SNEAKERS", image: "/placeholder.svg?height=200&width=300", href: "/men-shoes" },
-    { title: "TOPS", image: "/placeholder.svg?height=200&width=300", href: "/men-tops" },
-    { title: "HOODIES & SWEATSHIRTS", image: "/placeholder.svg?height=200&width=300", href: "/men-hoodies" },
-    { title: "PANTS", image: "/placeholder.svg?height=200&width=300", href: "/men-pants" },
+    { title: "SNEAKERS", image: "/placeholder.png?height=200&width=300", href: "/men-shoes" },
+    { title: "TOPS", image: "/placeholder.png?height=200&width=300", href: "/men-tops" },
+    { title: "HOODIES & SWEATSHIRTS", image: "/placeholder.png?height=200&width=300", href: "/men-hoodies" },
+    { title: "PANTS", image: "/placeholder.png?height=200&width=300", href: "/men-pants" },
   ]
 
   const promoTiles = [
     {
       title: "SAMBA",
       description: "Retro court. Timeless as ever.",
-      image: "/placeholder.svg?height=300&width=280",
+      image: "/placeholder.png?height=300&width=280",
       cta: "SHOP NOW",
     },
     {
       title: "DROPSET 3",
       description: "Rooted in Strength.",
-      image: "/placeholder.svg?height=300&width=280",
+      image: "/placeholder.png?height=300&width=280",
       cta: "SHOP NOW",
     },
     {
       title: "CRAFT LITE SHORTS",
       description: "Engineered to elevate your game.",
-      image: "/placeholder.svg?height=300&width=280",
+      image: "/placeholder.png?height=300&width=280",
       cta: "SHOP NOW",
     },
     {
       title: "UNDENIABLE DUO",
       description: "Bring 3-Stripes style that shows your #1 supportive team-mates for seasons to you.",
-      image: "/placeholder.svg?height=300&width=280",
+      image: "/placeholder.png?height=300&width=280",
       cta: "SHOP NOW",
     },
   ]
 
   const topPicks = [
-    { id: 1, name: "Samba OG Shoes", price: "$100", image: "/placeholder.svg?height=300&width=250" },
-    { id: 2, name: "Ultraboost 1.0 Shoes", price: "$190", image: "/placeholder.svg?height=300&width=250" },
-    { id: 3, name: "Ultraboost 22 Shoes", price: "$190", image: "/placeholder.svg?height=300&width=250" },
-    { id: 4, name: "Gazelle Indoor Shoes", price: "$100", image: "/placeholder.svg?height=300&width=250" },
+    { id: 1, name: "Samba OG Shoes", price: "$100", image: "/placeholder.png?height=300&width=250" },
+    { id: 2, name: "Ultraboost 1.0 Shoes", price: "$190", image: "/placeholder.png?height=300&width=250" },
+    { id: 3, name: "Ultraboost 22 Shoes", price: "$190", image: "/placeholder.png?height=300&width=250" },
+    { id: 4, name: "Gazelle Indoor Shoes", price: "$100", image: "/placeholder.png?height=300&width=250" },
   ]
 
   const recentlyViewed = [
@@ -51,11 +51,11 @@ export default function MenPage() {
       id: 1,
       name: "Real Madrid 23/24 Home Authentic Jersey",
       price: "$130",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
     },
-    { id: 2, name: "Essentials Hoodie", price: "$65", image: "/placeholder.svg?height=300&width=250" },
-    { id: 3, name: "Adizero EVO SL Shoes", price: "$130", image: "/placeholder.svg?height=300&width=250" },
-    { id: 4, name: "Adizero F50 FG Shoes", price: "$280", image: "/placeholder.svg?height=300&width=250" },
+    { id: 2, name: "Essentials Hoodie", price: "$65", image: "/placeholder.png?height=300&width=250" },
+    { id: 3, name: "Adizero EVO SL Shoes", price: "$130", image: "/placeholder.png?height=300&width=250" },
+    { id: 4, name: "Adizero F50 FG Shoes", price: "$280", image: "/placeholder.png?height=300&width=250" },
   ]
 
   const menCategories = {
@@ -81,7 +81,7 @@ export default function MenPage() {
           {/* Left panel */}
           <div
             className="relative bg-cover bg-center"
-            style={{ backgroundImage: "url('/placeholder.svg?height=500&width=400')" }}
+            style={{ backgroundImage: "url('/placeholder.png?height=500&width=400')" }}
           >
             <div className="absolute inset-0 bg-black bg-opacity-10"></div>
             <div className="absolute bottom-8 left-8 text-white">
@@ -96,7 +96,7 @@ export default function MenPage() {
           {/* Center panel */}
           <div
             className="relative bg-cover bg-center"
-            style={{ backgroundImage: "url('/placeholder.svg?height=500&width=400')" }}
+            style={{ backgroundImage: "url('/placeholder.png?height=500&width=400')" }}
           >
             <div className="absolute inset-0 bg-black bg-opacity-10"></div>
           </div>
@@ -104,7 +104,7 @@ export default function MenPage() {
           {/* Right panel */}
           <div
             className="relative bg-cover bg-center"
-            style={{ backgroundImage: "url('/placeholder.svg?height=500&width=400')" }}
+            style={{ backgroundImage: "url('/placeholder.png?height=500&width=400')" }}
           >
             <div className="absolute inset-0 bg-black bg-opacity-10"></div>
           </div>

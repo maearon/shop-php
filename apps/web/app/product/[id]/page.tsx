@@ -25,10 +25,10 @@ const getProductById = (id: string) => {
       rating: 4.5,
       reviewCount: 1247,
       images: [
-        "/placeholder.svg?height=600&width=400",
-        "/placeholder.svg?height=600&width=400",
-        "/placeholder.svg?height=600&width=400",
-        "/placeholder.svg?height=600&width=400",
+        "/placeholder.png?height=600&width=400",
+        "/placeholder.png?height=600&width=400",
+        "/placeholder.png?height=600&width=400",
+        "/placeholder.png?height=600&width=400",
       ],
       colors: [
         { name: "Medium Grey Heather", color: "bg-gray-400", selected: true },
@@ -118,26 +118,26 @@ export default function ProductDetailPage() {
   }
 
   const relatedProducts = [
-    { id: 2, name: "Own The Run Tee", price: "$25", image: "/placeholder.svg?height=200&width=200" },
-    { id: 3, name: "Run For The Oceans Jacket", price: "$85", image: "/placeholder.svg?height=200&width=200" },
-    { id: 4, name: "Adizero Running Shoes", price: "$130", image: "/placeholder.svg?height=200&width=200" },
-    { id: 5, name: "AEROREADY Socks 3-Pair", price: "$18", image: "/placeholder.svg?height=200&width=200" },
+    { id: 2, name: "Own The Run Tee", price: "$25", image: "/placeholder.png?height=200&width=200" },
+    { id: 3, name: "Run For The Oceans Jacket", price: "$85", image: "/placeholder.png?height=200&width=200" },
+    { id: 4, name: "Adizero Running Shoes", price: "$130", image: "/placeholder.png?height=200&width=200" },
+    { id: 5, name: "AEROREADY Socks 3-Pair", price: "$18", image: "/placeholder.png?height=200&width=200" },
   ]
 
   const youMayLike = [
-    { id: 6, name: "Run It 3-Stripes Shorts", price: "$25", image: "/placeholder.svg?height=200&width=200" },
+    { id: 6, name: "Run It 3-Stripes Shorts", price: "$25", image: "/placeholder.png?height=200&width=200" },
     {
       id: 7,
       name: "Designed for Training Workout Shorts",
       price: "$35",
-      image: "/placeholder.svg?height=200&width=200",
+      image: "/placeholder.png?height=200&width=200",
     },
-    { id: 8, name: "Speed Split 2-in-1 Shorts", price: "$45", image: "/placeholder.svg?height=200&width=200" },
+    { id: 8, name: "Speed Split 2-in-1 Shorts", price: "$45", image: "/placeholder.png?height=200&width=200" },
     {
       id: 9,
       name: "Ultimate Running Reflective 2-in-1 Shorts",
       price: "$55",
-      image: "/placeholder.svg?height=200&width=200",
+      image: "/placeholder.png?height=200&width=200",
     },
   ]
 
@@ -156,7 +156,7 @@ export default function ProductDetailPage() {
           <div className="space-y-4">
             <div className="aspect-square bg-gray-100">
               <img
-                src={product.images[currentImageIndex] || "/placeholder.svg"}
+                src={product.images[currentImageIndex] || "/placeholder.png"}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
@@ -171,7 +171,7 @@ export default function ProductDetailPage() {
                   }`}
                 >
                   <img
-                    src={image || "/placeholder.svg"}
+                    src={image || "/placeholder.png"}
                     alt={`${product.name} ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -404,7 +404,7 @@ export default function ProductDetailPage() {
               <Card key={item.id} className="border-none shadow-none">
                 <CardContent className="p-0">
                   <div className="relative mb-4">
-                    <img src={item.image || "/placeholder.svg"} alt={item.name} className="w-full h-48 object-cover" />
+                    <img src={item.image || "/placeholder.png"} alt={item.name} className="w-full h-48 object-cover" />
                     <WishButton item={item} className="absolute top-4 right-4" />
                   </div>
                   <div>
@@ -425,7 +425,7 @@ export default function ProductDetailPage() {
               <Card key={item.id} className="border-none shadow-none">
                 <CardContent className="p-0">
                   <div className="relative mb-4">
-                    <img src={item.image || "/placeholder.svg"} alt={item.name} className="w-full h-48 object-cover" />
+                    <img src={item.image || "/placeholder.png"} alt={item.name} className="w-full h-48 object-cover" />
                     <WishButton item={item} className="absolute top-4 right-4" />
                   </div>
                   <div>

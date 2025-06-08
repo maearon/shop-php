@@ -12,25 +12,25 @@ export default function HomePage() {
       id: 1,
       name: "Own The Run Shorts",
       price: "$18",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
     },
     {
       id: 2,
       name: "Adizero Adios 8 Shoes",
       price: "$160",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
     },
     {
       id: 3,
       name: "Essentials Fleece Regular Tapered Pants",
       price: "$50",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
     },
     {
       id: 4,
       name: "Z.N.E. Premium Full-Zip Hoodie",
       price: "$120",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
     },
   ]
 
@@ -39,25 +39,25 @@ export default function HomePage() {
       id: 5,
       name: "Real Madrid 24/25 Home Authentic Jersey",
       price: "$130",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
     },
     {
       id: 6,
       name: "Real Madrid 24/25 Home Jersey",
       price: "$90",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
     },
     {
       id: 7,
       name: "Samba OG Shoes",
       price: "$100",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
     },
     {
       id: 8,
       name: "Gazelle Shoes",
       price: "$100",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
     },
   ]
 
@@ -66,28 +66,28 @@ export default function HomePage() {
       title: "SUPERSTAR",
       subtitle: "PAST, PRESENT, FUTURE",
       description: "Explore the Superstar, now updated for the next generation.",
-      image: "/placeholder.svg?height=400&width=300",
+      image: "/placeholder.png?height=400&width=300",
       cta: "SHOP NOW",
     },
     {
       title: "UNDENIABLE DUO",
       subtitle: "",
       description: "Bring 3-Stripes style that shows your #1 supportive team-mates for seasons to you.",
-      image: "/placeholder.svg?height=400&width=300",
+      image: "/placeholder.png?height=400&width=300",
       cta: "SHOP NOW",
     },
     {
       title: "PLAY YOUR FASTEST",
       subtitle: "",
       description: "Ultraboost 5 tennis shoes. Made for speed.",
-      image: "/placeholder.svg?height=400&width=300",
+      image: "/placeholder.png?height=400&width=300",
       cta: "SHOP NOW",
     },
     {
       title: "DROPSET 3",
       subtitle: "",
       description: "Rooted in Strength.",
-      image: "/placeholder.svg?height=400&width=300",
+      image: "/placeholder.png?height=400&width=300",
       cta: "SHOP NOW",
     },
   ]
@@ -98,22 +98,22 @@ export default function HomePage() {
     {
       title: "How To Clean Shoes",
       description: "Get expert shoe-buying advice and learn how to choose your sneakers the right way.",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/placeholder.png?height=200&width=300",
     },
     {
       title: "The adidas Samba Shoe Guide",
       description: "Discover classic adidas footwear through the fit and feel of the new and old Samba.",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/placeholder.png?height=200&width=300",
     },
     {
       title: "Are the Looks: How to Style a Tennis Skirt",
       description: "Get inspired by iconic fashion looks to target tennis skirt outfits with adidas.",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/placeholder.png?height=200&width=300",
     },
     {
       title: "How to Style a Soccer Jersey",
       description: "Get tips on how to style a soccer jersey to create a surprisingly versatile wardrobe staple.",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/placeholder.png?height=200&width=300",
     },
   ]
 
@@ -147,7 +147,7 @@ export default function HomePage() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: "url('/placeholder.svg?height=500&width=1200')",
+            backgroundImage: "url('/placeholder.png?height=500&width=1200')",
           }}
         >
           <div className="absolute inset-0 bg-black bg-opacity-10"></div>
@@ -249,7 +249,7 @@ export default function HomePage() {
             <Card key={index} className="border-none shadow-none">
               <CardContent className="p-0">
                 <img
-                  src={resource.image || "/placeholder.svg"}
+                  src={resource.image || "/placeholder.png"}
                   alt={resource.title}
                   className="w-full h-48 object-cover mb-4"
                 />

@@ -16,28 +16,28 @@ export default function Homepage({ onNavigate }: Props) {
       id: 1,
       name: "Real Madrid 24/25 Home Authentic Jersey",
       price: "$130",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
       category: "Soccer",
     },
     {
       id: 2,
       name: "Real Madrid 24/25 Home Jersey",
       price: "$90",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
       category: "Soccer",
     },
     {
       id: 3,
       name: "Samba OG Shoes",
       price: "$100",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
       category: "Originals",
     },
     {
       id: 4,
       name: "Gazelle Shoes",
       price: "$100",
-      image: "/placeholder.svg?height=300&width=250",
+      image: "/placeholder.png?height=300&width=250",
       category: "Originals",
     },
   ]
@@ -47,28 +47,28 @@ export default function Homepage({ onNavigate }: Props) {
       title: "SUPERSTAR",
       subtitle: "PAST, PRESENT, FUTURE",
       description: "Explore the Superstar, now updated for the next generation.",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/placeholder.png?height=200&width=300",
       cta: "SHOP NOW",
     },
     {
       title: "ULTRABOOST",
       subtitle: "ULTRABOOST 22",
       description: "Step it forward with feel-good gear. #1 supportive experience on Adidas to you.",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/placeholder.png?height=200&width=300",
       cta: "SHOP NOW",
     },
     {
       title: "PLAY YOUR FASTEST",
       subtitle: "",
       description: "Ultraboost 5 tennis shoes. Made for speed.",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/placeholder.png?height=200&width=300",
       cta: "SHOP NOW",
     },
     {
       title: "EMBRACE IT",
       subtitle: "",
       description: "Believe in Strength.",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/placeholder.png?height=200&width=300",
       cta: "SHOP NOW",
     },
   ]
@@ -122,7 +122,7 @@ export default function Homepage({ onNavigate }: Props) {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: "url('/placeholder.svg?height=400&width=1200')",
+            backgroundImage: "url('/placeholder.png?height=400&width=1200')",
           }}
         >
           <div className="absolute inset-0 bg-black bg-opacity-20"></div>
@@ -165,7 +165,7 @@ export default function Homepage({ onNavigate }: Props) {
               <CardContent className="p-0">
                 <div className="relative mb-4">
                   <img
-                    src={product.image || "/placeholder.svg"}
+                    src={product.image || "/placeholder.png"}
                     alt={product.name}
                     className="w-full h-64 object-cover"
                   />

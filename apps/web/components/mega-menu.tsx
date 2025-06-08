@@ -423,7 +423,7 @@ export default function MegaMenu({ activeMenu, onClose }: MegaMenuProps) {
               </ul>
               {activeMenu === "SALE" && category.title === "FEATURED SALE" && (
                 <div className="mt-4">
-                  <img src="/placeholder.svg?height=100&width=150" alt="Sale promotion" className="w-full h-auto" />
+                  <img src="/placeholder.png?height=100&width=150" alt="Sale promotion" className="w-full h-auto" />
                 </div>
               )}
             </div>
