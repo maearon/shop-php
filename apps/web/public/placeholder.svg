@@ -1,0 +1,10 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#f0f0f0"/>
+  <g fill="#cccccc">
+    <polygon points="50,150 90,50 130,150" />
+    <rect x="60" y="150" width="10" height="30" />
+    <rect x="90" y="150" width="10" height="30" />
+    <rect x="120" y="150" width="10" height="30" />
+  </g>
+  <text x="100" y="190" font-size="14" text-anchor="middle" fill="#888">No Image</text>
+</svg>
