@@ -1,291 +1,291 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useCart } from "@/hooks/useCart"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Separator } from "@/components/ui/separator"
-import { formatPrice } from "@/lib/utils"
-import { CreditCard, Truck, MapPin } from "lucide-react"
-import Breadcrumbs from "@/components/ui/Breadcrumbs"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Card, CardContent } from "@/components/ui/card"
+import { Search, ArrowRight, Tag } from "lucide-react"
+import { useAppSelector } from "@/store/hooks"
 
 export default function CheckoutPage() {
-  const router = useRouter()
-  const { items, total, clearCart } = useCart()
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState("card")
-  const [shippingMethod, setShippingMethod] = useState("standard")
-
-  const shipping = total > 1000000 ? 0 : 50000
-  const finalTotal = total + shipping
-
+  const cartItems = useAppSelector((state) => state.cart.items)
   const [formData, setFormData] = useState({
-    email: "",
+    email: "manhng132@gmail.com",
     firstName: "",
     lastName: "",
-    phone: "",
     address: "",
-    city: "",
-    district: "",
-    ward: "",
-    postalCode: "",
+    phone: "",
+    saveInfo: false,
+    sameAddress: true,
+    ageVerified: true,
   })
+  const [errors, setErrors] = useState({
+    firstName: "",
+    lastName: "",
+    address: "",
+    phone: "",
+  })
+  const [showPromoCode, setShowPromoCode] = useState(false)
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
-  }
+  // Calculate totals
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + Number.parseFloat(item.price.replace("$", "")) * item.quantity,
+    0,
+  )
+  const salesTax = subtotal * 0.12
+  const delivery = 0 // Free delivery
+  const total = subtotal + salesTax + delivery
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsProcessing(true)
-
-    try {
-      // Simulate payment processing
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      // Clear cart and redirect to success page
-      clearCart()
-      router.push("/checkout/success")
-    } catch (error) {
-      console.error("Payment failed:", error)
-    } finally {
-      setIsProcessing(false)
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+    // Clear error when user starts typing
+    if (errors[field as keyof typeof errors]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }))
     }
   }
 
-  const breadcrumbs = [
-    { label: "Trang chủ", href: "/" },
-    { label: "Giỏ hàng", href: "/cart" },
-    { label: "Thanh toán", href: "/checkout" },
-  ]
+  const validateForm = () => {
+    const newErrors = {
+      firstName: !formData.firstName ? "Please enter your first name." : "",
+      lastName: !formData.lastName ? "Please enter your last name." : "",
+      address: !formData.address ? "Please enter your delivery address." : "",
+      phone: !formData.phone ? "Please enter your telephone number." : "",
+    }
+    setErrors(newErrors)
+    return !Object.values(newErrors).some((error) => error)
+  }
 
-  if (items.length === 0) {
-    router.push("/cart")
-    return null
+  const handleNext = () => {
+    if (validateForm()) {
+      // Proceed to next step
+      console.log("Form is valid, proceeding...")
+    }
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Breadcrumbs items={breadcrumbs} />
+      {/* Page Title */}
+      <div className="text-center mb-12">
+        <h1 className="text-3xl font-bold mb-2">CHECKOUT</h1>
+        <p className="text-gray-600">
+          ({totalItems} items) ${total.toFixed(2)}
+        </p>
+      </div>
 
-      <h1 className="mt-8 text-3xl font-bold">Thanh toán</h1>
-
-      <form onSubmit={handleSubmit} className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
-        {/* Left Column - Forms */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+        {/* Left Column - Checkout Form */}
         <div className="space-y-8">
-          {/* Contact Information */}
+          {/* Contact Section */}
           <div>
-            <h2 className="text-xl font-bold mb-4">Thông tin liên hệ</h2>
+            <h2 className="text-lg font-bold mb-4">CONTACT</h2>
+            <p className="text-sm text-gray-600">{formData.email}</p>
+          </div>
+
+          {/* Address Section */}
+          <div>
+            <h2 className="text-lg font-bold mb-4">ADDRESS</h2>
+            <h3 className="font-medium mb-4">Delivery address</h3>
+
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="email@example.com"
-                />
+              {/* Name Fields */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Input
+                    placeholder="First Name *"
+                    value={formData.firstName}
+                    onChange={(e) => handleInputChange("firstName", e.target.value)}
+                    className={errors.firstName ? "border-red-500" : ""}
+                  />
+                  {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+                </div>
+                <div>
+                  <Input
+                    placeholder="Last Name *"
+                    value={formData.lastName}
+                    onChange={(e) => handleInputChange("lastName", e.target.value)}
+                    className={errors.lastName ? "border-red-500" : ""}
+                  />
+                  {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Shipping Address */}
-          <div>
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <MapPin className="h-5 w-5" />
-              Địa chỉ giao hàng
-            </h2>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div>
-                <Label htmlFor="firstName">Họ *</Label>
+              {/* Address Field */}
+              <div className="relative">
                 <Input
-                  id="firstName"
-                  name="firstName"
-                  required
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="lastName">Tên *</Label>
-                <Input id="lastName" name="lastName" required value={formData.lastName} onChange={handleInputChange} />
-              </div>
-              <div className="md:col-span-2">
-                <Label htmlFor="phone">Số điện thoại *</Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  required
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  placeholder="0901234567"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <Label htmlFor="address">Địa chỉ *</Label>
-                <Input
-                  id="address"
-                  name="address"
-                  required
+                  placeholder="Find delivery address *"
                   value={formData.address}
-                  onChange={handleInputChange}
-                  placeholder="Số nhà, tên đường"
+                  onChange={(e) => handleInputChange("address", e.target.value)}
+                  className={errors.address ? "border-red-500" : ""}
                 />
+                <Search className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
+                {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
               </div>
+
+              {/* Phone Field */}
               <div>
-                <Label htmlFor="city">Tỉnh/Thành phố *</Label>
-                <Input id="city" name="city" required value={formData.city} onChange={handleInputChange} />
+                <Input
+                  placeholder="Phone Number *"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange("phone", e.target.value)}
+                  className={errors.phone ? "border-red-500" : ""}
+                />
+                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
               </div>
-              <div>
-                <Label htmlFor="district">Quận/Huyện *</Label>
-                <Input id="district" name="district" required value={formData.district} onChange={handleInputChange} />
+
+              {/* Checkboxes */}
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="saveInfo"
+                    checked={formData.saveInfo}
+                    onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, saveInfo: !!checked }))}
+                  />
+                  <label htmlFor="saveInfo" className="text-sm">
+                    Save address and contact information for future orders
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="sameAddress"
+                    checked={formData.sameAddress}
+                    onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, sameAddress: !!checked }))}
+                  />
+                  <label htmlFor="sameAddress" className="text-sm font-medium">
+                    Billing and delivery address are the same
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="ageVerified"
+                    checked={formData.ageVerified}
+                    onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, ageVerified: !!checked }))}
+                  />
+                  <label htmlFor="ageVerified" className="text-sm font-medium">
+                    I'm 13+ years old. *
+                  </label>
+                </div>
               </div>
-              <div>
-                <Label htmlFor="ward">Phường/Xã *</Label>
-                <Input id="ward" name="ward" required value={formData.ward} onChange={handleInputChange} />
-              </div>
-              <div>
-                <Label htmlFor="postalCode">Mã bưu điện</Label>
-                <Input id="postalCode" name="postalCode" value={formData.postalCode} onChange={handleInputChange} />
-              </div>
+
+              {/* Next Button */}
+              <Button
+                onClick={handleNext}
+                className="w-full bg-black text-white hover:bg-gray-800 py-6 text-lg font-bold mt-6"
+              >
+                NEXT
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
             </div>
           </div>
 
-          {/* Shipping Method */}
+          {/* Shipping Section */}
           <div>
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Truck className="h-5 w-5" />
-              Phương thức vận chuyển
-            </h2>
-            <RadioGroup value={shippingMethod} onValueChange={setShippingMethod}>
-              <div className="flex items-center space-x-2 rounded-lg border p-4">
-                <RadioGroupItem value="standard" id="standard" />
-                <Label htmlFor="standard" className="flex-1 cursor-pointer">
-                  <div className="flex justify-between">
-                    <div>
-                      <div className="font-medium">Giao hàng tiêu chuẩn</div>
-                      <div className="text-sm text-gray-600">3-5 ngày làm việc</div>
-                    </div>
-                    <div className="font-medium">{shipping === 0 ? "Miễn phí" : formatPrice(shipping)}</div>
-                  </div>
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2 rounded-lg border p-4">
-                <RadioGroupItem value="express" id="express" />
-                <Label htmlFor="express" className="flex-1 cursor-pointer">
-                  <div className="flex justify-between">
-                    <div>
-                      <div className="font-medium">Giao hàng nhanh</div>
-                      <div className="text-sm text-gray-600">1-2 ngày làm việc</div>
-                    </div>
-                    <div className="font-medium">{formatPrice(100000)}</div>
-                  </div>
-                </Label>
-              </div>
-            </RadioGroup>
+            <h2 className="text-lg font-bold mb-4 text-gray-400">SHIPPING</h2>
           </div>
 
-          {/* Payment Method */}
+          {/* Payment Section */}
           <div>
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <CreditCard className="h-5 w-5" />
-              Phương thức thanh toán
-            </h2>
-            <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-              <div className="flex items-center space-x-2 rounded-lg border p-4">
-                <RadioGroupItem value="card" id="card" />
-                <Label htmlFor="card" className="flex-1 cursor-pointer">
-                  <div className="font-medium">Thẻ tín dụng/ghi nợ</div>
-                  <div className="text-sm text-gray-600">Visa, Mastercard, JCB</div>
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2 rounded-lg border p-4">
-                <RadioGroupItem value="momo" id="momo" />
-                <Label htmlFor="momo" className="flex-1 cursor-pointer">
-                  <div className="font-medium">Ví MoMo</div>
-                  <div className="text-sm text-gray-600">Thanh toán qua ví điện tử MoMo</div>
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2 rounded-lg border p-4">
-                <RadioGroupItem value="cod" id="cod" />
-                <Label htmlFor="cod" className="flex-1 cursor-pointer">
-                  <div className="font-medium">Thanh toán khi nhận hàng (COD)</div>
-                  <div className="text-sm text-gray-600">Thanh toán bằng tiền mặt khi nhận hàng</div>
-                </Label>
-              </div>
-            </RadioGroup>
+            <h2 className="text-lg font-bold mb-4 text-gray-400">PAYMENT</h2>
+            <div className="flex space-x-2 opacity-50">
+              <div className="w-8 h-5 bg-gray-300 rounded"></div>
+              <div className="w-8 h-5 bg-gray-300 rounded"></div>
+              <div className="w-8 h-5 bg-gray-300 rounded"></div>
+              <div className="w-8 h-5 bg-gray-300 rounded"></div>
+              <div className="w-8 h-5 bg-gray-300 rounded"></div>
+              <div className="w-8 h-5 bg-gray-300 rounded"></div>
+            </div>
           </div>
         </div>
 
         {/* Right Column - Order Summary */}
         <div>
-          <div className="sticky top-8">
-            <div className="rounded-lg border p-6">
-              <h2 className="text-xl font-bold mb-4">Đơn hàng của bạn</h2>
-
-              <div className="space-y-4">
-                {items.map((item) => (
-                  <div key={`${item.id}-${item.size}-${item.color}`} className="flex justify-between">
-                    <div className="flex-1">
-                      <div className="font-medium">{item.name}</div>
-                      <div className="text-sm text-gray-600">
-                        {item.size} | {item.color} | x{item.quantity}
-                      </div>
-                    </div>
-                    <div className="font-medium">{formatPrice(item.price * item.quantity)}</div>
-                  </div>
-                ))}
-              </div>
-
-              <Separator className="my-4" />
-
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Tạm tính</span>
-                  <span>{formatPrice(total)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Phí vận chuyển</span>
-                  <span>
-                    {shippingMethod === "express"
-                      ? formatPrice(100000)
-                      : shipping === 0
-                        ? "Miễn phí"
-                        : formatPrice(shipping)}
-                  </span>
-                </div>
-              </div>
-
-              <Separator className="my-4" />
-
-              <div className="flex justify-between text-lg font-bold">
-                <span>Tổng cộng</span>
-                <span>{formatPrice(total + (shippingMethod === "express" ? 100000 : shipping))}</span>
-              </div>
-
-              <Button type="submit" className="w-full mt-6" size="lg" disabled={isProcessing}>
-                {isProcessing ? "Đang xử lý..." : "Hoàn tất đơn hàng"}
+          <div className="sticky top-4">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-bold">YOUR ORDER</h2>
+              <Button variant="link" className="text-sm font-bold underline">
+                EDIT
               </Button>
+            </div>
 
-              <div className="mt-4 text-xs text-gray-500">
-                <p>Bằng cách đặt hàng, bạn đồng ý với điều khoản sử dụng của chúng tôi.</p>
+            {/* Order Summary */}
+            <div className="space-y-2 mb-6">
+              <div className="flex justify-between text-sm">
+                <span>{totalItems} items</span>
+                <span>${subtotal.toFixed(2)}</span>
               </div>
+              <div className="flex justify-between text-sm">
+                <span>Original price</span>
+                <span>${(subtotal + 20).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Sales Tax</span>
+                <span>${salesTax.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Delivery</span>
+                <span>Free</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Sale</span>
+                <span className="text-red-600">-$21.00</span>
+              </div>
+              <div className="flex justify-between font-bold text-lg border-t pt-2">
+                <span>Total</span>
+                <span>${total.toFixed(2)}</span>
+              </div>
+              <p className="text-xs text-gray-600">
+                From $31.57/month or 4 payments at 0% interest with <strong>Klarna</strong>
+              </p>
+            </div>
+
+            {/* Promo Code */}
+            <div className="mb-6">
+              <Button
+                variant="outline"
+                onClick={() => setShowPromoCode(!showPromoCode)}
+                className="w-full justify-start"
+              >
+                <Tag className="mr-2 h-4 w-4" />
+                USE A PROMO CODE
+              </Button>
+              {showPromoCode && (
+                <div className="mt-2 flex">
+                  <Input placeholder="Enter promo code" className="rounded-r-none" />
+                  <Button className="rounded-l-none bg-black text-white">APPLY</Button>
+                </div>
+              )}
+            </div>
+
+            {/* Order Items */}
+            <div className="space-y-4">
+              {cartItems.map((item) => (
+                <Card key={item.id} className="border rounded-none">
+                  <CardContent className="flex p-4">
+                    <div className="w-20 h-20 mr-4">
+                      <img
+                        src={item.image || "/placeholder.svg"}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-sm">{item.name}</h3>
+                      <p className="text-sm font-bold">{item.price}</p>
+                      <p className="text-xs text-gray-600">
+                        Size: {item.size} / Quantity: {item.quantity}
+                      </p>
+                      <p className="text-xs text-gray-600">Color: {item.color}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   )
 }

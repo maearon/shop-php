@@ -1,0 +1,41 @@
+export const categoryConfig = {
+  "men-soccer-shoes": {
+    title: "MEN'S SOCCER SHOES",
+    breadcrumb: "Men / Soccer / Shoes",
+    description:
+      "Find your perfect pair of men's soccer shoes. From firm ground to artificial turf, we have the right cleats for every playing surface.",
+    category: "men",
+    subcategory: "soccer",
+    productType: "shoes",
+    totalProducts: 156,
+  },
+  "men-tops": {
+    title: "MEN'S TOPS",
+    breadcrumb: "Men / Clothing / Tops",
+    description:
+      "Discover our collection of men's tops. From t-shirts to tank tops, find the perfect fit for your active lifestyle.",
+    category: "men",
+    subcategory: "clothing",
+    productType: "tops",
+    totalProducts: 89,
+  },
+  "women-running-shoes": {
+    title: "WOMEN'S RUNNING SHOES",
+    breadcrumb: "Women / Running / Shoes",
+    description:
+      "Step up your running game with our women's running shoes. Designed for comfort, performance and style.",
+    category: "women",
+    subcategory: "running",
+    productType: "shoes",
+    totalProducts: 124,
+  },
+  "kids-soccer-shoes": {
+    title: "KIDS' SOCCER SHOES",
+    breadcrumb: "Kids / Soccer / Shoes",
+    description: "Get your young athlete ready for the field with our kids' soccer shoes collection.",
+    category: "kids",
+    subcategory: "soccer",
+    productType: "shoes",
+    totalProducts: 67,
+  },
+}

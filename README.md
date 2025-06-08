@@ -7,6 +7,9 @@ A production-ready microservices e-commerce platform built with modern technolog
 This monorepo contains multiple microservices:
 
 - **Frontend (React/Next.js)**: Modern e-commerce UI with Tailwind CSS
+```
+this is /wish when empty and when there are wishes and the image of wish and cart icons in the menu when empty and there are items, the logic is when pressing add to bag on product items then go to /cart, pressing the heart image then go to /wish, pressing heart on items in /cart then remove that item in /cart and the item will go to wish, the heart button everywhere is the toggle wish and unwish button corresponding to the solid and empty heart icon, making the menu display the correct state of wish cart from redux context, and the remove item button in /cart works, the heart button everywhere works can toggle wish and unwish
+```
 - **API Gateway (ASP.NET Core)**: Central API gateway with Auth0 integration
 - **Users Service (Node.js)**: User management and authentication
 - **Orders Service (Node.js)**: Order processing and management

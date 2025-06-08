@@ -1,277 +1,289 @@
-"use client";
-import { NextPage } from 'next'
-import Image from "next/image";
-import styles from "./page.module.css";
-import Link from 'next/link'
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
-import Pagination from 'react-js-pagination'
-import Skeleton from 'react-loading-skeleton'
-import micropostApi, { CreateResponse, ListResponse, Micropost } from '../components/shared/api/micropostApi'
-import ShowErrors, { ErrorMessageType } from '@/components/shared/errorMessages'
-import flashMessage from '../components/shared/flashMessages'
-import { useAppSelector } from '../redux/hooks'
-import { fetchUser, selectUser } from '../redux/session/sessionSlice'
-import { useDispatch } from 'react-redux';
-import HeroBanner from "@/components/home/HeroBanner"
-import FeaturedProducts from "@/components/home/FeaturedProducts"
-import CategoryGrid from "@/components/home/CategoryGrid"
-import PromoSection from "@/components/home/PromoSection"
-import Newsletter from "@/components/home/Newsletter"
-import SocialProof from "@/components/home/SocialProof"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
+import ProductCard from "@/components/product-card"
 
+export default function HomePage() {
+  const stillInterestedProducts = [
+    {
+      id: 1,
+      name: "Own The Run Shorts",
+      price: "$18",
+      image: "/placeholder.svg?height=300&width=250",
+    },
+    {
+      id: 2,
+      name: "Adizero Adios 8 Shoes",
+      price: "$160",
+      image: "/placeholder.svg?height=300&width=250",
+    },
+    {
+      id: 3,
+      name: "Essentials Fleece Regular Tapered Pants",
+      price: "$50",
+      image: "/placeholder.svg?height=300&width=250",
+    },
+    {
+      id: 4,
+      name: "Z.N.E. Premium Full-Zip Hoodie",
+      price: "$120",
+      image: "/placeholder.svg?height=300&width=250",
+    },
+  ]
 
-const CLIENT_ID = process.env.CLIENT_ID;
-const REDIRECT_URI = process.env.REDIRECT_URI;
-const SCOPE = process.env.SCOPE;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const API_KEY = process.env.API_KEY;
+  const newProducts = [
+    {
+      id: 5,
+      name: "Real Madrid 24/25 Home Authentic Jersey",
+      price: "$130",
+      image: "/placeholder.svg?height=300&width=250",
+    },
+    {
+      id: 6,
+      name: "Real Madrid 24/25 Home Jersey",
+      price: "$90",
+      image: "/placeholder.svg?height=300&width=250",
+    },
+    {
+      id: 7,
+      name: "Samba OG Shoes",
+      price: "$100",
+      image: "/placeholder.svg?height=300&width=250",
+    },
+    {
+      id: 8,
+      name: "Gazelle Shoes",
+      price: "$100",
+      image: "/placeholder.svg?height=300&width=250",
+    },
+  ]
 
-const Home: NextPage = () => {
-  const [page, setPage] = useState(1)
-  const [feedItems, setFeedItems] = useState<any[]>([])
-  const [total_count, setTotalCount] = useState(1)
-  const [following, setFollowing] = useState(Number)
-  const [followers, setFollowers] = useState(Number)
-  const [micropost, setMicropost] = useState(Number)
-  const [gravatar, setGavatar] = useState(String)
-  const [content, setContent] = useState('')
-  const [image, setImage] = useState(null)
-  const [imageName, setImageName] = useState('')
-  const inputEl = useRef<HTMLInputElement>(null)
-  const [errors, setErrors] = useState<ErrorMessageType>({});
-  const userData = useAppSelector(selectUser)
-  const dispatch = useDispatch()
-  const [loading, setLoading] = useState(true)
-  const [authCode, setAuthCode] = useState<string | null>(null);
+  const promoTiles = [
+    {
+      title: "SUPERSTAR",
+      subtitle: "PAST, PRESENT, FUTURE",
+      description: "Explore the Superstar, now updated for the next generation.",
+      image: "/placeholder.svg?height=400&width=300",
+      cta: "SHOP NOW",
+    },
+    {
+      title: "UNDENIABLE DUO",
+      subtitle: "",
+      description: "Bring 3-Stripes style that shows your #1 supportive team-mates for seasons to you.",
+      image: "/placeholder.svg?height=400&width=300",
+      cta: "SHOP NOW",
+    },
+    {
+      title: "PLAY YOUR FASTEST",
+      subtitle: "",
+      description: "Ultraboost 5 tennis shoes. Made for speed.",
+      image: "/placeholder.svg?height=400&width=300",
+      cta: "SHOP NOW",
+    },
+    {
+      title: "DROPSET 3",
+      subtitle: "",
+      description: "Rooted in Strength.",
+      image: "/placeholder.svg?height=400&width=300",
+      cta: "SHOP NOW",
+    },
+  ]
 
-  const extractVideoId = (youtubeUrl: string): string | null => {
-    const regExp = /embed\/([^?]*)/;
-    const match = youtubeUrl.match(regExp);
-    return (match && match[1]) ? match[1] : null;
-  };
+  const popularCategories = ["ultraboost", "samba", "campus", "soccer", "gazelle", "spezial"]
 
-  const fetchVideoDetails = async (videoId: string) => {
-    // https://www.geeksforgeeks.org/how-to-get-youtube-video-data-by-using-youtube-data-api-and-php/
-    // https://console.cloud.google.com/apis/credentials?orgonly=true&project=apt-helix-426002-r5&supportedpurview=project,organizationId,folder
-    const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${API_KEY}&part=snippet`;
+  const relatedResources = [
+    {
+      title: "How To Clean Shoes",
+      description: "Get expert shoe-buying advice and learn how to choose your sneakers the right way.",
+      image: "/placeholder.svg?height=200&width=300",
+    },
+    {
+      title: "The adidas Samba Shoe Guide",
+      description: "Discover classic adidas footwear through the fit and feel of the new and old Samba.",
+      image: "/placeholder.svg?height=200&width=300",
+    },
+    {
+      title: "Are the Looks: How to Style a Tennis Skirt",
+      description: "Get inspired by iconic fashion looks to target tennis skirt outfits with adidas.",
+      image: "/placeholder.svg?height=200&width=300",
+    },
+    {
+      title: "How to Style a Soccer Jersey",
+      description: "Get tips on how to style a soccer jersey to create a surprisingly versatile wardrobe staple.",
+      image: "/placeholder.svg?height=200&width=300",
+    },
+  ]
 
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      const videoData = data.items[0].snippet;
-      return {
-        title: videoData.title,
-        description: videoData.description.length > 240 ? videoData.description.substring(0, 240) + '...' : videoData.description,
-        videoId: videoId,
-        channelTitle: videoData.channelTitle,
-      };
-    } catch (error) {
-      flashMessage('error', 'Failed to fetch video details')
-      return {
-        title: 'Number of requests you can make to the API within a given period has been surpassed' ,
-        description: 'Number of requests you can make to the API within a given period has been surpassed',
-        videoId: videoId,
-        channelTitle: 'Number of requests you can make to the API within a given period has been surpassed',
-      };
-    }
-  };
-
-  const setFeeds = useCallback(async () => { 
-    micropostApi.getAll({page: page}
-    ).then(async (response: ListResponse<Micropost>) => {
-      if (response.feed_items) {
-        const updatedFeedItems = await Promise.all(
-          response.feed_items.map(async (item) => {
-            const videoId = extractVideoId(item.content);
-            if (videoId) {
-              const details = await fetchVideoDetails(videoId);
-              if (details) {
-                return { ...item, ...details };
-              }
-            }
-            return item;
-          })
-        );
-        setFeedItems(updatedFeedItems)
-        setTotalCount(response.total_count)
-        setFollowing(response.following)
-        setFollowers(response.followers)
-        setMicropost(response.micropost)
-        setGavatar(response.gravatar)
-        if (response.feed_items.length === 0 && page > 1) {
-          setPage(prev => prev - 1);
-        }
-      } else {
-        setFeedItems([])
-      }
-    })
-    .catch((error: any) => {
-      flashMessage('error', 'Set feed unsuccessfully')
-    })
-  }, [page])
-
-  const handleAuthClick = () => {
-    const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${SCOPE}`;
-    window.location.href = authUrl;
-  };
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        await dispatch(fetchUser());
-      } catch (error) {
-        flashMessage('error', 'Failed to fetch user')
-      } finally {
-        setFeeds();
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-
-    if (code !== null) {
-      const params = new URLSearchParams();
-      params.append('code', code);
-      params.append('client_id', CLIENT_ID || '');
-      params.append('client_secret', CLIENT_SECRET || '');
-      params.append('redirect_uri', REDIRECT_URI || '');
-      params.append('grant_type', 'authorization_code');
-
-      fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: params.toString(),
-      })
-      .then(response => response.json())
-      .then(data => {
-        localStorage.setItem('accessToken', data.access_token);
-        window.history.pushState({}, document.title, "/");
-      })
-      .catch(error => {
-        flashMessage('error', 'Error exchanging code for token')
-      });
-    } else {
-      flashMessage('error', 'Authorization code is missing from URL')
-    }
-  }, [dispatch, setFeeds]);
-
-  const handleRate = async (videoId: any, rating: any) => {
-    const accessToken = localStorage.getItem('accessToken');
-  
-    if (!accessToken) {
-      flashMessage('warning', 'Access token is missing. Please authenticate.')
-      handleAuthClick();
-      return;
-    }
-  
-    try {
-      const response = await fetch(`https://www.googleapis.com/youtube/v3/videos/rate?id=${videoId}&rating=${rating}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      if (response.status === 204) {
-        flashMessage('success', `Video ${rating} successfully`)
-      }
-
-      if (response.status === 401) {
-        flashMessage('error', `Video ${rating} unsuccessfully`)
-        localStorage.removeItem("accessToken");
-        handleRate(videoId, rating)
-      }
-    } catch (error) {
-      flashMessage('error', `Video ${rating} unsuccessfully`)
-      localStorage.removeItem("accessToken");
-      handleRate(videoId, rating)
-    }
-  };
-
-  const handlePageChange = (pageNumber: React.SetStateAction<number>) => {
-    setPage(pageNumber)
-  }
-
-  const handleContentInput = (e: any) => {
-    setContent(e.target.value)
-  }
-
-  const handleSubmit = (e: any) => {
-    e.preventDefault()
-    const formData2 = new FormData()
-    formData2.append('micropost[content]', content)
-    if (image) {
-      formData2.append('micropost[image]', image || new Blob, imageName)
-    }
-
-    var BASE_URL = ''
-    if (process.env.NODE_ENV === 'development') {
-      BASE_URL = 'http://localhost:3001/api'
-    } else if (process.env.NODE_ENV === 'production') {
-      BASE_URL = 'https://ruby-rails-boilerplate-3s9t.onrender.com/api'
-    }
-
-    fetch(BASE_URL+`/microposts`, {
-      method: "POST",
-      body: formData2,
-      credentials: 'include',
-      headers: {
-        'Authorization': localStorage.getItem('token') && localStorage.getItem('token') !== 'undefined' ?
-        `Bearer ${localStorage.getItem('token')} ${localStorage.getItem('remember_token')}` :
-        `Bearer ${sessionStorage.getItem('token')} ${sessionStorage.getItem('remember_token')}`
-      }
-    })
-    .then((response: any) => response.json().then((data: CreateResponse) => {
-      if (data.flash) {
-        setFeeds()
-        // inputEl.current.blur()
-        flashMessage(...data.flash)
-        setContent('')
-        setImage(null)
-        setErrors({})
-      }
-      if (data.error) {
-        // inputEl.current.blur()
-      }
-    })
-    )
-  }
-
-  const removeMicropost = (micropostid: number) => {
-    let sure = window.confirm("You sure?")
-    if (sure === true) {
-      micropostApi.remove(micropostid
-      ).then(response => {
-        if (response.flash) {
-          flashMessage(...response.flash)
-          setFeeds()
-        }
-      })
-      .catch((error: any) => {
-        flashMessage('error', 'Create micropost unsuccessfully')
-      })
-    }
+  const footerCategories = {
+    "SUMMER FAVORITES": ["Summer Shoes", "Tees", "Tank Tops", "Shorts", "Swimwear", "Outdoor Gear & Accessories"],
+    "SUMMER SPORT FITS": [
+      "Men's Summer Outfits",
+      "Men's Tank Tops",
+      "Men's Shorts",
+      "Women's Summer Outfits",
+      "Women's Shorts & Skirts",
+      "Women's Tank Tops",
+    ],
+    "OUR FAVORITE ACCESSORIES": ["Hats", "Bags", "Socks", "Sunglasses", "Water Bottles", "Gift Cards"],
+    "SCHOOL UNIFORMS": [
+      "Uniform Shoes",
+      "Uniform Polos",
+      "Uniform Pants",
+      "Uniform Shorts",
+      "Uniform Accessories",
+      "School Backpacks",
+    ],
   }
 
   return (
-    <main>
-      <HeroBanner />
-      <FeaturedProducts />
-      <CategoryGrid />
-      <PromoSection />
-      <Newsletter />
-      <SocialProof />
-    </main>
+    <div className="min-h-screen bg-white">
+      <Header />
+
+      {/* Hero Section */}
+      <section className="relative h-[500px] bg-gray-100 overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('/placeholder.svg?height=500&width=1200')",
+          }}
+        >
+          <div className="absolute inset-0 bg-black bg-opacity-10"></div>
+        </div>
+        <div className="relative container mx-auto px-4 h-full flex items-end pb-12">
+          <div className="text-white">
+            <h1 className="text-4xl font-bold mb-2">ADIZERO EVO SL</h1>
+            <p className="text-lg mb-4">Fast feels. For the speed of the city.</p>
+            <div className="flex space-x-4">
+              <Link href="/men">
+                <Button className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP WOMEN</Button>
+              </Link>
+              <Link href="/women">
+                <Button className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP MEN</Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Still Interested Section */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-xl font-bold">STILL INTERESTED?</h2>
+          <Button variant="link" className="text-sm font-bold">
+            VIEW ALL
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {stillInterestedProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </section>
+
+      {/* New Products Section */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center space-x-4">
+            <Badge className="bg-black text-white">New Arrivals</Badge>
+            <span className="text-sm text-gray-600">Best Sellers</span>
+          </div>
+          <Button variant="link" className="text-sm font-bold">
+            VIEW ALL
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {newProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </section>
+
+      {/* Promo Tiles */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {promoTiles.map((tile, index) => (
+            <Card key={index} className="relative overflow-hidden h-80 border-0 rounded-none">
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{
+                  backgroundImage: `url('${tile.image}')`,
+                }}
+              >
+                <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+              </div>
+              <CardContent className="relative h-full flex flex-col justify-end p-6 text-white">
+                <h3 className="font-bold text-lg mb-1">{tile.title}</h3>
+                {tile.subtitle && <p className="text-sm mb-2">{tile.subtitle}</p>}
+                <p className="text-sm mb-4">{tile.description}</p>
+                <Button variant="outline" size="sm" className="w-fit bg-white text-black hover:bg-gray-100 font-bold">
+                  {tile.cta} →
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Popular Categories */}
+      <section className="container mx-auto px-4 py-12">
+        <h2 className="text-xl font-bold mb-8">Popular right now</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {popularCategories.map((category, index) => (
+            <Button key={index} variant="outline" className="h-12 text-lg font-medium hover:bg-gray-50 rounded-none">
+              {category}
+            </Button>
+          ))}
+        </div>
+      </section>
+
+      {/* Related Resources */}
+      <section className="container mx-auto px-4 py-12">
+        <h2 className="text-xl font-bold mb-8">RELATED RESOURCES</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {relatedResources.map((resource, index) => (
+            <Card key={index} className="border-none shadow-none">
+              <CardContent className="p-0">
+                <img
+                  src={resource.image || "/placeholder.svg"}
+                  alt={resource.title}
+                  className="w-full h-48 object-cover mb-4"
+                />
+                <h3 className="font-bold mb-2 text-sm">{resource.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{resource.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer Categories */}
+      <section className="bg-gray-50 py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {Object.entries(footerCategories).map(([category, items]) => (
+              <div key={category}>
+                <h3 className="font-bold mb-4 text-sm">{category}</h3>
+                <ul className="space-y-2">
+                  {items.map((item, index) => (
+                    <li key={index}>
+                      <a href="#" className="text-sm text-gray-600 hover:underline">
+                        {item}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
   )
 }
-
-export default Home
