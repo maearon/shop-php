@@ -158,10 +158,10 @@ export default function HomePage() {
             <p className="text-lg mb-4">Fast feels. For the speed of the city.</p>
             <div className="flex space-x-4">
               <Link href="/men">
-                <Button className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP WOMEN</Button>
+                <Button className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP MEN</Button>
               </Link>
               <Link href="/women">
-                <Button className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP MEN</Button>
+                <Button className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP WOMEN</Button>
               </Link>
             </div>
           </div>

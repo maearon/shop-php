@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [web, api, users, orders, payments, search, legacy]
+        service: [web, api, users, orders, payments, search, legacy, api-java]
     
     steps:
       - name: Checkout code
@@ -48,6 +48,13 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Set up Java (for api-java)
+        if: matrix.service == 'api-java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
       - name: Install dependencies and test
         run: |
           case "${{ matrix.service }}" in
@@ -72,6 +79,10 @@ jobs:
               pip install -r requirements.txt
               python -m pytest
               ;;
+            api-java)
+              cd apps/spring-boilerplate
+              ./mvnw test
+              ;;
             legacy)
               echo "Legacy PHP service - skipping tests"
               ;;
@@ -83,7 +94,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     strategy:
       matrix:
-        service: [web, api, users, orders, payments, search, legacy]
+        service: [web, api, users, orders, payments, search, legacy, api-java]
 
     steps:
       - name: Checkout code
