@@ -1,161 +1,32 @@
 ### Social App Angular 19 StandAlone Mode + Spring Boot only API + Thymeleaf
-JVM-based runtime (Just-In-Time / JIT)
+
+
 ```
-chmod +x ./mvnw
-./mvnw spring-boot:run
+1998  cd angular-boilerplate/
+ 1999  ng build --configuration=production
+ 2000  sudo apt update
+ 2001  sudo apt install nodejs npm -y
+ 2002  node -v
+ 2003  npm -v
+ 2004  sudo npm install -g @angular/cli
+ 2005  ng build --configuration=production
+ 2006  nvm list
+ 2007  nvm --list
+ 2008  node -v
+ 2009  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+ 2010  source ~/.bashrc
+ 2011  nvm --version
+ 2012  nvm install 22.12.0
+ 2013  nvm alias default v22.12.0
+ 2014  nvm use default
+ 2015  ng build --configuration=production
+ 2016  npm i
+ 2017  ng build --configuration=production
+ 2018  ng serve
+ ----> localhost:4200
+
 ```
-```
-./mvnw clean package -DskipTests
-java -jar target/springboilerplate-0.0.1-SNAPSHOT.jar
-```
-AOT (Ahead-Of-Time)
-Dưới đây là phiên bản đã rút gọn và sửa lại pom.xml để có thể build được Native Image với GraalVM AOT (Ahead-of-Time) thành công:
 
-✅ Những dependency đã giữ lại vì tương thích tốt:
-spring-boot-starter-web
-
-spring-boot-starter-data-jpa
-
-spring-boot-starter-security
-
-spring-boot-starter-validation
-
-spring-boot-starter-actuator
-
-spring-boot-starter-mail
-
-postgresql
-
-lombok (phải loại khỏi native image build)
-
-spring-boot-starter-test (vẫn dùng cho test)
-
-❌ Những dependency bị loại bỏ vì gây lỗi AOT:
-spring-boot-devtools (runtime-only, không dùng với native)
-
-spring-boot-starter-thymeleaf & thymeleaf-extras-springsecurity6
-
-webjars (dùng reflection, không native-friendly)
-
-jjwt (phức tạp khi native build, thay bằng Spring Security JWT native-friendly sau)
-
-reflections (dùng reflection scanning)
-
-dotenv-java (dùng reflection)
-
-redis (đang gây lỗi native, có thể thêm lại sau khi base image ổn)
-```
-maearon@maearon:~/code/shop-php/apps/spring-boilerplate$ curl -s "https://get.sdkman.io" | bash
-
-                                -+syyyyyyys:
-                            `/yho:`       -yd.
-                         `/yh/`             +m.
-                       .oho.                 hy                          .`
-                     .sh/`                   :N`                `-/o`  `+dyyo:.
-                   .yh:`                     `M-          `-/osysoym  :hs` `-+sys:      hhyssssssssy+
-                 .sh:`                       `N:          ms/-``  yy.yh-      -hy.    `.N-````````+N.
-               `od/`                         `N-       -/oM-      ddd+`     `sd:     hNNm        -N:
-              :do`                           .M.       dMMM-     `ms.      /d+`     `NMMs       `do
-            .yy-                             :N`    ```mMMM.      -      -hy.       /MMM:       yh
-          `+d+`           `:/oo/`       `-/osyh/ossssssdNMM`           .sh:         yMMN`      /m.
-         -dh-           :ymNMMMMy  `-/shmNm-`:N/-.``   `.sN            /N-         `NMMy      .m/
-       `oNs`          -hysosmMMMMydmNmds+-.:ohm           :             sd`        :MMM/      yy
-      .hN+           /d:    -MMMmhs/-.`   .MMMh   .ss+-                 `yy`       sMMN`     :N.
-     :mN/           `N/     `o/-`         :MMMo   +MMMN-         .`      `ds       mMMh      do
-    /NN/            `N+....--:/+oooosooo+:sMMM:   hMMMM:        `my       .m+     -MMM+     :N.
-   /NMo              -+ooooo+/:-....`...:+hNMN.  `NMMMd`        .MM/       -m:    oMMN.     hs
-  -NMd`                                    :mm   -MMMm- .s/     -MMm.       /m-   mMMd     -N.
- `mMM/                                      .-   /MMh. -dMo     -MMMy        od. .MMMs..---yh
- +MMM.                                           sNo`.sNMM+     :MMMM/        sh`+MMMNmNm+++-
- mMMM-                                           /--ohmMMM+     :MMMMm.       `hyymmmdddo
- MMMMh.                  ````                  `-+yy/`yMMM/     :MMMMMy       -sm:.``..-:-.`
- dMMMMmo-.``````..-:/osyhddddho.           `+shdh+.   hMMM:     :MmMMMM/   ./yy/` `:sys+/+sh/
- .dMMMMMMmdddddmmNMMMNNNNNMMMMMs           sNdo-      dMMM-  `-/yd/MMMMm-:sy+.   :hs-      /N`
-  `/ymNNNNNNNmmdys+/::----/dMMm:          +m-         mMMM+ohmo/.` sMMMMdo-    .om:       `sh
-     `.-----+/.`       `.-+hh/`         `od.          NMMNmds/     `mmy:`     +mMy      `:yy.
-           /moyso+//+ossso:.           .yy`          `dy+:`         ..       :MMMN+---/oys:
-         /+m:  `.-:::-`               /d+                                    +MMMMMMMNh:`
-        +MN/                        -yh.                                     `+hddhy+.
-       /MM+                       .sh:
-      :NMo                      -sh/
-     -NMs                    `/yy:
-    .NMy                  `:sh+.
-   `mMm`               ./yds-
-  `dMMMmyo:-.````.-:oymNy:`
-  +NMMMMMMMMMMMMMMMMms:`
-    -+shmNMMMNmdy+:`
-
-
-                                                                 Now attempting installation...
-
-
-Looking for a previous installation of SDKMAN...
-SDKMAN found.
-
-======================================================================================================
- You already have SDKMAN installed.
- SDKMAN was found at:
-
-    /home/maearon/.sdkman
-
- Please consider running the following if you need to upgrade.
-
-    $ sdk selfupdate force
-
-======================================================================================================
-
-source "$HOME/.sdkman/bin/sdkman-init.sh"
-
-wget https://download.oracle.com/graalvm/21/latest/graalvm-community-jdk-21_linux-x64_bin.tar.gz
-
-# Tạo thư mục mới
-mkdir -p ~/graalvm
-
-# Giải nén vào thư mục
-tar -xzf graalvm-community-jdk-21_linux-x64_bin.tar.gz -C ~/graalvm
-
-# Xác định tên thư mục vừa giải nén (thường là graalvm-jdk-21.x.x)
-ls ~/graalvm
-
-nano ~/.bashrc
-export JAVA_HOME=$HOME/graalvm/graalvm-jdk-21.0.2+13.1
-export PATH="$JAVA_HOME/bin:$PATH"
-source ~/.bashrc
-
-gu install native-image
-
-java -agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image -jar target/springboilerplate-0.0.1-SNAPSHOT.jar
-✅ Kết luận nhanh:
-Lệnh bạn đang chạy CHƯA phải là AOT hoàn chỉnh (native executable), mà mới là bước GHI LẠI CẤU HÌNH cần thiết để chuẩn bị build native image. Đây là giai đoạn profiling bằng agent – tức đang thu thập metadata cần thiết để sau này biên dịch AOT bằng GraalVM native-image.
-
-Dưới đây là file pom.xml đầy đủ của bạn đã được chỉnh sửa theo phương án 1 – tạo thêm một JAR dạng "plain" (exec.jar) không có cấu trúc BOOT-INF, để GraalVM có thể build native image thành công:
-✅ Thay đổi chính:
-Thêm <classifier>exec</classifier> và <layout>NONE</layout> trong plugin spring-boot-maven-plugin.
-Đặt mainClass rõ ràng cho native image (com.example.springboilerplate.SpringBoilerplateApplication).
-
-
-./mvnw clean package
-
-
-native-image \
-  -cp target/springboilerplate-0.0.1-SNAPSHOT-exec.jar \
-  -H:Name=springboilerplate \
-  -H:ConfigurationFileDirectories=src/main/resources/META-INF/native-image \
-  --no-fallback \
-  --enable-http \
-  --enable-https \
-  --initialize-at-build-time=com.example.springboilerplate \
-  -H:+UnlockExperimentalVMOptions \
-  com.example.springboilerplate.SpringBoilerplateApplication
-
-./mvnw -Pnative spring-boot:build-image
-
-./target/springboilerplate
-
-
-docker run --rm -v $(pwd):/workspace -w /workspace ghcr.io/graalvm/graalvm-ce:ol9-java21 \
-    bash -c "./mvnw package -Pnative"
-```
 ```
 Init Config from https://start.spring.io/: See ./spring.png 
 

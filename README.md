@@ -118,13 +118,17 @@ docker-compose up
 \`\`\`
 
 4. Services will be available at:
-- Frontend: http://localhost:3000
+- Frontend: http://localhost:3000 *
 - API Gateway: http://localhost:5000
 - Users Service: http://localhost:3001
 - Orders Service: http://localhost:3002
-- Payments Service: http://localhost:3003
+- Payments Service: http://localhost:3003 *
 - Search Service: http://localhost:3004
-- Legacy Service: http://localhost:8080
+- Legacy Service: http://localhost:8080 *
+- ELASTICSEARCH Service: http://localhost:9200 *      Trình quản lý web qua trình duyệt tại
+                                           5672       Các ứng dụng (API, microservices, workers) gửi/nhận message từ RabbitMQ
+- RABBITMQ Service: http://localhost:15672 *
+- REDIS Service: http://localhost:8080
 
 ### Production Deployment
 

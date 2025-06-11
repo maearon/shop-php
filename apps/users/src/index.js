@@ -10,7 +10,17 @@ const app = express()
 const PORT = process.env.PORT || 3001
 
 // Initialize Prisma
-const prisma = new PrismaClient()
+// const prisma = new PrismaClient()
+// Prisma singleton setup
+const prismaClientSingleton = () => {
+  return new PrismaClient();
+};
+
+if (!global.prismaGlobal) {
+  global.prismaGlobal = prismaClientSingleton();
+}
+
+const prisma = global.prismaGlobal;
 
 // Redis connection
 const redis = Redis.createClient({
