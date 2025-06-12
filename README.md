@@ -59,8 +59,7 @@ cp .env.example .env
 
 3. Start all services with Docker Compose:
 \`\`\`bash
-maearon@maearon:~/code/shop-php/apps/web$ docker container rm $(docker container ls -aq) && docker rmi -f $(docker images -aq) && docker volume rm $(docker volume ls -q) && docker network prune -f
-
+docker container rm $(docker container ls -aq) && docker rmi -f $(docker images -aq) && docker volume rm $(docker volume ls -q) && docker network prune -f
 npm run dev
 # or
 docker-compose up
