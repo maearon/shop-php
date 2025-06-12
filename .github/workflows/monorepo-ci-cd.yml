@@ -57,9 +57,9 @@ jobs:
 
       - name: Set up Ruby (for api-ruby)
         if: matrix.service == 'api-ruby'
-        uses: actions/setup-ruby@v4
+        uses: ruby/setup-ruby@v1
         with:
-          java-version: '3.4.2'
+          ruby-version: '3.4.2'
 
       - name: Install dependencies and test
         run: |
