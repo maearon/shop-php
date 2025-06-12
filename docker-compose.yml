@@ -40,6 +40,7 @@ services:
       dockerfile: docker/api-java.Dockerfile
     ports:
       - "8080:8080"
+      - "5005:5005"  # 👈 Port debug
     environment:  
       - SPRING_PROFILES_ACTIVE=dev
       - DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
