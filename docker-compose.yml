@@ -61,6 +61,11 @@ services:
     ports:
       - "8085:8085"
     environment:  
+      - POSTGRES_DATABASE=verceldb
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=z9GYTlrXa8Qx
+      - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
+      - POSTGRES_PORT=5432
       - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require
     depends_on:
       - redis

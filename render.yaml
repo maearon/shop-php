@@ -18,6 +18,26 @@ services:
         sync: false
 
   - type: web
+    name: api-ruby
+    env: docker
+    plan: free
+    dockerfilePath: docker/api-ruby.Dockerfile
+    rootDir: .
+    envVars:
+      - key: POSTGRES_URL
+        sync: false
+
+  - type: web
+    name: api-java
+    env: docker
+    plan: free
+    dockerfilePath: docker/api-java.Dockerfile
+    rootDir: .
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: dev
+
+  - type: web
     name: adidas-users-service
     env: docker
     dockerfilePath: ./docker/users.Dockerfile

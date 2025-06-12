@@ -51,9 +51,5 @@ USER appuser
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:8085/up || exit 1
 
-# Development vs Production
-CMD if [ "$RAILS_ENV" = "development" ]; then \
-      bundle install && bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0 -p 8085; \
-    else \
-      bundle exec rails db:migrate && bundle exec puma -C config/puma.rb; \
-    fi
+# Start Rails server
+CMD ["rails", "server", "-b", "0.0.0.0", "-p", "8085"]
