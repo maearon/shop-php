@@ -58,8 +58,10 @@ cp .env.example .env
 \`\`\`
 
 3. Start all services with Docker Compose:
-\`\`\`bash
+```
 docker container rm $(docker container ls -aq) && docker rmi -f $(docker images -aq) && docker volume rm $(docker volume ls -q) && docker network prune -f
+```
+\`\`\`bash
 npm run dev
 # or
 docker-compose up
