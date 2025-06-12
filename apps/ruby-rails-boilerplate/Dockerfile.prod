@@ -1,0 +1,47 @@
+# Base image với Ruby 3.2.2 thay vì 3.1.2
+FROM ruby:3.42
+
+# Cài đặt các dependencies cần thiết
+RUN apt-get update -yq && apt-get install -y --no-install-recommends \
+    build-essential curl git vim unzip cron gcc wget netcat \
+    imagemagick postgresql-client \
+    nodejs && corepack enable && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Tạo thư mục ứng dụng
+RUN mkdir -p /app
+WORKDIR /app
+
+# Copy và cài đặt Yarn dependencies trước để tận dụng cache
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+
+# Cài đặt Bundler và Gems
+RUN gem install bundler -v 2.2.32
+COPY Gemfile Gemfile.lock ./
+RUN bundle install --without development test
+
+# Copy mã nguồn ứng dụng
+COPY . .
+
+# Định nghĩa biến môi trường
+ENV RAILS_ENV=production \
+    RAILS_SERVE_STATIC_FILES=true \
+    RAILS_LOG_TO_STDOUT=true
+
+# Chạy precompile assets nếu cần
+RUN SECRET_KEY_BASE=dummy_key DB_ADAPTER=nulldb bundle exec rails assets:precompile
+
+# Chạy ứng dụng với user không phải root
+RUN adduser --disabled-login --gecos "" appuser
+USER appuser
+
+# Entrypoint script
+RUN chmod +x entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]
+
+# Expose cổng 3000
+EXPOSE 3000
+
+# Chạy Puma server
+CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]

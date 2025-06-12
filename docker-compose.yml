@@ -24,7 +24,7 @@ services:
   # The API Gateway also integrates with Redis for caching, RabbitMQ for message queuing,
   # and Auth0 for authentication.     
 
-  # API java spring boot Service
+  # API java spring boot auth Service
   api-java:
     build:  
       context: .
@@ -51,7 +51,26 @@ services:
       - payments
       - search
     networks:
-      - adidas-network        
+      - adidas-network 
+
+  # API ruby rails product Service
+  api-ruby:
+    build:  
+      context: .
+      dockerfile: docker/api-ruby.Dockerfile
+    ports:
+      - "8085:8085"
+    environment:  
+      - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require
+    depends_on:
+      - redis
+      - rabbitmq
+      - users
+      - orders
+      - payments
+      - search
+    networks:
+      - adidas-network   
   
   # API dotnet Core Service
   api:

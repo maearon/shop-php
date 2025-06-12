@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [web, api, users, orders, payments, search, legacy, api-java]
+        service: [web, api, users, orders, payments, search, legacy, api-java, api-ruby]
     
     steps:
       - name: Checkout code
@@ -55,6 +55,12 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Set up Ruby (for api-ruby)
+        if: matrix.service == 'api-ruby'
+        uses: actions/setup-ruby@v4
+        with:
+          java-version: '3.4.2'
+
       - name: Install dependencies and test
         run: |
           case "${{ matrix.service }}" in
@@ -83,6 +89,10 @@ jobs:
               cd apps/spring-boilerplate
               ./mvnw test
               ;;
+            api-ruby)
+              cd apps/ruby-rails-boilerplate
+              rails test
+              ;;
             legacy)
               echo "Legacy PHP service - skipping tests"
               ;;
@@ -94,7 +104,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     strategy:
       matrix:
-        service: [web, api, users, orders, payments, search, legacy, api-java]
+        service: [web, api, users, orders, payments, search, legacy, api-java, api-ruby]
 
     steps:
       - name: Checkout code
