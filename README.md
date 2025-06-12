@@ -74,8 +74,8 @@ docker-compose up
 - Payments Service: http://localhost:3003 *
 - Search Service: http://localhost:3004
 - Legacy Service: http://localhost:8080 *
-- ELASTICSEARCH Service: http://localhost:9200 *      Trình quản lý web qua trình duyệt tại
-                                           5672       Các ứng dụng (API, microservices, workers) gửi/nhận message từ RabbitMQ
+- ELASTICSEARCH Service: http://localhost:9200 *
+- ELASTICSEARCH Service: http://localhost:5672 *                                        
 - RABBITMQ Service: http://localhost:15672 *
 - REDIS Service: http://localhost:8080
 
