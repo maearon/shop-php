@@ -8,8 +8,8 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:5000
-      - NEXT_PUBLIC_AUTH0_DOMAIN=${AUTH0_DOMAIN}
-      - NEXT_PUBLIC_AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
+      - NEXT_PUBLIC_AUTH0_DOMAIN=your-domain.auth0.com
+      - NEXT_PUBLIC_AUTH0_CLIENT_ID=your_auth0_client_id
     depends_on:
       - api
     networks:
@@ -33,23 +33,18 @@ services:
       - "8080:8080"
     environment:  
       - SPRING_PROFILES_ACTIVE=dev
-      - DATABASE_URL=${DATABASE_URL}
-      - AUTH0_DOMAIN=${AUTH0_DOMAIN}
-      - AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
-      - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
-      - REDIS_URL=${REDIS_URL}
-      - RABBITMQ_URL=${RABBITMQ_URL}
+      - DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
+      - AUTH0_DOMAIN=your-domain.auth0.com
+      - AUTH0_CLIENT_ID=your_auth0_client_id
+      - AUTH0_CLIENT_SECRET=your_auth0_client_secret
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - SERVICES_USERS_BASE_URL=http://users:3001
       - SERVICES_ORDERS_BASE_URL=http://orders:3002
       - SERVICES_PAYMENTS_BASE_URL=http://payments:3003
       - SERVICES_SEARCH_BASE_URL=http://search:3004
     depends_on:
-      - redis
-      - rabbitmq
-      - users
-      - orders
-      - payments
-      - search
+      - web
     networks:
       - adidas-network 
 
@@ -66,14 +61,9 @@ services:
       - POSTGRES_PASSWORD=z9GYTlrXa8Qx
       - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
       - POSTGRES_PORT=5432
-      - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require
+      - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
     depends_on:
-      - redis
-      - rabbitmq
-      - users
-      - orders
-      - payments
-      - search
+      - web
     networks:
       - adidas-network   
   
@@ -114,12 +104,15 @@ services:
     ports:
       - "3001:3001"
     environment:
+      - PORT=3001
       - NODE_ENV=development
-      - DATABASE_URL=${DATABASE_URL}
-      - AUTH0_DOMAIN=${AUTH0_DOMAIN}
-      - AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
-      - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
-      - REDIS_URL=${REDIS_URL}
+      - DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
+      - AUTH0_DOMAIN=your-domain.auth0.com
+      - AUTH0_CLIENT_ID=your_auth0_client_id
+      - AUTH0_CLIENT_SECRET=your_auth0_client_secret
+      - REDIS_URL=redis://redis:6379
+      - POSTGRES_PRISMA_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
+      - POSTGRES_URL_NON_POOLING=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9.us-east-1.aws.neon.tech/verceldb?sslmode=require
     depends_on:
       - redis
     networks:

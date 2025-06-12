@@ -69,16 +69,18 @@ docker-compose up
 
 4. Services will be available at:
 - Frontend: http://localhost:3000 *
+- API AUTH JAVA SPRING Service: http://localhost:8080 *
+- API PRODUCT RUBY RAILS Service: http://localhost:8085 *
 - API Gateway: http://localhost:5000
 - Users Service: http://localhost:3001
-- Orders Service: http://localhost:3002
+- Orders Service: http://localhost:3002 *
 - Payments Service: http://localhost:3003 *
 - Search Service: http://localhost:3004
-- Legacy Service: http://localhost:8080 *
+- Legacy Service: http://localhost:8081 *
 - ELASTICSEARCH Service: http://localhost:9200 *
 - ELASTICSEARCH Service: http://localhost:5672 *                                        
 - RABBITMQ Service: http://localhost:15672 *
-- REDIS Service: http://localhost:8080
+- REDIS Service: http://localhost:6379
 
 ### Production Deployment
 

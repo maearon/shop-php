@@ -52,4 +52,8 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:8085/up || exit 1
 
 # Start Rails server
-CMD ["rails", "server", "-b", "0.0.0.0", "-p", "8085"]
+CMD if [ "$RAILS_ENV" = "development" ]; then \
+      bundle install && bundle exec rails server -b 0.0.0.0 -p 8085; \
+    else \
+      bundle exec puma -C config/puma.rb; \
+    fi

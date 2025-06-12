@@ -10,14 +10,144 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 0) do
+ActiveRecord::Schema[8.0].define(version: 0) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+  enable_extension "pg_catalog.plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "GameType", ["mcq", "open_ended"]
   create_enum "MediaType", ["IMAGE", "VIDEO"]
   create_enum "NotificationType", ["LIKE", "FOLLOW", "COMMENT"]
+
+  create_table "Account", id: :text, force: :cascade do |t|
+    t.text "userId", null: false
+    t.text "type", null: false
+    t.text "provider", null: false
+    t.text "providerAccountId", null: false
+    t.text "refresh_token"
+    t.text "access_token"
+    t.integer "expires_at"
+    t.text "token_type"
+    t.text "scope"
+    t.text "id_token"
+    t.text "session_state"
+    t.index ["provider", "providerAccountId"], name: "Account_provider_providerAccountId_key", unique: true
+    t.index ["userId"], name: "Account_userId_idx"
+  end
+
+  create_table "AspNetRoleClaims", primary_key: "Id", id: :integer, default: nil, force: :cascade do |t|
+    t.text "RoleId", null: false
+    t.text "ClaimType"
+    t.text "ClaimValue"
+    t.index ["RoleId"], name: "IX_AspNetRoleClaims_RoleId"
+  end
+
+  create_table "AspNetRoles", primary_key: "Id", id: :text, force: :cascade do |t|
+    t.string "Name", limit: 256
+    t.string "NormalizedName", limit: 256
+    t.text "ConcurrencyStamp"
+    t.index ["NormalizedName"], name: "RoleNameIndex", unique: true
+  end
+
+  create_table "AspNetUserClaims", primary_key: "Id", id: :integer, default: nil, force: :cascade do |t|
+    t.text "UserId", null: false
+    t.text "ClaimType"
+    t.text "ClaimValue"
+    t.index ["UserId"], name: "IX_AspNetUserClaims_UserId"
+  end
+
+  create_table "AspNetUserLogins", primary_key: ["LoginProvider", "ProviderKey"], force: :cascade do |t|
+    t.text "LoginProvider", null: false
+    t.text "ProviderKey", null: false
+    t.text "ProviderDisplayName"
+    t.text "UserId", null: false
+    t.index ["UserId"], name: "IX_AspNetUserLogins_UserId"
+  end
+
+  create_table "AspNetUserRoles", primary_key: ["UserId", "RoleId"], force: :cascade do |t|
+    t.text "UserId", null: false
+    t.text "RoleId", null: false
+    t.index ["RoleId"], name: "IX_AspNetUserRoles_RoleId"
+  end
+
+  create_table "AspNetUserTokens", primary_key: ["UserId", "LoginProvider", "Name"], force: :cascade do |t|
+    t.text "UserId", null: false
+    t.text "LoginProvider", null: false
+    t.text "Name", null: false
+    t.text "Value"
+  end
+
+  create_table "AspNetUsers", primary_key: "Id", id: :text, force: :cascade do |t|
+    t.string "Name", limit: 50, null: false
+    t.text "ActivationDigest"
+    t.boolean "Activated", null: false
+    t.timestamptz "ActivatedAt"
+    t.text "RememberDigest"
+    t.text "ResetDigest"
+    t.timestamptz "ResetSentAt"
+    t.timestamptz "CreatedAt", null: false
+    t.timestamptz "UpdatedAt", null: false
+    t.boolean "Admin", null: false
+    t.string "UserName", limit: 256
+    t.string "NormalizedUserName", limit: 256
+    t.string "Email", limit: 256
+    t.string "NormalizedEmail", limit: 256
+    t.boolean "EmailConfirmed", null: false
+    t.text "PasswordHash"
+    t.text "SecurityStamp"
+    t.text "ConcurrencyStamp"
+    t.text "PhoneNumber"
+    t.boolean "PhoneNumberConfirmed", null: false
+    t.boolean "TwoFactorEnabled", null: false
+    t.timestamptz "LockoutEnd"
+    t.boolean "LockoutEnabled", null: false
+    t.integer "AccessFailedCount", null: false
+    t.index ["NormalizedEmail"], name: "EmailIndex"
+    t.index ["NormalizedUserName"], name: "UserNameIndex", unique: true
+  end
+
+  create_table "Game", id: :text, force: :cascade do |t|
+    t.text "userId", null: false
+    t.datetime "timeStarted", precision: 3, null: false
+    t.text "topic", null: false
+    t.datetime "timeEnded", precision: 3
+    t.enum "gameType", null: false, enum_type: "\"GameType\""
+    t.index ["userId"], name: "Game_userId_idx"
+  end
+
+  create_table "Microposts", primary_key: "Id", id: :bigint, default: nil, force: :cascade do |t|
+    t.string "Content", limit: 140, null: false
+    t.text "UserId", null: false
+    t.text "ImagePath"
+    t.timestamptz "CreatedAt", null: false
+    t.timestamptz "UpdatedAt", null: false
+    t.index ["UserId"], name: "IX_Microposts_UserId"
+  end
+
+  create_table "Question", id: :text, force: :cascade do |t|
+    t.text "question", null: false
+    t.text "answer", null: false
+    t.text "gameId", null: false
+    t.jsonb "options"
+    t.float "percentageCorrect"
+    t.boolean "isCorrect"
+    t.enum "questionType", null: false, enum_type: "\"GameType\""
+    t.text "userAnswer"
+    t.index ["gameId"], name: "Question_gameId_idx"
+  end
+
+  create_table "Relationships", primary_key: ["FollowerId", "FollowedId"], force: :cascade do |t|
+    t.text "FollowerId", null: false
+    t.text "FollowedId", null: false
+    t.timestamptz "CreatedAt", null: false
+    t.timestamptz "UpdatedAt", null: false
+    t.index ["FollowedId"], name: "IX_Relationships_FollowedId"
+  end
+
+  create_table "__EFMigrationsHistory", primary_key: "MigrationId", id: { type: :string, limit: 150 }, force: :cascade do |t|
+    t.string "ProductVersion", limit: 32, null: false
+  end
 
   create_table "_prisma_migrations", id: { type: :string, limit: 36 }, force: :cascade do |t|
     t.string "checksum", limit: 64, null: false
@@ -138,7 +268,7 @@ ActiveRecord::Schema[7.1].define(version: 0) do
 
   create_table "microposts", force: :cascade do |t|
     t.text "content"
-    t.bigint "user_id", null: false
+    t.text "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "created_at"], name: "index_microposts_on_user_id_and_created_at"
@@ -149,7 +279,7 @@ ActiveRecord::Schema[7.1].define(version: 0) do
     t.text "recipientId", null: false
     t.text "issuerId", null: false
     t.text "postId"
-    t.enum "type", null: false, enum_type: ""NotificationType""
+    t.enum "type", null: false, enum_type: "\"NotificationType\""
     t.boolean "read", default: false, null: false
     t.datetime "createdAt", precision: 3, default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
@@ -175,7 +305,7 @@ ActiveRecord::Schema[7.1].define(version: 0) do
 
   create_table "post_media", id: :text, force: :cascade do |t|
     t.text "postId"
-    t.enum "media_type", null: false, enum_type: ""MediaType""
+    t.enum "media_type", null: false, enum_type: "\"MediaType\""
     t.text "url", null: false
     t.datetime "createdAt", precision: 3, default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
@@ -211,8 +341,8 @@ ActiveRecord::Schema[7.1].define(version: 0) do
   end
 
   create_table "relationships", force: :cascade do |t|
-    t.integer "follower_id"
-    t.integer "followed_id"
+    t.text "follower_id"
+    t.text "followed_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["followed_id"], name: "index_relationships_on_followed_id"
@@ -239,6 +369,7 @@ ActiveRecord::Schema[7.1].define(version: 0) do
   create_table "sessions", id: :text, force: :cascade do |t|
     t.text "userId", null: false
     t.datetime "expiresAt", precision: 3, null: false
+    t.jsonb "payload"
   end
 
   create_table "tasks", force: :cascade do |t|
@@ -248,6 +379,12 @@ ActiveRecord::Schema[7.1].define(version: 0) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_tasks_on_project_id"
+  end
+
+  create_table "topic_count", id: :text, force: :cascade do |t|
+    t.text "topic", null: false
+    t.integer "count", null: false
+    t.index ["topic"], name: "topic_count_topic_key", unique: true
   end
 
   create_table "users", id: :text, force: :cascade do |t|
@@ -308,6 +445,18 @@ ActiveRecord::Schema[7.1].define(version: 0) do
     t.index ["user_id"], name: "index_wishes_on_user_id"
   end
 
+  add_foreign_key "Account", "users", column: "userId", name: "Account_userId_fkey", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "AspNetRoleClaims", "AspNetRoles", column: "RoleId", primary_key: "Id", name: "FK_AspNetRoleClaims_AspNetRoles_RoleId", on_delete: :cascade
+  add_foreign_key "AspNetUserClaims", "AspNetUsers", column: "UserId", primary_key: "Id", name: "FK_AspNetUserClaims_AspNetUsers_UserId", on_delete: :cascade
+  add_foreign_key "AspNetUserLogins", "AspNetUsers", column: "UserId", primary_key: "Id", name: "FK_AspNetUserLogins_AspNetUsers_UserId", on_delete: :cascade
+  add_foreign_key "AspNetUserRoles", "AspNetRoles", column: "RoleId", primary_key: "Id", name: "FK_AspNetUserRoles_AspNetRoles_RoleId", on_delete: :cascade
+  add_foreign_key "AspNetUserRoles", "AspNetUsers", column: "UserId", primary_key: "Id", name: "FK_AspNetUserRoles_AspNetUsers_UserId", on_delete: :cascade
+  add_foreign_key "AspNetUserTokens", "AspNetUsers", column: "UserId", primary_key: "Id", name: "FK_AspNetUserTokens_AspNetUsers_UserId", on_delete: :cascade
+  add_foreign_key "Game", "users", column: "userId", name: "Game_userId_fkey", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "Microposts", "AspNetUsers", column: "UserId", primary_key: "Id", name: "FK_Microposts_AspNetUsers_UserId", on_delete: :cascade
+  add_foreign_key "Question", "Game", column: "gameId", name: "Question_gameId_fkey", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "Relationships", "AspNetUsers", column: "FollowedId", primary_key: "Id", name: "FK_Relationships_AspNetUsers_FollowedId", on_delete: :restrict
+  add_foreign_key "Relationships", "AspNetUsers", column: "FollowerId", primary_key: "Id", name: "FK_Relationships_AspNetUsers_FollowerId", on_delete: :restrict
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "bookmarks", "posts", column: "postId", name: "bookmarks_postId_fkey", on_update: :cascade, on_delete: :cascade
@@ -327,6 +476,7 @@ ActiveRecord::Schema[7.1].define(version: 0) do
   add_foreign_key "likes", "posts", column: "postId", name: "likes_postId_fkey", on_update: :cascade, on_delete: :cascade
   add_foreign_key "likes", "users", column: "userId", name: "likes_userId_fkey", on_update: :cascade, on_delete: :cascade
   add_foreign_key "messages", "rooms"
+  add_foreign_key "microposts", "users"
   add_foreign_key "notifications", "posts", column: "postId", name: "notifications_postId_fkey", on_update: :cascade, on_delete: :cascade
   add_foreign_key "notifications", "users", column: "issuerId", name: "notifications_issuerId_fkey", on_update: :cascade, on_delete: :cascade
   add_foreign_key "notifications", "users", column: "recipientId", name: "notifications_recipientId_fkey", on_update: :cascade, on_delete: :cascade
