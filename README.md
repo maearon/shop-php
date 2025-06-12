@@ -43,29 +43,29 @@ this is /wish when empty and when there are wishes and the image of wish and car
 ### Development Setup
 
 1. Clone the repository:
-\`\`\`bash
+```
 git rm -r --cached .
 git add .
 git commit -m "Update .gitignore and re-add files"
 git clone <repository-url>
 cd shop-php
-\`\`\`
+```
 
 2. Copy environment variables:
-\`\`\`bash
+```
 cp .env.example .env
 # Edit .env with your actual values
-\`\`\`
+```
 
 3. Start all services with Docker Compose:
 ```
 docker container rm $(docker container ls -aq) && docker rmi -f $(docker images -aq) && docker volume rm $(docker volume ls -q) && docker network prune -f
 ```
-\`\`\`bash
+```
 npm run dev
 # or
 docker-compose up
-\`\`\`
+```
 
 4. Services will be available at:
 - Frontend: http://localhost:3000 *
@@ -83,15 +83,14 @@ docker-compose up
 ### Production Deployment
 
 1. Build production images:
-\`\`\`bash
+```
 npm run build
-\`\`\`
+```
 
 2. Deploy to production:
-\`\`\`bash
+```
 npm run prod
-\`\`\`
-
+```
 ## Environment Variables
 
 Each service has its own `.env` file. Key variables include:
