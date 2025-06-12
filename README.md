@@ -68,6 +68,7 @@ docker-compose up
 ```
 
 4. Services will be available at:
+- API Gateway: http://localhost
 - Frontend: http://localhost:3000 *
 - API AUTH JAVA SPRING Service: http://localhost:8080 *
 - API PRODUCT RUBY RAILS Service: http://localhost:8085 *

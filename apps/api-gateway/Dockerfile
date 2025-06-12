@@ -1,14 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 5001
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-COPY . .
-RUN dotnet restore
-RUN dotnet publish -c Release -o /app/publish
-
-FROM base AS final
-WORKDIR /app
-COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "api-gateway.dll"]
+FROM openresty/openresty:alpine
+COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+COPY lua/ /usr/local/openresty/nginx/lua/
+EXPOSE 80

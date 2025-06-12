@@ -1,4 +1,21 @@
 services:
+  # API Gateway
+  # This service acts as the API gateway for the microservices architecture.
+  # It handles incoming requests, routes them to the appropriate microservice,
+  # and manages authentication and authorization.
+  # The API Gateway is built using ASP.NET Core and serves as the entry point for the frontend application.
+  # It communicates with various microservices such as Users, Orders, Payments, and Search.
+  # The API Gateway also integrates with Redis for caching, RabbitMQ for message queuing,
+  # and Auth0 for authentication.  
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/api-gateway.Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - payments
+
   # Frontend
   web:
     build:
@@ -11,18 +28,10 @@ services:
       - NEXT_PUBLIC_AUTH0_DOMAIN=your-domain.auth0.com
       - NEXT_PUBLIC_AUTH0_CLIENT_ID=your_auth0_client_id
     depends_on:
+      - gateway
       - api
     networks:
-      - adidas-network
-
-  # API Gateway
-  # This service acts as the API gateway for the microservices architecture.
-  # It handles incoming requests, routes them to the appropriate microservice,
-  # and manages authentication and authorization.
-  # The API Gateway is built using ASP.NET Core and serves as the entry point for the frontend application.
-  # It communicates with various microservices such as Users, Orders, Payments, and Search.
-  # The API Gateway also integrates with Redis for caching, RabbitMQ for message queuing,
-  # and Auth0 for authentication.     
+      - adidas-network   
 
   # API java spring boot auth Service
   api-java:
@@ -49,23 +58,23 @@ services:
       - adidas-network 
 
   # API ruby rails product Service
-  api-ruby:
-    build:  
-      context: .
-      dockerfile: docker/api-ruby.Dockerfile
-    ports:
-      - "8085:8085"
-    environment:  
-      - POSTGRES_DATABASE=verceldb
-      - POSTGRES_USER=default
-      - POSTGRES_PASSWORD=z9GYTlrXa8Qx
-      - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
-      - POSTGRES_PORT=5432
-      - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
-    depends_on:
-      - web
-    networks:
-      - adidas-network   
+  # api-ruby:
+  #   build:  
+  #     context: .
+  #     dockerfile: docker/api-ruby.Dockerfile
+  #   ports:
+  #     - "8085:8085"
+  #   environment:  
+  #     - POSTGRES_DATABASE=verceldb
+  #     - POSTGRES_USER=default
+  #     - POSTGRES_PASSWORD=z9GYTlrXa8Qx
+  #     - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
+  #     - POSTGRES_PORT=5432
+  #     - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
+  #   depends_on:
+  #     - web
+  #   networks:
+  #     - adidas-network   
   
   # API dotnet Core Service
   api:
@@ -87,12 +96,7 @@ services:
       - Services__Payments__BaseUrl=http://payments:3003
       - Services__Search__BaseUrl=http://search:3004
     depends_on:
-      - redis
-      - rabbitmq
-      - users
-      - orders
       - payments
-      - search
     networks:
       - adidas-network
 
@@ -131,7 +135,6 @@ services:
       - RABBITMQ_URL=${RABBITMQ_URL}
       - REDIS_URL=${REDIS_URL}
     depends_on:
-      - redis
       - rabbitmq
     networks:
       - adidas-network
@@ -154,21 +157,20 @@ services:
       - adidas-network
 
   # Search Service
-  search:
-    build:
-      context: .
-      dockerfile: docker/search.Dockerfile
-    ports:
-      - "3004:3004"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
-      - REDIS_URL=${REDIS_URL}
-    depends_on:
-      - redis
-      - elasticsearch
-    networks:
-      - adidas-network
+  # search:
+  #   build:
+  #     context: .
+  #     dockerfile: docker/search.Dockerfile
+  #   ports:
+  #     - "3004:3004"
+  #   environment:
+  #     - DATABASE_URL=${DATABASE_URL}
+  #     - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
+  #     - REDIS_URL=${REDIS_URL}
+  #   depends_on:
+  #     - elasticsearch
+  #   networks:
+  #     - adidas-network
 
   # Legacy PHP Service
   legacy:
