@@ -34,10 +34,9 @@ services:
       - NEXT_PUBLIC_API_URL=http://localhost:5000
       - NEXT_PUBLIC_AUTH0_DOMAIN=your-domain.auth0.com
       - NEXT_PUBLIC_AUTH0_CLIENT_ID=your_auth0_client_id
-    depends_on:
-      - api-gateway
-      - api-java
-      - api-ruby
+    # depends_on:
+    #   - api-gateway
+    #   - api-java
     networks:
       - adidas-network   
 
@@ -49,7 +48,11 @@ services:
     ports:
       - "8080:8080"
       - "5005:5005"  # 👈 Port debug
+    volumes:
+      - ./apps/spring-boilerplate/src:/app/src
+    working_dir: /app
     environment:  
+      # - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       - SPRING_PROFILES_ACTIVE=dev
       - DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
       - AUTH0_DOMAIN=your-domain.auth0.com
@@ -61,88 +64,89 @@ services:
       - SERVICES_ORDERS_BASE_URL=http://orders:3002
       - SERVICES_PAYMENTS_BASE_URL=http://payments:3003
       - SERVICES_SEARCH_BASE_URL=http://search:3004
+    command: mvn spring-boot:run
     networks:
       - adidas-network 
 
   # API ruby rails product Service
-  api-ruby:
-    build:  
-      context: .
-      dockerfile: docker/api-ruby.Dockerfile
-    ports:
-      - "8085:8085"
-    environment:  
-      - POSTGRES_DATABASE=verceldb
-      - POSTGRES_USER=default
-      - POSTGRES_PASSWORD=z9GYTlrXa8Qx
-      - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
-      - POSTGRES_PORT=5432
-      - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
-    networks:
-      - adidas-network   
+  # api-ruby:
+  #   build:  
+  #     context: .
+  #     dockerfile: docker/api-ruby.Dockerfile
+  #   ports:
+  #     - "8085:8085"
+  #   environment:  
+  #     - POSTGRES_DATABASE=verceldb
+  #     - POSTGRES_USER=default
+  #     - POSTGRES_PASSWORD=z9GYTlrXa8Qx
+  #     - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
+  #     - POSTGRES_PORT=5432
+  #     - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
+  #   networks:
+  #     - adidas-network   
   
   # API dotnet Core Service
-  api:
-    build:
-      context: .
-      dockerfile: docker/api.Dockerfile
-    ports:
-      - "5000:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=${DATABASE_URL}
-      - Auth0__Domain=${AUTH0_DOMAIN}
-      - Auth0__ClientId=${AUTH0_CLIENT_ID}
-      - Auth0__ClientSecret=${AUTH0_CLIENT_SECRET}
-      - Redis__ConnectionString=${REDIS_URL}
-      - RabbitMQ__ConnectionString=${RABBITMQ_URL}
-      - Services__Users__BaseUrl=http://users:3001
-      - Services__Orders__BaseUrl=http://orders:3002
-      - Services__Payments__BaseUrl=http://payments:3003
-      - Services__Search__BaseUrl=http://search:3004
-    depends_on:
-      - payments
-    networks:
-      - adidas-network
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: docker/api.Dockerfile
+  #   ports:
+  #     - "5000:80"
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ConnectionStrings__DefaultConnection=${DATABASE_URL}
+  #     - Auth0__Domain=${AUTH0_DOMAIN}
+  #     - Auth0__ClientId=${AUTH0_CLIENT_ID}
+  #     - Auth0__ClientSecret=${AUTH0_CLIENT_SECRET}
+  #     - Redis__ConnectionString=${REDIS_URL}
+  #     - RabbitMQ__ConnectionString=${RABBITMQ_URL}
+  #     - Services__Users__BaseUrl=http://users:3001
+  #     - Services__Orders__BaseUrl=http://orders:3002
+  #     - Services__Payments__BaseUrl=http://payments:3003
+  #     - Services__Search__BaseUrl=http://search:3004
+  #   depends_on:
+  #     - payments
+  #   networks:
+  #     - adidas-network
 
   # Users Service
-  users:
-    build:
-      context: .
-      dockerfile: docker/users.Dockerfile
-    ports:
-      - "3001:3001"
-    environment:
-      - PORT=3001
-      - NODE_ENV=development
-      - DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
-      - AUTH0_DOMAIN=your-domain.auth0.com
-      - AUTH0_CLIENT_ID=your_auth0_client_id
-      - AUTH0_CLIENT_SECRET=your_auth0_client_secret
-      - REDIS_URL=redis://redis:6379
-      - POSTGRES_PRISMA_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
-      - POSTGRES_URL_NON_POOLING=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9.us-east-1.aws.neon.tech/verceldb?sslmode=require
-    depends_on:
-      - redis
-    networks:
-      - adidas-network
+  # users:
+  #   build:
+  #     context: .
+  #     dockerfile: docker/users.Dockerfile
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     - PORT=3001
+  #     - NODE_ENV=development
+  #     - DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
+  #     - AUTH0_DOMAIN=your-domain.auth0.com
+  #     - AUTH0_CLIENT_ID=your_auth0_client_id
+  #     - AUTH0_CLIENT_SECRET=your_auth0_client_secret
+  #     - REDIS_URL=redis://redis:6379
+  #     - POSTGRES_PRISMA_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
+  #     - POSTGRES_URL_NON_POOLING=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9.us-east-1.aws.neon.tech/verceldb?sslmode=require
+  #   depends_on:
+  #     - redis
+  #   networks:
+  #     - adidas-network
 
   # Orders Service
-  orders:
-    build:
-      context: .
-      dockerfile: docker/orders.Dockerfile
-    ports:
-      - "3002:3002"
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=${DATABASE_URL}
-      - RABBITMQ_URL=${RABBITMQ_URL}
-      - REDIS_URL=${REDIS_URL}
-    depends_on:
-      - rabbitmq
-    networks:
-      - adidas-network
+  # orders:
+  #   build:
+  #     context: .
+  #     dockerfile: docker/orders.Dockerfile
+  #   ports:
+  #     - "3002:3002"
+  #   environment:
+  #     - NODE_ENV=development
+  #     - DATABASE_URL=${DATABASE_URL}
+  #     - RABBITMQ_URL=${RABBITMQ_URL}
+  #     - REDIS_URL=${REDIS_URL}
+  #   depends_on:
+  #     - rabbitmq
+  #   networks:
+  #     - adidas-network
 
   # Payments Service
   payments:
@@ -178,26 +182,26 @@ services:
   #     - adidas-network
 
   # Legacy PHP Service
-  legacy:
-    build:
-      context: .
-      dockerfile: docker/legacy.Dockerfile
-    ports:
-      - "8081:80"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-    networks:
-      - adidas-network
+  # legacy:
+  #   build:
+  #     context: .
+  #     dockerfile: docker/legacy.Dockerfile
+  #   ports:
+  #     - "8081:80"
+  #   environment:
+  #     - DATABASE_URL=${DATABASE_URL}
+  #   networks:
+  #     - adidas-network
 
   # Redis Cache
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - adidas-network
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   networks:
+  #     - adidas-network
 
   # RabbitMQ
   rabbitmq:
