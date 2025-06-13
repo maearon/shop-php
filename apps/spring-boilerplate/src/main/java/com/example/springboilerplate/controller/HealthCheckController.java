@@ -11,7 +11,6 @@ import java.util.Map;
 @RequestMapping("/")
 public class HealthCheckController {
 
-    @GetMapping("/up")
     @RequestMapping(value = "/up", method = RequestMethod.HEAD)
     public ResponseEntity<Map<String, Object>> status() {
         Map<String, Object> response = new HashMap<>();
