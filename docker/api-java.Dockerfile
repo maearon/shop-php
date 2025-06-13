@@ -31,6 +31,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
 # Development vs Production
 CMD if [ "$SPRING_PROFILES_ACTIVE" = "development" ]; then \
       mvn spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"; \
+      -Dspring-boot.run.arguments=--server.address=0.0.0.0; \
     else \
       java -jar target/*.jar; \
     fi

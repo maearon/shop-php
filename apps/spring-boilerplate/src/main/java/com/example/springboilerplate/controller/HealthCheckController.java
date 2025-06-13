@@ -19,4 +19,12 @@ public class HealthCheckController {
         response.put("timestamp", Instant.now());
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/actuator/health")
+    public ResponseEntity<Map<String, Object>> health() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "ok");
+        response.put("timestamp", Instant.now());
+        return ResponseEntity.ok(response);
+    }
 }

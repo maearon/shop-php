@@ -1,4 +1,12 @@
-FROM openresty/openresty:alpine
-COPY apps/api-gateway/nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
-COPY apps/api-gateway/lua/ /usr/local/openresty/nginx/lua/
-EXPOSE 80
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY apps/api-gateway/package*.json ./
+RUN npm install
+
+COPY apps/api-gateway/ .
+
+EXPOSE 9000
+
+CMD ["node", "server.js"]

@@ -1,0 +1,38 @@
+http:
+  port: 9000
+
+apiEndpoints:
+  login:
+    path: /api/login
+    target: http://api-java:8080
+
+  payments:
+    path: /api/payments
+    target: http://payments:3003
+
+serviceEndpoints:
+  api-java:
+    url: http://api-java:8080
+
+  payments:
+    url: http://payments:3003
+
+policies:
+  - proxy
+
+pipelines:
+  login-pipeline:
+    apiEndpoints:
+      - login
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: api-java
+
+  payments-pipeline:
+    apiEndpoints:
+      - payments
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: payments

@@ -16,14 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [web, api, users, orders, payments, search, legacy, api-java, api-ruby]
+        service: [api-gateway, web, api, users, orders, payments, search, legacy, api-java, api-ruby]
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js (for web, users, orders)
-        if: matrix.service == 'web' || matrix.service == 'users' || matrix.service == 'orders'
+      - name: Set up Node.js (for api-gateway, web, users, orders)
+        if: matrix.service == 'api-gateway' || matrix.service == 'web' || matrix.service == 'users' || matrix.service == 'orders'
         uses: actions/setup-node@v4
         with:
           node-version: '18'
@@ -64,7 +64,7 @@ jobs:
       - name: Install dependencies and test
         run: |
           case "${{ matrix.service }}" in
-            web|users|orders)
+            api-gateway|web|users|orders)
               cd apps/${{ matrix.service }}
               npm ci
               npm run test
@@ -104,7 +104,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     strategy:
       matrix:
-        service: [web, api, users, orders, payments, search, legacy, api-java, api-ruby]
+        service: [api-gateway, web, api, users, orders, payments, search, legacy, api-java, api-ruby]
 
     steps:
       - name: Checkout code

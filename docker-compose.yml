@@ -7,14 +7,21 @@ services:
   # It communicates with various microservices such as Users, Orders, Payments, and Search.
   # The API Gateway also integrates with Redis for caching, RabbitMQ for message queuing,
   # and Auth0 for authentication.  
-  gateway:
+  api-gateway:
     build:
       context: .
       dockerfile: docker/api-gateway.Dockerfile
     ports:
-      - "80:80"
-    depends_on:
-      - payments
+      - "9000:9000"
+    # volumes:
+    #   - ./apps/api-gateway:/app
+    # working_dir: /app
+    # command: node server.js
+    # depends_on:
+    #   api-java:
+    #     condition: service_healthy
+    networks:
+      - adidas-network 
 
   # Frontend
   web:
@@ -28,8 +35,9 @@ services:
       - NEXT_PUBLIC_AUTH0_DOMAIN=your-domain.auth0.com
       - NEXT_PUBLIC_AUTH0_CLIENT_ID=your_auth0_client_id
     depends_on:
-      - gateway
-      - api
+      - api-gateway
+      - api-java
+      - api-ruby
     networks:
       - adidas-network   
 
@@ -53,29 +61,25 @@ services:
       - SERVICES_ORDERS_BASE_URL=http://orders:3002
       - SERVICES_PAYMENTS_BASE_URL=http://payments:3003
       - SERVICES_SEARCH_BASE_URL=http://search:3004
-    depends_on:
-      - web
     networks:
       - adidas-network 
 
   # API ruby rails product Service
-  # api-ruby:
-  #   build:  
-  #     context: .
-  #     dockerfile: docker/api-ruby.Dockerfile
-  #   ports:
-  #     - "8085:8085"
-  #   environment:  
-  #     - POSTGRES_DATABASE=verceldb
-  #     - POSTGRES_USER=default
-  #     - POSTGRES_PASSWORD=z9GYTlrXa8Qx
-  #     - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
-  #     - POSTGRES_PORT=5432
-  #     - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
-  #   depends_on:
-  #     - web
-  #   networks:
-  #     - adidas-network   
+  api-ruby:
+    build:  
+      context: .
+      dockerfile: docker/api-ruby.Dockerfile
+    ports:
+      - "8085:8085"
+    environment:  
+      - POSTGRES_DATABASE=verceldb
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=z9GYTlrXa8Qx
+      - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
+      - POSTGRES_PORT=5432
+      - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
+    networks:
+      - adidas-network   
   
   # API dotnet Core Service
   api:
