@@ -1,5 +1,5 @@
 # Tự động xử lý line endings cho tất cả các file văn bản
-* text=auto
+* text=auto eol=lf
 
 # Ruby
 *.rb text eol=lf
