@@ -20,37 +20,36 @@ RUN apt-get install -y \
 # Create a non-root user
 RUN adduser --disabled-login --gecos "" appuser
 
-# App directory
+# Create app directory and set permissions
 RUN mkdir -p /app && chown -R appuser:appuser /app
 WORKDIR /app
 
-# Copy only Gemfile first for layer caching
-COPY ./apps/ruby-rails-boilerplate/Gemfile ./apps/ruby-rails-boilerplate/Gemfile.lock ./
+# Copy Gemfile first to leverage caching
+COPY apps/ruby-rails-boilerplate/Gemfile* ./
 RUN gem install bundler && bundle install --jobs=4 --retry=3
 
-# Copy app source
-COPY ./apps/ruby-rails-boilerplate ./ 
+# Copy remaining app files
+COPY apps/ruby-rails-boilerplate/ .
 
-# Copy entrypoint
-COPY ./apps/ruby-rails-boilerplate/entrypoint.sh /usr/bin/entrypoint.sh
-RUN chmod +x /usr/bin/entrypoint.sh
+# Change ownership to appuser after copying files
+RUN chown -R appuser:appuser /app
 
-# Use entrypoint to handle pid cleanup
-ENTRYPOINT ["entrypoint.sh"]
-
-# Precompile assets if production
+# Precompile assets only if in production
 ARG RAILS_ENV=development
 ENV RAILS_ENV=${RAILS_ENV}
 RUN if [ "$RAILS_ENV" = "production" ]; then \
       SECRET_KEY_BASE=dummy_key bundle exec rake assets:precompile; \
     fi
 
-# Expose port
+# Add health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:3000/ || exit 1
+
+# Expose Rails port
 EXPOSE 3000
 
-# Default command
-CMD ["rails", "server", "-b", "0.0.0.0"]
+# Switch to non-root user
+USER appuser
 
-# Healthcheck for production
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:3000/up || exit 1
+# Start Rails server
+CMD ["rails", "server", "-b", "0.0.0.0"]

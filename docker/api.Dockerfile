@@ -1,18 +1,25 @@
-# Build stage
+# Base image để chạy app (runtime-only)
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 5217
+
+# Build image có SDK
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy and restore project
-COPY ./apps/DotNetBoilerplate/DotNetBoilerplate.csproj ./DotNetBoilerplate/
-RUN dotnet restore ./DotNetBoilerplate/DotNetBoilerplate.csproj
+# Copy source code
+COPY ./apps/DotNetBoilerplate/ .
 
-# Copy everything else and build
-COPY ./apps/DotNetBoilerplate ./DotNetBoilerplate/
-WORKDIR /src/DotNetBoilerplate
-RUN dotnet publish -c Release -o /app/publish
+# Restore dependencies
+RUN dotnet restore "DotNetBoilerplate.csproj"
 
-# Runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+# Build và publish app ra thư mục /app/publish
+RUN dotnet publish "DotNetBoilerplate.csproj" -c Release -o /app/publish
+
+# Final image
+FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
+
+# Run app
 ENTRYPOINT ["dotnet", "DotNetBoilerplate.dll"]

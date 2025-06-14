@@ -48,9 +48,9 @@ services:
     ports:
       - "8080:8080"
       - "5005:5005"  # 👈 Port debug
-    volumes:
-      - ./apps/spring-boilerplate/src:/app/src
-    working_dir: /app
+    # volumes:
+    #   - ./apps/spring-boilerplate/src:/app/src
+    # working_dir: /app
     environment:  
       # - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       - SPRING_PROFILES_ACTIVE=dev
@@ -64,7 +64,7 @@ services:
       - SERVICES_ORDERS_BASE_URL=http://orders:3002
       - SERVICES_PAYMENTS_BASE_URL=http://payments:3003
       - SERVICES_SEARCH_BASE_URL=http://search:3004
-    command: mvn spring-boot:run
+    # command: mvn spring-boot:run
     networks:
       - adidas-network 
 
@@ -75,11 +75,11 @@ services:
       dockerfile: docker/api-ruby.Dockerfile
     ports:
       - "3000:3000"
-    volumes:
-      - ./apps/ruby-rails-boilerplate:/app
-    working_dir: /app
-    env_file:
-      - ./apps/ruby-rails-boilerplate/.env
+    # volumes:
+    #   - ./apps/ruby-rails-boilerplate:/app
+    # working_dir: /app
+    # env_file:
+    #   - ./apps/ruby-rails-boilerplate/.env
     environment:
       - CRON_SECRET=0c063e23e6ded6e0483f7107a3337b50
       - NEXT_PUBLIC_STREAM_KEY=6cqupfrs4qh3
@@ -104,13 +104,13 @@ services:
       context: .
       dockerfile: docker/api.Dockerfile
     ports:
-      - "7217:80"
-    volumes:
-      - aspnet-keys:/root/.aspnet/DataProtection-Keys
+      - "5217:5217"
+    # volumes:
+    #   - aspnet-keys:/root/.aspnet/DataProtection-Keys
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:80
-    working_dir: /app
+      - ASPNETCORE_URLS=http://+:5217   # 🔥 Cho app lắng nghe ở cổng 5217 trong container thay vì 80 mặc định
+    # working_dir: /app
     networks:
       - adidas-network
 
