@@ -1,4 +1,9 @@
-#!/bin/bash git update-index --chmod=+x apps/ruby-rails-boilerplate/entrypoint.sh
+#!/bin/bash 
+git update-index --chmod=+x apps/ruby-rails-boilerplate/entrypoint.sh
+wsl
+cd /mnt/c/Users/manhn/code/shop-php
+chmod +x apps/ruby-rails-boilerplate/entrypoint.sh
+chmod +x apps/ruby-rails-boilerplate/entrypoint.sh
 set -e
 
 # install missing gems
