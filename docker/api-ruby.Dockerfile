@@ -51,7 +51,7 @@ USER appuser
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:8085/up || exit 1
 
-RUN echo "Current files:" && ls -la ./apps/ruby-rails-boilerplate
+# RUN echo "Current files:" && ls -la ./apps/ruby-rails-boilerplate
 
 # Start Rails server
 # COPY apps/ruby-rails-boilerplate/entrypoint.sh /usr/bin/
