@@ -1,6 +1,0 @@
-@AdidasApi_HostAddress = http://localhost:5217
-
-GET {{AdidasApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

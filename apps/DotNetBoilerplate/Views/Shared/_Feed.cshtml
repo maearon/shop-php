@@ -1,0 +1,33 @@
+@using DotNetBoilerplate.Models
+@using Microsoft.AspNetCore.Identity
+@model List<Micropost>
+
+<div class="microposts">
+    @foreach (var micropost in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a asp-controller="Users" asp-action="Show" asp-route-id="@micropost.UserId">
+                        @micropost.User.Name
+                    </a>
+                </h5>
+                <p class="card-text">@micropost.Content</p>
+                @if (!string.IsNullOrEmpty(micropost.ImagePath))
+                {
+                    <img src="~/uploads/@micropost.ImagePath" alt="Micropost image" class="img-fluid mb-2" style="max-height: 200px;" />
+                }
+                <p class="card-text"><small class="text-muted">Posted @micropost.CreatedAt.ToString("g")</small></p>
+                
+                @if (micropost.UserId == UserManager.GetUserId(User))
+                {
+                    <form asp-controller="Microposts" asp-action="Delete" asp-route-id="@micropost.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this micropost?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@inject UserManager<ApplicationUser> UserManager

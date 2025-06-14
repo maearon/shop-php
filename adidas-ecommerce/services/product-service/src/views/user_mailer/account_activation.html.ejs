@@ -1,9 +1,0 @@
-<h1>Sample App</h1>
-
-<p>Hi <%= @user.name %>,</p>
-
-<p>
-Welcome to the Sample App! Click on the link below to activate your account:
-</p>
-
-<%= link_to "Activate", "https://sample-app-nextjs.vercel.app/account_activations/#{@user.activation_token}/edit?email=#{@user.email}" %>

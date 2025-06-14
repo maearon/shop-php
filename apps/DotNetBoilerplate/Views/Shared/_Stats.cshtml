@@ -1,0 +1,17 @@
+@using DotNetBoilerplate.Models
+@model ApplicationUser
+
+<div class="stats">
+    <div class="row">
+        <div class="col-6">
+            <a asp-controller="Users" asp-action="Following" asp-route-id="@Model.Id">
+                <strong id="following" class="stat">@ViewBag.FollowingCount</strong> following
+            </a>
+        </div>
+        <div class="col-6">
+            <a asp-controller="Users" asp-action="Followers" asp-route-id="@Model.Id">
+                <strong id="followers" class="stat">@ViewBag.FollowersCount</strong> followers
+            </a>
+        </div>
+    </div>
+</div>

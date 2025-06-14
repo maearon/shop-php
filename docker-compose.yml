@@ -81,8 +81,20 @@ services:
     env_file:
       - ./apps/ruby-rails-boilerplate/.env
     environment:
-      RAILS_ENV: development
-      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      - CRON_SECRET=0c063e23e6ded6e0483f7107a3337b50
+      - NEXT_PUBLIC_STREAM_KEY=6cqupfrs4qh3
+      - NEXT_PUBLIC_UPLOADTHING_APP_ID=4ccb128760a9b12e757ee0cc267c4a4f
+      - POSTGRES_DATABASE=verceldb
+      - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
+      - POSTGRES_PASSWORD=z9GYTlrXa8Qx
+      - POSTGRES_PRISMA_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require&pgbouncer=true&connect_timeout=15
+      - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require
+      - POSTGRES_URL_NO_SSL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb
+      - POSTGRES_URL_NON_POOLING=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require
+      - POSTGRES_USER=default
+      - RAILS_MASTER_KEY=6a31ee167b28ab32ab171795d2eff778
+      - STREAM_SECRET=djkppj5rnre3bfqvraufhv8asfkbtngjpx8np7xhnumnege5542sg4vvcx7wx5xq
+      - WEB_CONCURRENCY=4
     networks:
     - adidas-network
   
@@ -92,21 +104,13 @@ services:
       context: .
       dockerfile: docker/api.Dockerfile
     ports:
-      - "7217:7217"
+      - "7217:80"
+    volumes:
+      - aspnet-keys:/root/.aspnet/DataProtection-Keys
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=${DATABASE_URL}
-      - Auth0__Domain=${AUTH0_DOMAIN}
-      - Auth0__ClientId=${AUTH0_CLIENT_ID}
-      - Auth0__ClientSecret=${AUTH0_CLIENT_SECRET}
-      - Redis__ConnectionString=${REDIS_URL}
-      - RabbitMQ__ConnectionString=${RABBITMQ_URL}
-      - Services__Users__BaseUrl=http://users:3001
-      - Services__Orders__BaseUrl=http://orders:3002
-      - Services__Payments__BaseUrl=http://payments:3003
-      - Services__Search__BaseUrl=http://search:3004
-    depends_on:
-      - payments
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    working_dir: /app
     networks:
       - adidas-network
 
@@ -233,6 +237,7 @@ services:
       - adidas-network
 
 volumes:
+  aspnet-keys: {}
   redis_data:
   rabbitmq_data:
   elasticsearch_data:
