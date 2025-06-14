@@ -116,6 +116,7 @@ Thumbs.db
 go.work
 
 # .NET
+.vs/
 bin/
 obj/
 *.user

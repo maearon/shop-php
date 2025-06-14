@@ -42,7 +42,7 @@ RUN if [ "$RAILS_ENV" = "production" ]; then \
     fi
 
 # Expose Rails port
-EXPOSE 8085
+EXPOSE 3000
 
 # Switch to non-root user
 USER appuser
@@ -53,7 +53,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
 
 # Start Rails server
 CMD if [ "$RAILS_ENV" = "development" ]; then \
-      bundle install && bundle exec rails server -b 0.0.0.0 -p 8085; \
+      bundle install && bundle exec rails server -b 0.0.0.0 -p 3000; \
     else \
       bundle exec puma -C config/puma.rb; \
     fi

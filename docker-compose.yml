@@ -29,7 +29,7 @@ services:
       context: .
       dockerfile: docker/web.Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:5000
       - NEXT_PUBLIC_AUTH0_DOMAIN=your-domain.auth0.com
@@ -68,46 +68,46 @@ services:
     networks:
       - adidas-network 
 
-  # API ruby rails product Service
-  # api-ruby:
-  #   build:  
-  #     context: .
-  #     dockerfile: docker/api-ruby.Dockerfile
-  #   ports:
-  #     - "8085:8085"
-  #   environment:  
-  #     - POSTGRES_DATABASE=verceldb
-  #     - POSTGRES_USER=default
-  #     - POSTGRES_PASSWORD=z9GYTlrXa8Qx
-  #     - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
-  #     - POSTGRES_PORT=5432
-  #     - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
-  #   networks:
-  #     - adidas-network   
+  #API ruby rails product Service
+  api-ruby:
+    build:  
+      context: .
+      dockerfile: docker/api-ruby.Dockerfile
+    ports:
+      - "3000:3000"
+    environment:  
+      - POSTGRES_DATABASE=verceldb
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=z9GYTlrXa8Qx
+      - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
+      - POSTGRES_PORT=5432
+      - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
+    networks:
+      - adidas-network   
   
-  # API dotnet Core Service
-  # api:
-  #   build:
-  #     context: .
-  #     dockerfile: docker/api.Dockerfile
-  #   ports:
-  #     - "5000:80"
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ConnectionStrings__DefaultConnection=${DATABASE_URL}
-  #     - Auth0__Domain=${AUTH0_DOMAIN}
-  #     - Auth0__ClientId=${AUTH0_CLIENT_ID}
-  #     - Auth0__ClientSecret=${AUTH0_CLIENT_SECRET}
-  #     - Redis__ConnectionString=${REDIS_URL}
-  #     - RabbitMQ__ConnectionString=${RABBITMQ_URL}
-  #     - Services__Users__BaseUrl=http://users:3001
-  #     - Services__Orders__BaseUrl=http://orders:3002
-  #     - Services__Payments__BaseUrl=http://payments:3003
-  #     - Services__Search__BaseUrl=http://search:3004
-  #   depends_on:
-  #     - payments
-  #   networks:
-  #     - adidas-network
+  #API dotnet Core Service
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    ports:
+      - "7217:7217"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=${DATABASE_URL}
+      - Auth0__Domain=${AUTH0_DOMAIN}
+      - Auth0__ClientId=${AUTH0_CLIENT_ID}
+      - Auth0__ClientSecret=${AUTH0_CLIENT_SECRET}
+      - Redis__ConnectionString=${REDIS_URL}
+      - RabbitMQ__ConnectionString=${RABBITMQ_URL}
+      - Services__Users__BaseUrl=http://users:3001
+      - Services__Orders__BaseUrl=http://orders:3002
+      - Services__Payments__BaseUrl=http://payments:3003
+      - Services__Search__BaseUrl=http://search:3004
+    depends_on:
+      - payments
+    networks:
+      - adidas-network
 
   # Users Service
   # users:
@@ -194,14 +194,14 @@ services:
   #     - adidas-network
 
   # Redis Cache
-  # redis:
-  #   image: redis:7-alpine
-  #   ports:
-  #     - "6379:6379"
-  #   volumes:
-  #     - redis_data:/data
-  #   networks:
-  #     - adidas-network
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - adidas-network
 
   # RabbitMQ
   rabbitmq:
