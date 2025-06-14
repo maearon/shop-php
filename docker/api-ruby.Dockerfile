@@ -29,6 +29,7 @@ COPY apps/ruby-rails-boilerplate/Gemfile apps/ruby-rails-boilerplate/Gemfile.loc
 RUN gem install bundler && bundle install --jobs=4 --retry=3
 
 # Copy remaining app files
+COPY entrypoint.sh ./
 # COPY apps/ruby-rails-boilerplate/ .
 
 # Change ownership to appuser after copying files
