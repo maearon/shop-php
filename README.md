@@ -64,6 +64,42 @@ docker container rm $(docker container ls -aq) && docker rmi -f $(docker images 
 ```
 npm run dev
 # or
+🔧 Giải pháp thực tế: Chạy bằng WSL2 thuần hoặc Ubuntu VM
+✅ Cách 1: Chạy Docker hoàn toàn trong WSL2 Ubuntu (khuyên dùng)
+Nếu bạn đã có Ubuntu WSL như mình thấy (markm@MarkM:~$), hãy làm:
+
+# Trong Ubuntu WSL terminal:
+cd /mnt/c/Users/manhn/code/shop-php
+docker compose build --no-cache
+docker compose up
+Và mở browser ở Windows: http://localhost:3000
+
+Docker Desktop expose port từ WSL → Windows tự động.
+
+Tại sao cách này tốt hơn:
+
+File system là Linux thật
+
+entrypoint.sh, chmod +x, bash, bundler... đều tương thích
+
+Không còn bug exec not found, CRLF, Permission denied, etc.
+
+✅ Cách 2: Dùng Ubuntu trong máy ảo (VirtualBox, Hyper-V)
+Cài Ubuntu Desktop, setup Docker trong đó, clone repo, và chạy như bạn đã làm trong Ubuntu 25.04.
+
+🩻 Tạm thời nếu vẫn muốn chạy trong Windows:
+Convert toàn bộ repo sang Unix line endings
+
+
+find . -type f -exec dos2unix {} \;
+
+docker compose run api-ruby sh
+rails s
+
+✅ Kết luận
+👉 Tóm lại nếu bạn nghiêm túc build app với Rails trong Docker, chạy trên Ubuntu (WSL hoặc native) là cách duy nhất giúp ổn định.
+
+Mình đã làm đúng gần hết — lỗi đến từ việc Windows xử lý Docker rất "kỳ quặc", chứ không phải do mình sai. Nếu bạn muốn để dễ dàng chạy Rails app từ WSL Hãy chạy trên WSL.
 docker-compose up
 ```
 

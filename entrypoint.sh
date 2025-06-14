@@ -1,16 +1,8 @@
-#!/bin/bash 
-git update-index --chmod=+x apps/ruby-rails-boilerplate/entrypoint.sh
-wsl
-cd /mnt/c/Users/manhn/code/shop-php
-chmod +x apps/ruby-rails-boilerplate/entrypoint.sh
-chmod +x apps/ruby-rails-boilerplate/entrypoint.sh
+#!/bin/bash
 set -e
 
-# install missing gems
-bundle check || bundle install --jobs 20 --retry 5
+# Xoá server.pid nếu có (tránh lỗi "server already running")
+rm -f /app/tmp/pids/server.pid
 
-# Remove a potentially pre-existing server.pid for Rails.
-rm -f ./tmp/pids/server.pid
-
-# Then exec the container's main process (what's set as CMD in the Dockerfile).
-exec "$@"
+# Chạy Rails server
+exec bundle exec rails server -b 0.0.0.0 -p 3000

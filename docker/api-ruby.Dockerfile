@@ -24,43 +24,39 @@ RUN adduser --disabled-login --gecos "" appuser
 RUN mkdir -p /app && chown -R appuser:appuser /app
 WORKDIR /app
 
-# Copy Gemfile first to leverage caching
-COPY apps/ruby-rails-boilerplate/Gemfile apps/ruby-rails-boilerplate/Gemfile.lock ./
+# Copy Gemfile first
+COPY ./apps/ruby-rails-boilerplate/Gemfile apps/ruby-rails-boilerplate/Gemfile.lock ./
 RUN gem install bundler && bundle install --jobs=4 --retry=3
 
-# Copy remaining app files
-COPY entrypoint.sh ./
-# COPY apps/ruby-rails-boilerplate/ .
+# Copy the rest of app
+COPY ./apps/ruby-rails-boilerplate ./
+COPY ./apps/ruby-rails-boilerplate/entrypoint.sh /usr/bin/entrypoint.sh
 
-# Change ownership to appuser after copying files
-RUN chown -R appuser:appuser /app
+# Make sure entrypoint is executable
+RUN chmod +x ./entrypoint.sh
 
-# Precompile assets only if in production
+# Precompile assets if production
 ARG RAILS_ENV=development
 ENV RAILS_ENV=${RAILS_ENV}
 RUN if [ "$RAILS_ENV" = "production" ]; then \
       SECRET_KEY_BASE=dummy_key bundle exec rake assets:precompile; \
     fi
 
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:3000/up || exit 1
+
 # Expose Rails port
 EXPOSE 3000
 
-# Switch to non-root user
+# Switch user
 USER appuser
 
-# Add health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:8085/up || exit 1
-
-# RUN echo "Current files:" && ls -la ./apps/ruby-rails-boilerplate
-
-# Start Rails server
-# COPY vào thư mục có quyền
-COPY apps/ruby-rails-boilerplate/entrypoint.sh /app/entrypoint.sh
-# COPY apps/ruby-rails-boilerplate/entrypoint.sh /usr/bin/
+# Set entrypoint
+# ENTRYPOINT ["./entrypoint.sh"]
+# Thêm trước CMD
 # COPY entrypoint.sh /usr/bin/
-# Đặt quyền thực thi cho user appuser
-# RUN chmod +x /app/entrypoint.sh
-#RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+# RUN chmod +x /usr/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
+CMD []

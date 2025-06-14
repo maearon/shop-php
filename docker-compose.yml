@@ -75,8 +75,9 @@ services:
       dockerfile: docker/api-ruby.Dockerfile
     ports:
       - "3000:3000"
-    volumes:
-      - ./apps/ruby-rails-boilerplate:/app
+    # Tạm thời comment để test
+    # volumes:
+    #   - ./apps/ruby-rails-boilerplate:/app
     working_dir: /app
     environment:  
       - POSTGRES_DATABASE=verceldb
@@ -85,7 +86,7 @@ services:
       - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
       - POSTGRES_PORT=5432
       - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
-    command: bash -c "bundle install && rm -f tmp/pids/server.pid && rails server -b 0.0.0.0 -p 3000"
+    # command: ["rails", "server", "-b", "0.0.0.0", "-p", "3000"]
     networks:
       - adidas-network   
   

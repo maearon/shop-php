@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# Remove a potentially pre-existing server.pid
+# Xoá server.pid nếu có (tránh lỗi "server already running")
 rm -f /app/tmp/pids/server.pid
 
-# Start the main process
-exec "$@"
+# Chạy Rails server
+exec bundle exec rails server -b 0.0.0.0 -p 3000
