@@ -75,11 +75,11 @@ services:
       dockerfile: docker/api-ruby.Dockerfile
     ports:
       - "3000:3000"
-    # volumes:
-    #   - ./apps/ruby-rails-boilerplate:/app
-    # working_dir: /app
-    # env_file:
-    #   - ./apps/ruby-rails-boilerplate/.env
+    volumes:
+      - ./apps/ruby-rails-boilerplate:/app
+    working_dir: /app
+    env_file:
+      - ./apps/ruby-rails-boilerplate/.env
     environment:
       - CRON_SECRET=0c063e23e6ded6e0483f7107a3337b50
       - NEXT_PUBLIC_STREAM_KEY=6cqupfrs4qh3
