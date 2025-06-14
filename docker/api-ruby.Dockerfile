@@ -54,7 +54,12 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
 # RUN echo "Current files:" && ls -la ./apps/ruby-rails-boilerplate
 
 # Start Rails server
+# COPY vào thư mục có quyền
+COPY apps/ruby-rails-boilerplate/entrypoint.sh /app/entrypoint.sh
 # COPY apps/ruby-rails-boilerplate/entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
+# COPY entrypoint.sh /usr/bin/
+# Đặt quyền thực thi cho user appuser
+# RUN chmod +x /app/entrypoint.sh
+#RUN chmod +x /usr/bin/entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["rails", "server", "-b", "0.0.0.0", "-p", "3000"]
