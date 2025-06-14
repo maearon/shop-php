@@ -98,13 +98,19 @@ rm config/credentials.yml.enc config/master.key
 EDITOR="nano" rails credentials:edit
 File encrypted and saved.
 rails s
-rails s
+git rm -r --cached .
+git add .
+git commit -m "chore: clear Git cache to respect .gitignore"
 
 ✅ Kết luận
 👉 Tóm lại nếu bạn nghiêm túc build app với Rails trong Docker, chạy trên Ubuntu (WSL hoặc native) là cách duy nhất giúp ổn định.
 
 Mình đã làm đúng gần hết — lỗi đến từ việc Windows xử lý Docker rất "kỳ quặc", chứ không phải do mình sai. Nếu bạn muốn để dễ dàng chạy Rails app từ WSL Hãy chạy trên WSL.
 docker-compose up
+rails s
+git rm -r --cached .
+git add .
+git commit -m "chore: clear Git cache to respect .gitignore"
 ```
 
 4. Services will be available at:

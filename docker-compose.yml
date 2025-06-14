@@ -70,25 +70,21 @@ services:
 
   #API ruby rails product Service
   api-ruby:
-    build:  
+    build:
       context: .
       dockerfile: docker/api-ruby.Dockerfile
     ports:
       - "3000:3000"
-    # Tạm thời comment để test
-    # volumes:
-    #   - ./apps/ruby-rails-boilerplate:/app
+    volumes:
+      - ./apps/ruby-rails-boilerplate:/app
     working_dir: /app
-    environment:  
-      - POSTGRES_DATABASE=verceldb
-      - POSTGRES_USER=default
-      - POSTGRES_PASSWORD=z9GYTlrXa8Qx
-      - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
-      - POSTGRES_PORT=5432
-      - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
-    # command: ["rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+    env_file:
+      - ./apps/ruby-rails-boilerplate/.env
+    environment:
+      RAILS_ENV: development
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
     networks:
-      - adidas-network   
+    - adidas-network
   
   #API dotnet Core Service
   api:

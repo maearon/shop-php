@@ -20,20 +20,23 @@ RUN apt-get install -y \
 # Create a non-root user
 RUN adduser --disabled-login --gecos "" appuser
 
-# Create app directory and set permissions
+# App directory
 RUN mkdir -p /app && chown -R appuser:appuser /app
 WORKDIR /app
 
-# Copy Gemfile first
-COPY ./apps/ruby-rails-boilerplate/Gemfile apps/ruby-rails-boilerplate/Gemfile.lock ./
+# Copy only Gemfile first for layer caching
+COPY ./apps/ruby-rails-boilerplate/Gemfile ./apps/ruby-rails-boilerplate/Gemfile.lock ./
 RUN gem install bundler && bundle install --jobs=4 --retry=3
 
-# Copy the rest of app
-COPY ./apps/ruby-rails-boilerplate ./
-COPY ./apps/ruby-rails-boilerplate/entrypoint.sh /usr/bin/entrypoint.sh
+# Copy app source
+COPY ./apps/ruby-rails-boilerplate ./ 
 
-# Make sure entrypoint is executable
-RUN chmod +x ./entrypoint.sh
+# Copy entrypoint
+COPY ./apps/ruby-rails-boilerplate/entrypoint.sh /usr/bin/entrypoint.sh
+RUN chmod +x /usr/bin/entrypoint.sh
+
+# Use entrypoint to handle pid cleanup
+ENTRYPOINT ["entrypoint.sh"]
 
 # Precompile assets if production
 ARG RAILS_ENV=development
@@ -42,21 +45,12 @@ RUN if [ "$RAILS_ENV" = "production" ]; then \
       SECRET_KEY_BASE=dummy_key bundle exec rake assets:precompile; \
     fi
 
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:3000/up || exit 1
-
-# Expose Rails port
+# Expose port
 EXPOSE 3000
 
-# Switch user
-USER appuser
+# Default command
+CMD ["rails", "server", "-b", "0.0.0.0"]
 
-# Set entrypoint
-# ENTRYPOINT ["./entrypoint.sh"]
-# Thêm trước CMD
-# COPY entrypoint.sh /usr/bin/
-# RUN chmod +x /usr/bin/entrypoint.sh
-
-ENTRYPOINT ["/usr/bin/entrypoint.sh"]
-CMD []
+# Healthcheck for production
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:3000/up || exit 1
