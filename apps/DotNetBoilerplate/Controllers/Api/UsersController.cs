@@ -1,4 +1,4 @@
-﻿using DotNetBoilerplate.Data;
+using DotNetBoilerplate.Data;
 using DotNetBoilerplate.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
