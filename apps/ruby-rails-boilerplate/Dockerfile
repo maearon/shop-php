@@ -1,55 +1,66 @@
-# Use stable Ruby image
-FROM ruby:3.4.2
+# syntax = docker/dockerfile:1
 
-# Install Node.js and Yarn using corepack
-RUN apt-get update && apt-get install -y curl \
-    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && corepack enable
+# This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
+# docker build -t my-app .
+# docker run -d -p 80:80 -p 443:443 --name my-app -e RAILS_MASTER_KEY=<value from config/master.key> my-app
 
-# Install base dependencies
-RUN apt-get install -y \
-    libvips-dev \
-    build-essential \
-    libpq-dev \
-    git && \
-    apt-get clean autoclean && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
+# Make sure RUBY_VERSION matches the Ruby version in .ruby-version
+ARG RUBY_VERSION=3.1.2
+FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
-# Create a non-root user
-RUN adduser --disabled-login --gecos "" appuser
+# Rails app lives here
+WORKDIR /rails
 
-# Create app directory and set permissions
-RUN mkdir -p /app && chown -R appuser:appuser /app
-WORKDIR /app
+# Install base packages
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-# Copy Gemfile first to leverage caching
+# Set production environment
+ENV RAILS_ENV="production" \
+    BUNDLE_DEPLOYMENT="1" \
+    BUNDLE_PATH="/usr/local/bundle" \
+    BUNDLE_WITHOUT="development"
+
+# Throw-away build stage to reduce size of final image
+FROM base AS build
+
+# Install packages needed to build gems
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential git libpq-dev pkg-config && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Install application gems
 COPY Gemfile Gemfile.lock ./
-RUN gem install bundler && bundle install --jobs=4 --retry=3
+RUN bundle install && \
+    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+    bundle exec bootsnap precompile --gemfile
 
-# Copy remaining app files
+# Copy application code
 COPY . .
 
-# Change ownership to appuser after copying files
-RUN chown -R appuser:appuser /app
+# Precompile bootsnap code for faster boot times
+RUN bundle exec bootsnap precompile app/ lib/
 
-# Precompile assets only if in production
-ARG RAILS_ENV=development
-ENV RAILS_ENV=${RAILS_ENV}
-RUN if [ "$RAILS_ENV" = "production" ]; then \
-      SECRET_KEY_BASE=dummy_key bundle exec rake assets:precompile; \
-    fi
 
-# Add health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:3000/ || exit 1
 
-# Expose Rails port
+
+# Final stage for app image
+FROM base
+
+# Copy built artifacts: gems, application
+COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
+COPY --from=build /rails /rails
+
+# Run and own only the runtime files as a non-root user for security
+RUN groupadd --system --gid 1000 rails && \
+    useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
+    chown -R rails:rails db log storage tmp
+USER 1000:1000
+
+# Entrypoint prepares the database.
+ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+
+# Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-
-# Switch to non-root user
-USER appuser
-
-# Start Rails server
-CMD ["rails", "server", "-b", "0.0.0.0"]
+CMD ["./bin/rails", "server"]

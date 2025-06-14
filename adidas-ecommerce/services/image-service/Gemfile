@@ -48,12 +48,6 @@ gem "bcrypt"
 # Create fake data types
 gem "faker"
 # gem "will_paginate"
-# gem "bootstrap-will_paginate"
-gem "bootstrap-sass"
-# Use Sass(not use) OR Scss(using) to process CSS
-gem "sassc-rails"
-# The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-gem "sprockets-rails"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
@@ -102,7 +96,6 @@ end
 # gem 'faker'
 # gem 'will_paginate'
 # gem 'bootstrap-will_paginate'
-# gem 'bootstrap-sass'
 # gem 'sassc-rails'
 # gem 'mini_magick'
 gem 'kaminari'
@@ -115,7 +108,6 @@ gem 'cocoon'
 # gem 'coffee-rails'
 # This gem allows resetting the id of an AR table to 0. It is useful after a delete_all command
 gem 'activerecord_reset_pk_sequence'
-gem 'font-awesome-sass'
 # gem 'slim'
 # gem 'rails-i18n'
 gem 'jquery-rails'

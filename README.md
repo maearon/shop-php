@@ -94,6 +94,10 @@ Convert toàn bộ repo sang Unix line endings
 find . -type f -exec dos2unix {} \;
 
 docker compose run api-ruby sh
+rm config/credentials.yml.enc config/master.key
+EDITOR="nano" rails credentials:edit
+File encrypted and saved.
+rails s
 rails s
 
 ✅ Kết luận
