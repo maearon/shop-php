@@ -1,0 +1,65 @@
+# Tự động xử lý line endings cho tất cả các file văn bản
+* text=auto
+
+# Ruby
+*.rb text eol=lf
+*.rake text eol=lf
+*.gemspec text eol=lf
+
+# Node.js / Frontend
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.svelte text eol=lf
+
+# Go
+*.go text eol=lf
+
+# Docker
+Dockerfile text eol=lf
+*.dockerignore text eol=lf
+
+# Shell / Bash
+*.sh text eol=lf
+*.bash text eol=lf
+
+# YAML / Config
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.env text eol=lf
+
+# Java / Spring Boot
+*.java text eol=lf
+*.gradle text eol=lf
+*.properties text eol=lf
+*.xml text eol=lf
+
+# .NET / C#
+*.cs text eol=lf
+*.csproj text eol=lf
+*.sln text eol=lf
+
+# Markdown / Docs
+*.md text eol=lf
+*.txt text eol=lf
+
+# Ignore binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.pdf binary
+*.zip binary
+*.exe binary
+*.dll binary

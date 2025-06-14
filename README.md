@@ -96,15 +96,22 @@ Convert toàn bộ repo sang Unix line endings
 
 
 find . -type f -exec dos2unix {} \;
+git config --global core.autocrlf false
+dos2unix $(find . -type f)
+git rm --cached -r .
+git reset
+git add .
+git commit -m "Normalize line endings across all files using .gitattributes"
 
 docker compose run api-ruby sh
 rm config/credentials.yml.enc config/master.key
 EDITOR="nano" rails credentials:edit
 File encrypted and saved.
 rails s
-git rm -r --cached .
+git rm --cached -r .
+git reset --hard
 git add .
-git commit -m "chore: clear Git cache to respect .gitignore"
+git commit -m "Normalize line endings across all files using .gitattributes"
 
 ✅ Kết luận
 👉 Tóm lại nếu bạn nghiêm túc build app với Rails trong Docker, chạy trên Ubuntu (WSL hoặc native) là cách duy nhất giúp ổn định.
