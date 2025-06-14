@@ -75,6 +75,9 @@ services:
       dockerfile: docker/api-ruby.Dockerfile
     ports:
       - "3000:3000"
+    volumes:
+      - ./apps/ruby-rails-boilerplate:/app
+    working_dir: /app
     environment:  
       - POSTGRES_DATABASE=verceldb
       - POSTGRES_USER=default

@@ -29,7 +29,7 @@ COPY apps/ruby-rails-boilerplate/Gemfile apps/ruby-rails-boilerplate/Gemfile.loc
 RUN gem install bundler && bundle install --jobs=4 --retry=3
 
 # Copy remaining app files
-COPY apps/ruby-rails-boilerplate/ .
+# COPY apps/ruby-rails-boilerplate/ .
 
 # Change ownership to appuser after copying files
 RUN chown -R appuser:appuser /app
@@ -51,9 +51,10 @@ USER appuser
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:8085/up || exit 1
 
+RUN echo "Current files:" && ls -la ./apps/ruby-rails-boilerplate
+
 # Start Rails server
-CMD if [ "$RAILS_ENV" = "development" ]; then \
-      bundle install && bundle exec rails server -b 0.0.0.0 -p 3000; \
-    else \
-      bundle exec puma -C config/puma.rb; \
-    fi
+# COPY apps/ruby-rails-boilerplate/entrypoint.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.sh
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["rails", "server", "-b", "0.0.0.0", "-p", "3000"]
