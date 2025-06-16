@@ -192,9 +192,10 @@ services:
     build:
       context: ./apps/django-boilerplate
     command: python manage.py consume_product_events
+    volumes:
+      - ./apps/django-boilerplate:/app
     depends_on:
       - rabbitmq
-      - api-ruby
     environment:
       - RABBITMQ_HOST=rabbitmq
     networks:
