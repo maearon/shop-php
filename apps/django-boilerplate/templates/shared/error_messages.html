@@ -1,0 +1,17 @@
+{% if form.errors %}
+  <div id="error_explanation">
+    <div class="alert alert-danger">
+      The form contains {{ form.errors|length }} error{{ form.errors|length|pluralize }}.
+    </div>
+    <ul>
+      {% for field in form %}
+        {% for error in field.errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}

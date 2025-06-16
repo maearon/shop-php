@@ -1,0 +1,14 @@
+<form method="post" action="{% url 'microposts:create' %}" enctype="multipart/form-data">
+  {% csrf_token %}
+  {% include "shared/error_messages.html" with form=form %}
+
+  <div class="field">
+    {{ form.content }}
+  </div>
+
+  <button type="submit" class="btn btn-primary">Post</button>
+
+  <span class="image">
+    {{ form.image }}
+  </span>
+</form>

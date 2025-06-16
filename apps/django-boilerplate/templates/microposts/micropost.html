@@ -1,0 +1,28 @@
+<li id="micropost-{{ micropost.id }}">
+  <a href="{% url 'accounts:user_detail' micropost.user.id %}">
+    <img src="{{ micropost.user.gravatar_url }}" alt="gravatar" class="gravatar" width="50" height="50">
+  </a>
+
+  <span class="user">user_detail
+    <a href="{% url 'accounts:user_detail' micropost.user.id %}">{{ micropost.user.name }}</a>
+  </span>
+
+  <span class="content">
+    {{ micropost.content|linebreaks }}
+    {% if micropost.image %}
+      <br>
+      <img src="{{ micropost.image.url }}" alt="micropost image" class="micropost-image">
+    {% endif %}
+  </span>
+
+  <span class="timestamp">
+    Posted {{ micropost.created_at|timesince }} ago.
+    {% if user == micropost.user %}
+      |
+      <form method="post" action="{% url 'microposts:delete' micropost.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-link" onclick="return confirm('You sure?');">delete</button>
+      </form>
+    {% endif %}
+  </span>
+</li>

@@ -1,0 +1,5 @@
+<form method="post" action="{% url 'relationships:follow_user' viewed_user.pk %}">
+  {% csrf_token %}
+  <input type="hidden" name="followed_id" value="{{ viewed_user.id }}">
+  <button type="submit" class="btn btn-primary">Follow</button>
+</form>

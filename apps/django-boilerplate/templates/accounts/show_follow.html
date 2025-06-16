@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <aside class="col-md-4">
+    <section class="user_info text-center">
+      <img src="{{ user.gravatar_url|default:'#' }}?s=50" alt="Avatar" class="rounded-circle" width="80" height="80">
+      <h1>{{ viewed_user.name }}</h1>
+      <span><a href="{% url 'accounts:user_detail' user.pk %}">View my profile</a></span><br>
+      <span><strong>Microposts:</strong> {{ microposts_count }}</span>
+    </section>
+
+    <section class="stats mt-3">
+      {% include "shared/stats.html" with user=user %}
+      {% if page_obj.object_list %}
+        <div class="user_avatars mt-2 d-flex flex-wrap gap-2 justify-content-center">
+          {% for user in page_obj.object_list %}
+            <a href="{% url 'accounts:user_detail' user.pk %}">
+              <img src="{{ user.gravatar_url }}" class="rounded-circle" width="30" height="30" alt="{{ user.name }}">
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </section>
+  </aside>
+
+  <div class="col-md-8">
+    <h3>{{ title }}</h3>
+    {% if page_obj.object_list %}
+      <ul class="users follow list-unstyled">
+        {% for user in page_obj.object_list %}
+          <li>
+            <a href="{% url 'accounts:user_detail' user.pk %}">
+              {{ user.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+      {% include "shared/pagination.html" with page_obj=page_obj %}
+    {% else %}
+      <p>No users found.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+<a href="{% url 'accounts:user_detail' user.id %}">
+  <img src="{{ user.gravatar_url|default:'#' }}?s=50" alt="{{ user.username }}" class="gravatar">
+</a>
+
+<h1>{{ user.name|default:user.username }}</h1>
+
+<span>
+  <a href="{% url 'accounts:user_detail' user.id %}">View my profile</a>
+</span>
+
+<span>
+  {{ microposts_count }} micropost{{ microposts_count|pluralize }}
+</span>

@@ -1,0 +1,5 @@
+<form method="post" action="{% url 'relationships:unfollow_user' viewed_user.pk %}">
+  {% csrf_token %}
+  <input type="hidden" name="_method" value="DELETE">
+  <button type="submit" class="btn">Unfollow</button>
+</form>

@@ -1,0 +1,15 @@
+<div class="stats">
+  <a href="{% url 'accounts:following' user.id %}">
+    <strong id="following" class="stat">
+      {{ following_count }}
+    </strong>
+    following
+  </a>
+
+  <a href="{% url 'accounts:followers' user.id %}">
+    <strong id="followers" class="stat">
+      {{ followers_count }}
+    </strong>
+    followers
+  </a>
+</div>

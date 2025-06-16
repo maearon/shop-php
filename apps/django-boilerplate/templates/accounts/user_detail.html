@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <aside class="col-md-4">
+    <section>
+      <h1>
+        <img src="{{ user.gravatar_url }}" alt="{{ user.name }}" class="gravatar">
+        {{ user.name }}
+      </h1>
+    </section>
+    <section class="stats">
+      {% include "shared/stats.html" with user=user %}
+    </section>
+  </aside>
+
+  <div class="col-md-8">
+    {% if request.user.is_authenticated and viewed_user.id != user.id %}
+      {% include "accounts/_follow_form.html" with user=user %}
+    {% endif %}
+
+    {% if page_obj %}
+      <h3>Microposts ({{ page_obj.paginator.count }})</h3>
+      <ol class="microposts">
+        {% for micropost in page_obj %}
+          <li>
+            <p>{{ micropost.content }}</p>
+            {% if micropost.image %}
+              <img src="{{ micropost.image.url }}" style="max-width: 200px;">
+            {% endif %}
+            <p><small>{{ micropost.created_at }}</small></p>
+          </li>
+        {% endfor %}
+      </ol>
+      {% include "shared/pagination.html" with page_obj=page_obj %}
+    {% else %}
+      <p>This user has no microposts.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}All users{% endblock %}
+
+{% block content %}
+  <h1>All users</h1>
+
+  {% include "shared/pagination.html" with page_obj=users %}
+
+  <ul class="users">
+    {% for user in page_obj %}
+      <li>
+        <a href="{% url 'accounts:user_detail' user.pk %}">
+          {{ user.username }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  {% include "shared/pagination.html" with page_obj=users %}
+{% endblock %}

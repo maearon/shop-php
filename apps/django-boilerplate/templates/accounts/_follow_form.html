@@ -1,0 +1,9 @@
+{% if user != viewed_user %}
+  <div id="follow_form">
+    {% if is_following %}
+      {% include 'accounts/_unfollow.html' %}
+    {% else %}
+      {% include 'accounts/_follow.html' %}
+    {% endif %}
+  </div>
+{% endif %}

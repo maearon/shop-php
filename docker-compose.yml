@@ -171,20 +171,20 @@ services:
       - adidas-network
 
   # Search Service
-  # search:
-  #   build:
-  #     context: .
-  #     dockerfile: docker/search.Dockerfile
-  #   ports:
-  #     - "3004:3004"
-  #   environment:
-  #     - DATABASE_URL=${DATABASE_URL}
-  #     - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
-  #     - REDIS_URL=${REDIS_URL}
-  #   depends_on:
-  #     - elasticsearch
-  #   networks:
-  #     - adidas-network
+  api-python:
+    build:
+      context: .
+      dockerfile: docker/api-python.Dockerfile
+    volumes:
+      - ./apps/django-boilerplate:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - elasticsearch
+      - redis
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - REDIS_URL=redis://redis:6379
 
   # Legacy PHP Service
   # legacy:
