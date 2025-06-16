@@ -1,4 +1,49 @@
 # Rails REST API + NextJS boilerplate 🇻🇳
+```
+docker compose exec api-ruby # rails c 
+Loading development environment (Rails 8.0.2)
+ruby-rails-boilerplate(dev)> Product.first
+  Product Load (232.4ms)  SELECT "products".* FROM "products" ORDER BY "products"."id" ASC LIMIT 1 /*application='RubyRailsBoilerplate'*/
+=> 
+#<Product:0x00007cd380cd9a30
+ id: 1,
+ name: "Loose Oversized Shirt",
+ jan_code: "08861",
+ gender: "Men",
+ franchise: "Tubular",
+ producttype: "Wear",
+ brand: "Originals",
+ category: "Shoes",
+ sport: "Running",
+ description_h5: nil,
+ description_p: nil,
+ specifications: nil,
+ care: nil,
+ created_at: "2025-06-09 09:33:39.611675000 +0000",
+ updated_at: "2025-06-09 09:33:39.611675000 +0000">
+ruby-rails-boilerplate(dev)> 
+
+ruby-rails-boilerplate(dev)> Product.first.variants.count
+  Product Load (235.1ms)  SELECT "products".* FROM "products" ORDER BY "products"."id" ASC LIMIT 1 /*application='RubyRailsBoilerplate'*/
+  Variant Count (236.8ms)  SELECT COUNT(*) FROM "variants" WHERE "variants"."product_id" = 1 /*application='RubyRailsBoilerplate'*/
+=> 4
+ruby-rails-boilerplate(dev)> Product.first.variants.first
+  Product Load (236.1ms)  SELECT "products".* FROM "products" ORDER BY "products"."id" ASC LIMIT 1 /*application='RubyRailsBoilerplate'*/
+  Variant Load (240.6ms)  SELECT "variants".* FROM "variants" WHERE "variants"."product_id" = 1 ORDER BY "variants"."id" ASC LIMIT 1 /*application='RubyRailsBoilerplate'*/
+=> 
+#<Variant:0x00007cd380207f80
+ id: 1,
+ color: "Black",
+ price: 65.0,
+ originalprice: 90.0,
+ sku: "AQ0886",
+ stock: 1000,
+ product_id: 1,
+ created_at: "2025-06-09 09:33:39.916636000 +0000",
+ updated_at: "2025-06-09 09:34:01.255263000 +0000">
+
+docker compose exec api-ruby bundle exec rake products:reindex
+```
 ## Description
 
 Rails REST API boilerplate for typical project can connect and interact with Posgres default by Prisma

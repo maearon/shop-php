@@ -14,11 +14,33 @@ module Rabbitmq
           event: "product.created",
           data: {
             id: product.id,
-            title: product.title,
-            price: product.price,
-            image_url: Rails.application.routes.url_helpers.rails_blob_url(product.image, only_path: false),
-            availableSizes: product.availableSizes,
-            currency: product.currencyFormat
+            name: product.name,
+            jan_code: product.jan_code,
+            gender: product.gender,
+            franchise: product.franchise,
+            producttype: product.producttype,
+            brand: product.brand,
+            category: product.category,
+            sport: product.sport,
+            description_h5: product.description_h5,
+            description_p: product.description_p,
+            specifications: product.specifications,
+            care: product.care,
+            created_at: product.created_at,
+            updated_at: product.updated_at,
+            variants: product.variants.map do |variant|
+              {
+                id: variant.id,
+                color: variant.color,
+                price: variant.price,
+                original_price: variant.originalprice,
+                sku: variant.sku,
+                stock: variant.stock,
+                product_id: variant.product_id,
+                created_at: variant.created_at,
+                updated_at: variant.updated_at,
+              }
+            end
           }
         }.to_json,
         routing_key: "product.created",

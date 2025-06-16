@@ -188,6 +188,18 @@ services:
     networks:
       - adidas-network
 
+  api-python-search-consumer:
+    build:
+      context: ./apps/django-boilerplate
+    command: python manage.py consume_product_events
+    depends_on:
+      - rabbitmq
+      - api-ruby
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    networks:
+      - adidas-network
+
   # Legacy PHP Service
   # legacy:
   #   build:

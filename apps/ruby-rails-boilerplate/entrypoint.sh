@@ -1,4 +1,8 @@
 #!/bin/bash
+set -e
+
+echo "🧹 Xoá server.pid cũ nếu có..."
+rm -f /app/tmp/pids/server.pid
 
 echo "🧹 Xoá credentials cũ nếu tồn tại..."
 rm -f config/credentials.yml.enc config/master.key
