@@ -1,8 +1,11 @@
 ```
 python3 --version
 pip3 --version
-python3 -m venv venv
-source venv/bin/activate
+python -m venv venv
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\venv\Scripts\activate        # Linux: source venv/bin/activate
+pip install -r requirements.txt
+
 pip install django
 django-admin --version
 django-admin startproject django_boilerplate

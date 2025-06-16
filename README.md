@@ -76,6 +76,9 @@ Nếu bạn đã có Ubuntu WSL như mình thấy (markm@MarkM:~$), hãy làm:
 
 # Trong Ubuntu WSL terminal:
 cd /mnt/c/Users/manhn/code/shop-php
+asdf local ruby 3.4.2
+bin/rails server --binding=0.0.0.0 --port=3000
+
 docker compose build --no-cache
 docker compose up
 Và mở browser ở Windows: http://localhost:3000

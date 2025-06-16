@@ -14,6 +14,7 @@ class Api::ProductsController < Api::ApiController
   def create
     @product = Product.new(product_params)
     if @product.save
+      Rabbitmq::ProductEventPublisher.publish(@product)
       render json: @product, status: :created
     else
       response422_with_error(@product.errors.messages)
