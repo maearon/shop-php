@@ -30,6 +30,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     # ✅ Auth static frontend
     path('admin/', admin.site.urls),
+    path('api/search/', include('apps.search.urls')),
     path('', include('apps.static_pages.urls')),
     path('accounts/', include('apps.accounts.urls')),
 

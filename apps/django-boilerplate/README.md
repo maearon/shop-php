@@ -7,6 +7,6 @@ pip install django
 django-admin --version
 django-admin startproject django_boilerplate
 pip install elasticsearch redis psycopg2-binary python-dotenv
-python manage.py startapp search
+python manage.py startapp apps/search
 pip freeze > requirements.txt
 ```

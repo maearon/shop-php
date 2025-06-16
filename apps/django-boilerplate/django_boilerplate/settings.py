@@ -41,6 +41,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    'apps.search',
     'apps.accounts',
     'apps.events',
     'apps.microposts',
