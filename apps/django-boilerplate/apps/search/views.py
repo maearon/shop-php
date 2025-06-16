@@ -15,8 +15,8 @@ from rest_framework.parsers import JSONParser
 load_dotenv()
 
 # Init clients
-es = Elasticsearch([os.getenv("ELASTICSEARCH_URL", "http://localhost:9200")])
-redis_client = redis.Redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"))
+es = Elasticsearch([os.getenv("ELASTICSEARCH_URL", "http://elasticsearch:9200")])
+redis_client = redis.Redis.from_url(os.getenv("REDIS_URL", "redis://redis:6379"))
 
 @api_view(['GET'])
 def health_check(request):

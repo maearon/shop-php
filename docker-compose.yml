@@ -185,6 +185,8 @@ services:
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
       - REDIS_URL=redis://redis:6379
+    networks:
+      - adidas-network
 
   # Legacy PHP Service
   # legacy:
