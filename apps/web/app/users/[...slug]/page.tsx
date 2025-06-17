@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from 'next/link'
 import { SetStateAction, useCallback, useEffect, useState } from 'react'
 import { useAppSelector } from '../@/store/hooks'
-import { selectUser } from '../@/store/sessionSlice'
+import { selectUser } from '@/store/sessionSlice'
 import userApi, { IUserFollow, UserFollow } from '../../../components/shared/api/userApi'
 import flashMessage from '../../../components/shared/flashMessages'
 import Pagination from 'react-js-pagination'
