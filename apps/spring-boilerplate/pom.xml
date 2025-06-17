@@ -67,6 +67,12 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+		<!-- Springdoc OpenAPI UI for Swagger -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.5.0</version>
+		</dependency>
 		<!-- PostgreSQL -->
 		<dependency>
 			<groupId>org.postgresql</groupId>

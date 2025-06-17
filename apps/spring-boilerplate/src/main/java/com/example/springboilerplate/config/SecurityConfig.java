@@ -108,6 +108,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/signup", "/api/login", "/error").permitAll()
                 .requestMatchers("/account-activation/**").permitAll()
                 .requestMatchers("/password-resets/**").permitAll()
+                .requestMatchers(
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**"
+                ).permitAll()
                 .anyRequest().authenticated()
             );
 
