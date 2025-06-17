@@ -167,6 +167,8 @@ services:
       - RABBITMQ_URL=${RABBITMQ_URL}
     depends_on:
       - rabbitmq
+      - elasticsearch
+      - redis
     networks:
       - adidas-network
 
@@ -180,6 +182,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      - rabbitmq
       - elasticsearch
       - redis
     environment:
@@ -196,6 +199,8 @@ services:
       - ./apps/django-boilerplate:/app
     depends_on:
       - rabbitmq
+      - elasticsearch
+      - redis
     environment:
       - RABBITMQ_HOST=rabbitmq
     networks:
@@ -226,12 +231,18 @@ services:
   # RabbitMQ
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:

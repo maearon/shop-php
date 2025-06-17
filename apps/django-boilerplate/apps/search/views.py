@@ -1,16 +1,11 @@
-# search/views.py
-
 import os
 import json
 import redis
-import psycopg2
 from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
-from django.http import JsonResponse
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.parsers import JSONParser
 
 load_dotenv()
 
@@ -20,17 +15,20 @@ redis_client = redis.Redis.from_url(os.getenv("REDIS_URL", "redis://redis:6379")
 
 @api_view(['GET'])
 def health_check(request):
-    return JsonResponse({"status": "healthy", "service": "search"})
+    return Response({"status": "healthy", "service": "search"})
 
 @api_view(['POST'])
 def search_products(request):
+    if not es.indices.exists(index="products"):
+        return Response({"detail": "Elasticsearch index not ready."}, status=503)
+
     try:
         data = request.data
         cache_key = f"search:{hash(str(data))}"
         cached_result = redis_client.get(cache_key)
 
         if cached_result:
-            return JsonResponse(json.loads(cached_result), safe=False)
+            return Response(json.loads(cached_result))
 
         query = {
             "bool": {
@@ -46,6 +44,9 @@ def search_products(request):
                     "fields": ["name^2", "description", "category", "brand"]
                 }
             })
+
+        if not query["bool"]["must"]:
+            query["bool"]["must"].append({ "match_all": {} })
 
         if data.get("category"):
             query["bool"]["filter"].append({
@@ -88,9 +89,9 @@ def search_products(request):
                 "id": hit["_id"],
                 "name": source["name"],
                 "description": source.get("description", ""),
-                "price": source["price"],
-                "category": source["category"],
-                "brand": source["brand"],
+                "price": source.get("price"),
+                "category": source.get("category"),
+                "brand": source.get("brand"),
                 "image_url": source.get("image_url", ""),
                 "score": hit["_score"]
             })
@@ -103,17 +104,17 @@ def search_products(request):
         }
 
         redis_client.setex(cache_key, 300, json.dumps(result))
-        return JsonResponse(result, safe=False)
+        return Response(result)
 
     except Exception as e:
-        return JsonResponse({"detail": f"Search error: {str(e)}"}, status=500)
+        return Response({"detail": f"Search error: {str(e)}"}, status=500)
 
 @api_view(['GET'])
 def get_suggestions(request):
     try:
         q = request.GET.get("q", "")
         if len(q) < 2:
-            return JsonResponse({"detail": "Query too short"}, status=400)
+            return Response({"detail": "Query too short"}, status=400)
 
         response = es.search(
             index="products",
@@ -131,10 +132,10 @@ def get_suggestions(request):
         )
 
         suggestions = [option["text"] for option in response["suggest"]["product_suggest"][0]["options"]]
-        return JsonResponse({"suggestions": suggestions})
+        return Response({"suggestions": suggestions})
 
     except Exception as e:
-        return JsonResponse({"detail": f"Suggestions error: {str(e)}"}, status=500)
+        return Response({"detail": f"Suggestions error: {str(e)}"}, status=500)
 
 @api_view(['POST'])
 def index_product(request):
@@ -158,10 +159,7 @@ def index_product(request):
         for key in redis_client.scan_iter(match="search:*"):
             redis_client.delete(key)
 
-        return JsonResponse({"message": "Product indexed successfully"})
+        return Response({"message": "Product indexed successfully"})
 
     except Exception as e:
-        return JsonResponse({"detail": f"Indexing error: {str(e)}"}, status=500)
-from django.shortcuts import render
-
-# Create your views here.
+        return Response({"detail": f"Indexing error: {str(e)}"}, status=500)

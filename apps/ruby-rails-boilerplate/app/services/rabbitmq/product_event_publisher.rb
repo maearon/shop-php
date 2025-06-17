@@ -33,12 +33,12 @@ module Rabbitmq
                 id: variant.id,
                 color: variant.color,
                 price: variant.price,
-                original_price: variant.originalprice,
+                originalprice: variant.originalprice, # chú ý key đồng bộ
                 sku: variant.sku,
                 stock: variant.stock,
                 product_id: variant.product_id,
                 created_at: variant.created_at,
-                updated_at: variant.updated_at,
+                updated_at: variant.updated_at
               }
             end
           }
@@ -48,7 +48,6 @@ module Rabbitmq
       )
 
       puts "📤 Published product.created event for product ##{product.id}"
-
       connection.close
     end
   end
