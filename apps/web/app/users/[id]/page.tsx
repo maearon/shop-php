@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import Pagination from 'react-js-pagination';
-import { useAppSelector } from '../@/store/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { selectUser } from '@/store/sessionSlice';
 import micropostApi, { Micropost } from '../../../components/shared/api/micropostApi';
 import relationshipApi from '../../../components/shared/api/relationshipApi';
