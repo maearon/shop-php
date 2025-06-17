@@ -89,7 +89,7 @@ export default function Header() {
               <Input placeholder="Search" className="w-48" />
               <Search className="h-5 w-5" />
             </div>
-            <Link href="/login" className="relative">
+            <Link href="/login" className="relative" title="Login">
               <User className="h-5 w-5 cursor-pointer" />
             </Link>
 

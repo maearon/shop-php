@@ -35,3 +35,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* global.css hoặc tailwind.config.js */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.05;
+  }
+  50% {
+    opacity: 0.1;
+  }
+}

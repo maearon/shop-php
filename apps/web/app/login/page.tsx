@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { fetchUser, selectUser, User } from '@/store/sessionSlice'
+import type { AppDispatch } from '@/redux/store'
 import sessionApi, { Response } from '@/components/shared/api/sessionApi'
 import flashMessage from '@/components/shared/flashMessages'
 import { ErrorMessage, Field, Form, Formik, FormikProps, useFormik, withFormik } from 'formik'
@@ -12,6 +12,8 @@ import * as Yup from 'yup'
 // import TextError from '../../components/shared/TextError'
 import ShowErrors, { ErrorMessageType } from '@/components/shared/errorMessages';
 import { useAppSelector } from '@/redux/hooks';
+import FullScreenLoader from '@/components/ui/FullScreenLoader';
+import { fetchUser, selectUser, User } from '@/store/sessionSlice';
 
 const initialValues = {
   email: '',
@@ -34,7 +36,7 @@ const New: NextPage = () => {
   const [rememberMe, setRememberme] = useState(true)
   const inputEl = useRef() as MutableRefObject<HTMLInputElement>
   const [errors, setErrors] = useState<ErrorMessageType>({});
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
   const [loading, setLoading] = useState(true)
   const userData = useAppSelector(selectUser)
   
@@ -78,10 +80,10 @@ const New: NextPage = () => {
         inputEl.current.blur()
         if (rememberMe) {
           localStorage.setItem("token", response.tokens.access.token)
-          localStorage.setItem("refresh_token", response.tokens.refresh.token)
+          localStorage.setItem("remember_token", response.tokens.access.token)
         } else {
           sessionStorage.setItem("token", response.tokens.access.token)
-          sessionStorage.setItem("refresh_token", response.tokens.refresh.token)
+          sessionStorage.setItem("remember_token", response.tokens.access.token)
         }
         dispatch(fetchUser())
         router.push("/")
@@ -103,7 +105,7 @@ const New: NextPage = () => {
 
   return loading ? (
     <>
-    <div>Loading...</div>
+    <FullScreenLoader />
     </>
   ) : userData.error ? (
     <h2>{userData.error}</h2>
