@@ -30,7 +30,7 @@ export const fetchUser = createAsyncThunk('session/getCurrentUser', async () => 
 });
 
 export const sessionSlice = createSlice({
-  name: 'user',
+  name: 'session',
   initialState,
   reducers: {
   },

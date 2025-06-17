@@ -4,21 +4,28 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Input } from "@/components/ui/input"
-import { Search, ShoppingBag, User, Heart, MenuIcon } from "lucide-react"
+import { Search, ShoppingBag, User, Heart, MenuIcon, LogOut, LogIn } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAppSelector } from "@/store/hooks"
 import MegaMenu from "./mega-menu"
+import sessionApi from "./shared/api/sessionApi"
+import { fetchUser, selectUser } from "@/store/sessionSlice"
+import flashMessage from "./shared/flashMessages"
+import router from "next/router"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "@/store/store"
 
 export default function Header() {
   const pathname = usePathname()
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
+  const dispatch = useDispatch<AppDispatch>()
+  const userData = useAppSelector(selectUser)
 
   // Get cart and wishlist counts from Redux
   const cartItemsCount = useAppSelector((state) => state.cart.items.reduce((total, item) => total + item.quantity, 0))
   const wishlistItemsCount = useAppSelector((state) => state.wishlist.items.length)
 
   const navItems = [
-    { name: "SHOES", href: "/shoes" },
     { name: "MEN", href: "/men" },
     { name: "WOMEN", href: "/women" },
     { name: "KIDS", href: "/kids" },
@@ -33,6 +40,50 @@ export default function Header() {
   const handleMouseLeave = () => {
     setActiveMenu(null)
   }
+
+  const onClick = async (e: any) => {
+    e.preventDefault();
+    
+    try {
+      // Call the API to destroy the session
+      const response = await sessionApi.destroy();
+      
+      // Always clear local and session storage
+      localStorage.removeItem("token");
+      localStorage.removeItem("remember_token");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("accessToken");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("remember_token");
+      sessionStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("accessToken");
+      await dispatch(fetchUser()); // Fetch user data if needed
+  
+      // Check the response status
+      if (response.status === 401) {
+        flashMessage("error", "Unauthorized")
+      }
+      
+      // Redirect to home page
+      router.push("/");
+    } catch (error) {
+      // Handle error and show flash message
+      flashMessage("error", "Logout error: " + error);
+      // Always clear local and session storage
+      localStorage.removeItem("token");
+      localStorage.removeItem("remember_token");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("accessToken");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("remember_token");
+      sessionStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("accessToken");
+      await dispatch(fetchUser()); // Fetch user data if needed
+  
+      // Check the response status
+      flashMessage("error", "Unauthorized")
+    }
+  };
 
   return (
     <header className="relative border-b border-gray-200">
@@ -112,6 +163,15 @@ export default function Header() {
                 </span>
               )}
             </Link>
+            {userData.value.email ? (
+              <Link href="#logout" onClick={onClick}>
+                <LogOut className="h-5 w-5 cursor-pointer" />
+              </Link>
+            ) : (
+              <Link href="/login">
+                <LogIn className="h-5 w-5 cursor-pointer" />
+              </Link>
+            )}
 
             <MenuIcon className="h-5 w-5 cursor-pointer md:hidden" />
           </div>
