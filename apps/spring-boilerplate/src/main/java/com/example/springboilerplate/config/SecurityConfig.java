@@ -98,8 +98,7 @@ public class SecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/up", "/favicon.ico", "/static/**", "/css/**", "/js/**").permitAll()
-                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/favicon.ico").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/api/password-reset/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()

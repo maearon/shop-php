@@ -4,9 +4,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { fetchUser, selectUser, User } from '../../redux/session/sessionSlice'
-import sessionApi, { Response } from '../../components/shared/api/sessionApi'
-import flashMessage from '../../components/shared/flashMessages'
+import { fetchUser, selectUser, User } from '@/store/sessionSlice'
+import sessionApi, { Response } from '@/components/shared/api/sessionApi'
+import flashMessage from '@/components/shared/flashMessages'
 import { ErrorMessage, Field, Form, Formik, FormikProps, useFormik, withFormik } from 'formik'
 import * as Yup from 'yup'
 // import TextError from '../../components/shared/TextError'
@@ -32,7 +32,7 @@ const New: NextPage = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberme] = useState(true)
-  const inputEl = useRef<HTMLInputElement>(null)
+  const inputEl = useRef() as MutableRefObject<HTMLInputElement>
   const [errors, setErrors] = useState<ErrorMessageType>({});
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(true)
@@ -69,19 +69,19 @@ const New: NextPage = () => {
         session: {
           email: values.email,
           password: values.password,
-          remember_me: values.rememberMe ? "1" : "1"
+          // remember_me: values.rememberMe ? "1" : "1"
         }
       }
     )
     .then(response => {
       if (response.user) {
-        // inputEl.current.blur()
+        inputEl.current.blur()
         if (rememberMe) {
           localStorage.setItem("token", response.tokens.access.token)
-          localStorage.setItem("remember_token", response.tokens.access.token)
+          localStorage.setItem("refresh_token", response.tokens.refresh.token)
         } else {
           sessionStorage.setItem("token", response.tokens.access.token)
-          sessionStorage.setItem("remember_token", response.tokens.access.token)
+          sessionStorage.setItem("refresh_token", response.tokens.refresh.token)
         }
         dispatch(fetchUser())
         router.push("/")

@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private static final List<String> EXCLUDED_PATHS = List.of(
-        "/", "/up", "/favicon.ico", "/static/**", "/css/**", "/js/**",
+        "/favicon.ico",
         "/swagger-ui.html",
         "/swagger-ui/**",
         "/v3/api-docs/**",
@@ -49,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
+        System.out.println("JWT filter triggered for: " + request.getRequestURI());
         String path = request.getRequestURI();
 
         // Bỏ qua filter cho các URL không cần xác thực
@@ -61,25 +62,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             
 
             String jwt = getJwtFromRequest(request);
+            System.out.println("Extracted jwt from token: " + request);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 String userId = null;
                 try {
                     userId = tokenProvider.getUserIdFromJWT(jwt);
+                    System.out.println("Extracted userId from token: " + userId);
                 } catch (Exception e) {
                     logger.warn("Invalid JWT while extracting user ID", e);
                 }
 
                 if (userId != null) {
-                    // proceed with authentication
+                    UserDetails userDetails = customUserDetailsService.loadUserById(userId);
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
-
-                UserDetails userDetails = customUserDetailsService.loadUserById(userId);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (TokenExpiredException ex) {
             logger.warn("Token expired: " + ex.getMessage(), ex);

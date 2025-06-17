@@ -89,7 +89,9 @@ export default function Header() {
               <Input placeholder="Search" className="w-48" />
               <Search className="h-5 w-5" />
             </div>
-            <User className="h-5 w-5 cursor-pointer" />
+            <Link href="/login" className="relative">
+              <User className="h-5 w-5 cursor-pointer" />
+            </Link>
 
             {/* Wishlist with count */}
             <Link href="/wishlist" className="relative">
