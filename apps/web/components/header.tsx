@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Input } from "@/components/ui/input"
@@ -24,6 +24,22 @@ export default function Header() {
   // Get cart and wishlist counts from Redux
   const cartItemsCount = useAppSelector((state) => state.cart.items.reduce((total, item) => total + item.quantity, 0))
   const wishlistItemsCount = useAppSelector((state) => state.wishlist.items.length)
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        await dispatch(fetchUser());
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [dispatch]);
 
   const navItems = [
     { name: "MEN", href: "/men" },
@@ -163,7 +179,9 @@ export default function Header() {
                 </span>
               )}
             </Link>
-            {userData.value.email ? (
+            {loading ? (
+              <li>Loading...</li>
+            ) : userData.value.email ? (
               <Link href="#logout" onClick={onClick}>
                 <LogOut className="h-5 w-5 cursor-pointer" />
               </Link>
