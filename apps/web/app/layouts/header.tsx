@@ -2,10 +2,10 @@
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
-import { fetchUser, selectUser } from '../../redux/session/sessionSlice';
+import { fetchUser, selectUser } from '@/store/sessionSlice';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppSelector } from '@/store/hooks';
 import sessionApi from '../../components/shared/api/sessionApi';
 import flashMessage from '@/components/shared/flashMessages';
 

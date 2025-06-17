@@ -1,7 +1,7 @@
 // import { ListParams, ListResponse, Student } from 'models';
 import API from '.';
 import { Micropost } from './micropostApi';
-import { User as UserCreate } from '../../../redux/session/sessionSlice';
+import { User as UserCreate } from '../@/store/sessionSlice';
 
 export interface ListParams {
   page?: number
