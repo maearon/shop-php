@@ -1,15 +1,32 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent } from "@/components/ui/card"
 import { Search, ArrowRight, Tag } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
+import cartApi, { Cart } from "@/components/shared/api/cartApi"
+import { selectUser } from "@/store/sessionSlice"
+import { User } from "@/components/shared/api/userApi"
 
 export default function CheckoutPage() {
-  const cartItems = useAppSelector((state) => state.cart.items)
+  // const cartItems = useAppSelector((state) => state.cart.items)
+  const [cartItemsRails, setCartItemsRails] = useState([] as Cart[])
+  const [users, setUsers] = useState([] as User[])
+  const [page, setPage] = useState(1)
+  const [total_count, setTotalCount] = useState(1)
+  const current_user = useAppSelector(selectUser);
+
+  useEffect(() => {
+    cartApi.index({page: page}
+    ).then(response => {
+      setCartItemsRails(response.carts)
+    })
+    .catch(console.error)
+  }, [])
+
   const [formData, setFormData] = useState({
     email: "manhng132@gmail.com",
     firstName: "",
@@ -29,14 +46,14 @@ export default function CheckoutPage() {
   const [showPromoCode, setShowPromoCode] = useState(false)
 
   // Calculate totals
-  const subtotal = cartItems.reduce(
+  const subtotal = cartItemsRails.reduce(
     (sum, item) => sum + Number.parseFloat(item.price.replace("$", "")) * item.quantity,
     0,
   )
   const salesTax = subtotal * 0.12
   const delivery = 0 // Free delivery
   const total = subtotal + salesTax + delivery
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0)
+  const totalItems = cartItemsRails.reduce((sum, item) => sum + item.quantity, 0)
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -260,7 +277,7 @@ export default function CheckoutPage() {
             </div>
 
             {/* Order Items */}
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               {cartItems.map((item) => (
                 <Card key={item.id} className="border rounded-none">
                   <CardContent className="flex p-4">
@@ -282,7 +299,7 @@ export default function CheckoutPage() {
                   </CardContent>
                 </Card>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

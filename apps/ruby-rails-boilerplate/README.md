@@ -1,5 +1,29 @@
 # Rails REST API + NextJS boilerplate 🇻🇳
 ```
+Không mở editor, tránh bị treo EDITOR=true rails credentials:edit
+
+
+
+# Tạo thư mục log và file log nếu chưa có, rồi set quyền
+mkdir -p log
+sudo touch log/development.log
+sudo chmod 0664 log/development.log
+
+# Tạo thư mục tmp/pids nếu chưa có, rồi set quyền
+mkdir -p tmp/pids
+sudo chmod -R 0775 tmp
+
+sudo chown -R $USER:$USER .
+
+
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ lsof -i :3000
+COMMAND  PID    USER  FD   TYPE DEVICE SIZE/OFF NODE NAME
+chrome  4409 maearon  48u  IPv6 300874      0t0  TCP ip6-localhost:55824->ip6-localhost:3000 (ESTABLISHED)
+chrome  4409 maearon 138u  IPv6 179729      0t0  TCP ip6-localhost:59310->ip6-localhost:3000 (ESTABLISHED)
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ sudo lsof -t -i :3000 | xargs sudo kill -9
+
+
+
 docker compose exec api-ruby # rails c 
 Loading development environment (Rails 8.0.2)
 ruby-rails-boilerplate(dev)> Product.first
