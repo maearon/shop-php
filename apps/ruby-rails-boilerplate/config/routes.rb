@@ -10,8 +10,8 @@ Rails.application.routes.draw do
   post   '/login',   to: 'sessions#create'
   delete '/logout',  to: 'sessions#destroy'
   get    '/my-account',    to: 'users#show'                # tag 1
-  get    '/my-account/order-history' ,    to: 'users#edit' # tag 2
-  get    '/my-account/profile' ,    to: 'orders#index'     # tag 3
+  get    '/my-account/order-history' ,    to: 'orders#edit' # tag 2
+  get    '/my-account/profile' ,    to: 'users#edit'     # tag 3
   # resources :users, except: [:edit] do
   # mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   resources :users do
@@ -70,13 +70,33 @@ Rails.application.routes.draw do
     resources :post_medias,         only: [:create, :destroy]
     resources :posts,               only: [:create, :destroy]
     resources :relationships,       only: [:create, :destroy]
-    resources :products
     namespace :v1 do
       get "users", to: "users#index"
       get "products", to: "products#index"
       get "wish", to: "wish#index"
       get "cart", to: "cart#index"
     end
+    # namespace :v2 do
+    # get    '/my-account',    to: 'users#show'                # tag 1
+    # get    '/my-account/order-history' ,    to: 'orders#edit' # tag 2
+    # get    '/my-account/profile' ,    to: 'users#edit'     # tag 3
+    resources :products, only: [:index, :show, :create, :destroy] do
+      resources :reviews
+    end
+    resources :cart_items, only: [:create, :update, :destroy]
+    resources :guest_cart_items, only: [:create, :update, :destroy]
+    resources :cart, only: [:index]
+    resources :wish, only: [:index]
+    resources :wish_items, only: [:create, :destroy]
+    resources :guest_wish_items, only: [:create, :destroy]
+    # get 'wish', to: 'wish#index'
+    resources :orders
+    # get 'checkout1', to: 'orders#checkout1'
+    # get 'checkout2', to: 'orders#checkout2'
+    # get 'checkout3', to: 'orders#checkout3'
+    # get 'checkout4', to: 'orders#checkout4'
+    # get 'checkout5', to: 'orders#checkout5'
+    # get 'addresses', to: 'addresses#index'
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

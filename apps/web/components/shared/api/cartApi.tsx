@@ -99,7 +99,7 @@ export interface Response {
 
 const cartApi = {
   index(params: ListParams): Promise<ListResponse<Cart>> {
-    const url = '/carts';
+    const url = '/cart';
     return API.get(url, { params });
   },
 

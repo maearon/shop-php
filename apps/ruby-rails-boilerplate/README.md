@@ -1,5 +1,8 @@
 # Rails REST API + NextJS boilerplate 🇻🇳
 ```
+http://localhost:3000/rails/info/routes ---> /api/cart?page=1
+
+
 Không mở editor, tránh bị treo EDITOR=true rails credentials:edit
 
 
