@@ -47,7 +47,7 @@ serviceEndpoints:
     url: http://api-java:8080
 
   api-ruby:
-    url: http://payments:3000
+    url: http://api-ruby:3000
 
   payments:
     url: http://payments:3003
