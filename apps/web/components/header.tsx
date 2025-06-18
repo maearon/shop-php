@@ -87,11 +87,11 @@ export default function Header() {
       flashMessage("error", "Logout error: " + error);
       // Always clear local and session storage
       localStorage.removeItem("token");
-      localStorage.removeItem("remember_token");
+      localStorage.removeItem("refresh_token");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("accessToken");
       sessionStorage.removeItem("token");
-      sessionStorage.removeItem("remember_token");
+      sessionStorage.removeItem("refresh_token");
       sessionStorage.removeItem("refreshToken");
       sessionStorage.removeItem("accessToken");
       await dispatch(fetchUser()); // Fetch user data if needed
@@ -156,7 +156,7 @@ export default function Header() {
               <Input placeholder="Search" className="w-48" />
               <Search className="h-5 w-5" />
             </div>
-            <Link href="/login" className="relative" title="Login">
+            <Link href="/account-login" className="relative" title="Login">
               <User className="h-5 w-5 cursor-pointer" />
             </Link>
 
@@ -186,7 +186,7 @@ export default function Header() {
                 <LogOut className="h-5 w-5 cursor-pointer" />
               </Link>
             ) : (
-              <Link href="/login">
+              <Link href="/account-login">
                 <LogIn className="h-5 w-5 cursor-pointer" />
               </Link>
             )}
