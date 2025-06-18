@@ -4,7 +4,7 @@ let BASE_URL = ''
 if (process.env.NODE_ENV === 'development') {
   BASE_URL = 'http://localhost:9000/api'
 } else {
-  BASE_URL = 'https://spring-boilerplate.onrender.com/api'
+  BASE_URL = 'http://localhost:9000/api'
 }
 
 axios.defaults.xsrfCookieName = 'CSRF-TOKEN';
