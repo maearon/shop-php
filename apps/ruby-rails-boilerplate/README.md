@@ -1,5 +1,88 @@
 # Rails REST API + NextJS boilerplate 🇻🇳
+
+
+https://guides.rubyonrails.org/association_basics.html
+https://stackoverflow.com/questions/11600928/when-to-use-a-has-many-through-relation-in-rails
+https://edgeapi.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html
 ```
+Nếu tất cả 372 variants đều thuộc loại Shoes và mỗi Shoes variant có 10 size, thì:
+
+✅ Tổng số variant_sizes sẽ là:
+Copy
+Edit
+372 variants × 10 sizes = 3,720 variant_sizes
+👉 Vậy sau khi chạy task gán size, bảng variant_sizes sẽ có 3,720 bản ghi.
+
+
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails variants:assign_sizes
+✅ Assigned 10 sizes to variant 1 (Shoes)
+✅ Assigned 10 sizes to variant 2 (Shoes)
+✅ Assigned 10 sizes to variant 3 (Shoes)
+✅ Assigned 10 sizes to variant 4 (Shoes)
+✅ Assigned 10 sizes to variant 5 (Shoes)
+✅ Assigned 10 sizes to variant 6 (Shoes)
+✅ Assigned 10 sizes to variant 7 (Shoes)
+✅ Assigned 10 sizes to variant 8 (Shoes)
+✅ Assigned 10 sizes to variant 9 (Shoes)
+✅ Assigned 10 sizes to variant 10 (Shoes)
+✅ Assigned 10 sizes to variant 11 (Shoes)
+✅ Assigned 10 sizes to variant 12 (Shoes)
+✅ Assigned 10 sizes to variant 13 (Shoes)
+✅ Assigned 10 sizes to variant 14 (Shoes)
+✅ Assigned 10 sizes to variant 15 (Shoes)
+✅ Assigned 10 sizes to variant 16 (Shoes)
+✅ Assigned 10 sizes to variant 17 (Shoes)
+
+......
+
+
+✅ Assigned 10 sizes to variant 372 (Shoes)
+
+
+
+
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:migrate:status | grep carts
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:seed
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:migrate:status | grep carts
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:schema:dump
+
+
+
+
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ 
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ 
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ 
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ 
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails c
+Loading development environment (Rails 8.0.2)
+ruby-rails-boilerplate(dev)> Size.pluck(:label, :system)
+  Size Pluck (356.7ms)  SELECT "sizes"."label", "sizes"."system" FROM "sizes" /*application='RubyRailsBoilerplate'*/
+=> 
+[["XS", "alpha"],
+ ["S", "alpha"],
+ ["M", "alpha"],
+ ["L", "alpha"],
+ ["XL", "alpha"],
+ ["XXL", "alpha"],
+ ["36", "numeric"],
+ ["37", "numeric"],
+ ["38", "numeric"],
+ ["39", "numeric"],
+ ["40", "numeric"],
+ ["41", "numeric"],
+ ["42", "numeric"],
+ ["43", "numeric"],
+ ["44", "numeric"],
+ ["45", "numeric"],
+ ["One Size", "one_size"]]
+ruby-rails-boilerplate(dev)> Size.group(:system).count
+  Size Count (678.6ms)  SELECT COUNT(*) AS "count_all", "sizes"."system" AS "sizes_system" FROM "sizes" GROUP BY "sizes"."system" /*application='RubyRailsBoilerplate'*/
+=> {"one_size" => 1, "alpha" => 6, "numeric" => 10}
+ruby-rails-boilerplate(dev)> 
+
+
+
+
 http://localhost:3000/rails/info/routes ---> /api/cart?page=1
 
 

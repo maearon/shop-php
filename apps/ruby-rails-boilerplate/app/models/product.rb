@@ -8,6 +8,7 @@ class Product < ApplicationRecord
   BRAND = %w{ Originals Athletics Essentials }
   CATEGORY = %w{ Shoes Compression Accessories Apparel }
   SPORT = %w{ Running Soccer Football }
+  SIZES = %w{XS S M L XL XXL}
 
   has_many :variants, inverse_of: :product, dependent: :destroy
   accepts_nested_attributes_for :variants, reject_if: :all_blank, allow_destroy: true

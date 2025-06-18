@@ -34,10 +34,11 @@ export interface CartItem {
   id: number;
   quantity: number;
   cart_id: number;
-  product_id: number;
-  variant_id: number;
   product: Product;
   variant: Variant;
+  size: string;
+  product_id: number;
+  variant_id: number;
   created_at: string;  // ISO 8601 format
   updated_at: string;
 }
@@ -66,6 +67,8 @@ export interface Variant {
   originalprice?: number;
   sku?: string;
   stock?: number;
+  size: string[];
+  images: string[];
   product_id: number;
   created_at: string; // ISO timestamp
   updated_at: string;

@@ -6,6 +6,8 @@ class Variant < ApplicationRecord
   has_many :wish_items
   has_many :order_items
   belongs_to :product
+  has_many :variant_sizes
+  has_many :sizes, through: :variant_sizes
 
   has_one_attached :avatar
   has_one_attached :hover

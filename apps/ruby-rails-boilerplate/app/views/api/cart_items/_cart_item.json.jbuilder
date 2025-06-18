@@ -30,6 +30,13 @@ json.variant do
   json.sku            cart_item.variant.sku
   json.stock          cart_item.variant.stock
   json.product_id     cart_item.variant.product_id
+  json.images cart_item.variant.images.map { |image|
+    if image.attached?
+      "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{url_for(image.variant(:display))}"
+    end
+  }.compact
   json.created_at     cart_item.variant.created_at
   json.updated_at     cart_item.variant.updated_at
 end
+
+json.size    cart_item.size

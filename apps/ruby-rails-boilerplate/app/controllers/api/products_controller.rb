@@ -8,6 +8,14 @@ class Api::ProductsController < Api::ApiController
   end
 
   def show
+    
+    @product.variants.each do |variant|
+      puts "Variant #{variant.color}:"
+      variant.sizes.each do |size|
+        puts "- #{size.label} (#{size.system})"
+      end
+    end
+
     render json: @product
   end
 

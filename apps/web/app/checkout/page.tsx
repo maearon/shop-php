@@ -278,29 +278,29 @@ export default function CheckoutPage() {
             </div>
 
             {/* Order Items */}
-            {/* <div className="space-y-4">
-              {cartItems.map((item) => (
+            <div className="space-y-4">
+              {cartItemsRails.map((item) => (
                 <Card key={item.id} className="border rounded-none">
                   <CardContent className="flex p-4">
                     <div className="w-20 h-20 mr-4">
                       <img
-                        src={item.image || "/placeholder.png"}
-                        alt={item.name}
+                        src={item.variant.images[0] || "/placeholder.png"}
+                        alt={item.product.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-bold text-sm">{item.name}</h3>
-                      <p className="text-sm font-bold">{item.price}</p>
+                      <h3 className="font-bold text-sm">{item.product.name}</h3>
+                      <p className="text-sm font-bold">{item.variant.price}</p>
                       <p className="text-xs text-gray-600">
                         Size: {item.size} / Quantity: {item.quantity}
                       </p>
-                      <p className="text-xs text-gray-600">Color: {item.color}</p>
+                      <p className="text-xs text-gray-600">Color: {item.variant.color}</p>
                     </div>
                   </CardContent>
                 </Card>
               ))}
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
