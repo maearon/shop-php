@@ -6,6 +6,38 @@ apiEndpoints:
     path: /api/login
     target: http://api-java:8080
 
+  logout:
+    path: /api/logout
+    target: http://api-java:8080
+
+  sessions:
+    path: /api/sessions
+    target: http://api-java:8080
+
+  refresh:
+    path: /api/refresh
+    target: http://api-java:8080
+
+  revoke:
+    path: /api/revoke
+    target: http://api-java:8080
+
+  products:
+    path: /api/products
+    target: http://api-ruby:3000
+
+  cart:
+    path: /api/cart
+    target: http://api-ruby:3000
+
+  wish:
+    path: /api/wish
+    target: http://api-ruby:3000
+
+  orders:
+    path: /api/orders
+    target: http://api-ruby:3000
+
   payments:
     path: /api/payments
     target: http://payments:3003
@@ -13,6 +45,9 @@ apiEndpoints:
 serviceEndpoints:
   api-java:
     url: http://api-java:8080
+
+  api-ruby:
+    url: http://payments:3000
 
   payments:
     url: http://payments:3003
@@ -28,7 +63,62 @@ pipelines:
       - proxy:
           - action:
               serviceEndpoint: api-java
-
+  logout-pipeline:
+    apiEndpoints:
+      - logout
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: api-java
+  sessions-pipeline:
+    apiEndpoints:
+      - sessions
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: api-java
+  refresh-pipeline:
+    apiEndpoints:
+      - refresh
+    policies: 
+      - proxy:
+          - action:
+              serviceEndpoint: api-java
+  revoke-pipeline:
+    apiEndpoints:
+      - revoke
+    policies: 
+      - proxy:
+          - action:
+              serviceEndpoint: api-java
+  products-pipeline:
+    apiEndpoints:
+      - products
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: api-ruby
+  cart-pipeline:
+    apiEndpoints:
+      - cart
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: api-ruby
+  wish-pipeline:
+    apiEndpoints:
+      - wish
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: api-ruby
+  orders-pipeline:
+    apiEndpoints:
+      - orders        
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: api-ruby
   payments-pipeline:
     apiEndpoints:
       - payments

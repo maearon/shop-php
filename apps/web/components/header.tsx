@@ -91,11 +91,13 @@ export default function Header() {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("guest_cart_id");
+      localStorage.removeItem("guest_wish_id");
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("refresh_token");
       sessionStorage.removeItem("refreshToken");
       sessionStorage.removeItem("accessToken");
       sessionStorage.removeItem("guest_cart_id");
+      sessionStorage.removeItem("guest_wish_id");
       await dispatch(fetchUser()); // Fetch user data if needed
   
       // Check the response status

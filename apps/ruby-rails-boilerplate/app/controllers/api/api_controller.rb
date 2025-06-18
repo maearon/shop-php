@@ -76,6 +76,39 @@ class Api::ApiController < ActionController::API
   end
 
   def current_wish
+    if current_user
+      # Logged-in user
+      wish = current_user.reload.wish || Wish.create(user_id: current_user.id)
+
+      if params[:guest_wish_id].present?
+        guest_wish = GuestWish.find_by(id: params[:guest_wish_id])
+
+        if guest_wish&.guest_wish_items&.present?
+          guest_wish.guest_wish_items.each do |guest_wish_item|
+            existing_item = wish.wish_items.find_by(variant_id: guest_wish_item.variant_id)
+            unless existing_item
+              wish.wish_items.create!(
+                product_id: guest_wish_item.product_id,
+                variant_id: guest_wish_item.variant_id
+              )
+            end
+          end
+          guest_wish.destroy
+        end
+      end
+
+      wish
+    else
+      # Guest user
+      guest_wish = if params[:guest_wish_id].present?
+                    GuestWish.find_by(id: params[:guest_wish_id])
+                  else
+                    GuestWish.create
+                  end
+
+      # Gợi ý: frontend lưu guest_wish_id sau khi nhận từ đây
+      guest_wish
+    end
   end
 
   def current_user_token
