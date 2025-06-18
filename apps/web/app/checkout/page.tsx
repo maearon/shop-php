@@ -7,13 +7,13 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent } from "@/components/ui/card"
 import { Search, ArrowRight, Tag } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
-import cartApi, { Cart } from "@/components/shared/api/cartApi"
+import cartApi, { CartItem } from "@/components/shared/api/cartApi"
 import { selectUser } from "@/store/sessionSlice"
 import { User } from "@/components/shared/api/userApi"
 
 export default function CheckoutPage() {
   // const cartItems = useAppSelector((state) => state.cart.items)
-  const [cartItemsRails, setCartItemsRails] = useState([] as Cart[])
+  const [cartItemsRails, setCartItemsRails] = useState([] as CartItem[])
   const [users, setUsers] = useState([] as User[])
   const [page, setPage] = useState(1)
   const [total_count, setTotalCount] = useState(1)
@@ -23,7 +23,7 @@ export default function CheckoutPage() {
     // const guestCartId = localStorage.getItem("guest_cart_id");
     cartApi.index({page: page}
     ).then(response => {
-      setCartItemsRails(response.carts)
+      setCartItemsRails(response.cart_items)
     })
     .catch(console.error)
   }, [])

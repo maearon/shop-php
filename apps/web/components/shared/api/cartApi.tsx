@@ -17,16 +17,58 @@ export interface ListParams {
   [key: string]: any
 }
 
-export interface ListResponse<Cart> {
-  carts: Cart[]
+export interface ListResponse<CartItem> {
+  cart_id: string
+  guest_cart: boolean
+  cart_items: CartItem[]
+  meta: Meta 
+}
+
+export interface Meta {
+  total_pages: number
+  current_page: number
   total_count: number
 }
 
-export interface Cart {
-  readonly id: string
-  name: string
-  gravatar_id: string
-  size: number
+export interface CartItem {
+  id: number;
+  quantity: number;
+  cart_id: number;
+  product_id: number;
+  variant_id: number;
+  product: Product;
+  variant: Variant;
+  created_at: string;  // ISO 8601 format
+  updated_at: string;
+}
+
+export interface Product {
+  id: number;
+  name?: string;
+  jan_code?: string;
+  gender?: string;
+  franchise?: string;
+  producttype?: string;
+  brand?: string;
+  category?: string;
+  sport?: string;
+  description_h5?: string;
+  description_p?: string;
+  specifications?: string;
+  care?: string;
+  created_at: string; // ISO 8601 timestamp (e.g., "2025-06-18T12:00:00Z")
+  updated_at: string;
+}
+export interface Variant {
+  id: number;
+  color?: string;
+  price?: number;
+  originalprice?: number;
+  sku?: string;
+  stock?: number;
+  product_id: number;
+  created_at: string; // ISO timestamp
+  updated_at: string;
 }
 
 export interface CreateParams {

@@ -1,6 +1,9 @@
 class Api::ApiController < ActionController::API
   include LocaleHelper
   helper_method :currency_code
+  helper_method :current_user
+  helper_method :current_cart
+  helper_method :current_wish
   include ResponsesHandler
   include ErrorsHandler
   include ActionController::RequestForgeryProtection
@@ -70,6 +73,9 @@ class Api::ApiController < ActionController::API
       # Gợi ý: trả về cả guest_cart_id để frontend lưu
       guest_cart
     end
+  end
+
+  def current_wish
   end
 
   def current_user_token
