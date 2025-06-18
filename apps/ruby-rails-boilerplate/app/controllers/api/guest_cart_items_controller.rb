@@ -1,4 +1,4 @@
-class GuestCartItemsController < ApplicationController
+class Api::GuestCartItemsController < Api::ApiController
   before_action :set_guest_cart_item, only:[:destroy, :update]
 
   def create

@@ -1,4 +1,6 @@
-class OrdersController < ApplicationController
+class Api::Api::OrdersController < Api::ApiController
+  before_action :authenticate!
+
   def index
     @orders = Order.all
   end

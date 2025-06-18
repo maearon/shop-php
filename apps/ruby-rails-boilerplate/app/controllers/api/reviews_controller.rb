@@ -1,4 +1,4 @@
-class ReviewsController < ApplicationController
+class Api::ReviewsController < Api::ApiController
 	def create
 		@product = Product.find(params[:product_id])
 		@review = @product.reviews.create(review_params)

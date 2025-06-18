@@ -5,11 +5,72 @@ A production-ready microservices e-commerce platform built with modern technolog
 ## Architecture
 
 This monorepo contains multiple microservices:
+```
+Development:
++-----------+        axios (port 3000)        +--------------+
+|  Next.js  | ----------------------------->  |  Rails API   |
+|  (frontend)|                                |  (dev only)  |
++-----------+                                 +--------------+
+```
+```
+Production:
+                 [1] User đến trang Checkout
+                             ↓
+                  +----------------------+
+                  |   Next.js frontend   |
+                  | (on Vercel or nginx) |
+                  +----------+-----------+       
+                ┌────────────────────────────┐
+                │   Next.js 14 Checkout UI   │
+                └────────────────────────────┘
+                             |
+                             | axios -> /api/*
+                             ↓
+                             ↓
+                  Axios POST /api/orders
+             (Bearer JWT set in interceptor)
+                             ↓
+                  +----------+-----------+
+                  |     Express Gateway  |  (PORT 9000)
+                  +----------+-----------+
+                             |
+          +------------------+-------------------+
+          |                  |                   |
+          ↓                  ↓                   ↓
+  Spring Auth Service     Rails API         Go Payment Service
+   (Login/Register)     (Products/Orders)    (Internal calls)
+     PORT 8080              PORT 3000          PORT (3003)
+            
+                     
+                    ┌────────────────────────────┐
+                    │       Rails API            │
+                    │ - authenticate_user!       │
+                    │ - create Order & Items     │
+                    └────────────────────────────┘
+                                ↓
+            Gọi sang Go Payment service (nội bộ HTTP call)
+                POST http://go-payments/pay with {order_id, amount, ...}
+                                ↓
+                    ┌────────────────────────────┐
+                    │     Go Payments Service    │
+                    │ - Handle payment           │
+                    │ - Callback (webhook) hoặc  │
+                    │   trả về ngay kết quả      │
+                    └────────────────────────────┘
+                                ↓
+                Trả về kết quả cho Rails → Next.js
+                                ↓
+                    ┌────────────────────────────┐
+                    │  Next.js hiển thị kết quả │
+                    │  success / error / pending│
+                    └────────────────────────────┘
+```
 
 - **Frontend (React/Next.js)**: Modern e-commerce UI with Tailwind CSS
 ```
 this is /wish when empty and when there are wishes and the image of wish and cart icons in the menu when empty and there are items, the logic is when pressing add to bag on product items then go to /cart, pressing the heart image then go to /wish, pressing heart on items in /cart then remove that item in /cart and the item will go to wish, the heart button everywhere is the toggle wish and unwish button corresponding to the solid and empty heart icon, making the menu display the correct state of wish cart from redux context, and the remove item button in /cart works, the heart button everywhere works can toggle wish and unwish
 ```
+
 - **API Gateway (ASP.NET Core)**: Central API gateway with Auth0 integration
 - **Users Service (Node.js)**: User management and authentication
 - **Orders Service (Node.js)**: Order processing and management

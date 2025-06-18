@@ -1,4 +1,4 @@
-class CartItemsController < ApplicationController
+class Api::CartItemsController < Api::ApiController
   before_action :set_cart_item, only:[:destroy, :update]
 
   def create

@@ -1,4 +1,4 @@
-class WishItemsController < ApplicationController
+class Api::GuestWishItemsController < Api::ApiController
   def create
     @product = Product.find(params[:product_id])
     @variant = Variant.find(params[:variant_id])
@@ -10,7 +10,7 @@ class WishItemsController < ApplicationController
   end
 
   def destroy
-    @current_item = WishItem.find(params[:id])
+    @current_item = GuestWishItem.find(params[:id])
     @product = @current_item.product
     @variant = @current_item.variant
     current_wish.unwish(@current_item)
