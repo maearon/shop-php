@@ -76,8 +76,11 @@ const LoginPage: NextPage = () => {
           localStorage.setItem("token", token)
           localStorage.setItem("refresh_token", response.tokens.refresh.token)
         } else {
-          sessionStorage.setItem("token", token)
-          sessionStorage.setItem("refresh_token", response.tokens.refresh.token)
+          // sessionStorage.setItem("token", token)
+          // sessionStorage.setItem("refresh_token", response.tokens.refresh.token)
+          localStorage.setItem("token", token)
+          localStorage.setItem("refresh_token", response.tokens.refresh.token)
+          localStorage.setItem("guest_cart_id", '123-xyz')
         }
         dispatch(fetchUser())
         router.push("/")

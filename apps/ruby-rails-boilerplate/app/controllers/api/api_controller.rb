@@ -32,6 +32,46 @@ class Api::ApiController < ActionController::API
     User.find_by(id: user_id) if user_id
   end
 
+  def current_cart
+    if current_user
+      # Logged-in user
+      cart = current_user.reload.cart || Cart.create(user_id: current_user.id)
+
+      if params[:guest_cart_id].present?
+        guest_cart = GuestCart.find_by(id: params[:guest_cart_id])
+        
+        if guest_cart && guest_cart.guest_cart_items.present?
+          guest_cart.guest_cart_items.each do |guest_cart_item|
+            existing_item = cart.cart_items.find_by(variant_id: guest_cart_item.variant_id)
+            if existing_item
+              existing_item.quantity += guest_cart_item.quantity.to_i
+              existing_item.save
+            else
+              cart.cart_items.create!(
+                product_id: guest_cart_item.product_id,
+                quantity: guest_cart_item.quantity,
+                variant_id: guest_cart_item.variant_id
+              )
+            end
+          end
+          guest_cart.destroy
+        end
+      end
+
+      cart
+    else
+      # Guest user
+      guest_cart = if params[:guest_cart_id].present?
+                    GuestCart.find_by(id: params[:guest_cart_id])
+                  else
+                    GuestCart.create
+                  end
+
+      # Gợi ý: trả về cả guest_cart_id để frontend lưu
+      guest_cart
+    end
+  end
+
   def current_user_token
     request.headers['Authorization']&.split[1]
   end

@@ -13,6 +13,7 @@ export interface CartCreate {
 
 export interface ListParams {
   page?: number
+  // guest_cart_id: string | null
   [key: string]: any
 }
 

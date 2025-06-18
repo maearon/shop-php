@@ -20,6 +20,7 @@ export default function CheckoutPage() {
   const current_user = useAppSelector(selectUser);
 
   useEffect(() => {
+    // const guestCartId = localStorage.getItem("guest_cart_id");
     cartApi.index({page: page}
     ).then(response => {
       setCartItemsRails(response.carts)

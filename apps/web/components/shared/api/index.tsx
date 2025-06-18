@@ -24,18 +24,32 @@ const API = axios.create({
 
 API.interceptors.request.use(
   function (config: AxiosRequestConfig) {
-    if (
-      localStorage.getItem('token') && localStorage.getItem('token') !== 'undefined'
-    ) 
-    {
-      config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
+    const token =
+      localStorage.getItem('token') !== 'undefined'
+        ? localStorage.getItem('token')
+        : sessionStorage.getItem('token');
+
+    if (token) {
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${token}`,
+      };
     }
-    else if (
-      sessionStorage.getItem('token') && sessionStorage.getItem('token') !== 'undefined'
-    ) 
-    {
-      config.headers.Authorization = `Bearer ${sessionStorage.getItem('token')}`
+
+    // 👉 Tự động thêm guest_cart_id vào query nếu có
+    const guestCartId =
+      localStorage.getItem('guest_cart_id') !== 'undefined'
+        ? localStorage.getItem('guest_cart_id')
+        : sessionStorage.getItem('guest_cart_id');
+
+    if (guestCartId) {
+      const url = new URL(config.url || '', BASE_URL);
+      if (!url.searchParams.has('guest_cart_id')) {
+        url.searchParams.set('guest_cart_id', guestCartId);
+        config.url = url.pathname + '?' + url.searchParams.toString();
+      }
     }
+
     return config;
   },
   function (error) {
