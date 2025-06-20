@@ -6,6 +6,9 @@ https://stackoverflow.com/questions/11600928/when-to-use-a-has-many-through-rela
 https://edgeapi.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html
 ```
 
+rails credentials:show
+
+
 markm@MarkM:/mnt/c/Users/manhn/code/shop-php/apps/ruby-rails-boilerplate$ EDITOR="cat" bin/rails credentials:edit
 Rails Error: Unable to access log file. Please ensure that /mnt/c/Users/manhn/code/shop-php/apps/ruby-rails-boilerplate/log/development.log exists and is writable (i.e. make it writable for user and group: chmod 0664 /mnt/c/Users/manhn/code/shop-php/apps/ruby-rails-boilerplate/log/development.log). The log level has been raised to WARN and the output directed to STDERR until the problem is fixed.
 Editing config/credentials.yml.enc...

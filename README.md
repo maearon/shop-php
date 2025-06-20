@@ -11,6 +11,7 @@ Development:
 |  Next.js  | ----------------------------->  |  Rails API   |
 |  (frontend)|                                |  (dev only)  |
 +-----------+                                 +--------------+
+In shop-php\apps\ruby-rails-boilerplate: rails credentials:show --> secret_key_base: <token> --> Coppy to app.jwtSecret=${APP_JWTSECRET:<token>} or .env in shop-php\apps\spring-boilerplate\src\main\resources\application.properties
 ```
 ```
 Production:
