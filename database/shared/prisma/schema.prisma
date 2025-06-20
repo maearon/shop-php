@@ -971,7 +971,7 @@ model token_blacklist_outstandingtoken {
 
 model variant_sizes {
   id         Int       @id @default(autoincrement())
-  variant_id Int
+  variant_id BigInt
   size_id    Int
   stock      Int?      @default(0)
   created_at DateTime? @default(now()) @db.Timestamp(6)
