@@ -5,6 +5,22 @@ https://guides.rubyonrails.org/association_basics.html
 https://stackoverflow.com/questions/11600928/when-to-use-a-has-many-through-relation-in-rails
 https://edgeapi.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html
 ```
+
+markm@MarkM:/mnt/c/Users/manhn/code/shop-php/apps/ruby-rails-boilerplate$ EDITOR="cat" bin/rails credentials:edit
+Rails Error: Unable to access log file. Please ensure that /mnt/c/Users/manhn/code/shop-php/apps/ruby-rails-boilerplate/log/development.log exists and is writable (i.e. make it writable for user and group: chmod 0664 /mnt/c/Users/manhn/code/shop-php/apps/ruby-rails-boilerplate/log/development.log). The log level has been raised to WARN and the output directed to STDERR until the problem is fixed.
+Editing config/credentials.yml.enc...
+# smtp:
+#   user_name: my-smtp-user
+#   password: my-smtp-password
+#
+# aws:
+#   access_key_id: 123
+#   secret_access_key: 345
+
+# Used as the base secret for all MessageVerifiers in Rails, including the one protecting cookies.
+secret_key_base: f2dc6dd1e38c7a0368dcd4c6298cd86af6bd5735cb4e7cf2f0a8dfceeaf47a59eb36906aac1f7003dad1c019c731d0016b58ad5e7c6268b9b4b1fca43a07f7d7
+File encrypted and saved.
+
 Nếu tất cả 372 variants đều thuộc loại Shoes và mỗi Shoes variant có 10 size, thì:
 
 ✅ Tổng số variant_sizes sẽ là:

@@ -42,7 +42,7 @@ public class JwtTokenProvider {
         Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getId())
+                .setSubject(userPrincipal.getId()) // ✅ 'spring-boilerplate-user'
                 .claim("type", "access")
                 .setIssuedAt(nowDate)
                 .setExpiration(expiryDate)
@@ -66,7 +66,7 @@ public class JwtTokenProvider {
         Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getId())
+                .setSubject(userPrincipal.getId()) // ✅ 'spring-boilerplate-user'
                 .claim("type", "refresh")
                 .setIssuedAt(nowDate)
                 .setExpiration(expiryDate)
