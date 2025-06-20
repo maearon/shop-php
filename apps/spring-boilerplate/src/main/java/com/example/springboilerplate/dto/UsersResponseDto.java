@@ -14,7 +14,7 @@ public class UsersResponseDto {
     private String email;
     private String gravatar;
 
-    public UsersResponseDto(String id, String name, String email) {
+    public UsersResponseDto(String id, String name, String username, String email) {
         this.id = id;
         this.name = name;
         this.username = username;

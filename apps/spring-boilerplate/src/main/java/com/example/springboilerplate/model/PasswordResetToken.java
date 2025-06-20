@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "password_reset_tokens")
 public class PasswordResetToken {
-    private static final int EXPIRATION = 24; // hours
+    // private static final int EXPIRATION = 24; // hours
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

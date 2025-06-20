@@ -15,9 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.springboilerplate.dto.MicropostResponseDto;
 import com.example.springboilerplate.dto.UserSummaryDto;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 

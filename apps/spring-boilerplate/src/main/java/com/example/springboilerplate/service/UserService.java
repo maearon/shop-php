@@ -156,12 +156,14 @@ public class UserService {
     }
 
     public Page<UsersResponseDto> getFollowingPaginated(String userId, Pageable pageable) {
-    return userRepository.findFollowingPaginated(userId, pageable)
-            .map(m -> new UsersResponseDto(
-                    m.getId(),
-                    m.getName(),
-                    m.getEmail()
-            ));
+        return userRepository.findFollowingPaginated(userId, pageable)
+                .map(m -> new UsersResponseDto(
+                        m.getId(),
+                        m.getName(),
+                        m.getUsername(),
+                        m.getEmail(),
+                        m.getGravatar()
+                ));
     }
 
     public Page<UsersResponseDto> getFollowersPaginated(String userId, Pageable pageable) {
@@ -169,7 +171,9 @@ public class UserService {
                 .map(m -> new UsersResponseDto(
                         m.getId(),
                         m.getName(),
-                        m.getEmail()
+                        m.getUsername(),
+                        m.getEmail(),
+                        m.getGravatar()
                 ));
     }
 
