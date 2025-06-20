@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
@@ -31,13 +32,15 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
-        Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getId())
-                .setIssuedAt(new Date())
+                .claim("type", "access")
+                .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key)
+                .setHeaderParam("typ", "JWT")
                 .compact();
     }
 
@@ -47,19 +50,21 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs * 2L); // dài hơn access token
 
-        Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getId())
+                .claim("type", "refresh")
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key)
+                .setHeaderParam("typ", "JWT")
                 .compact();
     }
 
     public String getUserIdFromJWT(String token) {
     Claims claims = Jwts.parserBuilder()
-            .setSigningKey(jwtSecret.getBytes())
+            .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
             .build()
             .parseClaimsJws(token)
             .getBody();
@@ -69,7 +74,7 @@ public class JwtTokenProvider {
 
     public Instant getExpirationFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(jwtSecret.getBytes())
+                .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -80,7 +85,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String authToken) {
         try {
             Jwts.parserBuilder()
-                .setSigningKey(jwtSecret.getBytes())
+                .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
                 .build()
                 .parseClaimsJws(authToken);
             return true;

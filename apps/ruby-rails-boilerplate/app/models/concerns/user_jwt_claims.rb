@@ -1,7 +1,7 @@
 module UserJwtClaims
   extend ActiveSupport::Concern
 
-  ALGORITHM = 'HS256'.freeze
+  ALGORITHM = 'HS512'.freeze
   ISS = 'http://localhost'.freeze
   SUB = 'rails-boilerplate-user'.freeze
   AUD = ['http://localhost'].freeze
