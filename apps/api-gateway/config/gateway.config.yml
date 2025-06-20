@@ -23,23 +23,23 @@ apiEndpoints:
     target: http://api-java:8080
 
   products:
-    path: /api/products
+    path: /api/products*
     target: http://api-ruby:3000
 
   cart:
-    path: /api/cart
+    path: /api/cart*
     target: http://api-ruby:3000
 
   wish:
-    path: /api/wish
+    path: /api/wish*
     target: http://api-ruby:3000
 
   orders:
-    path: /api/orders
+    path: /api/orders*
     target: http://api-ruby:3000
 
   payments:
-    path: /api/payments
+    path: /api/payments*
     target: http://payments:3003
 
 serviceEndpoints:
