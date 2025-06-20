@@ -48,7 +48,11 @@ export default function CheckoutPage() {
 
   // Calculate totals
   const subtotal = cartItemsRails.reduce(
-    (sum, item) => sum + Number.parseFloat(item.price.replace("$", "")) * item.quantity,
+    (sum, item) =>
+      sum +
+      (item.variant.price !== undefined && item.variant.price !== null && item.variant.price.toString().replace("$", "")
+        ? Number(item.variant.price) * item.quantity
+        : 0),
     0,
   )
   const salesTax = subtotal * 0.12

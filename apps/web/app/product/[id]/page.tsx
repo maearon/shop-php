@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -12,6 +12,7 @@ import { toggleWishlist } from "@/store/wishlistSlice"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import WishButton from "@/components/wish-button"
+import productApi from "@/components/shared/api/productApi"
 
 // Mock product data - in real app this would come from API
 const getProductById = (id: string) => {
@@ -53,12 +54,13 @@ const getProductById = (id: string) => {
   return products[id as keyof typeof products] || products["1"]
 }
 
-export default function ProductDetailPage() {
-  const params = useParams()
+const ProductDetailPage = ({ params }: { params: { id: string } }) => {
+  // const params = useParams()
   const dispatch = useAppDispatch()
   const wishlistItems = useAppSelector((state) => state.wishlist.items)
-
+  const [page, setPage] = useState(1)
   const product = getProductById(params.id as string)
+  const [productRails, setProductRails] = useState({} as any)
   const [selectedSize, setSelectedSize] = useState("")
   const [selectedColor, setSelectedColor] = useState(
     product.colors.find((c) => c.selected)?.name || product.colors[0].name,
@@ -74,6 +76,15 @@ export default function ProductDetailPage() {
   const [sizeError, setSizeError] = useState("")
 
   const isWishlisted = wishlistItems.some((item) => item.id === product.id)
+
+  useEffect(() => {
+    // const guestCartId = localStorage.getItem("guest_cart_id");
+    productApi.show(params.id, { page })
+      .then(response => {
+        // setProductRails(response.cart_items)
+      })
+      .catch(console.error)
+  }, [params.id, page])
 
   const handleAddToBag = () => {
     if (!selectedSize) {
@@ -443,3 +454,5 @@ export default function ProductDetailPage() {
     </div>
   )
 }
+
+export default ProductDetailPage;
