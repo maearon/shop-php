@@ -12,7 +12,8 @@ import { toggleWishlist } from "@/store/wishlistSlice"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import WishButton from "@/components/wish-button"
-import productApi from "@/components/shared/api/productApi"
+import productApi, { ProductDetails } from "@/components/shared/api/productApi"
+import FullScreenLoader from "@/components/ui/FullScreenLoader"
 
 // Mock product data - in real app this would come from API
 const getProductById = (id: string) => {
@@ -54,18 +55,18 @@ const getProductById = (id: string) => {
   return products[id as keyof typeof products] || products["1"]
 }
 
-const ProductDetailPage = ({ params }: { params: { id: string } }) => {
-  // const params = useParams()
+const ProductDetailPage = () => {
+  const params = useParams()
   const dispatch = useAppDispatch()
   const wishlistItems = useAppSelector((state) => state.wishlist.items)
-  const [page, setPage] = useState(1)
-  const product = getProductById(params.id as string)
-  const [productRails, setProductRails] = useState({} as any)
+  const [page] = useState(1)
+  const productRails = getProductById(params.id as string)
+  const [product, setProduct] = useState<ProductDetails | null>(null)
   const [selectedSize, setSelectedSize] = useState("")
-  const [selectedColor, setSelectedColor] = useState(
-    product.colors.find((c) => c.selected)?.name || product.colors[0].name,
-  )
+  const [selectedColor, setSelectedColor] = useState("")
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [sizeError, setSizeError] = useState("")
+
   const [expandedSections, setExpandedSections] = useState({
     reviews: false,
     description: false,
@@ -73,21 +74,20 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     care: false,
     sizeStyle: false,
   })
-  const [sizeError, setSizeError] = useState("")
-
-  const isWishlisted = wishlistItems.some((item) => item.id === product.id)
 
   useEffect(() => {
-    // const guestCartId = localStorage.getItem("guest_cart_id");
-    productApi.show(params.id, { page })
+    const id = params?.id as string
+    if (!id) return
+    productApi.show(id, { page })
       .then(response => {
-        // setProductRails(response.cart_items)
+        setProduct(response)
+        setSelectedColor(response.variants?.[0]?.color || "")
       })
       .catch(console.error)
-  }, [params.id, page])
+  }, [params?.id, page])
 
   const handleAddToBag = () => {
-    if (!selectedSize) {
+    if (!selectedSize || !product) {
       setSizeError("Please select your size")
       return
     }
@@ -97,22 +97,23 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
       addToCart({
         id: product.id,
         name: product.name,
-        price: product.price,
-        image: product.images[0],
+        price: (product.variants?.[0]?.price?.toString() ?? "0"),
+        image: product.variants?.[0]?.images?.[0] || "/placeholder.png",
         color: selectedColor,
         size: selectedSize,
-      }),
+      })
     )
   }
 
   const handleToggleWishlist = () => {
+    if (!product) return
     dispatch(
       toggleWishlist({
         id: product.id,
         name: product.name,
-        price: product.price,
-        image: product.images[0],
-      }),
+        price: (product.variants?.[0]?.price?.toString() ?? "0"),
+        image: product.variants?.[0]?.images?.[0] || "/placeholder.png",
+      })
     )
   }
 
@@ -152,10 +153,13 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
     },
   ]
 
+  if (!product) return <FullScreenLoader />
+
+  const isWishlisted = wishlistItems.some((item) => item.id === product.id)
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
-
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <nav className="text-sm text-gray-600 mb-6">
@@ -167,13 +171,13 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
           <div className="space-y-4">
             <div className="aspect-square bg-gray-100">
               <img
-                src={product.images[currentImageIndex] || "/placeholder.png"}
+                src={product.variants?.[currentImageIndex]?.images?.[0] || "/placeholder.png"}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="grid grid-cols-4 gap-2">
-              {product.images.map((image, index) => (
+              {product.variants?.map((variant, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
@@ -182,7 +186,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                   }`}
                 >
                   <img
-                    src={image || "/placeholder.png"}
+                    src={variant?.images?.[0] || "/placeholder.png"}
                     alt={`${product.name} ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -203,22 +207,22 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
                   <Star
                     key={i}
                     size={16}
-                    className={i < Math.floor(product.rating) ? "fill-black text-black" : "text-gray-300"}
+                    className={i < Math.floor(productRails.rating) ? "fill-black text-black" : "text-gray-300"}
                   />
                 ))}
               </div>
-              <span className="text-sm">({product.reviewCount})</span>
+              <span className="text-sm">({productRails.reviewCount})</span>
             </div>
 
             {/* Product Name and Price */}
             <div>
-              <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
-              <div className="flex items-center space-x-2">
-                <span className="text-xl font-bold">{product.price}</span>
-                {product.originalPrice && (
+            <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
+            <div className="flex items-center space-x-2">
+                <span className="text-xl font-bold">{product.variants[0].price}</span>
+                {product.variants[0].originalprice && (
                   <>
-                    <span className="text-lg text-gray-500 line-through">{product.originalPrice}</span>
-                    <Badge variant="destructive">{product.discount}</Badge>
+                    <span className="text-lg text-gray-500 line-through">{product.variants[0].originalprice}</span>
+                    <Badge variant="destructive">{productRails.discount}</Badge>
                   </>
                 )}
               </div>
@@ -235,15 +239,17 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
             <div>
               <h3 className="font-bold mb-3">Colors</h3>
               <div className="grid grid-cols-8 gap-2">
-                {product.colors.map((color, index) => (
+                {product.variants.map((variant, index) => (
                   <button
                     key={index}
-                    onClick={() => setSelectedColor(color.name)}
+                    onClick={() => setSelectedColor(variant.color ?? "")}
                     className={`w-12 h-12 rounded border-2 ${
-                      selectedColor === color.name ? "border-black" : "border-gray-300"
+                      selectedColor === variant.color ? "border-black" : "border-gray-300"
                     }`}
                   >
-                    <div className={`w-full h-full rounded ${color.color}`}></div>
+                    <div className={`w-full h-full rounded ${
+                      productRails.colors?.find((c) => c.name === variant.color)?.color || ""
+                    }`}></div>
                   </button>
                 ))}
               </div>
@@ -253,11 +259,11 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
             {/* Sizes */}
             <div>
               <div className="flex justify-between items-center mb-3">
-                <h3 className="font-bold">Sizes</h3>
+                <h3 className="font-bold mb-3">Sizes</h3>
                 <button className="text-sm underline">Size guide</button>
               </div>
               <div className="grid grid-cols-6 gap-2">
-                {product.sizes.map((size) => (
+                {product.variants?.[0]?.size?.map((size) => (
                   <button
                     key={size}
                     onClick={() => handleSizeSelect(size)}
@@ -292,7 +298,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
 
             {/* Features */}
             <div className="space-y-2">
-              {product.features.map((feature, index) => (
+              {productRails.features.map((feature, index) => (
                 <div key={index} className="flex items-center space-x-2 text-sm">
                   <span className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">
                     ✓
@@ -307,7 +313,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
               <Heart size={16} className={isWishlisted ? "fill-black text-black" : "text-gray-600"} />
               <span>{isWishlisted ? "Remove from wishlist" : "Add to wishlist"}</span>
             </button>
-          </div>
+           </div>
         </div>
 
         {/* Expandable Sections */}
@@ -318,20 +324,20 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
               onClick={() => toggleSection("reviews")}
               className="w-full flex justify-between items-center py-4 text-left font-bold"
             >
-              <span>Reviews ({product.reviewCount})</span>
+              <span>Reviews ({productRails.reviewCount})</span>
               {expandedSections.reviews ? <ChevronUp /> : <ChevronDown />}
             </button>
             {expandedSections.reviews && (
               <div className="pb-4">
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="flex items-center space-x-2">
-                    <span className="text-2xl font-bold">{product.rating}</span>
+                    <span className="text-2xl font-bold">{productRails.rating}</span>
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
                           size={16}
-                          className={i < Math.floor(product.rating) ? "fill-black text-black" : "text-gray-300"}
+                          className={i < Math.floor(productRails.rating) ? "fill-black text-black" : "text-gray-300"}
                         />
                       ))}
                     </div>
@@ -353,7 +359,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
             </button>
             {expandedSections.description && (
               <div className="pb-4">
-                <p className="text-gray-600">{product.description}</p>
+                <p className="text-gray-600">{productRails.description}</p>
               </div>
             )}
           </div>
@@ -369,7 +375,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
             </button>
             {expandedSections.details && (
               <div className="pb-4">
-                <p className="text-gray-600">{product.details}</p>
+                <p className="text-gray-600">{productRails.details}</p>
               </div>
             )}
           </div>
@@ -401,7 +407,7 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
             </button>
             {expandedSections.sizeStyle && (
               <div className="pb-4">
-                <p className="text-gray-600">{product.sizeGuide}</p>
+                <p className="text-gray-600">{productRails.sizeGuide}</p>
               </div>
             )}
           </div>

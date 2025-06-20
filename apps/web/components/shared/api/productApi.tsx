@@ -82,7 +82,7 @@ export interface CreateResponse<ProductCreate> {
   }
 }
 
-export interface ShowResponse {
+export interface ProductDetails {
   id: number;
   name: string;
   jan_code: string;
@@ -158,7 +158,7 @@ const productApi = {
     return API.post(url, params);
   },
 
-  show(id: string, params: ListParams): Promise<ShowResponse> {
+  show(id: string, params: ListParams): Promise<ProductDetails> {
     const url = `/products/${id}`;
     return API.get(url, { params });
   },
