@@ -19,9 +19,9 @@ class Jwt::User::EncodeTokenService
   def call # to .call
     [
       encode_token('access'), # access_token
-      ACCESS_TOKEN_EXPIRATION.from_now.strftime('%Y-%m-%dT%H:%M:%S.%LZ'), # UNIX to ISO string
+      ACCESS_TOKEN_EXPIRATION.from_now.strftime('%Y-%m-%dT%H:%M:%SZ'), # UNIX to ISO string
       encode_token('refresh'), # refresh_token
-      REFRESH_TOKEN_EXPIRATION.from_now.strftime('%Y-%m-%dT%H:%M:%S.%LZ') # UNIX to ISO string
+      REFRESH_TOKEN_EXPIRATION.from_now.strftime('%Y-%m-%dT%H:%M:%SZ') # UNIX to ISO string add milliseconds .742 add ('%Y-%m-%dT%H:%M:%S.%LZ') if needed
     ]
   end
 
