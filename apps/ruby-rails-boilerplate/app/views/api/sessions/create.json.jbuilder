@@ -1,15 +1,13 @@
 json.user do
   json.extract! @user, :id, :email, :name, :admin
-  json.token @user.token
-  json.passwordHash @user.password_digest
 end
 json.tokens do
   json.access do
     json.token @user.token
-    json.expires @user.token_expiration_at
+    json.expires @user.token_expiration_at # UNIX to ISO string
   end
   json.refresh do
     json.token @user.token
-    json.expires @user.token_expiration_at
+    json.expires @user.token_expiration_at # UNIX to ISO string
   end
 end

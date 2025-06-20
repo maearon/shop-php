@@ -11,8 +11,8 @@
     "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^5.7.1",
-    "prisma": "^5.7.1"
+    "@prisma/client": "^6.10.1",
+    "prisma": "^6.10.1"
   },
   "devDependencies": {
     "tsx": "^4.6.2",

@@ -13,9 +13,7 @@ export interface LoginField {
 }
 
 export interface Response<User> {
-  type: string
-  currentAuthority: string
-  user?: User
+  user: User
   tokens: {
     access: {
       token: string;
@@ -26,13 +24,6 @@ export interface Response<User> {
       expires: string;
     };
   };
-  flash?: [message_type: string, message: string]
-  error?: string[]
-  status?: number
-  message?: string
-  errors: {
-    [key: string]: string[]
-  }
 }
 
 const sessionApi = {

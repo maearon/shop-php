@@ -162,7 +162,7 @@ Convert toàn bộ repo sang Unix line endings
 
 
 find . -type f -exec dos2unix {} \;
-git config --global core.autocrlf false
+git config --global core.autocrlf input
 dos2unix $(find . -type f)
 git rm --cached -r .
 git reset

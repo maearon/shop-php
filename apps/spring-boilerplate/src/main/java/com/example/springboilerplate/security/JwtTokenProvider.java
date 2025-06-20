@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Instant;
+import java.time.Duration;
 import java.util.Date;
 
 @Component
@@ -24,20 +25,26 @@ public class JwtTokenProvider {
     private String jwtSecret;
 
     @Value("${app.jwtExpirationInMs:604800000}")
-    private int jwtExpirationInMs;
+    private int jwtExpirationInMs; // 7 days in milliseconds
 
     public String generateToken(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+        Instant now = Instant.now();
+        Instant expiry = now.plus(Duration.ofDays(7)); // hoặc plusMillis(jwtExpirationInMs)
+
+        Date nowDate = Date.from(now);
+        Date expiryDate = Date.from(expiry);
+        // Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+
+        // String expiresAt = expiry.toString(); // ISO 8601, giống Ruby
 
         Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getId())
                 .claim("type", "access")
-                .setIssuedAt(now)
+                .setIssuedAt(nowDate)
                 .setExpiration(expiryDate)
                 .signWith(key)
                 .setHeaderParam("typ", "JWT")
@@ -47,15 +54,21 @@ public class JwtTokenProvider {
     public String generateRefreshToken(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs * 2L); // dài hơn access token
+        Instant now = Instant.now();
+        Instant expiry = now.plus(Duration.ofDays(14)); // hoặc plusMillis(jwtExpirationInMs)
+
+        Date nowDate = Date.from(now);
+        Date expiryDate = Date.from(expiry);
+        // Date expiryDate = new Date(now.getTime() + jwtExpirationInMs * 2L); // 604800000 * 2L = 1209600000 // 14 days in milliseconds
+
+        // String expiresAt = expiry.toString(); // ISO 8601, giống Ruby
 
         Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getId())
                 .claim("type", "refresh")
-                .setIssuedAt(now)
+                .setIssuedAt(nowDate)
                 .setExpiration(expiryDate)
                 .signWith(key)
                 .setHeaderParam("typ", "JWT")

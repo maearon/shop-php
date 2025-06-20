@@ -51,6 +51,6 @@ public class SessionResponseDto {
     @NoArgsConstructor
     public static class TokenDto {
         private String token;
-        private Instant expires;
+        private Instant expires; // UNIX to ISO string
     }
 }
