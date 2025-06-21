@@ -1,281 +1,325 @@
-# Adidas E-commerce Monorepo
+# Adidas E-commerce Clone - Microservices Architecture
 
-A production-ready microservices e-commerce platform built with modern technologies, inspired by the legacy PHP Adidas shop.
+A production-ready microservices e-commerce platform built with modern technologies, cloning the complete Adidas.com experience with advanced features like real-time chat, location-based delivery, and comprehensive product management.
 
-## Architecture
+## 🏗️ Architecture Overview
 
-This monorepo contains multiple microservices:
-```
-Development:
-+-----------+        axios (port 3000)        +--------------+
-|  Next.js  | ----------------------------->  |  Rails API   |
-|  (frontend)|                                |  (dev only)  |
-+-----------+                                 +--------------+
-In shop-php\apps\ruby-rails-boilerplate: rails credentials:show --> secret_key_base: <token> --> Coppy to app.jwtSecret=${APP_JWTSECRET:<token>} or .env in shop-php\apps\spring-boilerplate\src\main\resources\application.properties
-```
-```
-Production:
-                 [1] User đến trang Checkout
+This monorepo implements a sophisticated microservices architecture designed to handle enterprise-level e-commerce operations:
+
+\`\`\`
+┌─────────────────────────────────────────────────────────────────┐
+│                    PRODUCTION ARCHITECTURE                       │
+└─────────────────────────────────────────────────────────────────┘
+
+                    [User visits Adidas Clone]
                              ↓
-                  +----------------------+
-                  |   Next.js frontend   |
-                  | (on Vercel or nginx) |
-                  +----------+-----------+       
-                ┌────────────────────────────┐
-                │   Next.js 14 Checkout UI   │
-                └────────────────────────────┘
-                             |
-                             | axios -> /api/*
-                             ↓
-                             ↓
-                  Axios POST /api/orders
-             (Bearer JWT set in interceptor)
-                             ↓
-                  +----------+-----------+
-                  |     Express Gateway  |  (PORT 9000)
-                  +----------+-----------+
-                             |
-          +------------------+-------------------+
-          |                  |                   |
-          ↓                  ↓                   ↓
-  Spring Auth Service     Rails API         Go Payment Service
-   (Login/Register)     (Products/Orders)    (Internal calls)
-     PORT 8080              PORT 3000          PORT (3003)
-            
-                     
-                    ┌────────────────────────────┐
-                    │       Rails API            │
-                    │ - authenticate_user!       │
-                    │ - create Order & Items     │
-                    └────────────────────────────┘
-                                ↓
-            Gọi sang Go Payment service (nội bộ HTTP call)
-                POST http://go-payments/pay with {order_id, amount, ...}
-                                ↓
-                    ┌────────────────────────────┐
-                    │     Go Payments Service    │
-                    │ - Handle payment           │
-                    │ - Callback (webhook) hoặc  │
-                    │   trả về ngay kết quả      │
-                    └────────────────────────────┘
-                                ↓
-                Trả về kết quả cho Rails → Next.js
-                                ↓
-                    ┌────────────────────────────┐
-                    │  Next.js hiển thị kết quả │
-                    │  success / error / pending│
-                    └────────────────────────────┘
-```
+                  ┌────────────────────────────┐
+                  │   Next.js 14 Frontend     │
+                  │   (Vercel/Nginx)          │
+                  │   Port: 3001              │
+                  └────────────┬───────────────┘
+                               │
+                               │ API Calls
+                               ↓
+                  ┌────────────────────────────┐
+                  │   Express API Gateway     │
+                  │   Port: 9000              │
+                  │   - Route Management      │
+                  │   - Authentication        │
+                  │   - Load Balancing        │
+                  └────────────┬───────────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        │                      │                      │
+        ↓                      ↓                      ↓
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│ Spring Boot  │    │ Rails API    │    │ Go Payments  │
+│ Auth Service │    │ Products     │    │ Service      │
+│ Port: 8080   │    │ Orders/Cart  │    │ Port: 3003   │
+│ - JWT Auth   │    │ Wishlist     │    │ - Stripe     │
+│ - User Mgmt  │    │ Port: 3000   │    │ - Webhooks   │
+└──────────────┘    └──────────────┘    └──────────────┘
+        │                      │                      │
+        └──────────────────────┼──────────────────────┘
+                               │
+                    ┌──────────────────┐
+                    │ Python Django    │
+                    │ Search Service   │
+                    │ Port: 8000       │
+                    │ - Elasticsearch  │
+                    │ - Product Search │
+                    └──────────────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        │                      │                      │
+        ↓                      ↓                      ↓
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│ PostgreSQL   │    │ Redis Cache  │    │ RabbitMQ     │
+│ (Neon)       │    │ Port: 6379   │    │ Port: 5672   │
+│ - Prisma ORM │    │ - Sessions   │    │ - Events     │
+│ - Multi-DB   │    │ - Cache      │    │ - Queues     │
+└──────────────┘    └──────────────┘    └──────────────┘
+\`\`\`
 
-- **Frontend (React/Next.js)**: Modern e-commerce UI with Tailwind CSS
-```
-this is /wish when empty and when there are wishes and the image of wish and cart icons in the menu when empty and there are items, the logic is when pressing add to bag on product items then go to /cart, pressing the heart image then go to /wish, pressing heart on items in /cart then remove that item in /cart and the item will go to wish, the heart button everywhere is the toggle wish and unwish button corresponding to the solid and empty heart icon, making the menu display the correct state of wish cart from redux context, and the remove item button in /cart works, the heart button everywhere works can toggle wish and unwish
-```
+## 🛠️ Tech Stack
 
-- **API Gateway (ASP.NET Core)**: Central API gateway with Auth0 integration
-- **Users Service (Node.js)**: User management and authentication
-- **Orders Service (Node.js)**: Order processing and management
-- **Payments Service (Go)**: Stripe payment processing
-- **Search Service (Python/FastAPI)**: Elasticsearch-powered product search
-- **Legacy Service (PHP)**: Modernized version of the original PHP code
+### Frontend
+- **Next.js 14** - App Router, Server Components
+- **React 18** - Modern React with Hooks
+- **Tailwind CSS** - Utility-first styling
+- **Redux Toolkit** - State management
+- **TypeScript** - Type safety
 
-## Tech Stack
+### Backend Services
+- **Spring Boot 3** (Java) - Authentication & User Management
+- **Ruby on Rails 7** - Products, Orders, Cart, Wishlist
+- **Go with Gin** - High-performance Payment Processing
+- **Python Django** - Search & Analytics
+- **Express.js** - API Gateway & Routing
 
-- **Frontend**: React, Next.js, Tailwind CSS
-- **Backend**: ASP.NET Core, Node.js, Go, Python, PHP
-- **Databases**: PostgreSQL (Neon), Redis (Upstash)
-- **Message Queue**: RabbitMQ (CloudAMQP)
-- **Search**: Elasticsearch (Bonsai.io)
-- **Authentication**: Auth0
-- **Payments**: Stripe
-- **Deployment**: Docker, Render.com, Vercel
-- **CI/CD**: GitHub Actions
+### Database & Storage
+- **PostgreSQL** (Neon) - Primary database
+- **Prisma ORM** - Database toolkit
+- **Redis** (Upstash) - Caching & Sessions
+- **Elasticsearch** - Product search
 
-## Quick Start
+### Infrastructure
+- **Docker & Docker Compose** - Containerization
+- **RabbitMQ** - Message queuing
+- **GitHub Actions** - CI/CD
+- **Vercel** - Frontend deployment
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Docker and Docker Compose
+\`\`\`bash
+# Required software
+- Docker & Docker Compose
 - Node.js 18+
-- .NET 8 SDK
-- Go 1.21+
-- Python 3.11+
-- PHP 8.2+
+- Java 17+ (for Spring Boot)
+- Ruby 3.4+ (for Rails)
+- Go 1.21+ (for Payments)
+- Python 3.11+ (for Search)
+\`\`\`
 
 ### Development Setup
 
-1. Clone the repository:
-```
-git rm -r --cached .
-git add .
-git commit -m "Update .gitignore and re-add files"
-git clone <repository-url>
+1. **Clone the repository:**
+\`\`\`bash
+git clone https://github.com/maearon/shop-php.git
 cd shop-php
-```
+\`\`\`
 
-2. Copy environment variables:
-```
+2. **Environment setup:**
+\`\`\`bash
+# Copy environment template
 cp .env.example .env
-# Edit .env with your actual values
-```
 
-3. Start all services with Docker Compose:
-```
-PS C:\Users\manhn\code\shop-php> 
+# Edit with your actual values
+nano .env
+\`\`\`
+
+3. **Database setup:**
+\`\`\`bash
+# Generate Prisma client
+cd database/shared
+npx prisma generate
+npx prisma db push
+npx prisma db seed
+\`\`\`
+
+4. **Start all services:**
+\`\`\`bash
+# Clean previous containers (if needed)
 docker stop $(docker ps -aq)
-
 docker container rm $(docker container ls -aq)
 docker rmi -f $(docker images -aq)
 docker volume rm $(docker volume ls -q)
 docker network prune -f
-```
-```
-npm run dev
-# or
-🔧 Giải pháp thực tế: Chạy bằng WSL2 thuần hoặc Ubuntu VM
-✅ Cách 1: Chạy Docker hoàn toàn trong WSL2 Ubuntu (khuyên dùng)
-Nếu bạn đã có Ubuntu WSL như mình thấy (markm@MarkM:~$), hãy làm:
 
-# Trong Ubuntu WSL terminal:
-cd /mnt/c/Users/manhn/code/shop-php
-asdf local ruby 3.4.2
-bin/rails server --binding=0.0.0.0 --port=3000
-
-docker compose build --no-cache
-docker compose up
-Và mở browser ở Windows: http://localhost:3000
-
-Docker Desktop expose port từ WSL → Windows tự động.
-
-Tại sao cách này tốt hơn:
-
-File system là Linux thật
-
-entrypoint.sh, chmod +x, bash, bundler... đều tương thích
-
-Không còn bug exec not found, CRLF, Permission denied, etc.
-
-✅ Cách 2: Dùng Ubuntu trong máy ảo (VirtualBox, Hyper-V)
-Cài Ubuntu Desktop, setup Docker trong đó, clone repo, và chạy như bạn đã làm trong Ubuntu 25.04.
-
-🩻 Tạm thời nếu vẫn muốn chạy trong Windows:
-Convert toàn bộ repo sang Unix line endings
-
-
-find . -type f -exec dos2unix {} \;
-git config --global core.autocrlf input
-dos2unix $(find . -type f)
-git rm --cached -r .
-git reset
-git add .
-git commit -m "Normalize line endings across all files using .gitattributes"
-
-docker compose run api-ruby sh
-rm config/credentials.yml.enc config/master.key
-EDITOR="nano" rails credentials:edit
-File encrypted and saved.
-rails s
-git rm --cached -r .
-git reset --hard
-git add .
-git commit -m "Normalize line endings across all files using .gitattributes"
-
-✅ Kết luận
-👉 Tóm lại nếu bạn nghiêm túc build app với Rails trong Docker, chạy trên Ubuntu (WSL hoặc native) là cách duy nhất giúp ổn định.
-
-Mình đã làm đúng gần hết — lỗi đến từ việc Windows xử lý Docker rất "kỳ quặc", chứ không phải do mình sai. Nếu bạn muốn để dễ dàng chạy Rails app từ WSL Hãy chạy trên WSL.
+# Build and start services
+docker-compose build --no-cache
 docker-compose up
-rails s
-git rm -r --cached .
-git add .
-git commit -m "chore: clear Git cache to respect .gitignore"
-```
+\`\`\`
 
-4. Services will be available at:
-- API Gateway: http://localhost
-- Frontend: http://localhost:3000 *
-- API AUTH JAVA SPRING Service: http://localhost:8080 *
-- API PRODUCT RUBY RAILS Service: http://localhost:8085 *
-- API Gateway: http://localhost:5000
-- Users Service: http://localhost:3001
-- Orders Service: http://localhost:3002 *
-- Payments Service: http://localhost:3003 *
-- Search Service: http://localhost:3004
-- Legacy Service: http://localhost:8081 *
-- ELASTICSEARCH Service: http://localhost:9200 *
-- ELASTICSEARCH Service: http://localhost:5672 *                                        
-- RABBITMQ Service: http://localhost:15672 *
-- REDIS Service: http://localhost:6379
+### Service Endpoints
 
-### Production Deployment
+| Service | Port | URL | Description |
+|---------|------|-----|-------------|
+| **Frontend** | 3001 | http://localhost:3001 | Next.js App |
+| **API Gateway** | 9000 | http://localhost:9000 | Express Gateway |
+| **Auth Service** | 8080 | http://localhost:8080 | Spring Boot |
+| **Product API** | 3000 | http://localhost:3000 | Rails API |
+| **Payments** | 3003 | http://localhost:3003 | Go Service |
+| **Search** | 8000 | http://localhost:8000 | Django API |
+| **Redis** | 6379 | redis://localhost:6379 | Cache |
+| **RabbitMQ** | 15672 | http://localhost:15672 | Message Queue |
+| **Elasticsearch** | 9200 | http://localhost:9200 | Search Engine |
 
-1. Build production images:
-```
-npm run build
-```
+## 📊 Database Schema
 
-2. Deploy to production:
-```
-npm run prod
-```
-## Environment Variables
+The system uses a comprehensive PostgreSQL schema managed by Prisma:
 
-Each service has its own `.env` file. Key variables include:
+### Core Entities
+- **Users** - Authentication & profiles
+- **Products** - Product catalog with variants
+- **Orders** - Order management
+- **Cart/Wishlist** - Shopping cart & wishlist
+- **Payments** - Payment transactions
+- **Reviews** - Product reviews
 
-- `DATABASE_URL`: PostgreSQL connection string
-- `REDIS_URL`: Redis connection string
-- `AUTH0_DOMAIN`, `AUTH0_CLIENT_ID`, `AUTH0_CLIENT_SECRET`: Auth0 configuration
-- `STRIPE_SECRET_KEY`: Stripe payment processing
-- `ELASTICSEARCH_URL`: Elasticsearch search service
-- `RABBITMQ_URL`: RabbitMQ message queue
+### Key Features
+- Multi-variant products (size, color)
+- Guest cart/wishlist support
+- Order tracking
+- User relationships (following)
+- Real-time notifications
 
-## API Documentation
+## 🔧 Development Workflow
 
-### API Gateway Endpoints
+### Adding New Features
 
-- `GET /health` - Health check
-- `POST /api/users` - Create user
-- `GET /api/users/{id}` - Get user by ID
-- `POST /api/orders` - Create order
-- `POST /api/search` - Search products
+1. **Frontend Changes:**
+\`\`\`bash
+# Work in the root directory (Next.js app)
+npm run dev
+# Components in /components
+# Pages in /app
+\`\`\`
 
-### Individual Service Endpoints
+2. **Backend Services:**
+\`\`\`bash
+# Spring Boot (Auth)
+cd apps/spring-boilerplate
+./mvnw spring-boot:run
 
-Each microservice exposes its own REST API. See individual service documentation for details.
+# Rails (Products)
+cd apps/ruby-rails-boilerplate
+rails server
 
-## Database Schema
+# Go (Payments)
+cd apps/payments
+go run main.go
+\`\`\`
 
-The system uses PostgreSQL with the following main tables:
+3. **Database Changes:**
+\`\`\`bash
+cd database/shared
+npx prisma db push
+npx prisma generate
+\`\`\`
 
-- `users` - User accounts
-- `products` - Product catalog
-- `orders` - Order information
-- `order_items` - Order line items
-- `payments` - Payment transactions
+## 🚢 Production Deployment
 
-## Message Queue Events
+### Docker Production Build
 
-Services communicate via RabbitMQ events:
+\`\`\`bash
+# Build production images
+docker-compose -f docker-compose.prod.yml build
 
-- `order_created` - New order placed
-- `payment_completed` - Payment successful
-- `payment_failed` - Payment failed
+# Deploy to production
+docker-compose -f docker-compose.prod.yml up -d
+\`\`\`
 
-## Monitoring and Logging
+### Environment Variables
 
-- Structured logging with Serilog (.NET) and Winston (Node.js)
-- Health checks for all services
-- Redis caching for performance
-- Elasticsearch for search analytics
+Key production variables:
 
-## Contributing
+\`\`\`env
+# Database
+DATABASE_URL=postgresql://user:pass@host:5432/db
+POSTGRES_PRISMA_URL=postgresql://user:pass@host:5432/db
+
+# Authentication
+AUTH0_DOMAIN=your-domain.auth0.com
+AUTH0_CLIENT_ID=your_client_id
+AUTH0_CLIENT_SECRET=your_secret
+
+# Payments
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Infrastructure
+REDIS_URL=redis://user:pass@host:6379
+RABBITMQ_URL=amqp://user:pass@host:5672
+ELASTICSEARCH_URL=https://host:9200
+\`\`\`
+
+## 🎯 Current Features
+
+### ✅ Implemented
+- Complete product catalog with variants
+- Shopping cart & wishlist functionality
+- User authentication & profiles
+- Order management
+- Payment processing (Stripe)
+- Product search (Elasticsearch)
+- Real-time notifications
+- Responsive design
+- Redux state management
+
+### 🚧 In Progress
+- Location-based delivery modal
+- Real-time chat system for logged users
+- Feedback system for non-logged users
+- Advanced product filtering
+- Order tracking
+- Admin dashboard
+
+## 📋 Next Development Tasks
+
+### 1. Location Modal (Priority: High)
+\`\`\`typescript
+// components/location-modal.tsx
+- Auto-show on first visit
+- Country/region selection
+- Delivery location persistence
+- Flag icons integration
+\`\`\`
+
+### 2. Chat System (Priority: High)
+\`\`\`typescript
+// components/chat-widget.tsx
+- Show only for logged users
+- Collapsible chat interface
+- Virtual agent integration
+- Chat history persistence
+\`\`\`
+
+### 3. User Feedback (Priority: Medium)
+\`\`\`typescript
+// components/feedback-modal.tsx
+- Show for non-logged users
+- Feedback collection
+- Email integration
+\`\`\`
+
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
 
-## License
+### Code Standards
+- TypeScript for all new code
+- Tailwind CSS for styling
+- Prisma for database operations
+- Jest for testing
+- ESLint + Prettier for formatting
 
-MIT License - see LICENSE file for details
+## 📞 Support
+
+- **Issues**: GitHub Issues
+- **Discussions**: GitHub Discussions
+- **Email**: support@adidas-clone.com
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+**Built with ❤️ by the Adidas Clone Team**

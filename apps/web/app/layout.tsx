@@ -3,6 +3,10 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/providers"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
+import ChatWidget from "@/components/chat-widget"
+import { FeedbackModalProvider, LocationModalProvider } from "@/components/modal-providers"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -19,7 +23,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <Providers>
+          {/* <Header /> */}
+          <main>{children}</main>
+          {/* <Footer /> */}
+          <ChatWidget />
+          {/* Location Modal */}
+          <LocationModalProvider />
+
+          {/* Chat Widget for logged users */}
+          <ChatWidget />
+
+          {/* Feedback Modal for non-logged users */}
+          <FeedbackModalProvider />
+        </Providers> 
       </body>
     </html>
   )
