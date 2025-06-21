@@ -38,6 +38,14 @@ apiEndpoints:
     path: /api/orders*
     target: http://api-ruby:3000
 
+  search-products:
+    path: /search/products*
+    target: http://api-python:8000
+
+  search-suggestions:
+    path: /search/suggestions*
+    target: http://api-python:8000
+
   payments:
     path: /api/payments*
     target: http://payments:3003
@@ -48,6 +56,9 @@ serviceEndpoints:
 
   api-ruby:
     url: http://api-ruby:3000
+
+  api-python:
+    url: http://api-python:8000
 
   payments:
     url: http://payments:3003
@@ -119,6 +130,20 @@ pipelines:
       - proxy:
           - action:
               serviceEndpoint: api-ruby
+  search-products-pipeline:
+    apiEndpoints:
+      - search-products
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: api-python
+  search-suggestions-pipeline:
+    apiEndpoints:
+      - search-suggestions
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: api-python
   payments-pipeline:
     apiEndpoints:
       - payments

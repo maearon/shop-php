@@ -181,7 +181,8 @@ export interface Product {
   image_url: string
   variants: Variant[]
   slug: string
-  image: string
+  score?: number
+  image?: string
 }
 
 export interface Variant {
@@ -211,6 +212,26 @@ export interface ProductsResponse {
       description: string
     }
   }
+}
+
+export interface SearchResponse {
+  products: Product[]
+  total: number
+  page: number
+  size: number
+}
+
+export interface SearchFilters {
+  query?: string
+  category?: string
+  brand?: string
+  gender?: string
+  sport?: string
+  min_price?: number
+  max_price?: number
+  size?: number
+  page?: number
+  sort?: string
 }
 
 export interface ProductFilters {
@@ -317,6 +338,15 @@ class ApiClient {
     return response
   }
 
+  // Search APIs (Django Python - search service via Rails proxy)
+  async searchProducts(filters: SearchFilters = {}): Promise<SearchResponse> {
+    return API.post("/search/products", filters)
+  }
+
+  async getSearchSuggestions(query: string): Promise<{ suggestions: string[] }> {
+    return API.get(`/search/suggestions?q=${encodeURIComponent(query)}`)
+  }
+
   // Products APIs (Ruby Rails - port 3000)
   async getProducts(filters: ProductFilters = {}): Promise<ProductsResponse> {
     const params = new URLSearchParams()
@@ -420,11 +450,11 @@ class ApiClient {
   }
 
   // Search APIs (Python Django - search service)
-  async searchProducts(query: string, filters: any = {}): Promise<ProductsResponse> {
-    return API.get("/search/products", {
-      params: { q: query, ...filters },
-    })
-  }
+  // async searchProducts(query: string, filters: any = {}): Promise<ProductsResponse> {
+  //   return API.get("/search/products", {
+  //     params: { q: query, ...filters },
+  //   })
+  // }
 
   // Payment APIs (Go Gin - payments service)
   async createPaymentIntent(amount: number, currency = "USD"): Promise<any> {

@@ -1,8 +1,10 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Search, ShoppingBag, User, Heart, MenuIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -15,9 +17,11 @@ import AdidasLogo from "./adidas-logo"
 
 export default function Header() {
   const pathname = usePathname()
+  const router = useRouter()
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showUserSlideout, setShowUserSlideout] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
   const userData = useAppSelector(selectUser)
 
   // Get cart and wishlist counts from Redux
@@ -45,6 +49,19 @@ export default function Header() {
       setShowUserSlideout(true)
     } else {
       setShowLoginModal(true)
+    }
+  }
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}&sitePath=us`)
+    }
+  }
+
+  const handleSearchClick = () => {
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}&sitePath=us`)
     }
   }
 
@@ -101,10 +118,18 @@ export default function Header() {
 
             {/* Right side */}
             <div className="flex items-center space-x-4">
-              <div className="hidden md:flex items-center space-x-2">
-                <Input placeholder="Search" className="w-48" />
-                <Search className="h-5 w-5" />
-              </div>
+              {/* Search */}
+              <form onSubmit={handleSearchSubmit} className="hidden md:flex items-center space-x-2">
+                <Input
+                  placeholder="Search"
+                  className="w-48"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button type="button" onClick={handleSearchClick}>
+                  <Search className="h-5 w-5 cursor-pointer" />
+                </button>
+              </form>
 
               {/* User Icon */}
               <button
