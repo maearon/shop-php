@@ -6,7 +6,7 @@ A production-ready microservices e-commerce platform built with modern technolog
 
 This monorepo implements a sophisticated microservices architecture designed to handle enterprise-level e-commerce operations:
 
-\`\`\`
+```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    PRODUCTION ARCHITECTURE                       │
 └─────────────────────────────────────────────────────────────────┘
@@ -59,7 +59,7 @@ This monorepo implements a sophisticated microservices architecture designed to 
 │ - Prisma ORM │    │ - Sessions   │    │ - Events     │
 │ - Multi-DB   │    │ - Cache      │    │ - Queues     │
 └──────────────┘    └──────────────┘    └──────────────┘
-\`\`\`
+```
 
 ## 🛠️ Tech Stack
 
@@ -72,7 +72,7 @@ This monorepo implements a sophisticated microservices architecture designed to 
 
 ### Backend Services
 - **Spring Boot 3** (Java) - Authentication & User Management
-- **Ruby on Rails 7** - Products, Orders, Cart, Wishlist
+- **Ruby on Rails 8** - Products, Orders, Cart, Wishlist
 - **Go with Gin** - High-performance Payment Processing
 - **Python Django** - Search & Analytics
 - **Express.js** - API Gateway & Routing
@@ -93,7 +93,7 @@ This monorepo implements a sophisticated microservices architecture designed to 
 
 ### Prerequisites
 
-\`\`\`bash
+```bash
 # Required software
 - Docker & Docker Compose
 - Node.js 18+
@@ -101,36 +101,36 @@ This monorepo implements a sophisticated microservices architecture designed to 
 - Ruby 3.4+ (for Rails)
 - Go 1.21+ (for Payments)
 - Python 3.11+ (for Search)
-\`\`\`
+```
 
 ### Development Setup
 
 1. **Clone the repository:**
-\`\`\`bash
+```bash
 git clone https://github.com/maearon/shop-php.git
 cd shop-php
-\`\`\`
+```
 
 2. **Environment setup:**
-\`\`\`bash
+```bash
 # Copy environment template
 cp .env.example .env
 
 # Edit with your actual values
 nano .env
-\`\`\`
+```
 
 3. **Database setup:**
-\`\`\`bash
+```bash
 # Generate Prisma client
 cd database/shared
 npx prisma generate
 npx prisma db push
 npx prisma db seed
-\`\`\`
+```
 
 4. **Start all services:**
-\`\`\`bash
+```bash
 # Clean previous containers (if needed)
 docker stop $(docker ps -aq)
 docker container rm $(docker container ls -aq)
@@ -141,7 +141,7 @@ docker network prune -f
 # Build and start services
 docker-compose build --no-cache
 docker-compose up
-\`\`\`
+```
 
 ### Service Endpoints
 
@@ -181,15 +181,15 @@ The system uses a comprehensive PostgreSQL schema managed by Prisma:
 ### Adding New Features
 
 1. **Frontend Changes:**
-\`\`\`bash
+```bash
 # Work in the root directory (Next.js app)
 npm run dev
 # Components in /components
 # Pages in /app
-\`\`\`
+```
 
 2. **Backend Services:**
-\`\`\`bash
+```bash
 # Spring Boot (Auth)
 cd apps/spring-boilerplate
 ./mvnw spring-boot:run
@@ -201,32 +201,32 @@ rails server
 # Go (Payments)
 cd apps/payments
 go run main.go
-\`\`\`
+```
 
 3. **Database Changes:**
-\`\`\`bash
+```bash
 cd database/shared
 npx prisma db push
 npx prisma generate
-\`\`\`
+```
 
 ## 🚢 Production Deployment
 
 ### Docker Production Build
 
-\`\`\`bash
+```bash
 # Build production images
 docker-compose -f docker-compose.prod.yml build
 
 # Deploy to production
 docker-compose -f docker-compose.prod.yml up -d
-\`\`\`
+```
 
 ### Environment Variables
 
 Key production variables:
 
-\`\`\`env
+```env
 # Database
 DATABASE_URL=postgresql://user:pass@host:5432/db
 POSTGRES_PRISMA_URL=postgresql://user:pass@host:5432/db
@@ -244,7 +244,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 REDIS_URL=redis://user:pass@host:6379
 RABBITMQ_URL=amqp://user:pass@host:5672
 ELASTICSEARCH_URL=https://host:9200
-\`\`\`
+```
 
 ## 🎯 Current Features
 
@@ -270,30 +270,30 @@ ELASTICSEARCH_URL=https://host:9200
 ## 📋 Next Development Tasks
 
 ### 1. Location Modal (Priority: High)
-\`\`\`typescript
+```typescript
 // components/location-modal.tsx
 - Auto-show on first visit
 - Country/region selection
 - Delivery location persistence
 - Flag icons integration
-\`\`\`
+```
 
 ### 2. Chat System (Priority: High)
-\`\`\`typescript
+```typescript
 // components/chat-widget.tsx
 - Show only for logged users
 - Collapsible chat interface
 - Virtual agent integration
 - Chat history persistence
-\`\`\`
+```
 
 ### 3. User Feedback (Priority: Medium)
-\`\`\`typescript
+```typescript
 // components/feedback-modal.tsx
 - Show for non-logged users
 - Feedback collection
 - Email integration
-\`\`\`
+```
 
 ## 🤝 Contributing
 

@@ -80,9 +80,12 @@ Rails.application.routes.draw do
     # get    '/my-account',    to: 'users#show'                # tag 1
     # get    '/my-account/order-history' ,    to: 'orders#edit' # tag 2
     # get    '/my-account/profile' ,    to: 'users#edit'     # tag 3
-    resources :products, only: [:index, :show, :create, :destroy] do
-      resources :reviews
+    resources :products do
+      collection do
+        get :filters
+      end
     end
+    resources :reviews, only: [:create, :update, :destroy]
     resources :cart_items, only: [:create, :update, :destroy]
     resources :guest_cart_items, only: [:create, :update, :destroy]
     resources :cart, only: [:index]
@@ -109,4 +112,12 @@ Rails.application.routes.draw do
   # root "posts#index"
   post "/graphql", to: "graphql#execute"
   post '/api/ai/chat', to: 'api/ai#chat'
+
+  # Health check
+  get '/health', to: 'application#health'
+  
+  # Catch-all for SPA routing
+  get '*path', to: 'application#index', constraints: ->(request) do
+    !request.xhr? && request.format.html?
+  end
 end

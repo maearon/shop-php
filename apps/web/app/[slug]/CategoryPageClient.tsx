@@ -1,14 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { notFound } from "next/navigation"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import ProductGrid from "@/components/product-grid"
 import FiltersSidebar from "@/components/filters-sidebar"
 import { Button } from "@/components/ui/button"
-import { ChevronDown, SlidersHorizontal } from "lucide-react"
+import { ChevronDown, SlidersHorizontal, Loader2 } from "lucide-react"
 import { categoryConfig } from "@/utils/category-config"
+import { apiClient, type Product, type ProductsResponse } from "@/lib/api"
 
 type CategoryPageProps = {
   params: {
@@ -20,16 +21,18 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
   const { slug } = params
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [sortBy, setSortBy] = useState("newest")
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [meta, setMeta] = useState<ProductsResponse["meta"] | null>(null)
+  const [loadingMore, setLoadingMore] = useState(false)
 
-  // Kiểm tra xem slug có tồn tại trong config không
+  // Check if slug exists in config
   const config = categoryConfig[slug as keyof typeof categoryConfig]
 
-  if (!config) {
+  if (!config && !loading) {
     notFound()
   }
-
-  // Mock data cho sản phẩm - trong thực tế sẽ fetch từ API
-  const products = generateMockProducts(config.productType, config.subcategory, 48)
 
   const sortOptions = [
     { value: "newest", label: "Newest" },
@@ -39,6 +42,99 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
     { value: "rating", label: "Highest Rated" },
   ]
 
+  // Fetch products from API
+  const fetchProducts = async (page = 1, append = false) => {
+    try {
+      if (!append) setLoading(true)
+      else setLoadingMore(true)
+
+      const filters = {
+        slug,
+        page,
+        per_page: 20,
+        sort: sortBy,
+      }
+
+      const response = await apiClient.getProducts(filters)
+
+      if (append) {
+        setProducts((prev) => [...prev, ...response.products])
+      } else {
+        setProducts(response.products)
+      }
+
+      setMeta(response.meta)
+      setError(null)
+    } catch (err) {
+      console.error("Failed to fetch products:", err)
+      setError("Failed to load products. Please try again.")
+    } finally {
+      setLoading(false)
+      setLoadingMore(false)
+    }
+  }
+
+  // Initial load
+  useEffect(() => {
+    if (slug) {
+      fetchProducts()
+    }
+  }, [slug, sortBy])
+
+  // Handle load more
+  const handleLoadMore = () => {
+    if (meta && meta.current_page < meta.total_pages) {
+      fetchProducts(meta.current_page + 1, true)
+    }
+  }
+
+  // Handle sort change
+  const handleSortChange = (newSort: string) => {
+    setSortBy(newSort)
+    // fetchProducts will be called by useEffect
+  }
+
+  // Loading state
+  if (loading && products.length === 0) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <main className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <span className="ml-2">Loading products...</span>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Error state
+  if (error && products.length === 0) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <main className="container mx-auto px-4 py-6">
+          <div className="flex flex-col items-center justify-center h-64">
+            <p className="text-red-600 mb-4">{error}</p>
+            <Button onClick={() => fetchProducts()}>Try Again</Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Use API data or fallback to config
+  const categoryInfo = meta?.category_info || {
+    title: config?.title || slug.toUpperCase().replace("-", " "),
+    breadcrumb: config?.breadcrumb || slug.replace("-", " / "),
+    description: config?.description || `Discover our collection of ${slug.replace("-", " ")}.`,
+  }
+
+  const totalProducts = meta?.total_count || config?.totalProducts || 0
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -46,17 +142,17 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
       <main className="container mx-auto px-4 py-6">
         {/* Breadcrumb */}
         <nav className="text-sm text-gray-600 mb-4">
-          <span>{config.breadcrumb}</span>
+          <span>{categoryInfo.breadcrumb}</span>
         </nav>
 
         {/* Page Header */}
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h1 className="text-2xl font-bold mb-2">{config.title}</h1>
-            <p className="text-gray-600 max-w-2xl">{config.description}</p>
+            <h1 className="text-2xl font-bold mb-2">{categoryInfo.title}</h1>
+            <p className="text-gray-600 max-w-2xl">{categoryInfo.description}</p>
           </div>
           <div className="text-right">
-            <p className="text-sm text-gray-600">{config.totalProducts} items</p>
+            <p className="text-sm text-gray-600">{totalProducts} items</p>
           </div>
         </div>
 
@@ -84,7 +180,7 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
             <span className="text-sm text-gray-600">Sort By:</span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={(e) => handleSortChange(e.target.value)}
               className="border border-gray-300 rounded px-3 py-1 text-sm"
             >
               {sortOptions.map((option) => (
@@ -98,24 +194,47 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
 
         {/* Product Grid - Full Width */}
         <div className="mb-8">
-          <ProductGrid products={products} columns={4} />
+          {products.length > 0 ? (
+            <>
+              <ProductGrid
+                products={products.map((p) => ({
+                  ...p,
+                  price: typeof p.price === "number" ? `$${p.price}` : p.price,
+                }))}
+                columns={4}
+              />
 
-          {/* Load More Button */}
-          <div className="text-center mt-8">
-            <Button variant="outline" className="px-8">
-              Load More Products
-            </Button>
-          </div>
+              {/* Load More Button */}
+              {meta && meta.current_page < meta.total_pages && (
+                <div className="text-center mt-8">
+                  <Button variant="outline" className="px-8" onClick={handleLoadMore} disabled={loadingMore}>
+                    {loadingMore ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        Loading...
+                      </>
+                    ) : (
+                      "Load More Products"
+                    )}
+                  </Button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No products found for this category.</p>
+            </div>
+          )}
         </div>
 
-        {/* Recently Viewed */}
+        {/* Recently Viewed - Keep existing mock for now */}
         <section className="mt-16">
           <h2 className="text-xl font-bold mb-6">RECENTLY VIEWED ITEMS</h2>
           <div className="grid grid-cols-4 gap-6">
             {generateMockProducts("mixed", "recent", 4).map((product) => (
               <div key={product.id} className="space-y-2">
                 <img
-                  src={product.image || "/placeholder.png"}
+                  src={product.image || "/placeholder.png?height=300&width=250"}
                   alt={product.name}
                   className="w-full h-48 object-cover"
                 />
@@ -135,22 +254,22 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
                 <h3 className="font-bold mb-2">MEN'S SHOES</h3>
                 <ul className="space-y-1 text-gray-600">
                   <li>
-                    <a href="#" className="hover:underline">
+                    <a href="/men-running-shoes" className="hover:underline">
                       Running Shoes
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="hover:underline">
+                    <a href="/men-soccer-shoes" className="hover:underline">
                       Soccer Shoes
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="hover:underline">
+                    <a href="/men-basketball-shoes" className="hover:underline">
                       Basketball Shoes
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="hover:underline">
+                    <a href="/men-lifestyle-shoes" className="hover:underline">
                       Lifestyle Shoes
                     </a>
                   </li>
@@ -160,22 +279,22 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
                 <h3 className="font-bold mb-2">MEN'S CLOTHING</h3>
                 <ul className="space-y-1 text-gray-600">
                   <li>
-                    <a href="#" className="hover:underline">
+                    <a href="/men-tops" className="hover:underline">
                       T-Shirts
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="hover:underline">
+                    <a href="/men-hoodies" className="hover:underline">
                       Hoodies
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="hover:underline">
+                    <a href="/men-pants" className="hover:underline">
                       Pants
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="hover:underline">
+                    <a href="/men-shorts" className="hover:underline">
                       Shorts
                     </a>
                   </li>
@@ -184,9 +303,9 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
             </div>
           </div>
           <div>
-            <h2 className="text-xl font-bold mb-4">{config.title.replace("'S", "'S")} GUIDE</h2>
+            <h2 className="text-xl font-bold mb-4">{categoryInfo.title} GUIDE</h2>
             <p className="text-sm text-gray-600 leading-relaxed">
-              {config.productType === "shoes"
+              {slug.includes("shoes")
                 ? "Find the perfect fit with our comprehensive size guide. Our shoes are designed with the latest technology to provide comfort, performance, and style for every activity."
                 : "Discover the perfect style and fit with our clothing collection. Made with premium materials and innovative designs for maximum comfort and performance."}
             </p>
@@ -195,14 +314,23 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
       </main>
 
       {/* Filters Sidebar */}
-      <FiltersSidebar isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} category={config} />
+      <FiltersSidebar
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        category={config}
+        onFiltersChange={(filters) => {
+          // Handle filter changes
+          console.log("Filters changed:", filters)
+          // You can implement filter logic here
+        }}
+      />
 
       <Footer />
     </div>
   )
 }
 
-// Hàm tạo dữ liệu mock cho sản phẩm
+// Keep existing mock function for recently viewed items
 function generateMockProducts(type: string, subcategory: string, count: number) {
   const products = []
 
@@ -210,38 +338,22 @@ function generateMockProducts(type: string, subcategory: string, count: number) 
     let name = ""
     let price = ""
 
-    if (type === "shoes" && subcategory === "soccer") {
-      const soccerShoes = [
-        "Predator Elite Firm Ground Cleats",
-        "X Crazyfast Elite Firm Ground Cleats",
-        "Copa Pure Elite Firm Ground Cleats",
-        "Nemeziz Messi Elite Firm Ground Cleats",
-        "F50 Elite Firm Ground Cleats",
+    if (type === "mixed" && subcategory === "recent") {
+      const recentItems = [
+        "Ultraboost 22 Running Shoes",
+        "Essentials 3-Stripes Hoodie",
+        "Stan Smith Shoes",
+        "Adicolor Classics Firebird Track Jacket",
       ]
-      name = soccerShoes[i % soccerShoes.length]
-      price = `$${Math.floor(Math.random() * 200) + 100}`
-    } else if (type === "tops") {
-      const tops = [
-        "Essentials 3-Stripes T-Shirt",
-        "Adicolor Classics Trefoil Tee",
-        "Training Tech T-Shirt",
-        "Run It 3-Stripes Tee",
-        "Badge of Sport Tee",
-        "Essentials Linear Logo Hoodie",
-        "Adicolor Classics SST Track Top",
-        "Training Aeroready Tee",
-        "Originals Trefoil Hoodie",
-        "Performance Tank Top",
-      ]
-      name = tops[i % tops.length]
-      price = `$${Math.floor(Math.random() * 80) + 20}`
+      name = recentItems[i - 1] || `Product ${i}`
+      price = `$${Math.floor(Math.random() * 150) + 50}`
     } else {
       name = `Product ${i}`
       price = `$${Math.floor(Math.random() * 150) + 50}`
     }
 
     products.push({
-      id: i,
+      id: i + 1000, // Different ID range to avoid conflicts
       name: name,
       price: price,
       image: "/placeholder.png?height=300&width=250",
