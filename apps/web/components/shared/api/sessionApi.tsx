@@ -26,7 +26,16 @@ export interface Response<User> {
   };
 }
 
+export interface IndexResponse {
+  user: User;
+}
+
 const sessionApi = {
+  index(): Promise<IndexResponse> {
+    const url = '/sessions';
+    return API.get(url);
+  },
+
   create(params: SessionParams): Promise<Response<User>> {
     const url = '/login';
     return API.post(url, params);

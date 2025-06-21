@@ -51,7 +51,7 @@
         <%= image_tag image , :height => "50",:width=>"50" %>
         <% end %> 
     </td>
-    <td><%= product.price %></td>
+    <td><%= product.variants.first.price %></td>
     <td><%= product.originalpride %></td>
     <td>
         <%= product.subcolor_id && product.color_id  ? product.color.subcolors.find(product.subcolor_id).subcolor_name : '' %>

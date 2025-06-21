@@ -42,7 +42,7 @@ tmp/
 *.pid
 *.pid.lock
 public/assets
-storage/*
+/apps/ruby-rails-boilerplate/storage/*
 !.keep
 coverage/
 vendor/bundle

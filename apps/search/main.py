@@ -179,7 +179,7 @@ async def index_product(product: Product):
         doc = {
             "name": product.name,
             "description": product.description,
-            "price": product.price,
+            "price": 0,
             "category": product.category,
             "brand": product.brand,
             "image_url": product.image_url,

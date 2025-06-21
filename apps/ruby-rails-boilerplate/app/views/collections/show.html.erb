@@ -85,7 +85,7 @@
       <h4 class="product-detail-name m-text16 p-b-13">
         <%= @product.productname %>
       </h4>
-      <% giaban = @product.price %>
+      <% giaban = @product.variants.first.price %>
           <% giagoc = @product.originalpride %>
       <span id="comparePrice" class="m-text17" style="text-decoration: line-through;">
         <span class=money>

@@ -148,10 +148,51 @@ export interface Response {
   flash?: [message_type: string, message: string]
 }
 
+export interface ProductFilters {
+  slug?: string
+  q?: string
+  gender?: string
+  category?: string
+  sport?: string
+  brand?: string
+  min_price?: number
+  max_price?: number
+  size?: string
+  color?: string
+  page?: number
+  per_page?: number
+}
+
+export interface ProductsResponse {
+  products: Product[]
+  meta: {
+    current_page: number
+    total_pages: number
+    total_count: number
+    per_page: number
+    filters_applied: Record<string, any>
+    category_info: {
+      title: string
+      breadcrumb: string
+      description: string
+    }
+  }
+}
+
 const productApi = {
-  index(params: ListParams): Promise<ListResponse<Product>> {
-    const url = '/product';
-    return API.get(url, { params });
+  index(filters: ProductFilters = {}): Promise<ProductsResponse> {
+    const params = new URLSearchParams()
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, value.toString())
+      }
+    })
+
+    const queryString = params.toString()
+    const endpoint = `/products${queryString ? `?${queryString}` : ""}`
+
+    return API.get(endpoint)
   },
 
   create(params: CreateParams): Promise<CreateResponse<ProductCreate>> {

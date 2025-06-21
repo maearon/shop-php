@@ -115,7 +115,7 @@ export default function Header() {
   }
 
   const handleUserIconClick = () => {
-    if (userData.value.email) {
+    if (userData.value?.email) {
       setShowUserSlideout(true)
     } else {
       setShowLoginModal(true)
@@ -228,10 +228,10 @@ export default function Header() {
               <button
                 onClick={handleUserIconClick}
                 className="relative"
-                title={userData.value.email ? "Account" : "Login"}
+                title={userData.value?.email ? "Account" : "Login"}
               >
                 <User className="h-5 w-5 cursor-pointer" />
-                {!userData.value.email && (
+                {!userData.value?.email && (
                   <span className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                     1
                   </span>
@@ -266,7 +266,7 @@ export default function Header() {
 
               {loading ? (
                 <li>Loading...</li>
-              ) : userData.value.email ? (
+              ) : userData.value?.email ? (
                 <Link href="#logout" onClick={onClick}>
                   <LogOut className="h-5 w-5 cursor-pointer" />
                 </Link>

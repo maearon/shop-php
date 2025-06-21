@@ -32,8 +32,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false)
 
   const initialValues: ProfileFormValues = {
-    name: userData.value.name || "",
-    email: userData.value.email || "",
+    name: userData.value?.name || "",
+    email: userData.value?.email || "",
     phone: "",
     dateOfBirth: "",
     gender: "",

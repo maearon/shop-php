@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import API from '@/components/shared/api/index';
 import { RootState } from '@/store/store';
+import sessionApi from '@/components/shared/api/sessionApi';
 
 export interface User {
   readonly id: string
@@ -23,9 +24,13 @@ const initialState: UserState = {
   error: ''
 };
 
-export const fetchUser = createAsyncThunk('session/getCurrentUser', async () => {
-  const response = await API.get('/sessions')
-  return response;
+export const fetchUser = createAsyncThunk('session/getCurrentUser', async (_, thunkAPI) => {
+  try {
+    const response = await sessionApi.index();
+    return response;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue('Cannot fetch user');
+  }
 });
 
 export const sessionSlice = createSlice({

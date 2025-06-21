@@ -1,3 +1,24 @@
+# Alpha sizes for clothing (quần áo)
+%w[XS S M L XL XXL].each do |label|
+  Size.create!(
+    label: label,
+    system: "alpha",
+    location: "VN",
+    stock: rand(10..50)
+  )
+end
+
+# Numeric sizes for shoes (giày)
+(36..45).each do |n|
+  Size.create!(
+    label: n.to_s,
+    system: "numeric",
+    location: "VN",
+    stock: rand(5..30)
+  )
+end
+
+
 # # Alpha sizes for clothing
 # %w[XS S M L XL XXL].each do |label|
 #   Size.find_or_create_by!(label: label, system: "alpha")
@@ -46,5 +67,3 @@ end
 # Size.find_or_create_by!(label: "One Size", system: "one_size", location: "GLOBAL") do |s|
 #   s.stock = 999
 # end
-
-

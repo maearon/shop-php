@@ -63,7 +63,7 @@ export default function MyAccountLayout({ children }: { children: React.ReactNod
         <div className="lg:col-span-1">
           <div className="bg-white border rounded-lg p-6">
             <div className="mb-6">
-              <h2 className="text-xl font-bold mb-2">HI {userData.value.name?.toUpperCase() || "USER"}</h2>
+              <h2 className="text-xl font-bold mb-2">HI {userData.value?.name?.toUpperCase() || "USER"}</h2>
               <div className="flex items-center text-sm text-gray-600">
                 <span className="mr-2">🏆</span>
                 <span>0 points to spend</span>

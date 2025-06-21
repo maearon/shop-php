@@ -1,26 +1,42 @@
-# Clear existing data
 puts "Clearing existing products..."
 Product.destroy_all
+Product.reset_pk_sequence
+Variant.destroy_all
+Variant.reset_pk_sequence
+VariantSize.destroy_all
+VariantSize.reset_pk_sequence
 
-# Create sample products
-puts "Generating 93 sample products..."
+puts "Ensuring sizes exist..."
 
-# Enums
 ALPHA_SIZES   = %w[XS S M L XL XXL]
 NUMERIC_SIZES = (36..45).to_a.map(&:to_s)
-LOCATIONS     = %w[US VN JP]
+LOCATIONS     = %w[US VN]
 IMAGE_DIR     = "#{Rails.root}/app/assets/images/img"
+
+# Tạo size cho từng hệ và từng location
+LOCATIONS.each do |loc|
+  ALPHA_SIZES.each do |label|
+    Size.find_or_create_by!(label: label, system: "alpha", location: loc)
+  end
+
+  NUMERIC_SIZES.each do |label|
+    Size.find_or_create_by!(label: label, system: "numeric", location: loc)
+  end
+end
+
+# One Size dùng cho các sản phẩm không phân biệt size
+Size.find_or_create_by!(label: "One Size", system: "one_size", location: "GLOBAL")
+
+puts "Generating 93 sample products..."
+
+brands        = %w[Adidas Nike Puma UnderArmour Reebok Asics]
+sports        = %w[Running Soccer Basketball Tennis Gym Training]
+producttypes  = %w[Wear Compression TankTop Jersey Hoodie]
+genders       = %w[Men Women Unisex]
+categories    = %w[Shoes Apparel Accessories]
 
 93.times do |i|
   i += 1
-
-  # Đa dạng hóa brand, sport, producttype
-  brands        = %w[Adidas Nike Puma UnderArmour Reebok Asics]
-  sports        = %w[Running Soccer Basketball Tennis Gym Training]
-  producttypes  = %w[Wear Compression TankTop Jersey Hoodie]
-  genders       = %w[Men Women Unisex]
-  categories    = %w[Shoes Apparel Accessories]
-
   brand        = brands.sample
   sport        = sports.sample
   producttype  = producttypes.sample
@@ -40,45 +56,41 @@ IMAGE_DIR     = "#{Rails.root}/app/assets/images/img"
     description_h5: "Premium #{producttype} for #{sport}",
     description_p: "Experience comfort and performance with the new #{name}.",
     care: "Machine wash cold. Tumble dry low.",
-    specifications: "High-performance fabric, ergonomic design, moisture-wicking",
-    price: rand(25..220),
-    variants_attributes: {
-      0 => { color: 'Black', price: rand(25..220), originalprice: rand(250..300), sku: "SKU#{i}-A" },
-      1 => { color: 'White', price: rand(25..220), originalprice: rand(250..300), sku: "SKU#{i}-B" },
-      2 => { color: 'Red',   price: rand(25..220), originalprice: rand(250..300), sku: "SKU#{i}-C" },
-      3 => { color: 'Blue',  price: rand(25..220), originalprice: rand(250..300), sku: "SKU#{i}-D" }
-    }
+    specifications: "High-performance fabric, ergonomic design, moisture-wicking"
   )
 
-  # Attach images
-  t = i % 12
-  t = 12 if t.zero?
+  %w[Black White Red Blue].each_with_index do |color, idx|
+    variant = product.variants.create!(
+      color: color,
+      price: rand(25..220),
+      originalprice: rand(250..300),
+      sku: "SKU#{i}-#{('A'.ord + idx).chr}",
+      stock: 10
+    )
 
-  variant1 = product.variants[0]
-  variant1.avatar.attach(io: File.open("#{IMAGE_DIR}/item#{t}.png"), filename: "item#{t}.png", content_type: 'image/png')
-  variant1.hover.attach(io: File.open("#{IMAGE_DIR}/item#{t}.png"), filename: "item#{t}.png", content_type: 'image/png')
+    # Attach images
+    t = i % 12
+    t = 12 if t.zero?
 
-  product.variants[0].images.attach(io: File.open("#{IMAGE_DIR}/detail1.png"), filename: "detail1.png", content_type: "image/png")
-  product.variants[1].images.attach(io: File.open("#{IMAGE_DIR}/detail2.png"), filename: "detail2.png", content_type: "image/png")
-  product.variants[2].images.attach(io: File.open("#{IMAGE_DIR}/detail3.png"), filename: "detail3.png", content_type: "image/png")
-  product.variants[3].images.attach(io: File.open("#{IMAGE_DIR}/detail4.png"), filename: "detail4.png", content_type: "image/png")
-
-  # Assign sizes via join table
-  product.variants.each do |variant|
-    sizes = if product.category == "Shoes"
-      NUMERIC_SIZES.map { |label| Size.find_by!(label: label, system: "numeric", location: "US") }
-    elsif product.category == "Apparel"
-      ALPHA_SIZES.map { |label| Size.find_by!(label: label, system: "alpha", location: "US") }
-    else
-      [Size.find_by!(label: "One Size", system: "one_size", location: "US")]
+    if idx == 0
+      variant.avatar.attach(io: File.open("#{IMAGE_DIR}/item#{t}.png"), filename: "item#{t}.png", content_type: 'image/png')
+      variant.hover.attach(io: File.open("#{IMAGE_DIR}/item#{t}.png"), filename: "item#{t}.png", content_type: 'image/png')
     end
 
+    variant.images.attach(io: File.open("#{IMAGE_DIR}/detail#{idx + 1}.png"), filename: "detail#{idx + 1}.png", content_type: "image/png")
+
+    # Gán size
+    sizes = case category
+            when "Shoes"
+              NUMERIC_SIZES.map { |label| Size.find_by!(label: label, system: "numeric", location: "US") }
+            when "Apparel"
+              ALPHA_SIZES.map { |label| Size.find_by!(label: label, system: "alpha", location: "US") }
+            else
+              [Size.find_by!(label: "One Size", system: "one_size", location: "GLOBAL")]
+            end
+
     sizes.each do |size|
-      VariantSize.create!(
-        variant: variant,
-        size: size,
-        stock: rand(1..30)
-      )
+      VariantSize.create!(variant: variant, size: size, stock: rand(1..30))
     end
   end
 

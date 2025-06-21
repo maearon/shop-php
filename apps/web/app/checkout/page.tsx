@@ -102,7 +102,7 @@ export default function CheckoutPage() {
           {/* Contact Section */}
           <div>
             <h2 className="text-lg font-bold mb-4">CONTACT</h2>
-            <p className="text-sm text-gray-600">{current_user.value.email}</p>
+            <p className="text-sm text-gray-600">{current_user.value?.email}</p>
           </div>
 
           {/* Address Section */}

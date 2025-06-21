@@ -41,19 +41,24 @@ const LoginPage: NextPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        await dispatch(fetchUser())
+        setLoading(false)
+        const resultAction = await dispatch(fetchUser())
+        if (fetchUser.fulfilled.match(resultAction) && resultAction.payload?.user?.email) {
+          router.push("/")
+        } else if (fetchUser.rejected.match(resultAction)) {
+          setLoading(false)
+        }
+        setLoading(false)
       } catch (error) {
         console.error("Failed to fetch user:", error)
+        setLoading(false)
       } finally {
         setLoading(false)
-        if (userData?.value?.email) {
-          router.push("/")
-        }
       }
     }
 
     fetchUserData()
-  }, [dispatch, router, userData?.value?.email])
+  }, [dispatch, router])
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),
@@ -96,7 +101,7 @@ const LoginPage: NextPage = () => {
 
   if (loading) return <FullScreenLoader />
 
-  return userData.value.email ? (
+  return userData.value?.email ? (
     <div className="min-h-screen bg-gray-50">
       {/* <Header /> */}
       <div className="container mx-auto px-4 py-8 text-center">

@@ -189,7 +189,7 @@ class Api::ProductsController < Api::ApiController
     {
       id: product.id,
       name: product.name,
-      price: product.price || 0,
+      price: product.variants.first.price || 0,
       brand: product.brand,
       category: product.category,
       gender: product.gender,
@@ -216,14 +216,14 @@ class Api::ProductsController < Api::ApiController
     {
       id: variant.id,
       color: variant.color,
-      sizes: variant.sizes.map { |size| 
+      sizes: variant.variant_sizes.map do |vs|
         {
-          id: size.id,
-          label: size.label,
-          system: size.system,
-          available: size.stock > 0
+          id: vs.size.id,
+          label: vs.size.label,
+          system: vs.size.system,
+          available: vs.stock.to_i > 0
         }
-      }
+      end
     }
   end
 

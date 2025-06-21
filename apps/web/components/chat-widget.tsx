@@ -45,7 +45,7 @@ export default function ChatWidget() {
         },
         {
           id: "3",
-          text: `Welcome to the adidas virtual agent, ${userData.value.name || "there"}.`,
+          text: `Welcome to the adidas virtual agent, ${userData.value?.name || "there"}.`,
           isBot: true,
           timestamp: new Date(welcomeTime.getTime() + 2000),
         },
@@ -60,7 +60,7 @@ export default function ChatWidget() {
 
       setMessages(welcomeMessages)
     }
-  }, [isOpen, userData.value.name, isLoggedIn, messages.length])
+  }, [isOpen, userData.value?.name, isLoggedIn, messages.length])
 
   // Don't show chat widget if user is not logged in
   if (!isLoggedIn) {

@@ -79,7 +79,7 @@ export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlid
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
             <div>
-              <h2 className="text-xl font-bold">HI {userData.value.name?.toUpperCase() || "MEMBER"}</h2>
+              <h2 className="text-xl font-bold">HI {userData.value?.name?.toUpperCase() || "MEMBER"}</h2>
               <div className="flex items-center mt-2">
                 <div className="flex items-center">
                   <span className="text-sm font-bold">adi</span>
