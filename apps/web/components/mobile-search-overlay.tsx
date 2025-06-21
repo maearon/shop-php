@@ -26,17 +26,16 @@ const searchSuggestions = [
 export default function MobileSearchOverlay({
   isOpen,
   onClose,
-  searchQuery,
+  searchQuery = "",
   setSearchQuery,
   onSearch,
 }: MobileSearchOverlayProps) {
   const [filteredSuggestions, setFilteredSuggestions] = useState(searchSuggestions)
 
   useEffect(() => {
-    if (searchQuery.trim()) {
-      const filtered = searchSuggestions.filter((suggestion) =>
-        suggestion.term.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
+    const q = searchQuery.trim()
+    if (q) {
+      const filtered = searchSuggestions.filter(({ term }) => term.toLowerCase().includes(q.toLowerCase()))
       setFilteredSuggestions(filtered)
     } else {
       setFilteredSuggestions(searchSuggestions)

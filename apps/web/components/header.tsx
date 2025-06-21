@@ -38,9 +38,9 @@ export default function Header() {
   const userData = useAppSelector(selectUser)
 
   // Top bar messages
-  const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIVERY WITH PRIME"]
+const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIVERY WITH PRIME"]
 
-  // Auto-rotate messages every 3 seconds
+  // Auto-rotate top bar messages
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentMessageIndex((prev) => (prev + 1) % topBarMessages.length)
@@ -167,7 +167,7 @@ export default function Header() {
       {/* Top bar */}
         <div className="bg-black text-white text-xs py-1 text-center">
           <span>
-            FREE STANDARD SHIPPING WITH ADICLUB{" "}
+            {topBarMessages[currentMessageIndex]}
             <button 
             className="ml-1 inline-flex items-center"
             onClick={() => setShowTopBarDropdown(!showTopBarDropdown)}
@@ -202,14 +202,34 @@ export default function Header() {
           <span>
           </span>
           {/* Country selector */}
-          <div className="hidden md:flex items-center space-x-2 text-xs">
+          {/* <div className="hidden md:flex items-center space-x-2 text-xs">
             <span></span>
             <select className="bg-transparent border-none text-xs">
               <option value="US">🇺🇸 United States</option>
               <option value="VN">🇻🇳 Viet Nam</option>
             </select>
-          </div>
+          </div> */}
         </div>
+
+        {/* Top Bar with rotating messages */}
+      {/* <div className="bg-black text-white relative"> */}
+        {/* <button
+          onClick={() => setShowTopBarDropdown(!showTopBarDropdown)}
+          className="w-full py-2 px-4 flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
+        >
+          <span className="text-sm font-medium">{topBarMessages[currentMessageIndex]}</span>
+          <ChevronDown
+            className={`w-4 h-4 transition-transform duration-200 ${showTopBarDropdown ? "rotate-180" : ""}`}
+          />
+        </button> */}
+
+        {/* Top Bar Dropdown - positioned right below top bar */}
+        {/* {showTopBarDropdown && (
+          <div className="absolute top-full left-0 right-0 z-50">
+            <TopBarDropdown isOpen={showTopBarDropdown} onClose={() => setShowTopBarDropdown(!showTopBarDropdown)} />
+          </div>
+        )} */}
+      {/* </div> */}
 
         {/* Main header */}
         <div className="container mx-auto px-4 py-4">
