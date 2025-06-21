@@ -58,6 +58,7 @@ export interface Product {
   care?: string;
   created_at: string; // ISO 8601 timestamp (e.g., "2025-06-18T12:00:00Z")
   updated_at: string;
+  image?: string; // Assuming image is a string URL
 }
 
 
