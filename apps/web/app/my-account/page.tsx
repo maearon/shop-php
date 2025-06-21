@@ -1,89 +1,166 @@
 "use client"
 
+import { useState } from "react"
 import { useAppSelector } from "@/store/hooks"
 import { selectUser } from "@/store/sessionSlice"
 import Link from "next/link"
+import { Heart } from "lucide-react"
 
 export default function MyAccountPage() {
+  const [activeTab, setActiveTab] = useState("FEED")
   const userData = useAppSelector(selectUser)
 
-  return (
-    <div className="space-y-8">
-      {/* Welcome Section */}
-      <div className="bg-white border rounded-lg p-6">
-        <h1 className="text-2xl font-bold mb-4">MY DETAILS</h1>
-        <p className="text-gray-600 mb-6">Feel free to edit any of your details below so your account is up to date.</p>
+  const tabs = [
+    { id: "FEED", label: "FEED" },
+    { id: "ORDERS", label: "ORDERS" },
+    { id: "ACCOUNT", label: "ACCOUNT" },
+  ]
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h3 className="font-bold mb-4">DETAILS</h3>
-            <div className="space-y-2">
-              <p className="font-medium">{userData.value.name || "MANH NGUYEN"}</p>
-              <p className="text-gray-600">2000-13-02</p>
-              <p className="text-gray-600">GENDER</p>
-              <Link href="/my-account/profile" className="text-black underline font-medium">
-                EDIT
-              </Link>
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header Section */}
+      <div className="bg-white border-b">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">HI {userData.value.name?.toUpperCase() || "MANH"}</h1>
+              <div className="flex items-center mt-2">
+                <span className="text-sm text-gray-600 mr-2">👑</span>
+                <span className="text-sm text-gray-600">0 points to spend</span>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold">adiclub</div>
+              <div className="text-sm">LEVEL 1</div>
             </div>
           </div>
 
-          <div>
-            <h3 className="font-bold mb-4">LOGIN DETAILS</h3>
-            <div className="space-y-2">
-              <p className="text-gray-600">EMAIL</p>
-              <p className="font-medium">{userData.value.email}</p>
-              <Link href="/my-account/profile" className="text-black underline font-medium">
-                EDIT
-              </Link>
-            </div>
+          {/* Tabs Navigation */}
+          <div className="flex space-x-8 mt-8">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`pb-2 font-medium ${
+                  activeTab === tab.id ? "border-b-2 border-black text-black" : "text-gray-600 hover:text-black"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Link
-          href="/my-account/order-history"
-          className="bg-white border rounded-lg p-6 hover:shadow-md transition-shadow"
-        >
-          <div className="text-center">
-            <div className="text-3xl mb-2">📦</div>
-            <h3 className="font-bold mb-2">Order History</h3>
-            <p className="text-sm text-gray-600">View your past orders and track current ones</p>
-          </div>
-        </Link>
+      {/* Content */}
+      <div className="container mx-auto px-4 py-8">
+        {activeTab === "FEED" && (
+          <div className="space-y-8">
+            {/* Your Vouchers */}
+            <div className="bg-white rounded-lg p-6">
+              <h2 className="text-xl font-bold mb-4">YOUR VOUCHERS</h2>
+              <p className="text-gray-600 mb-2">You don't have any vouchers currently.</p>
+              <p className="text-gray-600 mb-4">
+                You currently don't have enough adiClub points to unlock discount vouchers.
+              </p>
+              <Link href="#" className="text-black underline font-medium">
+                HOW TO EARN MORE POINTS
+              </Link>
+            </div>
 
-        <Link href="/my-account/addresses" className="bg-white border rounded-lg p-6 hover:shadow-md transition-shadow">
-          <div className="text-center">
-            <div className="text-3xl mb-2">📍</div>
-            <h3 className="font-bold mb-2">Address Book</h3>
-            <p className="text-sm text-gray-600">Manage your shipping and billing addresses</p>
-          </div>
-        </Link>
+            {/* More of What You Love */}
+            <div className="bg-white rounded-lg p-6">
+              <h2 className="text-2xl font-bold mb-4">MORE OF WHAT YOU LOVE</h2>
+              <p className="text-gray-600 mb-6">
+                We've collected some of our favourite products based on your preferences and purchases.
+              </p>
 
-        <Link href="/wishlist" className="bg-white border rounded-lg p-6 hover:shadow-md transition-shadow">
-          <div className="text-center">
-            <div className="text-3xl mb-2">❤️</div>
-            <h3 className="font-bold mb-2">Wishlist</h3>
-            <p className="text-sm text-gray-600">View your saved items</p>
+              {/* Product Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[1, 2, 3, 4].map((item) => (
+                  <div key={item} className="group cursor-pointer">
+                    <div className="aspect-square bg-gray-100 rounded-lg mb-3 relative overflow-hidden">
+                      <img
+                        src={`/placeholder.svg?height=300&width=300`}
+                        alt="Product"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      />
+                      <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md hover:bg-gray-50">
+                        <Heart className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <h3 className="font-medium mb-1">Product Name</h3>
+                    <p className="text-gray-600 text-sm mb-2">Category</p>
+                    <p className="font-bold">$120.00</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        </Link>
-      </div>
+        )}
 
-      {/* adiClub Status */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-xl font-bold mb-2">adiClub Level 1</h3>
-            <p className="opacity-90">You have 0 points to spend</p>
-          </div>
-          <div className="text-right">
-            <div className="text-3xl mb-2">🏆</div>
-            <Link href="/my-account/adiclub" className="bg-white text-blue-600 px-4 py-2 rounded font-medium">
-              View Benefits
+        {activeTab === "ORDERS" && (
+          <div className="bg-white rounded-lg p-8 text-center">
+            <h2 className="text-2xl font-bold mb-4">NO ORDERS YET</h2>
+            <p className="text-gray-600 mb-6">Once you place an order, it will appear here.</p>
+            <Link
+              href="/"
+              className="inline-block bg-black text-white px-8 py-3 font-medium hover:bg-gray-800 transition"
+            >
+              START SHOPPING
             </Link>
           </div>
-        </div>
+        )}
+
+        {activeTab === "ACCOUNT" && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg p-6">
+              <h2 className="text-xl font-bold mb-4">ACCOUNT OVERVIEW</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="font-bold mb-4">PERSONAL INFORMATION</h3>
+                  <Link
+                    href="/my-account/profile"
+                    className="text-black hover:underline flex items-center justify-between p-3 border rounded"
+                  >
+                    <span>Edit your personal details</span>
+                    <span>→</span>
+                  </Link>
+                </div>
+                <div>
+                  <h3 className="font-bold mb-4">ADDRESS BOOK</h3>
+                  <Link
+                    href="/my-account/addresses"
+                    className="text-black hover:underline flex items-center justify-between p-3 border rounded"
+                  >
+                    <span>Manage your addresses</span>
+                    <span>→</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-6">
+              <h2 className="text-xl font-bold mb-4">PREFERENCES</h2>
+              <div className="space-y-3">
+                <Link
+                  href="/my-account/preferences"
+                  className="flex items-center justify-between p-3 border rounded hover:bg-gray-50"
+                >
+                  <span>Communication preferences</span>
+                  <span>→</span>
+                </Link>
+                <Link
+                  href="/my-account/size-profile"
+                  className="flex items-center justify-between p-3 border rounded hover:bg-gray-50"
+                >
+                  <span>Size profile</span>
+                  <span>→</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

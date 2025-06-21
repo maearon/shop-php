@@ -1,0 +1,188 @@
+"use client"
+
+import { useState } from "react"
+import { X, ChevronRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { useAppSelector } from "@/store/hooks"
+import { selectUser } from "@/store/sessionSlice"
+import Link from "next/link"
+import { useDispatch } from "react-redux"
+import type { AppDispatch } from "@/store/store"
+import sessionApi from "./shared/api/sessionApi"
+import { fetchUser } from "@/store/sessionSlice"
+import flashMessage from "./shared/flashMessages"
+
+interface UserAccountSlideoutProps {
+  isOpen: boolean
+  onClose: () => void
+}
+
+export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlideoutProps) {
+  const [activeTab, setActiveTab] = useState("JUST FOR YOU")
+  const userData = useAppSelector(selectUser)
+  const dispatch = useDispatch<AppDispatch>()
+
+  const handleLogout = async () => {
+    try {
+      await sessionApi.destroy()
+      localStorage.removeItem("token")
+      sessionStorage.removeItem("token")
+      await dispatch(fetchUser())
+      flashMessage("success", "Logged out successfully")
+      onClose()
+    } catch (error) {
+      flashMessage("error", "Logout failed")
+    }
+  }
+
+  const tabs = ["JUST FOR YOU", "POINTS SHOP", "EARN POINTS"]
+
+  const offers = [
+    {
+      title: "Download the adidas app",
+      description: "Get alerts for releases, sales and member offers",
+    },
+    {
+      title: "Go for a run and earn points",
+      description: "Download adidas Running app and earn 2 points for every mile tracked",
+    },
+    {
+      title: "Get a Spotify Premium subscription",
+      description: "Redeem your adiClub points to unlock up to 5 months of access to Spotify Premium",
+    },
+    {
+      title: "Earn a $10 discount",
+      description: "Invite a friend to adiClub and you both get $10 off",
+    },
+    {
+      title: "Only at adiClub",
+      description: "Exclusive products curated for members",
+    },
+    {
+      title: "Complete your profile",
+      description: "Tell us more about yourself to unlock personalized recommendations",
+    },
+  ]
+
+  return (
+    <>
+      {/* Overlay */}
+      {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={onClose} />}
+
+      {/* Slideout Panel */}
+      <div
+        className={`fixed top-0 right-0 h-full w-96 bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b">
+            <div>
+              <h2 className="text-xl font-bold">HI {userData.value.name?.toUpperCase() || "MEMBER"}</h2>
+              <div className="flex items-center mt-2">
+                <div className="flex items-center">
+                  <span className="text-sm font-bold">adi</span>
+                  <span className="text-sm font-bold text-blue-600 italic">club</span>
+                  <div className="ml-1 flex items-center">
+                    <span className="text-xs">LEVEL</span>
+                    <span className="ml-1 text-2xl font-bold">1</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded">
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* Points */}
+          <div className="px-6 py-4 border-b">
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Points to spend</span>
+              <div className="flex items-center">
+                <div className="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mr-2">
+                  <span className="text-xs">0</span>
+                </div>
+                <span className="font-bold">0</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Menu Items */}
+          <div className="px-6 py-4 border-b">
+            <Link
+              href="/my-account"
+              onClick={onClose}
+              className="flex items-center justify-between py-3 hover:bg-gray-50 -mx-2 px-2 rounded"
+            >
+              <span className="font-medium">VISIT YOUR ACCOUNT</span>
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+            <button className="flex items-center justify-between py-3 hover:bg-gray-50 -mx-2 px-2 rounded w-full text-left">
+              <span className="font-medium">POINTS HISTORY</span>
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Tabs */}
+          <div className="border-b">
+            <div className="flex">
+              {tabs.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex-1 py-3 px-2 text-xs font-medium border-b-2 ${
+                    activeTab === tab
+                      ? "border-black text-black"
+                      : "border-transparent text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto">
+            {activeTab === "JUST FOR YOU" && (
+              <div className="p-6 space-y-4">
+                {offers.map((offer, index) => (
+                  <div key={index} className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-medium text-sm mb-1">{offer.title}</h3>
+                        <p className="text-xs text-gray-600">{offer.description}</p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-gray-400 ml-2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab === "POINTS SHOP" && (
+              <div className="p-6 text-center">
+                <p className="text-gray-500">No points shop items available</p>
+              </div>
+            )}
+
+            {activeTab === "EARN POINTS" && (
+              <div className="p-6 text-center">
+                <p className="text-gray-500">Ways to earn points coming soon</p>
+              </div>
+            )}
+          </div>
+
+          {/* Logout Button */}
+          <div className="p-6 border-t">
+            <Button onClick={handleLogout} variant="outline" className="w-full">
+              Log Out
+            </Button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
