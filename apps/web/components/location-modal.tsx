@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { X } from "lucide-react"
 
 interface LocationModalProps {
   isOpen: boolean
@@ -46,11 +45,6 @@ export default function LocationModal({ isOpen, onClose, onLocationSelect }: Loc
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md p-0 bg-white">
         <div className="relative p-8">
-          {/* Close button */}
-          <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full">
-            <X className="h-5 w-5" />
-          </button>
-
           {/* Header */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-black mb-2">PLEASE CHOOSE YOUR</h2>

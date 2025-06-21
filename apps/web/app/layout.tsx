@@ -7,6 +7,8 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import ChatWidget from "@/components/chat-widget"
 import { FeedbackModalProvider, LocationModalProvider } from "@/components/modal-providers"
+import FeedbackWidget from "@/components/feedback-widget"
+import ScrollToTop from "@/components/scroll-to-top"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -35,7 +37,10 @@ export default function RootLayout({
           <ChatWidget />
 
           {/* Feedback Modal for non-logged users */}
-          <FeedbackModalProvider />
+          {/* <FeedbackModalProvider /> */}
+          {/* Fixed Widgets */}
+          <FeedbackWidget />
+          <ScrollToTop />
         </Providers> 
       </body>
     </html>

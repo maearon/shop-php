@@ -58,9 +58,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md p-0 bg-white">
         {/* Close Button */}
-        <button onClick={onClose} className="absolute top-4 right-4 z-10 p-2 hover:bg-gray-100 rounded">
-          <X className="h-4 w-4" />
-        </button>
 
         <div className="p-8">
           {/* adiClub Logo */}
