@@ -24,9 +24,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          {/* <Header /> */}
+          <Header />
           <main>{children}</main>
-          {/* <Footer /> */}
+          <Footer />
           <ChatWidget />
           {/* Location Modal */}
           <LocationModalProvider />
