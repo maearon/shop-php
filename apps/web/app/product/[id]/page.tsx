@@ -159,7 +159,7 @@ const ProductDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      {/* <Header /> */}
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <nav className="text-sm text-gray-600 mb-6">
@@ -456,7 +456,7 @@ const ProductDetailPage = () => {
         </section>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   )
 }

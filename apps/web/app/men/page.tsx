@@ -73,7 +73,7 @@ export default function MenPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      {/* <Header /> */}
 
       {/* Hero Section - Three Panel Layout */}
       <section className="relative h-[500px] bg-gray-100 overflow-hidden">
@@ -215,7 +215,7 @@ export default function MenPage() {
         </div>
       </section>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   )
 }

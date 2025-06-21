@@ -98,14 +98,14 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
   if (loading && products.length === 0) {
     return (
       <div className="min-h-screen bg-white">
-        <Header />
+        {/* <Header /> */}
         <main className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-center h-64">
             <Loader2 className="h-8 w-8 animate-spin" />
             <span className="ml-2">Loading products...</span>
           </div>
         </main>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     )
   }
@@ -114,14 +114,14 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
   if (error && products.length === 0) {
     return (
       <div className="min-h-screen bg-white">
-        <Header />
+        {/* <Header /> */}
         <main className="container mx-auto px-4 py-6">
           <div className="flex flex-col items-center justify-center h-64">
             <p className="text-red-600 mb-4">{error}</p>
             <Button onClick={() => fetchProducts()}>Try Again</Button>
           </div>
         </main>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     )
   }
@@ -137,7 +137,7 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      {/* <Header /> */}
 
       <main className="container mx-auto px-4 py-6">
         {/* Breadcrumb */}
@@ -325,7 +325,7 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
         }}
       />
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   )
 }

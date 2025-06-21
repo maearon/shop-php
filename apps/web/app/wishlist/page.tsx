@@ -29,7 +29,7 @@ export default function WishlistPage() {
   if (wishlistItems.length === 0) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        {/* <Header /> */}
         <main className="flex-grow container mx-auto px-4 py-12">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold mb-2">MY WISHLIST</h1>
@@ -67,7 +67,7 @@ export default function WishlistPage() {
             </div>
           </div>
         </main>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     )
   }
@@ -75,7 +75,7 @@ export default function WishlistPage() {
   // Wishlist with items view
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      {/* <Header /> */}
       <main className="flex-grow container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl font-bold mb-2">MY WISHLIST</h1>
@@ -135,7 +135,7 @@ export default function WishlistPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   )
 }

@@ -98,7 +98,7 @@ const LoginPage: NextPage = () => {
 
   return userData.value.email ? (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      {/* <Header /> */}
       <div className="container mx-auto px-4 py-8 text-center">
         <h1 className="text-2xl font-bold mb-4">Welcome back!</h1>
         <p className="text-gray-600 mb-8">You are already logged in.</p>
@@ -106,11 +106,11 @@ const LoginPage: NextPage = () => {
           Go to My Account
         </Link>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   ) : (
     <div className="min-h-screen bg-white">
-      <Header />
+      {/* <Header /> */}
 
       {/* Hero Section */}
       <div className="relative bg-gray-100 py-16">
@@ -290,7 +290,7 @@ const LoginPage: NextPage = () => {
         </div>
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   )
 }
