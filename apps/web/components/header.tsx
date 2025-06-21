@@ -1,12 +1,11 @@
 "use client"
 
 import type React from "react"
-
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
-import { Search, ShoppingBag, User, Heart, MenuIcon, LogOut, LogIn } from "lucide-react"
+import { Search, ShoppingBag, User, Heart, MenuIcon, LogOut, LogIn, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAppSelector } from "@/store/hooks"
 import MegaMenu from "./mega-menu"
@@ -15,9 +14,13 @@ import LoginModal from "./login-modal"
 import UserAccountSlideout from "./user-account-slideout"
 import AdidasLogo from "./adidas-logo"
 import { useDispatch } from "react-redux"
-import { AppDispatch } from "@/store/store"
+import type { AppDispatch } from "@/store/store"
 import sessionApi from "./shared/api/sessionApi"
 import flashMessage from "./shared/flashMessages"
+import TopBarDropdown from "./top-bar-dropdown"
+import MobileMenu from "./mobile-menu"
+import MobileAppBanner from "./mobile-app-banner"
+import MobileSearchOverlay from "./mobile-search-overlay"
 
 export default function Header() {
   const pathname = usePathname()
@@ -26,7 +29,35 @@ export default function Header() {
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showUserSlideout, setShowUserSlideout] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [showTopBarDropdown, setShowTopBarDropdown] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const [showMobileSearch, setShowMobileSearch] = useState(false)
+  const [showAppBanner, setShowAppBanner] = useState(true)
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
+  const [loginBadgeAnimate, setLoginBadgeAnimate] = useState(false)
   const userData = useAppSelector(selectUser)
+
+  // Top bar messages
+  const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIVERY WITH PRIME"]
+
+  // Auto-rotate messages every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentMessageIndex((prev) => (prev + 1) % topBarMessages.length)
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Login badge animation - bounce 3 times every 3 seconds
+  useEffect(() => {
+    if (!userData.value?.email) {
+      const interval = setInterval(() => {
+        setLoginBadgeAnimate(true)
+        setTimeout(() => setLoginBadgeAnimate(false), 900) // 3 bounces * 300ms each
+      }, 3000)
+      return () => clearInterval(interval)
+    }
+  }, [userData.value?.email])
 
   // Get cart and wishlist counts from Redux
   const cartItemsCount = useAppSelector((state) => state.cart.items.reduce((total, item) => total + item.quantity, 0))
@@ -41,7 +72,6 @@ export default function Header() {
   ]
 
   const [loading, setLoading] = useState(true)
-
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
@@ -54,7 +84,6 @@ export default function Header() {
         setLoading(false)
       }
     }
-
     fetchUserData()
   }, [dispatch])
 
@@ -68,12 +97,8 @@ export default function Header() {
 
   const onClick = async (e: any) => {
     e.preventDefault()
-
     try {
-      // Call the API to destroy the session
       const response = await sessionApi.destroy()
-
-      // Always clear local and session storage
       localStorage.removeItem("token")
       localStorage.removeItem("remember_token")
       localStorage.removeItem("refreshToken")
@@ -82,19 +107,14 @@ export default function Header() {
       sessionStorage.removeItem("remember_token")
       sessionStorage.removeItem("refreshToken")
       sessionStorage.removeItem("accessToken")
-      await dispatch(fetchUser()) // Fetch user data if needed
+      await dispatch(fetchUser())
 
-      // Check the response status
       if (response.status === 401) {
         flashMessage("error", "Unauthorized")
       }
-
-      // Redirect to home page
       router.push("/")
     } catch (error) {
-      // Handle error and show flash message
       flashMessage("error", "Logout error: " + error)
-      // Always clear local and session storage
       localStorage.removeItem("token")
       localStorage.removeItem("refresh_token")
       localStorage.removeItem("refreshToken")
@@ -107,9 +127,7 @@ export default function Header() {
       sessionStorage.removeItem("accessToken")
       sessionStorage.removeItem("guest_cart_id")
       sessionStorage.removeItem("guest_wish_id")
-      await dispatch(fetchUser()) // Fetch user data if needed
-
-      // Check the response status
+      await dispatch(fetchUser())
       flashMessage("error", "Unauthorized")
     }
   }
@@ -126,6 +144,7 @@ export default function Header() {
     e.preventDefault()
     if (searchQuery.trim()) {
       router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}&sitePath=us`)
+      setShowMobileSearch(false)
     }
   }
 
@@ -135,14 +154,24 @@ export default function Header() {
     }
   }
 
+  const handleMobileSearchClick = () => {
+    setShowMobileSearch(true)
+  }
+
   return (
     <>
+      {/* Mobile App Banner */}
+      <MobileAppBanner isOpen={showAppBanner} onClose={() => setShowAppBanner(false)} />
+
       <header className="relative border-b border-gray-200">
       {/* Top bar */}
         <div className="bg-black text-white text-xs py-1 text-center">
           <span>
             FREE STANDARD SHIPPING WITH ADICLUB{" "}
-            <button className="ml-1 inline-flex items-center">
+            <button 
+            className="ml-1 inline-flex items-center"
+            onClick={() => setShowTopBarDropdown(!showTopBarDropdown)}
+            >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -184,15 +213,15 @@ export default function Header() {
 
         {/* Main header */}
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          {/* Desktop Layout */}
+          <div className="hidden md:flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center">
-              {/* <div className="text-2xl font-bold">adidas</div> */}
               <AdidasLogo />
             </Link>
 
-            {/* Navigation */}
-            <nav className="hidden md:flex space-x-8">
+            {/* Desktop Navigation */}
+            <nav className="flex space-x-8">
               {navItems.map((item) => (
                 <div key={item.name} className="relative" onMouseEnter={() => handleMouseEnter(item.name)}>
                   <Link
@@ -209,10 +238,10 @@ export default function Header() {
               ))}
             </nav>
 
-            {/* Right side */}
+            {/* Right side icons */}
             <div className="flex items-center space-x-4">
-              {/* Search */}
-              <form onSubmit={handleSearchSubmit} className="hidden md:flex items-center space-x-2">
+              {/* Desktop Search */}
+              <form onSubmit={handleSearchSubmit} className="flex items-center space-x-2">
                 <Input
                   placeholder="Search"
                   className="w-48"
@@ -232,7 +261,12 @@ export default function Header() {
               >
                 <User className="h-5 w-5 cursor-pointer" />
                 {!userData.value?.email && (
-                  <span className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  <span
+                    className={cn(
+                      "absolute -top-2 -right-2 bg-yellow-500 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold transition-transform duration-100",
+                      loginBadgeAnimate && "animate-bounce",
+                    )}
+                  >
                     1
                   </span>
                 )}
@@ -264,8 +298,9 @@ export default function Header() {
                 )}
               </Link>
 
+              {/* Desktop Login/Logout */}
               {loading ? (
-                <li>Loading...</li>
+                <span>Loading...</span>
               ) : userData.value?.email ? (
                 <Link href="#logout" onClick={onClick}>
                   <LogOut className="h-5 w-5 cursor-pointer" />
@@ -275,15 +310,86 @@ export default function Header() {
                   <LogIn className="h-5 w-5 cursor-pointer" />
                 </Link>
               )}
+            </div>
+          </div>
 
-              <MenuIcon className="h-5 w-5 cursor-pointer md:hidden" />
+          {/* Mobile Layout */}
+          <div className="md:hidden flex items-center justify-between">
+            {/* Left side - Hamburger and Wishlist */}
+            <div className="flex items-center space-x-4">
+              <button onClick={() => setShowMobileMenu(true)}>
+                <MenuIcon className="h-6 w-6" />
+              </button>
+
+              <Link href="/wishlist" className="relative">
+                <Heart className="h-5 w-5 cursor-pointer" />
+                {wishlistItemsCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {wishlistItemsCount}
+                  </span>
+                )}
+              </Link>
+            </div>
+
+            {/* Center - Logo */}
+            <Link href="/" className="flex items-center">
+              <AdidasLogo />
+            </Link>
+
+            {/* Right side - User, Search, Cart */}
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={handleUserIconClick}
+                className="relative"
+                title={userData.value?.email ? "Account" : "Login"}
+              >
+                <User className="h-5 w-5 cursor-pointer" />
+                {!userData.value?.email && (
+                  <span
+                    className={cn(
+                      "absolute -top-2 -right-2 bg-yellow-500 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold transition-transform duration-100",
+                      loginBadgeAnimate && "animate-bounce",
+                    )}
+                  >
+                    1
+                  </span>
+                )}
+              </button>
+
+              <button onClick={handleMobileSearchClick}>
+                <Search className="h-5 w-5 cursor-pointer" />
+              </button>
+
+              <Link href="/cart" className="relative">
+                <ShoppingBag className="h-5 w-5 cursor-pointer" />
+                {cartItemsCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartItemsCount}
+                  </span>
+                )}
+              </Link>
             </div>
           </div>
         </div>
 
-        {/* Mega Menu */}
+        {/* Desktop Mega Menu */}
         <MegaMenu activeMenu={activeMenu} onClose={handleMouseLeave} />
       </header>
+
+      {/* Top Bar Dropdown */}
+      <TopBarDropdown isOpen={showTopBarDropdown} onClose={() => setShowTopBarDropdown(false)} />
+
+      {/* Mobile Menu */}
+      <MobileMenu isOpen={showMobileMenu} onClose={() => setShowMobileMenu(false)} />
+
+      {/* Mobile Search Overlay */}
+      <MobileSearchOverlay
+        isOpen={showMobileSearch}
+        onClose={() => setShowMobileSearch(false)}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        onSearch={handleSearchSubmit}
+      />
 
       {/* Login Modal */}
       <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />

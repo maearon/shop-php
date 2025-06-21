@@ -13,7 +13,7 @@ import ScrollToTop from "@/components/scroll-to-top"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Adidas - Impossible is Nothing",
+  title: "adidas Online Shop | adidas US",
   description: "Shop the latest adidas shoes, clothing and accessories",
 }
 
