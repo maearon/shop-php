@@ -44,7 +44,7 @@ ENTRYPOINT ["/usr/bin/entrypoint.sh"]
 ARG RAILS_ENV=development
 ENV RAILS_ENV=${RAILS_ENV}
 RUN if [ "$RAILS_ENV" = "production" ]; then \
-      SECRET_KEY_BASE=WTSuperSecretKeyForSpringBoilerplateApplicationMustBeLongEnoughForSecurity bundle exec rake assets:precompile; \
+      SECRET_KEY_BASE=f2dc6dd1e38c7a0368dcd4c6298cd86af6bd5735cb4e7cf2f0a8dfceeaf47a59eb36906aac1f7003dad1c019c731d0016b58ad5e7c6268b9b4b1fca43a07f7d7 bundle exec rake assets:precompile; \
     fi
 
 # Expose port
