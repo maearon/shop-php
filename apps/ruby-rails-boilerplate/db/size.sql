@@ -7,3 +7,6 @@ CREATE TABLE sizes (
 
   UNIQUE (label, system)
 );
+
+ALTER TABLE sizes ADD COLUMN location VARCHAR(10);
+ALTER TABLE sizes ADD COLUMN stock INTEGER DEFAULT 0;
