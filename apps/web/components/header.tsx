@@ -13,7 +13,7 @@ import { fetchUser, selectUser } from "@/store/sessionSlice"
 import flashMessage from "./shared/flashMessages"
 import router from "next/router"
 import { useDispatch } from "react-redux"
-import { AppDispatch } from "@/store/store"
+import type { AppDispatch } from "@/store/store"
 
 export default function Header() {
   const pathname = usePathname()
@@ -25,21 +25,21 @@ export default function Header() {
   const cartItemsCount = useAppSelector((state) => state.cart.items.reduce((total, item) => total + item.quantity, 0))
   const wishlistItemsCount = useAppSelector((state) => state.wishlist.items.length)
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        await dispatch(fetchUser());
+        await dispatch(fetchUser())
       } catch (error) {
-        console.error('Failed to fetch user:', error);
+        console.error("Failed to fetch user:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchUserData();
-  }, [dispatch]);
+    fetchUserData()
+  }, [dispatch])
 
   const navItems = [
     { name: "MEN", href: "/men" },
@@ -58,74 +58,97 @@ export default function Header() {
   }
 
   const onClick = async (e: any) => {
-    e.preventDefault();
-    
+    e.preventDefault()
+
     try {
       // Call the API to destroy the session
-      const response = await sessionApi.destroy();
-      
+      const response = await sessionApi.destroy()
+
       // Always clear local and session storage
-      localStorage.removeItem("token");
-      localStorage.removeItem("remember_token");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("accessToken");
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("remember_token");
-      sessionStorage.removeItem("refreshToken");
-      sessionStorage.removeItem("accessToken");
-      await dispatch(fetchUser()); // Fetch user data if needed
-  
+      localStorage.removeItem("token")
+      localStorage.removeItem("remember_token")
+      localStorage.removeItem("refreshToken")
+      localStorage.removeItem("accessToken")
+      sessionStorage.removeItem("token")
+      sessionStorage.removeItem("remember_token")
+      sessionStorage.removeItem("refreshToken")
+      sessionStorage.removeItem("accessToken")
+      await dispatch(fetchUser()) // Fetch user data if needed
+
       // Check the response status
       if (response.status === 401) {
         flashMessage("error", "Unauthorized")
       }
-      
+
       // Redirect to home page
-      router.push("/");
+      router.push("/")
     } catch (error) {
       // Handle error and show flash message
-      flashMessage("error", "Logout error: " + error);
+      flashMessage("error", "Logout error: " + error)
       // Always clear local and session storage
-      localStorage.removeItem("token");
-      localStorage.removeItem("refresh_token");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("guest_cart_id");
-      localStorage.removeItem("guest_wish_id");
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("refresh_token");
-      sessionStorage.removeItem("refreshToken");
-      sessionStorage.removeItem("accessToken");
-      sessionStorage.removeItem("guest_cart_id");
-      sessionStorage.removeItem("guest_wish_id");
-      await dispatch(fetchUser()); // Fetch user data if needed
-  
+      localStorage.removeItem("token")
+      localStorage.removeItem("refresh_token")
+      localStorage.removeItem("refreshToken")
+      localStorage.removeItem("accessToken")
+      localStorage.removeItem("guest_cart_id")
+      localStorage.removeItem("guest_wish_id")
+      sessionStorage.removeItem("token")
+      sessionStorage.removeItem("refresh_token")
+      sessionStorage.removeItem("refreshToken")
+      sessionStorage.removeItem("accessToken")
+      sessionStorage.removeItem("guest_cart_id")
+      sessionStorage.removeItem("guest_wish_id")
+      await dispatch(fetchUser()) // Fetch user data if needed
+
       // Check the response status
       flashMessage("error", "Unauthorized")
     }
-  };
+  }
 
   return (
     <header className="relative border-b border-gray-200">
       {/* Top bar */}
       <div className="bg-black text-white text-xs py-1 text-center">
-        FREE STANDARD SHIPPING WITH ADICLUB{" "}
-        <button className="ml-1 inline-flex items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="w-3 h-3"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </button>
+        <span>
+          FREE STANDARD SHIPPING WITH ADICLUB{" "}
+          <button className="ml-1 inline-flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-3 h-3"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+        </span>
+        {/* Country selector */}
+        {/* <div className="hidden md:flex items-center space-x-2 text-xs">
+          <span>🇺🇸</span>
+          <select className="bg-transparent border-none text-xs">
+            <option value="US">United States</option>
+            <option value="VN">Viet Nam</option>
+          </select>
+        </div> */}
+      </div>
+
+      <div className="bg-black text-white text-xs py-1 text-center flex justify-between items-center">
+        <span>
+        </span>
+        {/* Country selector */}
+        <div className="hidden md:flex items-center space-x-2 text-xs">
+          <span>🇺🇸</span>
+          <select className="bg-transparent border-none text-xs">
+            <option value="US">United States</option>
+            <option value="VN">Viet Nam</option>
+          </select>
+        </div>
       </div>
 
       {/* Main header */}
@@ -160,8 +183,14 @@ export default function Header() {
               <Input placeholder="Search" className="w-48" />
               <Search className="h-5 w-5" />
             </div>
+            {/* User icon with badge */}
             <Link href="/account-login" className="relative" title="Login">
               <User className="h-5 w-5 cursor-pointer" />
+              {!userData?.value?.email && (
+                <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  1
+                </span>
+              )}
             </Link>
 
             {/* Wishlist with count */}
@@ -174,15 +203,22 @@ export default function Header() {
               )}
             </Link>
 
-            {/* Cart with count */}
-            <Link href="/cart" className="relative">
-              <ShoppingBag className="h-5 w-5 cursor-pointer" />
-              {cartItemsCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartItemsCount}
-                </span>
+            {/* Cart with hover tooltip */}
+            <div className="relative group">
+              <Link href="/cart" className="relative">
+                <ShoppingBag className="h-5 w-5 cursor-pointer" />
+                {cartItemsCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartItemsCount}
+                  </span>
+                )}
+              </Link>
+              {cartItemsCount === 0 && (
+                <div className="absolute top-8 right-0 bg-white border shadow-lg px-4 py-2 text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  YOUR CART IS EMPTY
+                </div>
               )}
-            </Link>
+            </div>
             {loading ? (
               <li>Loading...</li>
             ) : userData.value.email ? (
