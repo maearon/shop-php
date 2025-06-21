@@ -11,6 +11,7 @@ import MegaMenu from "./mega-menu"
 import { selectUser } from "@/store/sessionSlice"
 import LoginModal from "./login-modal"
 import UserAccountSlideout from "./user-account-slideout"
+import AdidasLogo from "./adidas-logo"
 
 export default function Header() {
   const pathname = usePathname()
@@ -76,7 +77,8 @@ export default function Header() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center">
-              <div className="text-2xl font-bold">adidas</div>
+              {/* <div className="text-2xl font-bold">adidas</div> */}
+              <AdidasLogo />
             </Link>
 
             {/* Navigation */}
