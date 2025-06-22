@@ -22,37 +22,36 @@ const API = axios.create({
   },
 })
 
-API.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
-    if (typeof window !== "undefined") {
-    const token =
-      localStorage.getItem("token") !== "undefined" ? localStorage.getItem("token") : sessionStorage.getItem("token")
-    
+import type { InternalAxiosRequestConfig } from "axios"
 
-    if (token) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${token}`,
+API.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    if (typeof window !== "undefined") {
+      const token =
+        localStorage.getItem("token") !== "undefined"
+          ? localStorage.getItem("token")
+          : sessionStorage.getItem("token")
+
+      if (token && config.headers) {
+        config.headers["Authorization"] = `Bearer ${token}`
       }
-    }
     }
 
     // 👉 Tự động thêm guest_cart_id vào query nếu có
     if (typeof window !== "undefined") {
-    const guestCartId =
-      localStorage.getItem("guest_cart_id") !== "undefined"
-        ? localStorage.getItem("guest_cart_id")
-        : sessionStorage.getItem("guest_cart_id")
-    
+      const guestCartId =
+        localStorage.getItem("guest_cart_id") !== "undefined"
+          ? localStorage.getItem("guest_cart_id")
+          : sessionStorage.getItem("guest_cart_id")
 
-    if (guestCartId) {
-      const url = new URL(config.url || "", BASE_URL)
-      if (!url.searchParams.has("guest_cart_id")) {
-        url.searchParams.set("guest_cart_id", guestCartId)
-        config.url = url.pathname + "?" + url.searchParams.toString()
+      if (guestCartId) {
+        const url = new URL(config.url || "", BASE_URL)
+        if (!url.searchParams.has("guest_cart_id")) {
+          url.searchParams.set("guest_cart_id", guestCartId)
+          config.url = url.pathname + "?" + url.searchParams.toString()
+        }
       }
     }
-   }
 
     return config
   },
