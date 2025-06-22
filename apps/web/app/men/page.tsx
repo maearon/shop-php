@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
+import MenFooter from "@/components/men-footer"
 
 export default function MenPage() {
   const categoryTiles = [
@@ -59,7 +60,7 @@ export default function MenPage() {
   ]
 
   const menCategories = {
-    "MEN'S CLOTHING": ["T-shirts", "Hoodies", "Sweatshirts", "Jackets", "Pants & Joggers", "Shorts"],
+    "MEN'S CLOTHINGgggg": ["T-shirts", "Hoodies", "Sweatshirts", "Jackets", "Pants & Joggers", "Shorts"],
     "MEN'S SHOES": ["Shoes", "High Top Sneakers", "Low Top Sneakers", "Slip On Sneakers", "All White Sneakers"],
     "MEN'S ACCESSORIES": ["Men's Accessories", "Men's Socks", "Men's Bags", "Men's Hats", "Men's Headphones"],
     "MEN'S COLLECTIONS": [
@@ -184,17 +185,17 @@ export default function MenPage() {
       </section>
 
       {/* Recently Viewed */}
-      <section className="container mx-auto px-4 py-12">
+      {/* <section className="container mx-auto px-4 py-12">
         <h2 className="text-xl font-bold mb-8">RECENTLY VIEWED ITEMS</h2>
         <div className="grid grid-cols-4 gap-6">
           {recentlyViewed.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Men's Categories Footer */}
-      <section className="bg-gray-50 py-12">
+      {/* <section className="bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-4 gap-8">
             {Object.entries(menCategories).map(([category, items]) => (
@@ -213,9 +214,10 @@ export default function MenPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* <Footer /> */}
+      <MenFooter />
     </div>
   )
 }
