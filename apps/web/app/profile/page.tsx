@@ -30,7 +30,9 @@ export default function ProfilePage() {
   const dispatch = useDispatch<AppDispatch>()
   const userData = useAppSelector(selectUser)
   const [loading, setLoading] = useState(false)
+  if (typeof window !== "undefined") {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  }
 
   const initialValues: ProfileFormValues = {
     name: userData.value?.name || "",

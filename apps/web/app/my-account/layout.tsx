@@ -29,7 +29,9 @@ export default function MyAccountLayout({ children }: { children: React.ReactNod
   const userData = useAppSelector(selectUser)
   const [loading, setLoading] = useState(true)
   const pathname = usePathname()
+  if (typeof window !== "undefined") {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  }
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -93,8 +95,10 @@ export default function MyAccountLayout({ children }: { children: React.ReactNod
               <div className="pt-4 border-t">
                 <button
                   onClick={() => {
+                    if (typeof window !== "undefined") {
                     localStorage.clear()
                     sessionStorage.clear()
+                    }
                     router.push("/")
                   }}
                   className="flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded w-full text-left"

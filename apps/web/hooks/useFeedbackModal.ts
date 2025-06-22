@@ -11,8 +11,10 @@ export function useFeedbackModal() {
   useEffect(() => {
     // Only show feedback modal for non-logged users
     if (!isLoggedIn) {
+      if (typeof window !== "undefined") {
       const hasSeenFeedback = localStorage.getItem("feedback-modal-seen")
       const lastShown = localStorage.getItem("feedback-modal-last-shown")
+      }
       const now = Date.now()
       const oneDay = 24 * 60 * 60 * 1000 // 24 hours
 
@@ -31,8 +33,10 @@ export function useFeedbackModal() {
 
   const closeModal = () => {
     setIsOpen(false)
+    if (typeof window !== "undefined") {
     localStorage.setItem("feedback-modal-seen", "true")
     localStorage.setItem("feedback-modal-last-shown", Date.now().toString())
+    }
   }
 
   return {

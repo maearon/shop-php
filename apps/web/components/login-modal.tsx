@@ -26,7 +26,9 @@ const validationSchema = Yup.object({
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
+  if (typeof window !== "undefined") {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  }
 
   const handleSubmit = async (values: { email: string; keepLoggedIn: boolean }) => {
     setIsLoading(true)

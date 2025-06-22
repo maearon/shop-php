@@ -13,7 +13,9 @@ import FullScreenLoader from '@/components/ui/FullScreenLoader';
 import { fetchUser, selectUser } from '@/store/sessionSlice';
 import { AppDispatch } from '@/store/store';
 import { useAppSelector } from '@/store/hooks';
+if (typeof window !== "undefined") {
 const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+}
 
 const initialValues = {
   email: '',
@@ -81,14 +83,18 @@ const LoginPage: NextPage = () => {
         inputEl.current.blur()
         const { token } = response.tokens.access
         if (values.rememberMe === '1') {
+          if (typeof window !== "undefined") {
           localStorage.setItem("token", token)
           localStorage.setItem("refresh_token", response.tokens.refresh.token)
+          }
         } else {
           // sessionStorage.setItem("token", token)
           // sessionStorage.setItem("refresh_token", response.tokens.refresh.token)
+          if (typeof window !== "undefined") {
           localStorage.setItem("token", token)
           localStorage.setItem("refresh_token", response.tokens.refresh.token)
           localStorage.setItem("guest_cart_id", '123-xyz')
+          }
         }
         if (token) {
         dispatch(fetchUser())

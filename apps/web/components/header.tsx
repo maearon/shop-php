@@ -36,7 +36,9 @@ export default function Header() {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const [loginBadgeAnimate, setLoginBadgeAnimate] = useState(false)
   const userData = useAppSelector(selectUser)
+  if (typeof window !== "undefined") {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  }
 
   // Top bar messages
 const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIVERY WITH PRIME"]
@@ -102,6 +104,7 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
     e.preventDefault()
     try {
       const response = await sessionApi.destroy()
+      if (typeof window !== "undefined") {
       localStorage.removeItem("token")
       localStorage.removeItem("remember_token")
       localStorage.removeItem("refreshToken")
@@ -110,6 +113,7 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
       sessionStorage.removeItem("remember_token")
       sessionStorage.removeItem("refreshToken")
       sessionStorage.removeItem("accessToken")
+      }
       if (token) {
       await dispatch(fetchUser())
       }
@@ -120,6 +124,7 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
       router.push("/")
     } catch (error) {
       flashMessage("error", "Logout error: " + error)
+      if (typeof window !== "undefined") {
       localStorage.removeItem("token")
       localStorage.removeItem("refresh_token")
       localStorage.removeItem("refreshToken")
@@ -132,6 +137,7 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
       sessionStorage.removeItem("accessToken")
       sessionStorage.removeItem("guest_cart_id")
       sessionStorage.removeItem("guest_wish_id")
+      }
       if (token) {
       await dispatch(fetchUser())
       }

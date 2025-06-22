@@ -24,8 +24,10 @@ const API = axios.create({
 
 API.interceptors.request.use(
   (config: AxiosRequestConfig) => {
+    if (typeof window !== "undefined") {
     const token =
       localStorage.getItem("token") !== "undefined" ? localStorage.getItem("token") : sessionStorage.getItem("token")
+    
 
     if (token) {
       config.headers = {
@@ -33,12 +35,15 @@ API.interceptors.request.use(
         Authorization: `Bearer ${token}`,
       }
     }
+    }
 
     // 👉 Tự động thêm guest_cart_id vào query nếu có
+    if (typeof window !== "undefined") {
     const guestCartId =
       localStorage.getItem("guest_cart_id") !== "undefined"
         ? localStorage.getItem("guest_cart_id")
         : sessionStorage.getItem("guest_cart_id")
+    
 
     if (guestCartId) {
       const url = new URL(config.url || "", BASE_URL)
@@ -47,6 +52,7 @@ API.interceptors.request.use(
         config.url = url.pathname + "?" + url.searchParams.toString()
       }
     }
+   }
 
     return config
   },
@@ -65,18 +71,22 @@ const processQueue = (error: any, token: string | null = null) => {
 }
 
 const getRefreshToken = () => {
+  if (typeof window !== "undefined") {
   return localStorage.getItem("refresh_token") || sessionStorage.getItem("refresh_token")
+  }
 }
 
 const clearTokens = () => {
+  if (typeof window !== "undefined") {
   localStorage.removeItem("token")
   localStorage.removeItem("refresh_token")
   sessionStorage.removeItem("token")
   sessionStorage.removeItem("refresh_token")
+  }
 }
 
 const saveTokens = (token: string, refreshToken: string, rememberMe: boolean) => {
-  if (rememberMe) {
+  if (rememberMe && typeof window !== "undefined") {
     localStorage.setItem("token", token)
     localStorage.setItem("refresh_token", refreshToken)
   } else {
@@ -123,7 +133,9 @@ API.interceptors.response.use(
 
         const newToken = res.data.token
         const newRefresh = res.data.refresh_token
+        if (typeof window !== "undefined") {
         const rememberMe = !!localStorage.getItem("token") // true if using localStorage
+        }
 
         saveTokens(newToken, newRefresh, rememberMe)
         API.defaults.headers["Authorization"] = `Bearer ${newToken}`

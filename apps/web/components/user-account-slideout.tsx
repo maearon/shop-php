@@ -21,13 +21,17 @@ export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlid
   const [activeTab, setActiveTab] = useState("JUST FOR YOU")
   const userData = useAppSelector(selectUser)
   const dispatch = useDispatch<AppDispatch>()
+  if (typeof window !== "undefined") {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  }
 
   const handleLogout = async () => {
     try {
       await sessionApi.destroy()
+      if (typeof window !== "undefined") {
       localStorage.removeItem("token")
       sessionStorage.removeItem("token")
+      }
       if (token) {
       await dispatch(fetchUser())
       }

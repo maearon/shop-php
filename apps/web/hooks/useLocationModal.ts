@@ -7,8 +7,10 @@ export function useLocationModal() {
 
   useEffect(() => {
     // Check if user has already selected a location
+    if (typeof window !== "undefined") {
     const savedLocation = localStorage.getItem("delivery-location")
     const hasSeenModal = localStorage.getItem("location-modal-seen")
+    }
 
     if (!savedLocation && !hasSeenModal) {
       // Show modal after a short delay
@@ -22,12 +24,18 @@ export function useLocationModal() {
 
   const closeModal = () => {
     setIsOpen(false)
+    {
+      if (typeof window !== "undefined") {
     localStorage.setItem("location-modal-seen", "true")
+      }
+   }
   }
 
   const selectLocation = (location: string) => {
+    if (typeof window !== "undefined") {
     localStorage.setItem("delivery-location", location)
     localStorage.setItem("location-modal-seen", "true")
+    }
     setIsOpen(false)
   }
 

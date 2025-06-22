@@ -20,8 +20,10 @@ export default function OAuthCallbackPage() {
       axios
         .post("http://localhost:8080/api/oauth/callback", { code })
         .then((res) => {
+          if (typeof window !== "undefined") {
           localStorage.setItem("token", res.data.tokens.access.token)
           localStorage.setItem("refresh_token", res.data.tokens.refresh.token)
+          }
           // setUser(user)
           dispatch(fetchUser())
           router.push("/")

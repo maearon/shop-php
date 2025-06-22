@@ -71,10 +71,12 @@ API.interceptors.request.use(
     }
 
     // Auto add guest_cart_id to query if available
+    if (typeof window !== "undefined") {
     const guestCartId =
       localStorage.getItem("guest_cart_id") !== "undefined"
         ? localStorage.getItem("guest_cart_id")
         : sessionStorage.getItem("guest_cart_id")
+    
 
     if (guestCartId && config.url) {
       const url = new URL(config.url, BASE_URL)
@@ -83,6 +85,7 @@ API.interceptors.request.use(
         config.url = url.pathname + url.search
       }
     }
+    
 
     return config
   },
@@ -143,7 +146,9 @@ API.interceptors.response.use(
 
         const newToken = res.data.token
         const newRefresh = res.data.refresh_token
+        if (typeof window !== "undefined") {
         const rememberMe = !!localStorage.getItem("token")
+        }
 
         saveTokens(newToken, newRefresh, rememberMe)
         API.defaults.headers["Authorization"] = `Bearer ${newToken}`
@@ -331,7 +336,9 @@ class ApiClient {
     })
 
     if (response.token) {
+      if (typeof window !== "undefined") {
       const rememberMe = !!localStorage.getItem("token")
+      }
       saveTokens(response.token, response.refresh_token, rememberMe)
     }
 

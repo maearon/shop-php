@@ -32,7 +32,9 @@ export default function LocationModal({ isOpen, onClose, onLocationSelect }: Loc
 
   const handleConfirm = () => {
     onLocationSelect(selectedLocation)
+    if (typeof window !== "undefined") {
     localStorage.setItem("delivery-location", selectedLocation)
+    }
     onClose()
   }
 
