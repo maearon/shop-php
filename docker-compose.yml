@@ -64,6 +64,9 @@ services:
       - SERVICES_ORDERS_BASE_URL=http://orders:3002
       - SERVICES_PAYMENTS_BASE_URL=http://payments:3003
       - SERVICES_SEARCH_BASE_URL=http://search:3004
+      - GOOGLE_CLIENT_ID
+      - GOOGLE_CLIENT_SECRET
+      - GOOGLE_REDIRECT_URI
     # command: mvn spring-boot:run
     networks:
       - adidas-network 

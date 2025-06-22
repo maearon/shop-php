@@ -15,9 +15,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import java.util.List;
+import org.springframework.util.AntPathMatcher;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -27,42 +28,56 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final CustomUserDetailsService customUserDetailsService;
 
-    // Sử dụng @Lazy để phá vỡ circular dependency
     public JwtAuthenticationFilter(@Lazy CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
     }
 
     private static final List<String> EXCLUDED_PATHS = List.of(
-        "/favicon.ico",
-        "/swagger-ui.html",
-        "/swagger-ui/**",
-        "/v3/api-docs/**",
-        "/api/login",
-        "/api/signup",
-        "/api/password-reset",
-        "/api/password-reset/**",
-        "/api/account-activation",
-        "/uploads/",
-        "/error"
+            "/favicon.ico",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/api/login",
+            "/oauth/callback", "/api/oauth/**",
+            "/api/signup",
+            "/api/password-reset/**",
+            "/api/account-activation",
+            "/uploads/**",
+            "/error"
     );
+
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    private boolean isExcludedPath(String path) {
+        boolean result = EXCLUDED_PATHS.stream().anyMatch(pattern -> {
+            boolean matched = pathMatcher.match(pattern, path);
+            if (matched) {
+                System.out.println("✅ Excluded path matched: " + pattern + " with " + path);
+            }
+            return matched;
+        });
+        if (!result) {
+            System.out.println("❌ Path not excluded: " + path);
+        }
+        return result;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-        throws ServletException, IOException {
-        System.out.println("JWT filter triggered for: " + request.getRequestURI());
-        String path = request.getRequestURI();
+            throws ServletException, IOException {
 
-        // Bỏ qua filter cho các URL không cần xác thực
-        if (EXCLUDED_PATHS.stream().anyMatch(path::startsWith)) {
+        String method = request.getMethod();
+        String path = request.getRequestURI();
+        System.out.println("JWT filter triggered for: " + method + " " + path);
+
+        if (isExcludedPath(path)) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            
-
             String jwt = getJwtFromRequest(request);
-            System.out.println("Extracted jwt from token: " + request);
+            System.out.println("Extracted jwt: " + jwt);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 String userId = null;
@@ -76,9 +91,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (userId != null) {
                     UserDetails userDetails = customUserDetailsService.loadUserById(userId);
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
+                            userDetails, null, userDetails.getAuthorities()
+                    );
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }

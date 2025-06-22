@@ -24,6 +24,7 @@ public class JwtResponseDto {
         private String email;
         private String name;
         private boolean admin;
+        private String avatarUrl; // ✅ thêm dòng này nếu thiếu
     }
 
     @Data

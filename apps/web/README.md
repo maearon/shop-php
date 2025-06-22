@@ -1,3 +1,24 @@
+```
+📦 frontend/
+│   ├── apps/web/hooks/useAuth.ts (đã tạo mới)
+│   ├── apps/web/context/AuthContext.tsx (đã tạo mới)
+│   ├── apps/web/lib/token.ts (đã tạo mới)
+│   ├── apps/web/api/authApi.ts (đã tạo mới)
+│   ├── apps/web/api/userApi.ts 
+│   └── apps/web/app/layout.tsx
+│
+📦 express-gateway/
+│   └── routes.yaml (proxy /auth/oauth → backend) apps\api-gateway\config\gateway.config.yml
+│
+📦 backend-api-java/ (Spring Boot)
+│   └── apps\spring-boilerplate\src\main\java\com\example\springboilerplate\controller\api\AuthApiController.java
+│   └── apps\spring-boilerplate\src\main\java\com\example\springboilerplate\service\AuthService.java (đã tạo mới vì /login đang chỉ gọi đến apps/spring-boilerplate/src/main/java/com/example/springboilerplate/security/JwtTokenProvider.java) 
+│   └── apps\spring-boilerplate\src\main\java\com\example\springboilerplate\model\User.java
+│   └── apps\spring-boilerplate\src\main\java\com\example\springboilerplate\repository\UserRepository.java
+│   └── utils/JwtUtil.java (đã tạo apps\spring-boilerplate\src\main\java\com\example\springboilerplate\utils\JwtUtil.java)
+```
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

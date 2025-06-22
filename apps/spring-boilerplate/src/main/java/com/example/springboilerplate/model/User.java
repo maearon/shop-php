@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,33 +21,37 @@ import java.util.*;
 public class User implements UserDetails {
 
     @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid2") // CHO PHÉP HIBERNATE TỰ SINH UUID
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "id", updatable = false, nullable = false)
     private String id;
 
-    @NotBlank
     @Size(min = 3, max = 50)
     @Column(nullable = false)
     private String name;
 
-    @NotBlank
     @Size(min = 3, max = 50)
     @Column(nullable = false)
     private String username;
 
-     @NotBlank
-     @Size(min = 3, max = 50)
-     @Column(name = "\"displayName\"", nullable = true)
-     private String displayName;
+    @Size(min = 3, max = 50)
+    @Column(name = "\"displayName\"", nullable = true)
+    private String displayName;
 
-    @NotBlank
+    @Column(name = "\"avatarUrl\"")
+    private String avatarUrl;
+
     @Email
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotBlank
     @Size(min = 6)
-    @Column(name = "password_digest", nullable = false)
+    @Column(name = "password_digest")
     private String password;
+
+    @Column(name = "\"googleId\"")
+    private String googleId;
+    private String provider;
 
     @Column(nullable = false)
     private boolean admin = false;

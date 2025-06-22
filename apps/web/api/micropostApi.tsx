@@ -1,6 +1,6 @@
 // import { ListParams, ListResponse, Student } from 'models';
 import API from '.';
-import { ErrorMessageType } from '../errorMessages';
+import { ErrorMessageType } from '../components/shared/errorMessages';
 
 export interface ListParams {
   page?: number

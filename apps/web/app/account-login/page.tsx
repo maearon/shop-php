@@ -2,9 +2,9 @@
 import type { NextPage } from "next"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { type MutableRefObject, useEffect, useRef, useState } from "react"
+import { type MutableRefObject, useRef, useState } from "react"
 import { useDispatch } from "react-redux"
-import sessionApi from "@/components/shared/api/sessionApi"
+import sessionApi from "@/api/sessionApi"
 import flashMessage from "@/components/shared/flashMessages"
 import { ErrorMessage, Field, Form, Formik } from "formik"
 import * as Yup from "yup"
@@ -13,8 +13,6 @@ import FullScreenLoader from "@/components/ui/FullScreenLoader"
 import { fetchUser, selectUser } from "@/store/sessionSlice"
 import type { AppDispatch } from "@/store/store"
 import { useAppSelector } from "@/store/hooks"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
 
 const initialValues = {
   email: "",
@@ -34,31 +32,9 @@ const LoginPage: NextPage = () => {
   const router = useRouter()
   const inputEl = useRef() as MutableRefObject<HTMLInputElement>
   const [errors, setErrors] = useState<ErrorMessageType>({})
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
   const userData = useAppSelector(selectUser)
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setLoading(false)
-        const resultAction = await dispatch(fetchUser())
-        if (fetchUser.fulfilled.match(resultAction) && resultAction.payload?.user?.email) {
-          router.push("/")
-        } else if (fetchUser.rejected.match(resultAction)) {
-          setLoading(false)
-        }
-        setLoading(false)
-      } catch (error) {
-        console.error("Failed to fetch user:", error)
-        setLoading(false)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchUserData()
-  }, [dispatch, router])
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),
@@ -77,14 +53,8 @@ const LoginPage: NextPage = () => {
         if (response.user) {
           inputEl.current.blur()
           const { token } = response.tokens.access
-          if (values.rememberMe === "1") {
-            localStorage.setItem("token", token)
-            localStorage.setItem("refresh_token", response.tokens.refresh.token)
-          } else {
-            localStorage.setItem("token", token)
-            localStorage.setItem("refresh_token", response.tokens.refresh.token)
-            localStorage.setItem("guest_cart_id", "123-xyz")
-          }
+          localStorage.setItem("token", token)
+          localStorage.setItem("refresh_token", response.tokens.refresh.token)
           dispatch(fetchUser())
           router.push("/")
         }
@@ -99,11 +69,18 @@ const LoginPage: NextPage = () => {
       })
   }
 
+  const handleGoogleLogin = () => {
+    const clientId = "588366578054-bqg4hntn2fts7ofqk0s19286tjddnp0v.apps.googleusercontent.com"
+    const redirectUri = `${window.location.origin}/oauth/callback`
+    const scope = "openid email profile"
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`
+    window.location.href = authUrl
+  }
+
   if (loading) return <FullScreenLoader />
 
   return userData.value?.email ? (
     <div className="min-h-screen bg-gray-50">
-      {/* <Header /> */}
       <div className="container mx-auto px-4 py-8 text-center">
         <h1 className="text-2xl font-bold mb-4">Welcome back!</h1>
         <p className="text-gray-600 mb-8">You are already logged in.</p>
@@ -111,17 +88,12 @@ const LoginPage: NextPage = () => {
           Go to My Account
         </Link>
       </div>
-      {/* <Footer /> */}
     </div>
   ) : (
     <div className="min-h-screen bg-white">
-      {/* <Header /> */}
-
-      {/* Hero Section */}
       <div className="relative bg-gray-100 py-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Left side - Hero content */}
             <div className="space-y-6">
               <div className="bg-white p-8 rounded-lg">
                 <div className="flex items-center mb-4">
@@ -135,33 +107,15 @@ const LoginPage: NextPage = () => {
                   receive immediate access to these Level 1 benefits:
                 </p>
                 <ul className="space-y-2 text-sm">
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Free shipping
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>A 15% off voucher for your next purchase
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Access to Members Only products and sales
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Access to adidas Running and Training apps
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-2">✓</span>
-                    Special offers and promotions
-                  </li>
+                  <li className="flex items-center"><span className="text-green-500 mr-2">✓</span> Free shipping</li>
+                  <li className="flex items-center"><span className="text-green-500 mr-2">✓</span> A 15% off voucher</li>
+                  <li className="flex items-center"><span className="text-green-500 mr-2">✓</span> Members Only sales</li>
+                  <li className="flex items-center"><span className="text-green-500 mr-2">✓</span> Access to adidas apps</li>
+                  <li className="flex items-center"><span className="text-green-500 mr-2">✓</span> Special promotions</li>
                 </ul>
-                <p className="text-sm text-gray-600 mt-4">
-                  Join now to start earning points, reach new levels and unlock more rewards and benefits from adiClub.
-                </p>
               </div>
             </div>
 
-            {/* Right side - Login form */}
             <div className="bg-white p-8 rounded-lg shadow-lg">
               <div className="text-center mb-6">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
@@ -175,34 +129,18 @@ const LoginPage: NextPage = () => {
 
               <p className="font-medium mb-4">Log in or sign up (it's free)</p>
 
-              {/* Social Login Buttons */}
               <div className="grid grid-cols-4 gap-2 mb-6">
-                {["apple", "facebook", "google", "yahoo"].map((provider) => (
+                {[{ name: "apple" }, { name: "facebook" }, { name: "google", onClick: handleGoogleLogin }, { name: "yahoo" }].map(({ name, onClick }) => (
                   <button
-                    key={provider}
+                    key={name}
+                    onClick={onClick}
                     className="border border-gray-300 p-3 flex items-center justify-center hover:bg-gray-50 transition-colors"
-                    aria-label={`Login with ${provider}`}
+                    aria-label={`Login with ${name}`}
                   >
-                    <img src={`/icons/${provider}.svg`} alt={provider} className="h-5 text-xl" />
+                    <img src={`/icons/${name}.svg`} alt={name} className="h-5" />
                   </button>
                 ))}
               </div>
-              {/* <div className="grid grid-cols-4 gap-2 mb-6">
-                {[
-                  { name: "apple", icon: "🍎" },
-                  { name: "facebook", icon: "📘" },
-                  { name: "google", icon: "🔍" },
-                  { name: "yahoo", icon: "📧" },
-                ].map((provider) => (
-                  <button
-                    key={provider.name}
-                    className="border border-gray-300 p-3 flex items-center justify-center hover:bg-gray-50 transition-colors"
-                    aria-label={`Login with ${provider.name}`}
-                  >
-                    <span className="text-xl">{provider.icon}</span>
-                  </button>
-                ))}
-              </div> */}
 
               <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
                 {({ values, errors: formErrors, touched }) => (
@@ -214,9 +152,7 @@ const LoginPage: NextPage = () => {
                         name="email"
                         type="email"
                         placeholder="EMAIL ADDRESS *"
-                        className={`w-full border p-3 rounded ${
-                          formErrors.email && touched.email ? "border-red-500" : "border-gray-300"
-                        } focus:border-blue-500 focus:outline-none`}
+                        className={`w-full border p-3 rounded ${formErrors.email && touched.email ? "border-red-500" : "border-gray-300"} focus:border-blue-500 focus:outline-none`}
                       />
                       <ErrorMessage name="email">
                         {(error) => <div className="text-red-500 text-sm mt-1">{error}</div>}
@@ -228,9 +164,7 @@ const LoginPage: NextPage = () => {
                         name="password"
                         type="password"
                         placeholder="PASSWORD *"
-                        className={`w-full border p-3 rounded ${
-                          formErrors.password && touched.password ? "border-red-500" : "border-gray-300"
-                        } focus:border-blue-500 focus:outline-none`}
+                        className={`w-full border p-3 rounded ${formErrors.password && touched.password ? "border-red-500" : "border-gray-300"} focus:border-blue-500 focus:outline-none`}
                       />
                       <ErrorMessage name="password">
                         {(error) => <div className="text-red-500 text-sm mt-1">{error}</div>}
@@ -240,10 +174,7 @@ const LoginPage: NextPage = () => {
                     <div className="flex items-start space-x-2">
                       <Field type="checkbox" name="rememberMe" value="1" className="mt-1" />
                       <label className="text-sm text-gray-600">
-                        Keep me logged in. Applies to all options.{" "}
-                        <Link href="#" className="text-blue-600 underline">
-                          More info
-                        </Link>
+                        Keep me logged in. Applies to all options. <Link href="#" className="text-blue-600 underline">More info</Link>
                       </label>
                     </div>
 
@@ -261,41 +192,13 @@ const LoginPage: NextPage = () => {
               <div className="mt-6 text-xs text-gray-500">
                 <p className="mb-2">Sign me up to adiClub, featuring exclusive adidas offers and news</p>
                 <p>
-                  By clicking the "Continue" button, you are joining adiClub, will receive emails with the latest news
-                  and updates, and agree to the{" "}
-                  <Link href="#" className="text-blue-600 underline">
-                    TERMS OF USE
-                  </Link>{" "}
-                  and{" "}
-                  <Link href="#" className="text-blue-600 underline">
-                    ADICLUB TERMS AND CONDITIONS
-                  </Link>{" "}
-                  and acknowledge you have read the{" "}
-                  <Link href="#" className="text-blue-600 underline">
-                    ADIDAS PRIVACY POLICY
-                  </Link>
-                  .
+                  By clicking the "Continue" button, you are joining adiClub and agree to the <Link href="#" className="text-blue-600 underline">TERMS OF USE</Link>, <Link href="#" className="text-blue-600 underline">ADICLUB TERMS</Link>, and <Link href="#" className="text-blue-600 underline">PRIVACY POLICY</Link>.
                 </p>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Bottom CTA */}
-      <div className="bg-blue-600 text-white py-8">
-        <div className="container mx-auto px-4 text-center">
-          <h3 className="text-2xl font-bold mb-2">JOIN OUR ADICLUB & GET 15% OFF</h3>
-          <Link
-            href="/signup"
-            className="bg-white text-blue-600 px-6 py-2 rounded font-semibold hover:bg-gray-100 transition-colors"
-          >
-            SIGN UP FOR FREE →
-          </Link>
-        </div>
-      </div>
-
-      {/* <Footer /> */}
     </div>
   )
 }

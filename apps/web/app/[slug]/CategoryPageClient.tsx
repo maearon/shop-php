@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronDown, SlidersHorizontal, Loader2 } from "lucide-react"
 import { categoryConfig } from "@/utils/category-config"
 import { apiClient, type ProductsResponse } from "@/lib/api"
-import productApi, { type Product } from "@/components/shared/api/productApi"
+import productApi, { type Product } from "@/api/productApi"
 
 type CategoryPageProps = {
   params: {

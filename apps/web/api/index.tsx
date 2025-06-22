@@ -112,7 +112,7 @@ API.interceptors.response.use(
 
       if (!refreshToken) {
         clearTokens()
-        window.location.href = "/login"
+        window.location.href = "/account-login"
         return Promise.reject(error)
       }
 
@@ -134,7 +134,7 @@ API.interceptors.response.use(
       } catch (err) {
         processQueue(err, null)
         clearTokens()
-        window.location.href = "/login"
+        window.location.href = "/account-login"
         return Promise.reject(err)
       } finally {
         isRefreshing = false

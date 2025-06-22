@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 import flashMessage from '../../../components/shared/flashMessages'
-import passwordResetApi from '../../../components/shared/api/passwordResetApi'
+import passwordResetApi from '../../../api/passwordResetApi'
 import { MutableRefObject, useRef, useState } from 'react'
 // import errorMessage from '../../components/shared/errorMessages'
 

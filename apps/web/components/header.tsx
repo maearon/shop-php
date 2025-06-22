@@ -15,7 +15,7 @@ import UserAccountSlideout from "./user-account-slideout"
 import AdidasLogo from "./adidas-logo"
 import { useDispatch } from "react-redux"
 import type { AppDispatch } from "@/store/store"
-import sessionApi from "./shared/api/sessionApi"
+import sessionApi from "../api/sessionApi"
 import flashMessage from "./shared/flashMessages"
 import TopBarDropdown from "./top-bar-dropdown"
 import MobileMenu from "./mobile-menu"
@@ -36,6 +36,7 @@ export default function Header() {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const [loginBadgeAnimate, setLoginBadgeAnimate] = useState(false)
   const userData = useAppSelector(selectUser)
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
   // Top bar messages
 const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIVERY WITH PRIME"]
@@ -77,7 +78,9 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        await dispatch(fetchUser())
+        if (token) {
+          await dispatch(fetchUser())
+        }
       } catch (error) {
         console.error("Failed to fetch user:", error)
       } finally {
@@ -107,7 +110,9 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
       sessionStorage.removeItem("remember_token")
       sessionStorage.removeItem("refreshToken")
       sessionStorage.removeItem("accessToken")
+      if (token) {
       await dispatch(fetchUser())
+      }
 
       if (response.status === 401) {
         flashMessage("error", "Unauthorized")
@@ -127,7 +132,9 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
       sessionStorage.removeItem("accessToken")
       sessionStorage.removeItem("guest_cart_id")
       sessionStorage.removeItem("guest_wish_id")
+      if (token) {
       await dispatch(fetchUser())
+      }
       flashMessage("error", "Unauthorized")
     }
   }

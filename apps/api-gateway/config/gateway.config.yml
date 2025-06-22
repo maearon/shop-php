@@ -2,6 +2,10 @@ http:
   port: 9000
 
 apiEndpoints:
+  oauth:
+    path: /api/oauth*
+    target: http://api-java:8080
+
   login:
     path: /api/login
     target: http://api-java:8080
@@ -67,6 +71,13 @@ policies:
   - proxy
 
 pipelines:
+  oauth-pipeline:
+    apiEndpoints:
+      - oauth
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: api-java
   login-pipeline:
     apiEndpoints:
       - login

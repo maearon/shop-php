@@ -9,6 +9,8 @@ import ChatWidget from "@/components/chat-widget"
 import { FeedbackModalProvider, LocationModalProvider } from "@/components/modal-providers"
 import FeedbackWidget from "@/components/feedback-widget"
 import ScrollToTop from "@/components/scroll-to-top"
+import { AuthProvider } from "@/context/AuthContext"
+import { GoogleOAuthProvider } from "@react-oauth/google"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -25,7 +27,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        
+        <GoogleOAuthProvider clientId={'588366578054-bqg4hntn2fts7ofqk0s19286tjddnp0v.apps.googleusercontent.com'}>
         <Providers>
+        <AuthProvider>
           <Header />
           <main>{children}</main>
           <Footer />
@@ -41,7 +46,9 @@ export default function RootLayout({
           {/* Fixed Widgets */}
           <FeedbackWidget />
           <ScrollToTop />
-        </Providers> 
+        </AuthProvider>
+        </Providers>
+        </GoogleOAuthProvider>
       </body>
     </html>
   )

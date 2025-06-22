@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import accountActivationApi from "@/components/shared/api/accountActivationApi";
+import accountActivationApi from "@/api/accountActivationApi";
 import flashMessage from "@/components/shared/flashMessages";
 
 // Kiểu dữ liệu cho params
@@ -33,7 +33,7 @@ export default function Edit({ params }: EditProps) {
       .then((response) => {
         flashMessage("success", "The account has been activated. Please log in.");
         setTimeout(() => {
-          router.push("/login");
+          router.push("/account-login");
         }, 3000);
       })
       .catch((error) => {

@@ -12,7 +12,7 @@ import { toggleWishlist } from "@/store/wishlistSlice"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import WishButton from "@/components/wish-button"
-import productApi, { ProductDetails } from "@/components/shared/api/productApi"
+import productApi, { ProductDetails } from "@/api/productApi"
 import FullScreenLoader from "@/components/ui/FullScreenLoader"
 
 // Mock product data - in real app this would come from API

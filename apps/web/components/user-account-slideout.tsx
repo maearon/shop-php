@@ -8,7 +8,7 @@ import { selectUser } from "@/store/sessionSlice"
 import Link from "next/link"
 import { useDispatch } from "react-redux"
 import type { AppDispatch } from "@/store/store"
-import sessionApi from "./shared/api/sessionApi"
+import sessionApi from "../api/sessionApi"
 import { fetchUser } from "@/store/sessionSlice"
 import flashMessage from "./shared/flashMessages"
 
@@ -21,13 +21,16 @@ export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlid
   const [activeTab, setActiveTab] = useState("JUST FOR YOU")
   const userData = useAppSelector(selectUser)
   const dispatch = useDispatch<AppDispatch>()
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
   const handleLogout = async () => {
     try {
       await sessionApi.destroy()
       localStorage.removeItem("token")
       sessionStorage.removeItem("token")
+      if (token) {
       await dispatch(fetchUser())
+      }
       flashMessage("success", "Logged out successfully")
       onClose()
     } catch (error) {

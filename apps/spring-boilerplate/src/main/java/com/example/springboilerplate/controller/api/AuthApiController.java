@@ -1,15 +1,11 @@
 package com.example.springboilerplate.controller.api;
 
-import com.example.springboilerplate.dto.ApiResponse;
-import com.example.springboilerplate.dto.JwtResponseDto;
-import com.example.springboilerplate.dto.LoginDto;
-import com.example.springboilerplate.dto.RefreshTokenRequestDto;
-import com.example.springboilerplate.dto.RegisterDto;
-import com.example.springboilerplate.dto.RegisterRequest;
-import com.example.springboilerplate.dto.SessionResponseDto;
+import com.example.springboilerplate.dto.*;
 import com.example.springboilerplate.model.User;
 import com.example.springboilerplate.repository.UserRepository;
 import com.example.springboilerplate.security.JwtTokenProvider;
+import com.example.springboilerplate.service.AuthService;
+import com.example.springboilerplate.service.OAuth2VerifierService;
 import com.example.springboilerplate.service.UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,6 +42,8 @@ public class AuthApiController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
     private final UserService userService;
+    private final OAuth2VerifierService oAuth2VerifierService;
+    private final AuthService authService;
     private final UserRepository userRepository;
 
     @GetMapping("/sessions")
@@ -61,6 +61,51 @@ public class AuthApiController {
                 .build();
 
         return ResponseEntity.ok(Map.of("user", userDto));
+    }
+
+    @PostMapping("/oauth/callback")
+    public ResponseEntity<?> handleOAuthCallback(@RequestBody Map<String, String> body) {
+        String code = body.get("code");
+        String provider = body.getOrDefault("provider", "google");
+
+        System.out.println("👉 Received OAuth callback: code=" + code + ", provider=" + provider);
+
+        OAuthUserInfo oAuthInfo = oAuth2VerifierService.exchangeCodeForUserInfo(code);
+        if (oAuthInfo == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid OAuth code");
+        }
+
+        User user = authService.findOrCreateUserFromOAuth(oAuthInfo, provider);
+
+        // Tạo authentication và sinh token
+        UserPrincipal principal = UserPrincipal.create(user);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
+        String accessToken = tokenProvider.generateToken(authentication);
+        String refreshToken = tokenProvider.generateRefreshToken(authentication);
+
+        Instant expiresAt = tokenProvider.getExpirationFromToken(accessToken);
+        Instant expiresAtRefresh = tokenProvider.getExpirationFromToken(refreshToken);
+
+        JwtResponseDto jwtResponse = JwtResponseDto.builder()
+            .user(JwtResponseDto.UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .admin(principal.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")))
+                .build())
+            .tokens(JwtResponseDto.TokenGroupDto.builder()
+                .access(JwtResponseDto.TokenDto.builder()
+                    .token(accessToken)
+                    .expires(expiresAt)
+                    .build())
+                .refresh(JwtResponseDto.TokenDto.builder()
+                    .token(refreshToken)
+                    .expires(expiresAtRefresh)
+                    .build())
+                .build())
+            .build();
+
+        return ResponseEntity.ok(jwtResponse);
     }
 
     @PostMapping("/login")

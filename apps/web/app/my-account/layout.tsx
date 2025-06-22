@@ -29,11 +29,14 @@ export default function MyAccountLayout({ children }: { children: React.ReactNod
   const userData = useAppSelector(selectUser)
   const [loading, setLoading] = useState(true)
   const pathname = usePathname()
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        if (token) {
         await dispatch(fetchUser())
+        }
       } catch (error) {
         console.error("Failed to fetch user:", error)
       } finally {

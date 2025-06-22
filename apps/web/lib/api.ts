@@ -131,7 +131,7 @@ API.interceptors.response.use(
       if (!refreshToken) {
         clearTokens()
         if (typeof window !== "undefined") {
-          window.location.href = "/login"
+          window.location.href = "/account-login"
         }
         return Promise.reject(error)
       }
@@ -155,7 +155,7 @@ API.interceptors.response.use(
         processQueue(err, null)
         clearTokens()
         if (typeof window !== "undefined") {
-          window.location.href = "/login"
+          window.location.href = "/account-login"
         }
         return Promise.reject(err)
       } finally {

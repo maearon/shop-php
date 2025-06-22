@@ -90,6 +90,8 @@ export interface Response {
 }
 
 const userApi = {
+  getCurrent: () => API.get("/sessions"),
+
   index(params: ListParams): Promise<ListResponse<User>> {
     const url = '/users';
     return API.get(url, { params });

@@ -131,6 +131,15 @@
 			<groupId>org.webjars</groupId>
 			<artifactId>webjars-locator-core</artifactId>
 		</dependency>
+		<dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-client</artifactId>
+    </dependency>
+		<dependency>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client</artifactId>
+			<version>2.4.1</version>
+		</dependency>
 
 		<!-- Hibernate (explicitly added) -->
 		<dependency>
@@ -146,12 +155,6 @@
 			<version>0.10.2</version>
 		</dependency>
 
-		<!-- Dotenv for Spring Boot -->
-		<dependency>
-			<groupId>io.github.cdimascio</groupId>
-			<artifactId>dotenv-java</artifactId>
-			<version>3.2.0</version>
-		</dependency>
 		<!-- pom.xml -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

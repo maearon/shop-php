@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import sessionApi from '@/components/shared/api/sessionApi'
+import sessionApi from '@/api/sessionApi'
 import flashMessage from '@/components/shared/flashMessages'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
@@ -13,6 +13,7 @@ import FullScreenLoader from '@/components/ui/FullScreenLoader';
 import { fetchUser, selectUser } from '@/store/sessionSlice';
 import { AppDispatch } from '@/store/store';
 import { useAppSelector } from '@/store/hooks';
+const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
 const initialValues = {
   email: '',
@@ -37,21 +38,28 @@ const LoginPage: NextPage = () => {
   const userData = useAppSelector(selectUser)
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        await dispatch(fetchUser());
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-      } finally {
-        setLoading(false);
-        if (userData?.value?.email) {
-          router.push("/");
+      const fetchUserData = async () => {
+        try {
+          setLoading(false)
+          if (token) {
+          const resultAction = await dispatch(fetchUser())
+          if (fetchUser.fulfilled.match(resultAction) && resultAction.payload?.user?.email) {
+            router.push("/")
+          } else if (fetchUser.rejected.match(resultAction)) {
+            setLoading(false)
+          }
+          }
+          setLoading(false)
+        } catch (error) {
+          console.error("Failed to fetch user:", error)
+          setLoading(false)
+        } finally {
+          setLoading(false)
         }
       }
-    };
-
-    fetchUserData();
-  }, [dispatch, router, userData?.value?.email]);
+  
+      fetchUserData()
+    }, [dispatch, router])
 
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -82,7 +90,9 @@ const LoginPage: NextPage = () => {
           localStorage.setItem("refresh_token", response.tokens.refresh.token)
           localStorage.setItem("guest_cart_id", '123-xyz')
         }
+        if (token) {
         dispatch(fetchUser())
+        }
         router.push("/")
       }
       if (response.flash) flashMessage(...response.flash)

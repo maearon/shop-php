@@ -8,7 +8,7 @@ import redis
 from django.core.management.base import BaseCommand
 from elasticsearch import Elasticsearch
 
-def connect_elasticsearch_with_retry(url, retries=10, delay=3):
+def connect_elasticsearch_with_retry(url, retries=10, delay=30):
     for attempt in range(retries):
         try:
             es = Elasticsearch([url])

@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { X, Apple } from "lucide-react"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
-import sessionApi from "./shared/api/sessionApi"
+import sessionApi from "../api/sessionApi"
 import { useDispatch } from "react-redux"
 import type { AppDispatch } from "@/store/store"
 import { fetchUser } from "@/store/sessionSlice"
@@ -26,6 +26,7 @@ const validationSchema = Yup.object({
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
   const handleSubmit = async (values: { email: string; keepLoggedIn: boolean }) => {
     setIsLoading(true)
@@ -36,7 +37,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       })
 
       if (response.success) {
-        await dispatch(fetchUser())
+        if (token) {
+         await dispatch(fetchUser())
+        }
         flashMessage("success", "Login successful!")
         onClose()
       } else {
