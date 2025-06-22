@@ -72,20 +72,19 @@ API.interceptors.request.use(
 
     // Auto add guest_cart_id to query if available
     if (typeof window !== "undefined") {
-    const guestCartId =
-      localStorage.getItem("guest_cart_id") !== "undefined"
-        ? localStorage.getItem("guest_cart_id")
-        : sessionStorage.getItem("guest_cart_id")
-    
+      const guestCartId =
+        localStorage.getItem("guest_cart_id") !== "undefined"
+          ? localStorage.getItem("guest_cart_id")
+          : sessionStorage.getItem("guest_cart_id")
 
-    if (guestCartId && config.url) {
-      const url = new URL(config.url, BASE_URL)
-      if (!url.searchParams.has("guest_cart_id")) {
-        url.searchParams.set("guest_cart_id", guestCartId)
-        config.url = url.pathname + url.search
+      if (guestCartId && config.url) {
+        const url = new URL(config.url, BASE_URL)
+        if (!url.searchParams.has("guest_cart_id")) {
+          url.searchParams.set("guest_cart_id", guestCartId)
+          config.url = url.pathname + url.search
+        }
       }
     }
-    
 
     return config
   },
