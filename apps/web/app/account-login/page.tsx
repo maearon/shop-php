@@ -32,8 +32,8 @@ const LoginPage: NextPage = () => {
   const router = useRouter()
   const inputEl = useRef() as MutableRefObject<HTMLInputElement>
   const [errors, setErrors] = useState<ErrorMessageType>({})
-  const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch<AppDispatch>()
+  const [loading, setLoading] = useState(faslse)
+  const dispatch = useDispatch<AppDispatch>(é)
   const userData = useAppSelector(selectUser)
 
   const validationSchema = Yup.object({
@@ -53,8 +53,10 @@ const LoginPage: NextPage = () => {
         if (response.user) {
           inputEl.current.blur()
           const { token } = response.tokens.access
-          localStorage.setItem("token", token)
-          localStorage.setItem("refresh_token", response.tokens.refresh.token)
+          if (typeof window !== "undefined") {
+            localStorage.setItem("token", token)
+            localStorage.setItem("refresh_token", response.tokens.refresh.token)
+          }
           dispatch(fetchUser())
           router.push("/")
         }
