@@ -33,7 +33,7 @@ const LoginPage: NextPage = () => {
   const inputEl = useRef() as MutableRefObject<HTMLInputElement>
   const [errors, setErrors] = useState<ErrorMessageType>({})
   const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch<AppDispatch>(é)
+  const dispatch = useDispatch<AppDispatch>()
   const userData = useAppSelector(selectUser)
 
   const validationSchema = Yup.object({
