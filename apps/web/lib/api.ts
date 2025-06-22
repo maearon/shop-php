@@ -145,8 +145,9 @@ API.interceptors.response.use(
 
         const newToken = res.data.token
         const newRefresh = res.data.refresh_token
+        let rememberMe = false
         if (typeof window !== "undefined") {
-        const rememberMe = !!localStorage.getItem("token")
+          rememberMe = !!localStorage.getItem("token")
         }
 
         saveTokens(newToken, newRefresh, rememberMe)
@@ -294,7 +295,7 @@ class ApiClient {
       saveTokens(response.token, response.refresh_token, rememberMe)
     }
 
-    return response
+    return response.data
   }
 
   async register(userData: {
@@ -309,7 +310,7 @@ class ApiClient {
       saveTokens(response.token, response.refresh_token, false)
     }
 
-    return response
+    return response.data
   }
 
   async logout(): Promise<void> {

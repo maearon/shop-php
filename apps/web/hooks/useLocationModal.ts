@@ -7,9 +7,11 @@ export function useLocationModal() {
 
   useEffect(() => {
     // Check if user has already selected a location
+    let savedLocation: string | null = null;
+    let hasSeenModal: string | null = null;
     if (typeof window !== "undefined") {
-    const savedLocation = localStorage.getItem("delivery-location")
-    const hasSeenModal = localStorage.getItem("location-modal-seen")
+      savedLocation = localStorage.getItem("delivery-location");
+      hasSeenModal = localStorage.getItem("location-modal-seen");
     }
 
     if (!savedLocation && !hasSeenModal) {

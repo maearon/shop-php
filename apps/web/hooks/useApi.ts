@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useCallback } from "react"
 import { useDispatch } from "react-redux"
 import authApi from "@/api/authApi"
-import { setToken } from "@/lib/token"
+import { setTokens } from "@/lib/token"
 import { fetchUser } from "@/store/sessionSlice"
 import type { AppDispatch } from "@/store/store"
 
@@ -14,13 +14,13 @@ export const useAuth = () => {
 
   const loginWithGoogle = useCallback(async (idToken: string) => {
     try {
-      const res = await authApi.oauthLogin({
+      const res = await authApi.oauth({
         id_token: idToken,
         provider: "google",
       })
 
       if (res?.tokens?.access?.token) {
-        setToken(res.tokens)
+        setTokens(res.tokens.access.token, res.tokens.refresh.token, true)
         await dispatch(fetchUser())
         router.push("/")
       }
