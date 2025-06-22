@@ -32,7 +32,7 @@ const LoginPage: NextPage = () => {
   const router = useRouter()
   const inputEl = useRef() as MutableRefObject<HTMLInputElement>
   const [errors, setErrors] = useState<ErrorMessageType>({})
-  const [loading, setLoading] = useState(faslse)
+  const [loading, setLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>(é)
   const userData = useAppSelector(selectUser)
 
