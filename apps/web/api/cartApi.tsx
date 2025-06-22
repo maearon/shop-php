@@ -145,7 +145,7 @@ export interface Response {
 }
 
 const cartApi = {
-  index(params: ListParams): Promise<ListResponse<Cart>> {
+  index(params: ListParams): Promise<ListResponse<CartItem>> {
     const url = '/cart';
     return API.get(url, { params });
   },

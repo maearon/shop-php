@@ -133,8 +133,9 @@ API.interceptors.response.use(
 
         const newToken = res.data.token
         const newRefresh = res.data.refresh_token
+        let rememberMe = false
         if (typeof window !== "undefined") {
-        const rememberMe = !!localStorage.getItem("token") // true if using localStorage
+          rememberMe = !!localStorage.getItem("token") // true if using localStorage
         }
 
         saveTokens(newToken, newRefresh, rememberMe)
