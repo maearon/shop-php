@@ -32,6 +32,7 @@ export interface SignUpField {
 }
 
 export interface CreateResponse<UserCreate> {
+  success?: boolean
   user?: UserCreate
   flash?: [message_type: string, message: string]
   status?: number
@@ -98,7 +99,7 @@ const userApi = {
   },
 
   create(params: CreateParams): Promise<CreateResponse<UserCreate>> {
-    const url = '/users';
+    const url = '/signup';
     return api.post(url, params);
   },
 

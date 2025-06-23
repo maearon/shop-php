@@ -105,6 +105,7 @@ public class SecurityConfig {
                 .requestMatchers("/home", "/about", "/help", "/contact").permitAll()
                 .requestMatchers("/images/**", "/webjars/**").permitAll()
                 .requestMatchers("/api/signup", "/api/login", "/api/oauth/callback", "/api/oauth/**", "/error").permitAll()
+                .requestMatchers("/api/users").permitAll()
                 .requestMatchers("/account-activation/**").permitAll()
                 .requestMatchers("/password-resets/**").permitAll()
                 .requestMatchers(

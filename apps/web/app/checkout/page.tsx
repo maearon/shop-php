@@ -9,7 +9,7 @@ import { Search, ArrowRight, Tag } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
 import cartApi, { CartItem } from "@/api/endpoints/cartApi"
 import { selectUser } from "@/store/sessionSlice"
-import { User } from "@/api/hooks/userApi"
+import { User } from "@/api/endpoints/userApi"
 
 export default function CheckoutPage() {
   // const cartItems = useAppSelector((state) => state.cart.items)
