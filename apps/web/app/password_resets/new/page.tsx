@@ -2,8 +2,8 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/navigation'
 import React, { MutableRefObject, useRef, useState } from 'react'
-import passwordResetApi from '../../../api/passwordResetApi';
-import flashMessage from '../../../components/shared/flashMessages';
+import passwordResetApi from '@/api/endpoints/passwordResetApi';
+import flashMessage from '@/components/shared/flashMessages';
 
 const initialState = {
   email: '',

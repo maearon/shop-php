@@ -1,8 +1,8 @@
 "use client";
 import { useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
-import flashMessage from '../../../components/shared/flashMessages'
-import passwordResetApi from '../../../api/passwordResetApi'
+import flashMessage from '@/components/shared/flashMessages'
+import passwordResetApi from '@/api/endpoints/passwordResetApi'
 import { MutableRefObject, useRef, useState } from 'react'
 // import errorMessage from '../../components/shared/errorMessages'
 

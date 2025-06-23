@@ -2,8 +2,8 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/navigation'
 import React, { MutableRefObject, useRef, useState } from 'react'
-import accountActivationApi from '../../../api/accountActivationApi'
-import flashMessage from '../../../components/shared/flashMessages'
+import accountActivationApi from '@/api/endpoints/accountActivationApi'
+import flashMessage from '@/components/shared/flashMessages'
 import ShowErrors, { ErrorMessageType } from '@/components/shared/errorMessages';
 
 const initialState = {

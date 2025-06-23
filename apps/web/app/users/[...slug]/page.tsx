@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { SetStateAction, useCallback, useEffect, useState } from 'react'
 import { useAppSelector } from '@/store/hooks'
 import { selectUser } from '@/store/sessionSlice'
-import userApi, { IUserFollow, UserFollow } from '../../../api/hooks/userApi'
-import flashMessage from '../../../components/shared/flashMessages'
+import userApi, { IUserFollow, UserFollow } from '@/api/hooks/userApi'
+import flashMessage from '@/components/shared/flashMessages'
 import Pagination from 'react-js-pagination'
 
 const ShowFollow = ({params}: {params: {slug: string[]}}) =>{

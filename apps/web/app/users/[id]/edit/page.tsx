@@ -4,10 +4,10 @@ import { ErrorMessage, Field, FieldArray, Form, Formik } from 'formik'
 import { useRouter } from 'next/navigation'
 import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
 import * as Yup from 'yup'
-import userApi, { UserEdit } from '../../../../api/hooks/userApi'
-import errorMessage from '../../../../components/shared/errorMessages'
-import flashMessage from '../../../../components/shared/flashMessages'
-// import TextError from '../../../../components/shared/TextError'
+import userApi, { UserEdit } from '@/api/hooks/userApi'
+import errorMessage from '@/components/shared/errorMessages'
+import flashMessage from '@/components/shared/flashMessages'
+// import TextError from '@/components/shared/TextError'
 
 const initialValues = {
   name: '',
