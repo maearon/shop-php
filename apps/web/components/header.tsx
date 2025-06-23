@@ -21,8 +21,12 @@ import TopBarDropdown from "./top-bar-dropdown"
 import MobileMenu from "./mobile-menu"
 import MobileAppBanner from "./mobile-app-banner"
 import MobileSearchOverlay from "./mobile-search-overlay"
+import { useCurrentUser } from "@/api/useCurrentUser";
+import { useLogout } from "@/api/useLogout";
 
 export default function Header() {
+  const { data: currentUserData, isLoading: userLoading } = useCurrentUser();
+  const logoutMutation = useLogout();
   const pathname = usePathname()
   const router = useRouter()
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
@@ -36,8 +40,9 @@ export default function Header() {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const [loginBadgeAnimate, setLoginBadgeAnimate] = useState(false)
   const userData = useAppSelector(selectUser)
+  let token: string | null = null;
   if (typeof window !== "undefined") {
-  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    token = localStorage.getItem("token") || sessionStorage.getItem("token");
   }
 
   // Top bar messages
@@ -103,7 +108,7 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
   const onClick = async (e: any) => {
     e.preventDefault()
     try {
-      const response = await sessionApi.destroy()
+      await sessionApi.destroy()
       if (typeof window !== "undefined") {
       localStorage.removeItem("token")
       localStorage.removeItem("remember_token")
@@ -118,9 +123,6 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
       await dispatch(fetchUser())
       }
 
-      if (response.status === 401) {
-        flashMessage("error", "Unauthorized")
-      }
       router.push("/")
     } catch (error) {
       flashMessage("error", "Logout error: " + error)
@@ -332,12 +334,12 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
               </Link>
 
               {/* Desktop Login/Logout */}
-              {loading ? (
+              {userLoading ? (
                 <span>Loading...</span>
-              ) : userData.value?.email ? (
-                <Link href="#logout" onClick={onClick}>
+              ) : currentUserData?.user?.email ? (
+                <button onClick={() => logoutMutation.mutate()}>
                   <LogOut className="h-5 w-5 cursor-pointer" />
-                </Link>
+                </button>
               ) : (
                 <Link href="/account-login">
                   <LogIn className="h-5 w-5 cursor-pointer" />

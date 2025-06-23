@@ -13,6 +13,7 @@ import FullScreenLoader from "@/components/ui/FullScreenLoader"
 import { fetchUser, selectUser } from "@/store/sessionSlice"
 import type { AppDispatch } from "@/store/store"
 import { useAppSelector } from "@/store/hooks"
+import { useQuery } from "@tanstack/react-query";
 
 const initialValues = {
   email: "",
@@ -32,9 +33,11 @@ const LoginPage: NextPage = () => {
   const router = useRouter()
   const inputEl = useRef() as MutableRefObject<HTMLInputElement>
   const [errors, setErrors] = useState<ErrorMessageType>({})
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const dispatch = useDispatch<AppDispatch>()
   const userData = useAppSelector(selectUser)
+
+  // TODO fetch user data and set loading to false redirect /my-account if current user is logged in
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),

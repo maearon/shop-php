@@ -11,6 +11,7 @@ import FeedbackWidget from "@/components/feedback-widget"
 import ScrollToTop from "@/components/scroll-to-top"
 import { AuthProvider } from "@/context/AuthContext"
 import { GoogleOAuthProvider } from "@react-oauth/google"
+import ReactQueryProvider from "./ReactQueryProvider";
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -31,6 +32,7 @@ export default function RootLayout({
         <GoogleOAuthProvider clientId={'588366578054-bqg4hntn2fts7ofqk0s19286tjddnp0v.apps.googleusercontent.com'}>
         <Providers>
         <AuthProvider>
+        <ReactQueryProvider>
           <Header />
           <main>{children}</main>
           <Footer />
@@ -46,6 +48,7 @@ export default function RootLayout({
           {/* Fixed Widgets */}
           <FeedbackWidget />
           <ScrollToTop />
+        </ReactQueryProvider>
         </AuthProvider>
         </Providers>
         </GoogleOAuthProvider>
