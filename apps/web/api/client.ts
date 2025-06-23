@@ -3,8 +3,8 @@ import { getAccessToken, getRefreshToken, setTokens, clearTokens } from "@/lib/t
 
 // Base URL config
 const BASE_URL = process.env.NODE_ENV === "development"
-  ? "http://localhost:8080/api"
-  : "http://localhost:8080/api"
+  ? "http://localhost:9000/api"
+  : "http://localhost:9000/api"
 
 // CSRF & credentials setup
 axios.defaults.xsrfCookieName = "CSRF-TOKEN"
