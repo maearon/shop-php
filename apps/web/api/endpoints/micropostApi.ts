@@ -1,6 +1,6 @@
 // import { ListParams, ListResponse, Student } from 'models';
-import API from '.';
-import { ErrorMessageType } from '../components/shared/errorMessages';
+import api from '@/api/client';
+import { ErrorMessageType } from '@/components/shared/errorMessages';
 
 export interface ListParams {
   page?: number
@@ -54,22 +54,22 @@ export interface Response {
 const micropostApi = {
   getAll(params: ListParams): Promise<ListResponse<Micropost>> {
     const url = '';
-    return API.get(url, { params });
+    return api.get(url, { params });
   },
 
   // create(params: CreateParams): Promise<CreateResponse> {
   //   const url = '/microposts';
-  //   return API.post(url,params, headers: { Content-Type:'multipart/form-data' } })
+  //   return api.post(url,params, headers: { Content-Type:'multipart/form-data' } })
   // },
 
   remove(id: number): Promise<Response> {
     const url = `/microposts/${id}`;
-    return API.delete(url);
+    return api.delete(url);
   },
 
   likeOrDislikeYoutubeVideo(videoId: string, rating: string): Promise<Response> {
     const url = `https://www.googleapis.com/youtube/v3/videos/rate?id=${videoId}&rating=${rating}`;
-    return API.post(url);
+    return api.post(url);
   },
 };
 

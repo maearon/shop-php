@@ -129,12 +129,12 @@ const userApi = {
 
   // following(id: string, page: number): Promise<FollowResponse<UserFollow,IUserFollow>> {
   //   const url = `/users/${id}`;
-  //   return API.delete(url);
+  //   return api.delete(url);
   // },
 
   // followers(id: string, page: number): Promise<FollowResponse<UserFollow,IUserFollow>> {
   //   const url = `/users/${id}`;
-  //   return API.delete(url);
+  //   return api.delete(url);
   // },
 };
 

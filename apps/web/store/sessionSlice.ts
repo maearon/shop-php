@@ -35,7 +35,7 @@ export const fetchUser = createAsyncThunk(
       const response = await sessionApi.me()
       return response.user
     } catch (error: any) {
-      return thunkAPI.rejectWithValue('Cannot fetch user')
+      return thunkapi.rejectWithValue('Cannot fetch user')
     }
   }
 )

@@ -1,4 +1,4 @@
-import API from ".";
+import api from '@/api/client';
 
 export interface CreateParams {
   followed_id: string | string[] | undefined
@@ -15,12 +15,12 @@ export interface DestroyResponse {
 const relationshipApi = {
   create(params: CreateParams): Promise<CreateResponse> {
     const url = '/relationships';
-    return API.post(url, params);
+    return api.post(url, params);
   },
 
   destroy(id: string): Promise<DestroyResponse> {
     const url = `/relationships/${id}`;
-    return API.delete(url);
+    return api.delete(url);
   },
 };
 

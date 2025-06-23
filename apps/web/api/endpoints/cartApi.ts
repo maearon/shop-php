@@ -1,6 +1,6 @@
 // import { ListParams, ListResponse, Student } from 'models';
-import API from '../client';
-import { Micropost } from '../micropostApi';
+import api from '@/api/client';
+import { Micropost } from '@/api/endpoints/micropostApi';
 // import { Cart as CartCreate } from '@/store/sessionSlice';
 
 export interface CartCreate {
@@ -147,47 +147,47 @@ export interface Response {
 const cartApi = {
   index(params: ListParams): Promise<ListResponse<CartItem>> {
     const url = '/cart';
-    return API.get(url, { params });
+    return api.get(url, { params });
   },
 
   create(params: CreateParams): Promise<CreateResponse<CartCreate>> {
     const url = '/carts';
-    return API.post(url, params);
+    return api.post(url, params);
   },
 
   show(id: string, params: ListParams): Promise<ShowResponse<CartShow>> {
     const url = `/carts/${id}`;
-    return API.get(url, { params });
+    return api.get(url, { params });
   },
 
   edit(id: string): Promise<EditResponse> {
     const url = `/carts/${id}/edit`;
-    return API.get(url);
+    return api.get(url);
   },
 
   update(id: string, params: UpdateParams): Promise<UpdateResponse> {
     const url = `/carts/${id}`;
-    return API.patch(url, params);
+    return api.patch(url, params);
   },
 
   destroy(id: string): Promise<Response> {
     const url = `/carts/${id}`;
-    return API.delete(url);
+    return api.delete(url);
   },
 
   follow(id: string, page: number, lastUrlSegment: string): Promise<FollowResponse<CartFollow,ICartFollow>> {
     const url = `/carts/${id}/${lastUrlSegment}`;
-    return API.get(url, { params: { page } });
+    return api.get(url, { params: { page } });
   },
 
   // following(id: string, page: number): Promise<FollowResponse<CartFollow,ICartFollow>> {
   //   const url = `/carts/${id}`;
-  //   return API.delete(url);
+  //   return api.delete(url);
   // },
 
   // followers(id: string, page: number): Promise<FollowResponse<CartFollow,ICartFollow>> {
   //   const url = `/carts/${id}`;
-  //   return API.delete(url);
+  //   return api.delete(url);
   // },
 };
 

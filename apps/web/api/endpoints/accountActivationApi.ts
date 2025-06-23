@@ -1,5 +1,5 @@
 // import { ListParams, ListResponse, Student } from 'models';
-import API from '.';
+import api from "@/api/client";
 import { User } from '@/store/sessionSlice';
 
 export interface UpdateResponse {
@@ -25,11 +25,11 @@ export interface Response<User> {
 const accountActivationApi = {
   create(params: UpdateParams): Promise<UpdateResponse> {
     const url = `/account_activations`;
-    return API.post(url, params);
+    return api.post(url, params);
   },
   update(activation_token: string, email: string): Promise<Response<User>> {
     const url = `/account_activations/${activation_token}`;
-    return API.patch(url, {email: email});
+    return api.patch(url, {email: email});
   }
 };
 

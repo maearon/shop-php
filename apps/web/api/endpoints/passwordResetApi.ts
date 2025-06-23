@@ -1,4 +1,4 @@
-import API from '.';
+import api from "@/api/client";
 
 export interface CreateParams {
   password_reset: PasswordResetCreateField
@@ -31,11 +31,11 @@ export interface PasswordResetUpdateField {
 const passwordResetApi = {
   create(params: CreateParams): Promise<CreateResponse> {
     const url = '/password_resets';
-    return API.post(url, params);
+    return api.post(url, params);
   },
   update(reset_token: string, params: UpdateParams): Promise<UpdateResponse> {
     const url = `/password_resets/${reset_token}`;
-    return API.patch(url, params);
+    return api.patch(url, params);
   }
 };
 

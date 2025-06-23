@@ -1,5 +1,5 @@
 // import { ListParams, ListResponse, Student } from 'models';
-import graphQLClient from '.';
+import graphQLClient from '@/api/graphqlClient';
 import { gql } from 'graphql-request'
 
 const useUserApi = {

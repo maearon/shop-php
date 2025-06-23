@@ -1,6 +1,5 @@
 // import { ListParams, ListResponse, Student } from 'models';
-import API from '../client';
-import { Micropost } from './micropostApi';
+import api from "@/api/client";
 // import { Product as ProductCreate } from '@/store/sessionSlice';
 
 export interface ProductCreate {
@@ -192,47 +191,47 @@ const productApi = {
     const queryString = params.toString()
     const endpoint = `/products${queryString ? `?${queryString}` : ""}`
 
-    return API.get(endpoint)
+    return api.get(endpoint)
   },
 
   create(params: CreateParams): Promise<CreateResponse<ProductCreate>> {
     const url = '/products';
-    return API.post(url, params);
+    return api.post(url, params);
   },
 
   show(id: string, params: ListParams): Promise<ProductDetails> {
     const url = `/products/${id}`;
-    return API.get(url, { params });
+    return api.get(url, { params });
   },
 
   edit(id: string): Promise<EditResponse> {
     const url = `/products/${id}/edit`;
-    return API.get(url);
+    return api.get(url);
   },
 
   update(id: string, params: UpdateParams): Promise<UpdateResponse> {
     const url = `/products/${id}`;
-    return API.patch(url, params);
+    return api.patch(url, params);
   },
 
   destroy(id: string): Promise<Response> {
     const url = `/products/${id}`;
-    return API.delete(url);
+    return api.delete(url);
   },
 
   follow(id: string, page: number, lastUrlSegment: string): Promise<FollowResponse<ProductFollow,IProductFollow>> {
     const url = `/products/${id}/${lastUrlSegment}`;
-    return API.get(url, { params: { page } });
+    return api.get(url, { params: { page } });
   },
 
   // following(id: string, page: number): Promise<FollowResponse<ProductFollow,IProductFollow>> {
   //   const url = `/products/${id}`;
-  //   return API.delete(url);
+  //   return api.delete(url);
   // },
 
   // followers(id: string, page: number): Promise<FollowResponse<ProductFollow,IProductFollow>> {
   //   const url = `/products/${id}`;
-  //   return API.delete(url);
+  //   return api.delete(url);
   // },
 };
 
