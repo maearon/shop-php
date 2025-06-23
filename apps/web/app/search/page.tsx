@@ -7,7 +7,8 @@ import { ArrowLeft, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import ProductGrid from "@/components/product-grid"
 import SearchFilters from "@/components/search-filters"
-import { apiClient, type SearchFilters as SearchFiltersType, type Product } from "@/api/client"
+import searchApi, { SearchFiltersType } from "@/api/endpoints/searchApi"
+import { Product } from "@/api/endpoints/productApi"
 
 function SearchPageContent() {
   const searchParams = useSearchParams()
@@ -58,7 +59,7 @@ function SearchPageContent() {
     setError(null)
 
     try {
-      const response = await apiClient.searchProducts(searchFilters)
+      const response = await searchApi.searchProducts(searchFilters)
       setProducts(response.products)
       setTotalResults(response.total)
       setCurrentPage(searchFilters.page || 1)

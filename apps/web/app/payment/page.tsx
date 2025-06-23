@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation"
 import { useAppSelector } from "@/store/hooks"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
-import { apiClient } from "@/api/client"
 import flashMessage from "@/components/shared/flashMessages"
+import { paymentApiClient } from "@/api/endpoints/paymentApi"
+import orderApi from "@/api/endpoints/orderApi"
 
 const validationSchema = Yup.object({
   cardNumber: Yup.string().required("Card number is required"),
@@ -66,10 +67,10 @@ export default function CheckoutPaymentPage() {
     setLoading(true)
     try {
       // Create payment intent
-      const paymentIntent = await apiClient.createPaymentIntent(Math.round(total * 100), "USD")
+      const paymentIntent = await paymentApiClient.createPaymentIntent(Math.round(total * 100), "USD")
 
       // Process payment
-      const paymentResult = await apiClient.confirmPayment(paymentIntent.id, values.cardNumber)
+      const paymentResult = await paymentApiClient.confirmPayment(paymentIntent.id, values.cardNumber)
 
       if (paymentResult.success) {
         // Create order
@@ -79,7 +80,7 @@ export default function CheckoutPaymentPage() {
           payment_method: values.paymentMethod,
         }
 
-        const order = await apiClient.createOrder(orderData)
+        const order = await orderApi.createOrder(orderData)
 
         flashMessage("success", "Order placed successfully!")
         router.push(`/order-confirmation/${order.id}`)

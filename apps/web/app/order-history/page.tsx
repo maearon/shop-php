@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { apiClient } from "@/api/client"
+import orderApi from "@/api/endpoints/orderApi"
 
 interface Order {
   id: number
@@ -20,7 +20,7 @@ export default function OrderHistoryPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await apiClient.getOrders()
+        const response = await orderApi.getOrders()
         setOrders(response)
       } catch (error) {
         console.error("Failed to fetch orders:", error)
