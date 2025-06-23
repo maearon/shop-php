@@ -5,7 +5,7 @@ import { X, ChevronDown, ChevronUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
-import { apiClient } from "@/api/client"
+import productApi from "@/api/endpoints/productApi"
 
 interface FiltersSidebarProps {
   isOpen: boolean
@@ -39,7 +39,7 @@ export default function FiltersSidebar({ isOpen, onClose, category, onFiltersCha
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
-        const options = await apiClient.getProductFilters()
+        const options = await productApi.getProductFilters()
         setFilterOptions(options)
       } catch (error) {
         console.error("Failed to fetch filter options:", error)

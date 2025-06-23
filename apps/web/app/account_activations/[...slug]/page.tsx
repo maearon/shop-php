@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import accountActivationApi from "@/api/accountActivationApi";
+import accountActivationApi from "@/api/endpoints/accountActivationApi";
 import flashMessage from "@/components/shared/flashMessages";
 
 // Kiểu dữ liệu cho params

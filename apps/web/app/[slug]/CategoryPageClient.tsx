@@ -9,8 +9,12 @@ import FiltersSidebar from "@/components/filters-sidebar"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, SlidersHorizontal, Loader2 } from "lucide-react"
 import { categoryConfig } from "@/utils/category-config"
-import { apiClient, type ProductsResponse } from "@/api/client"
-import productApi, { type Product } from "@/api/endpoints/productApi"
+import api from "@/api/client"
+import productApi, { ProductsResponse, type Product as OriginalProduct } from "@/api/endpoints/productApi"
+
+type Product = OriginalProduct & {
+  price: number | string
+}
 
 type CategoryPageProps = {
   params: {
@@ -59,9 +63,20 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
       const response = await productApi.index(filters)
 
       if (append) {
-        setProducts((prev) => [...prev, ...((response.products ?? []) as Product[])])
+        setProducts((prev) => [
+          ...prev,
+          ...((response.products ?? []).map((p) => ({
+            ...p,
+            price: (p as any).price ?? "",
+          })) as Product[]),
+        ])
       } else {
-        setProducts(response.products)
+        setProducts(
+          (response.products ?? []).map((p) => ({
+            ...p,
+            price: (p as any).price ?? "",
+          })) as Product[]
+        )
       }
 
       setMeta(response.meta)

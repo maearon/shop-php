@@ -8,7 +8,7 @@ import type { AppDispatch } from "@/store/store"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
 import flashMessage from "@/components/shared/flashMessages"
-import API from "@/api/client"
+import api from "@/api/client"
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Name is required"),
@@ -30,9 +30,9 @@ export default function ProfilePage() {
   const dispatch = useDispatch<AppDispatch>()
   const userData = useAppSelector(selectUser)
   const [loading, setLoading] = useState(false)
-  if (typeof window !== "undefined") {
-  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-  }
+  const token = (typeof window !== "undefined")
+    ? localStorage.getItem("token") || sessionStorage.getItem("token")
+    : null;
 
   const initialValues: ProfileFormValues = {
     name: userData.value?.name || "",
@@ -45,11 +45,11 @@ export default function ProfilePage() {
   const onSubmit = async (values: ProfileFormValues) => {
     setLoading(true)
     try {
-      const response = await API.put("/profile", {
+      const response = await api.put("/profile", {
         user: values,
       })
 
-      if (response.success) {
+      if (response.data.success) {
         flashMessage("success", "Profile updated successfully")
         if (token) {
         dispatch(fetchUser())

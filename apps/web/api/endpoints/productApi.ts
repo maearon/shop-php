@@ -216,6 +216,17 @@ export interface ProductsResponse {
 }
 
 const productApi = {
+  async getProductFilters(): Promise<{
+    genders: string[]
+    categories: string[]
+    sports: string[]
+    brands: string[]
+    sizes: string[]
+    price_ranges: Array<{ label: string; min: number; max: number | null }>
+  }> {
+    return api.get("/products/filters")
+  },
+
   index(filters: ProductFilters = {}): Promise<ProductsResponse> {
     const params = new URLSearchParams()
 
