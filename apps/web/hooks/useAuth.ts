@@ -1,5 +1,5 @@
 import { useCallback } from "react"
-import authApi from "@/api/authApi"
+import authApi from "@/api/endpoints/authApi"
 import { setTokens, clearTokens } from "@/lib/token"
 import { useRouter } from "next/navigation"
 import { useDispatch } from "react-redux"

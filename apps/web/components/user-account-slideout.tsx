@@ -8,7 +8,7 @@ import { selectUser } from "@/store/sessionSlice"
 import Link from "next/link"
 import { useDispatch } from "react-redux"
 import type { AppDispatch } from "@/store/store"
-import sessionApi from "../api/sessionApi"
+import sessionApi from "../api/endpoints/sessionApi"
 import { fetchUser } from "@/store/sessionSlice"
 import flashMessage from "./shared/flashMessages"
 

@@ -7,9 +7,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent } from "@/components/ui/card"
 import { Search, ArrowRight, Tag } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
-import cartApi, { CartItem } from "@/api/cartApi"
+import cartApi, { CartItem } from "@/api/endpoints/cartApi"
 import { selectUser } from "@/store/sessionSlice"
-import { User } from "@/api/userApi"
+import { User } from "@/api/hooks/userApi"
 
 export default function CheckoutPage() {
   // const cartItems = useAppSelector((state) => state.cart.items)

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { apiClient, type ProductsResponse, type ProductFilters } from "@/lib/api"
+import { apiClient, type ProductsResponse, type ProductFilters } from "@/api/client"
 
 export function useProducts(initialFilters: ProductFilters = {}) {
   const [data, setData] = useState<ProductsResponse | null>(null)

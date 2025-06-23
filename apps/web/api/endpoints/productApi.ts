@@ -1,5 +1,5 @@
 // import { ListParams, ListResponse, Student } from 'models';
-import API from '.';
+import API from '../client';
 import { Micropost } from './micropostApi';
 // import { Product as ProductCreate } from '@/store/sessionSlice';
 

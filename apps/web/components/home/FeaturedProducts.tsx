@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import ProductCard from "@/components/product/ProductCard"
-import { getFeaturedProducts, type Product } from "@/lib/api"
+import { getFeaturedProducts, type Product } from "@/api/client"
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([])

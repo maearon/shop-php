@@ -1,10 +1,10 @@
-import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios"
+import axios, { type InternalAxiosRequestConfig, type AxiosResponse } from "axios"
 
 let BASE_URL = ""
 if (process.env.NODE_ENV === "development") {
-  BASE_URL = "http://localhost:9000/api"
+  BASE_URL = "http://localhost:8080/api"
 } else {
-  BASE_URL = "http://localhost:9000/api"
+  BASE_URL = "http://localhost:8080/api"
 }
 
 axios.defaults.xsrfCookieName = "CSRF-TOKEN"
@@ -13,7 +13,7 @@ axios.defaults.xsrfHeaderName = "X-CSRF-Token"
 
 axios.defaults.withCredentials = true
 
-const API = axios.create({
+const api = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
@@ -22,9 +22,7 @@ const API = axios.create({
   },
 })
 
-import type { InternalAxiosRequestConfig } from "axios"
-
-API.interceptors.request.use(
+api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (typeof window !== "undefined") {
       const token =
@@ -95,7 +93,7 @@ const saveTokens = (token: string, refreshToken: string, rememberMe: boolean) =>
 }
 
 // ✅ Response Interceptor
-API.interceptors.response.use(
+api.interceptors.response.use(
   (response: AxiosResponse) => response.data,
   async (error) => {
     const originalRequest = error.config
@@ -138,7 +136,7 @@ API.interceptors.response.use(
         }
 
         saveTokens(newToken, newRefresh, rememberMe)
-        API.defaults.headers["Authorization"] = `Bearer ${newToken}`
+        api.defaults.headers["Authorization"] = `Bearer ${newToken}`
         processQueue(null, newToken)
 
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`
@@ -157,4 +155,4 @@ API.interceptors.response.use(
   },
 )
 
-export default API
+export default api

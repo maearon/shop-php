@@ -9,8 +9,8 @@ import FiltersSidebar from "@/components/filters-sidebar"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, SlidersHorizontal, Loader2 } from "lucide-react"
 import { categoryConfig } from "@/utils/category-config"
-import { apiClient, type ProductsResponse } from "@/lib/api"
-import productApi, { type Product } from "@/api/productApi"
+import { apiClient, type ProductsResponse } from "@/api/client"
+import productApi, { type Product } from "@/api/endpoints/productApi"
 
 type CategoryPageProps = {
   params: {

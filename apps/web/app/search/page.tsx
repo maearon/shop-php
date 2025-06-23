@@ -7,7 +7,7 @@ import { ArrowLeft, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import ProductGrid from "@/components/product-grid"
 import SearchFilters from "@/components/search-filters"
-import { apiClient, type SearchFilters as SearchFiltersType, type Product } from "@/lib/api"
+import { apiClient, type SearchFilters as SearchFiltersType, type Product } from "@/api/client"
 
 function SearchPageContent() {
   const searchParams = useSearchParams()

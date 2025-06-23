@@ -65,6 +65,28 @@ This monorepo implements a sophisticated microservices architecture designed to 
 
 ### Frontend
 - **Next.js 14** - App Router, Server Components
+```
+header.tsx
+└─ useInitSession()
+   └─ Call dispatch(fetchUser())
+      └─ sessionSlice
+         └─ Call sessionApi.me() direct
+         🔴 Not through React Query → Not show on Devtools
+```
+to
+```
+header.tsx
+└─ useInitSession()
+   └─ Gọi useCurrentUserQuery()
+      └─ React Query
+         └─ queryFn: async () => {
+               const user = await dispatch(fetchUser())
+               return user
+             }
+            └─ sessionSlice.fetchUser
+               └─ Call sessionApi.me()
+         ✅ Show on React Query Devtools
+```
 - **React 18** - Modern React with Hooks
 - **Tailwind CSS** - Utility-first styling
 - **Redux Toolkit** - State management

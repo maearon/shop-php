@@ -1,6 +1,6 @@
 // import { ListParams, ListResponse, Student } from 'models';
-import API from '.';
-import { Micropost } from './micropostApi';
+import API from '../client';
+import { Micropost } from '../micropostApi';
 // import { Cart as CartCreate } from '@/store/sessionSlice';
 
 export interface CartCreate {

@@ -8,7 +8,7 @@ import type { AppDispatch } from "@/store/store"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
 import flashMessage from "@/components/shared/flashMessages"
-import API from "@/api/index"
+import API from "@/api/client"
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Name is required"),

@@ -9,24 +9,34 @@ import { Search, ShoppingBag, User, Heart, MenuIcon, LogOut, LogIn, ChevronDown 
 import { cn } from "@/lib/utils"
 import { useAppSelector } from "@/store/hooks"
 import MegaMenu from "./mega-menu"
-import { fetchUser, selectUser } from "@/store/sessionSlice"
 import LoginModal from "./login-modal"
 import UserAccountSlideout from "./user-account-slideout"
 import AdidasLogo from "./adidas-logo"
-import { useDispatch } from "react-redux"
 import type { AppDispatch } from "@/store/store"
-import sessionApi from "../api/sessionApi"
+import sessionApi from "../api/endpoints/sessionApi"
 import flashMessage from "./shared/flashMessages"
 import TopBarDropdown from "./top-bar-dropdown"
 import MobileMenu from "./mobile-menu"
 import MobileAppBanner from "./mobile-app-banner"
 import MobileSearchOverlay from "./mobile-search-overlay"
-import { useCurrentUser } from "@/api/useCurrentUser";
-import { useLogout } from "@/api/useLogout";
+import { useLogout } from "@/api/hooks/useLogout";
+import { useInitSession } from "@/api/hooks/useInitSession"
+import { useSelector, useDispatch } from "react-redux"
+import { selectUser, logout } from "@/store/sessionSlice"
 
 export default function Header() {
-  const { data: currentUserData, isLoading: userLoading } = useCurrentUser();
-  const logoutMutation = useLogout();
+  const dispatch = useDispatch<AppDispatch>()
+  const userState = useSelector(selectUser)
+  const user = userState.value
+  const userLoading = userState.status === "loading"  
+
+  useInitSession()
+
+
+
+
+
+  const logoutHandler = useLogout()
   const pathname = usePathname()
   const router = useRouter()
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
@@ -39,14 +49,10 @@ export default function Header() {
   const [showAppBanner, setShowAppBanner] = useState(true)
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const [loginBadgeAnimate, setLoginBadgeAnimate] = useState(false)
-  const userData = useAppSelector(selectUser)
-  let token: string | null = null;
-  if (typeof window !== "undefined") {
-    token = localStorage.getItem("token") || sessionStorage.getItem("token");
-  }
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") || sessionStorage.getItem("token") : null
 
   // Top bar messages
-const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIVERY WITH PRIME"]
+  const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIVERY WITH PRIME"]
 
   // Auto-rotate top bar messages
   useEffect(() => {
@@ -58,14 +64,14 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
 
   // Login badge animation - bounce 3 times every 3 seconds
   useEffect(() => {
-    if (!userData.value?.email) {
+    if (!user?.email) {
       const interval = setInterval(() => {
         setLoginBadgeAnimate(true)
         setTimeout(() => setLoginBadgeAnimate(false), 900) // 3 bounces * 300ms each
       }, 3000)
       return () => clearInterval(interval)
     }
-  }, [userData.value?.email])
+  }, [user?.email])
 
   // Get cart and wishlist counts from Redux
   const cartItemsCount = useAppSelector((state) => state.cart.items.reduce((total, item) => total + item.quantity, 0))
@@ -80,22 +86,8 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
   ]
 
   const [loading, setLoading] = useState(true)
-  const dispatch = useDispatch<AppDispatch>()
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        if (token) {
-          await dispatch(fetchUser())
-        }
-      } catch (error) {
-        console.error("Failed to fetch user:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchUserData()
-  }, [dispatch])
+
 
   const handleMouseEnter = (menuName: string) => {
     setActiveMenu(menuName)
@@ -105,50 +97,8 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
     setActiveMenu(null)
   }
 
-  const onClick = async (e: any) => {
-    e.preventDefault()
-    try {
-      await sessionApi.destroy()
-      if (typeof window !== "undefined") {
-      localStorage.removeItem("token")
-      localStorage.removeItem("remember_token")
-      localStorage.removeItem("refreshToken")
-      localStorage.removeItem("accessToken")
-      sessionStorage.removeItem("token")
-      sessionStorage.removeItem("remember_token")
-      sessionStorage.removeItem("refreshToken")
-      sessionStorage.removeItem("accessToken")
-      }
-      if (token) {
-      await dispatch(fetchUser())
-      }
-
-      router.push("/")
-    } catch (error) {
-      flashMessage("error", "Logout error: " + error)
-      if (typeof window !== "undefined") {
-      localStorage.removeItem("token")
-      localStorage.removeItem("refresh_token")
-      localStorage.removeItem("refreshToken")
-      localStorage.removeItem("accessToken")
-      localStorage.removeItem("guest_cart_id")
-      localStorage.removeItem("guest_wish_id")
-      sessionStorage.removeItem("token")
-      sessionStorage.removeItem("refresh_token")
-      sessionStorage.removeItem("refreshToken")
-      sessionStorage.removeItem("accessToken")
-      sessionStorage.removeItem("guest_cart_id")
-      sessionStorage.removeItem("guest_wish_id")
-      }
-      if (token) {
-      await dispatch(fetchUser())
-      }
-      flashMessage("error", "Unauthorized")
-    }
-  }
-
   const handleUserIconClick = () => {
-    if (userData.value?.email) {
+    if (user?.email) {
       setShowUserSlideout(true)
     } else {
       setShowLoginModal(true)
@@ -292,10 +242,10 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
               <button
                 onClick={handleUserIconClick}
                 className="relative"
-                title={userData.value?.email ? "Account" : "Login"}
+                title={user?.email ? "Account" : "Login"}
               >
                 <User className="h-5 w-5 cursor-pointer" />
-                {!userData.value?.email && (
+                {!user?.email && (
                   <span
                     className={cn(
                       "absolute -top-2 -right-2 bg-yellow-500 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold transition-transform duration-100",
@@ -336,8 +286,8 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
               {/* Desktop Login/Logout */}
               {userLoading ? (
                 <span>Loading...</span>
-              ) : currentUserData?.user?.email ? (
-                <button onClick={() => logoutMutation.mutate()}>
+              ) : user?.email ? (
+                <button onClick={logoutHandler}>
                   <LogOut className="h-5 w-5 cursor-pointer" />
                 </button>
               ) : (
@@ -376,10 +326,10 @@ const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIV
               <button
                 onClick={handleUserIconClick}
                 className="relative"
-                title={userData.value?.email ? "Account" : "Login"}
+                title={user?.email ? "Account" : "Login"}
               >
                 <User className="h-5 w-5 cursor-pointer" />
-                {!userData.value?.email && (
+                {!user?.email && (
                   <span
                     className={cn(
                       "absolute -top-2 -right-2 bg-yellow-500 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold transition-transform duration-100",

@@ -1,5 +1,4 @@
-// apps/web/api/sessionApi.ts
-import API from "."
+import api from "@/api/client"
 import { User } from "@/store/sessionSlice"
 
 export interface LoginCredentials {
@@ -29,16 +28,16 @@ export interface SessionIndexResponse {
 }
 
 const sessionApi = {
-  index(): Promise<SessionIndexResponse> {
-    return API.get("/sessions")
+  me(): Promise<SessionIndexResponse> {
+    return api.get("/sessions")
   },
 
   create(params: LoginParams): Promise<SessionResponse> {
-    return API.post("/login", params)
+    return api.post("/login", params)
   },
 
   destroy(): Promise<void> {
-    return API.delete("/logout")
+    return api.delete("/logout")
   },
 }
 

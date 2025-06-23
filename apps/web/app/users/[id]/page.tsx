@@ -7,7 +7,7 @@ import { useAppSelector } from '@/store/hooks';
 import { selectUser } from '@/store/sessionSlice';
 import micropostApi, { Micropost } from '../../../api/micropostApi';
 import relationshipApi from '../../../api/relationshipApi';
-import userApi, { UserShow } from '../../../api/userApi';
+import userApi, { UserShow } from '../../../api/hooks/userApi';
 import flashMessage from '../../../components/shared/flashMessages';
 import FollowForm from '../../../components/users/FollowForm';
 import Link from 'next/link';

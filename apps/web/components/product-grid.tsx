@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import WishButton from "./wish-button"
-import type { Product } from "@/lib/api"
+import type { Product } from "@/api/client"
 
 type ProductGridProps = {
   products: Product[]

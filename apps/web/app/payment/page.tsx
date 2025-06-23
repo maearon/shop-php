@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useAppSelector } from "@/store/hooks"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
-import { apiClient } from "@/lib/api"
+import { apiClient } from "@/api/client"
 import flashMessage from "@/components/shared/flashMessages"
 
 const validationSchema = Yup.object({

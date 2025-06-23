@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { apiClient } from "@/lib/api"
+import { apiClient } from "@/api/client"
 
 interface Order {
   id: number

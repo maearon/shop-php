@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation"
 import { useCallback } from "react"
 import { useDispatch } from "react-redux"
-import authApi from "@/api/authApi"
+import authApi from "@/api/endpoints/authApi"
 import { setTokens } from "@/lib/token"
 import { fetchUser } from "@/store/sessionSlice"
 import type { AppDispatch } from "@/store/store"

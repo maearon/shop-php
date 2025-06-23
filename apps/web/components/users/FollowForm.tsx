@@ -1,5 +1,5 @@
 import React from "react";
-import { UserShow } from "../../api/userApi";
+import { UserShow } from "../../api/hooks/userApi";
 
 // export interface FollowFormProps {
 //   data: FormData;
