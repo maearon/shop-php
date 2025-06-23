@@ -8,11 +8,10 @@ export default function ScrollToTop() {
 
   useEffect(() => {
     const onScroll = () => {
-      // show after user scrolls 400 px
+      // Show after user scrolls 400 px
       setVisible(window.scrollY > 400)
     }
 
-    // throttle with requestAnimationFrame for perf
     let ticking = false
     const handleScroll = () => {
       if (!ticking) {
@@ -30,7 +29,6 @@ export default function ScrollToTop() {
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
-    // hide immediately so it disappears while we scroll up
     setVisible(false)
   }
 
@@ -38,11 +36,11 @@ export default function ScrollToTop() {
     <button
       aria-label="Scroll back to top"
       onClick={scrollToTop}
-      className={`hidden md:block fixed bottom-8 right-4 md:bottom-10 md:right-8 z-50 flex h-12 w-12 items-center justify-center 
-        rounded-sm bg-black text-white shadow-lg transition-opacity duration-300
-        ${visible ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+      className={`hidden md:flex fixed bottom-18 right-4 md:bottom-16 md:right-6 z-50 
+        h-12 w-12 items-center justify-center rounded-sm bg-black text-white shadow-lg 
+        transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0 pointer-events-none"}`}
     >
-      <ChevronUp className="h-5 w-5" />
+      <ChevronUp className="h-5 w-5 mx-auto my-auto" />
     </button>
   )
 }

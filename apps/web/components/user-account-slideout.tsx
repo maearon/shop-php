@@ -8,9 +8,8 @@ import { selectUser } from "@/store/sessionSlice"
 import Link from "next/link"
 import { useDispatch } from "react-redux"
 import type { AppDispatch } from "@/store/store"
-import sessionApi from "../api/endpoints/sessionApi"
-import { fetchUser } from "@/store/sessionSlice"
 import flashMessage from "./shared/flashMessages"
+import { useLogout } from "@/api/hooks/useLogout"
 
 interface UserAccountSlideoutProps {
   isOpen: boolean
@@ -24,19 +23,13 @@ export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlid
   if (typeof window !== "undefined") {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   }
+  const logoutHandler = useLogout()
 
-  const handleLogout = async () => {
+  const handleLogoutWithClose = async () => {
     try {
-      await sessionApi.destroy()
-      if (typeof window !== "undefined") {
-      localStorage.removeItem("token")
-      sessionStorage.removeItem("token")
-      }
-      if (token) {
-      await dispatch(fetchUser())
-      }
+      await logoutHandler()           // 🟢 Gọi logout  
       flashMessage("success", "Logged out successfully")
-      onClose()
+      onClose()                       // ✅ Đóng slideout
     } catch (error) {
       flashMessage("error", "Logout failed")
     }
@@ -184,7 +177,7 @@ export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlid
 
           {/* Logout Button */}
           <div className="p-6 border-t">
-            <Button onClick={handleLogout} variant="outline" className="w-full">
+            <Button onClick={handleLogoutWithClose} variant="outline" className="w-full">
               Log Out
             </Button>
           </div>

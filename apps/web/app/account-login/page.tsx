@@ -32,7 +32,7 @@ interface MyFormValues {
 
 const LoginPage: NextPage = () => {
   const router = useRouter()
-  const inputEl = useRef() as MutableRefObject<HTMLInputElement>
+  const inputEl = useRef<HTMLButtonElement>(null)
   const [errors, setErrors] = useState<ErrorMessageType>({})
   const dispatch = useDispatch<AppDispatch>()
   const userData = useAppSelector(selectUser)
@@ -74,7 +74,7 @@ const LoginPage: NextPage = () => {
         rememberMe: values.rememberMe === "1", // ✅ Truyền boolean
       })
 
-      inputEl.current.blur()
+      inputEl.current?.blur()
       router.push("/")
       if (response.tokens) flashMessage("Logged in successfully", "success")
     } catch (error: any) {

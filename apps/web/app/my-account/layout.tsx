@@ -12,6 +12,9 @@ import FullScreenLoader from "@/components/ui/FullScreenLoader"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { useLogout } from "@/api/hooks/useLogout"
+import flashMessage from "@/components/shared/flashMessages"
+import { useCurrentUser } from "@/api/hooks/useCurrentUser"
 
 const accountMenuItems = [
   { name: "Account Overview", href: "/my-account", icon: "👤" },
@@ -33,21 +36,33 @@ export default function MyAccountLayout({ children }: { children: React.ReactNod
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   }
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        if (token) {
-        await dispatch(fetchUser())
-        }
-      } catch (error) {
-        console.error("Failed to fetch user:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
+  const [hasMounted, setHasMounted] = useState(false)
+  const { data: user, isLoading, isError, isFetched } = useCurrentUser()
 
-    fetchUserData()
-  }, [dispatch])
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (isFetched && !user?.email) {
+      setTimeout(() => {
+        router.replace("/account-login")
+      }, 0)
+    }
+    setLoading(false);
+  }, [isFetched, user, router])
+
+  const logoutHandler = useLogout()
+
+  const handleLogoutWithToLogin = async () => {
+    try {
+      await logoutHandler()           // 🟢 Gọi logout  
+      flashMessage("success", "Logged out successfully")
+      router.replace("/account-login")   // ✅ To login
+    } catch (error) {
+      flashMessage("error", "Logout failed")
+    }
+  }
 
   useEffect(() => {
     if (!loading && !userData.loggedIn) {
@@ -103,7 +118,7 @@ export default function MyAccountLayout({ children }: { children: React.ReactNod
                   }}
                   className="flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded w-full text-left"
                 >
-                  <span className="mr-3">🚪</span>
+                  <span className="mr-3" onClick={handleLogoutWithToLogin}>🚪</span>
                   Log out
                 </button>
               </div>

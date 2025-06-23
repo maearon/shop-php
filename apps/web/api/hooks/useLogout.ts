@@ -4,6 +4,8 @@ import { useDispatch } from "react-redux"
 import sessionApi from "@/api/endpoints/sessionApi"
 import { logout } from "@/store/sessionSlice"
 import type { AppDispatch } from "@/store/store"
+import { fetchUser } from "@/store/sessionSlice"
+import { clearTokens } from "@/lib/token"
 
 export function useLogout() {
   const dispatch = useDispatch<AppDispatch>()
@@ -12,6 +14,8 @@ export function useLogout() {
     try {
       await sessionApi.destroy()
       dispatch(logout())
+      clearTokens()
+      await dispatch(fetchUser()) // ✅ Redux fetch user sau logout
     } catch (error) {
       console.error("Logout failed", error)
     }
