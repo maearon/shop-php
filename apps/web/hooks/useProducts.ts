@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { apiClient, type ProductsResponse, type ProductFilters } from "@/api/client"
+import productApi, { ProductFilters, ProductsResponse } from '@/api/endpoints/productApi';
 
 export function useProducts(initialFilters: ProductFilters = {}) {
   const [data, setData] = useState<ProductsResponse | null>(null)
@@ -15,7 +15,7 @@ export function useProducts(initialFilters: ProductFilters = {}) {
       setError(null)
 
       const mergedFilters = { ...filters, ...newFilters }
-      const response = await apiClient.getProducts(mergedFilters)
+      const response = await productApi.index(mergedFilters)
 
       setData(response)
       setFilters(mergedFilters)

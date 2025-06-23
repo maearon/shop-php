@@ -11,7 +11,8 @@ import FeedbackWidget from "@/components/feedback-widget"
 import ScrollToTop from "@/components/scroll-to-top"
 import { AuthProvider } from "@/context/AuthContext"
 import { GoogleOAuthProvider } from "@react-oauth/google"
-import ReactQueryProvider from "./ReactQueryProvider";
+import ReactQueryProvider from "./ReactQueryProvider"
+import RedirectListener from "@/components/RedirectListener" // ✅ THÊM DÒNG NÀY
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -28,29 +29,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        
         <GoogleOAuthProvider clientId={'588366578054-bqg4hntn2fts7ofqk0s19286tjddnp0v.apps.googleusercontent.com'}>
-        <Providers>
-        <AuthProvider>
-        <ReactQueryProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <ChatWidget />
-          {/* Location Modal */}
-          <LocationModalProvider />
-
-          {/* Chat Widget for logged users */}
-          <ChatWidget />
-
-          {/* Feedback Modal for non-logged users */}
-          {/* <FeedbackModalProvider /> */}
-          {/* Fixed Widgets */}
-          <FeedbackWidget />
-          <ScrollToTop />
-        </ReactQueryProvider>
-        </AuthProvider>
-        </Providers>
+          <Providers>
+            <AuthProvider>
+              <ReactQueryProvider>
+                <RedirectListener /> {/* ✅ THÊM VÀO BODY */}
+                <Header />
+                <main>{children}</main>
+                <Footer />
+                <ChatWidget />
+                <LocationModalProvider />
+                <ChatWidget />
+                <FeedbackWidget />
+                <ScrollToTop />
+              </ReactQueryProvider>
+            </AuthProvider>
+          </Providers>
         </GoogleOAuthProvider>
       </body>
     </html>

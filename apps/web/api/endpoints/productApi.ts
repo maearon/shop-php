@@ -2,6 +2,38 @@
 import api from "@/api/client";
 // import { Product as ProductCreate } from '@/store/sessionSlice';
 
+export interface ProductFilters {
+  slug?: string
+  q?: string
+  gender?: string
+  category?: string
+  sport?: string
+  brand?: string
+  min_price?: number
+  max_price?: number
+  size?: string
+  color?: string
+  page?: number
+  per_page?: number
+}
+
+
+export interface ProductsResponse {
+  products: Product[]
+  meta: {
+    current_page: number
+    total_pages: number
+    total_count: number
+    per_page: number
+    filters_applied: Record<string, any>
+    category_info: {
+      title: string
+      breadcrumb: string
+      description: string
+    }
+  }
+}
+
 export interface ProductCreate {
   readonly id: string
   email: string
@@ -58,6 +90,11 @@ export interface Product {
   created_at: string; // ISO 8601 timestamp (e.g., "2025-06-18T12:00:00Z")
   updated_at: string;
   image?: string; // Assuming image is a string URL
+  description: string
+  image_url: string
+  variants: Variant[]
+  slug: string
+  score?: number
 }
 
 

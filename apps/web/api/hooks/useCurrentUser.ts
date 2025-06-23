@@ -3,9 +3,12 @@ import { useQuery } from "@tanstack/react-query"
 import { useDispatch } from "react-redux"
 import { fetchUser } from "@/store/sessionSlice"
 import type { AppDispatch } from "@/store/store"
+import { getAccessToken } from "@/lib/token"
 
 export const useCurrentUser = () => {
   const dispatch = useDispatch<AppDispatch>()
+
+  const token = typeof window !== "undefined" ? getAccessToken() : null
 
   return useQuery({
     queryKey: ["currentUser"],
@@ -13,7 +16,9 @@ export const useCurrentUser = () => {
       const user = await dispatch(fetchUser()).unwrap()
       return user
     },
+    enabled: !!token, // ✅ Chỉ chạy khi đã có token
     staleTime: 1000 * 60 * 5,
     retry: false,
+    refetchOnWindowFocus: false,
   })
 }

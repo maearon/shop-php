@@ -1,10 +1,10 @@
 "use client"
+
 import type { NextPage } from "next"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { type MutableRefObject, useRef, useState } from "react"
+import { type MutableRefObject, useEffect, useRef, useState } from "react"
 import { useDispatch } from "react-redux"
-import sessionApi from "@/api/endpoints/sessionApi"
 import flashMessage from "@/components/shared/flashMessages"
 import { ErrorMessage, Field, Form, Formik } from "formik"
 import * as Yup from "yup"
@@ -13,7 +13,8 @@ import FullScreenLoader from "@/components/ui/FullScreenLoader"
 import { fetchUser, selectUser } from "@/store/sessionSlice"
 import type { AppDispatch } from "@/store/store"
 import { useAppSelector } from "@/store/hooks"
-import { useQuery } from "@tanstack/react-query";
+import { useLoginMutation } from "@/api/hooks/useLoginMutation"
+import { useCurrentUser } from "@/api/hooks/useCurrentUser"
 
 const initialValues = {
   email: "",
@@ -33,45 +34,53 @@ const LoginPage: NextPage = () => {
   const router = useRouter()
   const inputEl = useRef() as MutableRefObject<HTMLInputElement>
   const [errors, setErrors] = useState<ErrorMessageType>({})
-  const [loading, setLoading] = useState(true)
   const dispatch = useDispatch<AppDispatch>()
   const userData = useAppSelector(selectUser)
+  const { data: user, isLoading, isError, isFetched } = useCurrentUser()
+  const [hasMounted, setHasMounted] = useState(false)
 
-  // TODO fetch user data and set loading to false redirect /my-account if current user is logged in
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (isFetched && user?.email) {
+      setTimeout(() => {
+        router.replace("/my-account")
+      }, 0)
+    }
+  }, [isFetched, user, router])
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),
     password: Yup.string().required("Required"),
   })
 
-  const onSubmit = (values: MyFormValues) => {
-    sessionApi
-      .create({
-        session: {
-          email: values.email,
-          password: values.password,
-        },
+  const loginMutation = useLoginMutation()
+
+  const onSubmit = async (values: MyFormValues) => {
+    try {
+      // ✅ Handle session vs local storage
+      // if (values.rememberMe === "1") {
+      //   sessionStorage.removeItem("auth_storage")
+      // } else {
+      //   sessionStorage.setItem("auth_storage", "session")
+      // }
+      // has logic !!localStorage.getItem("token"), const storage = remember ?
+
+      const response = await loginMutation.mutateAsync({
+        email: values.email,
+        password: values.password,
+        rememberMe: values.rememberMe === "1", // ✅ Truyền boolean
       })
-      .then((response) => {
-        if (response.user) {
-          inputEl.current.blur()
-          const { token } = response.tokens.access
-          if (typeof window !== "undefined") {
-            localStorage.setItem("token", token)
-            localStorage.setItem("refresh_token", response.tokens.refresh.token)
-          }
-          dispatch(fetchUser())
-          router.push("/")
-        }
-        if (response.flash) flashMessage(...response.flash)
-        if (response.status === 401) {
-          setErrors(response.errors)
-        }
-      })
-      .catch((error) => {
-        flashMessage("error", "User or password incorrect")
-        setErrors({ email: ["or password incorrect"] })
-      })
+
+      inputEl.current.blur()
+      router.push("/")
+      if (response.tokens) flashMessage("Logged in successfully", "success")
+    } catch (error: any) {
+      flashMessage("error", "User or password incorrect")
+      setErrors({ email: ["or password incorrect"] })
+    }
   }
 
   const handleGoogleLogin = () => {
@@ -82,19 +91,27 @@ const LoginPage: NextPage = () => {
     window.location.href = authUrl
   }
 
-  if (loading) return <FullScreenLoader />
+  if (!hasMounted || isLoading) return <FullScreenLoader />
 
-  return userData.value?.email ? (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 text-center">
-        <h1 className="text-2xl font-bold mb-4">Welcome back!</h1>
-        <p className="text-gray-600 mb-8">You are already logged in.</p>
-        <Link href="/my-account" className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800">
-          Go to My Account
-        </Link>
+  if (isError) {
+    flashMessage("error", "Session expired or unauthorized. Please login again.")
+  }
+
+  if (user?.email) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8 text-center">
+          <h1 className="text-2xl font-bold mb-4">Welcome back!</h1>
+          <p className="text-gray-600 mb-8">You are already logged in.</p>
+          <Link href="/my-account" className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800">
+            Go to My Account
+          </Link>
+        </div>
       </div>
-    </div>
-  ) : (
+    )
+  }
+
+  return (
     <div className="min-h-screen bg-white">
       <div className="relative bg-gray-100 py-16">
         <div className="container mx-auto px-4">
@@ -177,7 +194,7 @@ const LoginPage: NextPage = () => {
                     </div>
 
                     <div className="flex items-start space-x-2">
-                      <Field type="checkbox" name="rememberMe" value="1" className="mt-1" />
+                      <Field type="checkbox" name="rememberMe" value="1" className="mt-1" checked={values.rememberMe === "1"} />
                       <label className="text-sm text-gray-600">
                         Keep me logged in. Applies to all options. <Link href="#" className="text-blue-600 underline">More info</Link>
                       </label>

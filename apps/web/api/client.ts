@@ -1,16 +1,14 @@
 import axios, { type InternalAxiosRequestConfig, type AxiosResponse } from "axios"
+import { getAccessToken, getRefreshToken, setTokens, clearTokens } from "@/lib/token"
 
-let BASE_URL = ""
-if (process.env.NODE_ENV === "development") {
-  BASE_URL = "http://localhost:8080/api"
-} else {
-  BASE_URL = "http://localhost:8080/api"
-}
+// Base URL config
+const BASE_URL = process.env.NODE_ENV === "development"
+  ? "http://localhost:8080/api"
+  : "http://localhost:8080/api"
 
+// CSRF & credentials setup
 axios.defaults.xsrfCookieName = "CSRF-TOKEN"
-
 axios.defaults.xsrfHeaderName = "X-CSRF-Token"
-
 axios.defaults.withCredentials = true
 
 const api = axios.create({
@@ -22,26 +20,24 @@ const api = axios.create({
   },
 })
 
+// 🔄 Redirect handler
+const dispatchRedirectToLogin = () => {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("customRedirectToLogin"))
+  }
+}
+
+// 🔐 Attach tokens and guest_cart_id
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    if (typeof window !== "undefined") {
-      const token =
-        localStorage.getItem("token") !== "undefined"
-          ? localStorage.getItem("token")
-          : sessionStorage.getItem("token")
-
-      if (token && config.headers) {
+    if (typeof window !== "undefined" && config.headers) {
+      const token = getAccessToken()
+      if (token) {
         config.headers["Authorization"] = `Bearer ${token}`
       }
-    }
 
-    // 👉 Tự động thêm guest_cart_id vào query nếu có
-    if (typeof window !== "undefined") {
       const guestCartId =
-        localStorage.getItem("guest_cart_id") !== "undefined"
-          ? localStorage.getItem("guest_cart_id")
-          : sessionStorage.getItem("guest_cart_id")
-
+        localStorage.getItem("guest_cart_id") ?? sessionStorage.getItem("guest_cart_id")
       if (guestCartId) {
         const url = new URL(config.url || "", BASE_URL)
         if (!url.searchParams.has("guest_cart_id")) {
@@ -50,13 +46,12 @@ api.interceptors.request.use(
         }
       }
     }
-
     return config
   },
   (error) => Promise.reject(error),
 )
 
-// ✅ Token Refresh Mechanism
+// 🔄 Token Refresh Logic
 let isRefreshing = false
 let failedQueue: any[] = []
 
@@ -67,38 +62,11 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = []
 }
 
-const getRefreshToken = () => {
-  if (typeof window !== "undefined") {
-  return localStorage.getItem("refresh_token") || sessionStorage.getItem("refresh_token")
-  }
-}
-
-const clearTokens = () => {
-  if (typeof window !== "undefined") {
-  localStorage.removeItem("token")
-  localStorage.removeItem("refresh_token")
-  sessionStorage.removeItem("token")
-  sessionStorage.removeItem("refresh_token")
-  }
-}
-
-const saveTokens = (token: string, refreshToken: string, rememberMe: boolean) => {
-  if (rememberMe && typeof window !== "undefined") {
-    localStorage.setItem("token", token)
-    localStorage.setItem("refresh_token", refreshToken)
-  } else {
-    sessionStorage.setItem("token", token)
-    sessionStorage.setItem("refresh_token", refreshToken)
-  }
-}
-
-// ✅ Response Interceptor
 api.interceptors.response.use(
   (response: AxiosResponse) => response.data,
   async (error) => {
     const originalRequest = error.config
 
-    // Retry only once
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
@@ -107,7 +75,7 @@ api.interceptors.response.use(
           failedQueue.push({
             resolve: (token: string) => {
               originalRequest.headers["Authorization"] = `Bearer ${token}`
-              resolve(axios(originalRequest))
+              resolve(api(originalRequest))
             },
             reject,
           })
@@ -119,7 +87,7 @@ api.interceptors.response.use(
 
       if (!refreshToken) {
         clearTokens()
-        window.location.href = "/account-login"
+        dispatchRedirectToLogin()
         return Promise.reject(error)
       }
 
@@ -130,21 +98,18 @@ api.interceptors.response.use(
 
         const newToken = res.data.token
         const newRefresh = res.data.refresh_token
-        let rememberMe = false
-        if (typeof window !== "undefined") {
-          rememberMe = !!localStorage.getItem("token") // true if using localStorage
-        }
+        const rememberMe = !!localStorage.getItem("token")
 
-        saveTokens(newToken, newRefresh, rememberMe)
+        setTokens(newToken, newRefresh, rememberMe)
         api.defaults.headers["Authorization"] = `Bearer ${newToken}`
         processQueue(null, newToken)
 
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`
-        return axios(originalRequest)
+        return api(originalRequest)
       } catch (err) {
         processQueue(err, null)
         clearTokens()
-        window.location.href = "/account-login"
+        dispatchRedirectToLogin()
         return Promise.reject(err)
       } finally {
         isRefreshing = false
@@ -152,7 +117,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error)
-  },
+  }
 )
 
 export default api
