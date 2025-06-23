@@ -18,7 +18,7 @@ export const useCurrentUser = () => {
     },
     enabled: !!token, // ✅ Chỉ chạy khi đã có token
     staleTime: 1000 * 60 * 5,
-    retry: false,
+    retry: false, // ⛔ Đây chính là chặn retry nếu fetchUser bị lỗi (401, 403, etc.) infinite loops loading F5 avoided
     refetchOnWindowFocus: false,
   })
 }
