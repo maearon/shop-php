@@ -80,7 +80,10 @@ maearon@maearon:~/code/shop-php/apps/web/stories$ ls
 assets  button.css  Button.stories.ts  Button.tsx  Configure.mdx  header.css  Header.stories.ts  Header.tsx  page.css  Page.stories.ts  Page.tsx
 
 
----> http://localhost:6006/?path=/story/example-button--primary&args=primary:!false&onboarding=true
+http://localhost:6006/?path=/story/example-button--primary&args=primary:!false&onboarding=true
+http://localhost:6006/?path=/story/example-button--primary&args=primary:!false&onboarding=true
+
+http://localhost:6006/?path=/story/example-button--default
 
 ```
 ```
