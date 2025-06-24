@@ -16,11 +16,19 @@ const meta: Meta<typeof Input> = {
     disabled: {
       control: 'boolean',
     },
+    'aria-label': {
+      control: 'text',
+      description: 'Accessible label for screen readers',
+      table: {
+        category: 'Accessibility',
+      },
+    },
   },
   args: {
     type: 'text',
     placeholder: 'Nhập văn bản...',
     disabled: false,
+    'aria-label': 'Trường nhập liệu', // ✅ hỗ trợ accessibility
   },
 }
 
@@ -32,7 +40,8 @@ export const Default: Story = {}
 export const Disabled: Story = {
   args: {
     disabled: true,
-    placeholder: 'Input bị disabled',
+    placeholder: 'Input bị disable',
+    'aria-label': 'Trường nhập bị vô hiệu hóa',
   },
 }
 
@@ -40,5 +49,6 @@ export const Password: Story = {
   args: {
     type: 'password',
     placeholder: 'Nhập mật khẩu',
+    'aria-label': 'Trường nhập mật khẩu',
   },
 }
