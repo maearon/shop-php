@@ -1,4 +1,29 @@
 ```
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+cat /proc/sys/fs/inotify/max_user_watches
+maearon@maearon:~/code/shop-php/apps/web$ npm run storybook
+
+> adidas-clone@0.1.0 storybook
+> storybook dev -p 6006
+
+storybook v9.0.12
+
+info => Serving static files from /home/maearon/code/shop-php/node_modules/@chromatic-com/storybook/assets at /addon-visual-tests-assets
+info => Serving static files from ././public at /
+info => Starting manager..
+info => Starting preview..
+info Using tsconfig paths for react-docgen
+╭──────────────────────────────────────────────────╮
+│                                                  │
+│   Storybook 9.0.12 for nextjs-vite started       │
+│   289 ms for manager and 640 ms for preview      │
+│                                                  │
+│    Local:            http://localhost:6006/      │
+│    On your network:  http://192.168.1.8:6006/    │
+│                                                  │
+╰──────────────────────────────────────────────────╯
+```
+```
 maearon@maearon:~/code/shop-php/apps/web$ nvm i 20
 Downloading and installing node v20.19.3...
 Downloading https://nodejs.org/dist/v20.19.3/node-v20.19.3-linux-x64.tar.xz...
