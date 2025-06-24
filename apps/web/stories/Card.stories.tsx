@@ -26,3 +26,20 @@ export const Default: Story = {
     </Card>
   ),
 }
+
+export const WithButton: Story = {
+  render: () => (
+    <Card className="w-[300px]">
+      <CardHeader>
+        <CardTitle>Subscribe</CardTitle>
+        <CardDescription>Get notified when we launch</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <input className="w-full px-3 py-2 border rounded" placeholder="Your email" />
+      </CardContent>
+      <CardFooter>
+        <button className="ml-auto px-4 py-2 bg-blue-600 text-white rounded">Subscribe</button>
+      </CardFooter>
+    </Card>
+  ),
+}

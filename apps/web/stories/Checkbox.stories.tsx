@@ -44,3 +44,12 @@ export const CheckedAndDisabled: Story = {
     disabled: true,
   },
 }
+
+export const WithLabel: Story = {
+  render: (args) => (
+    <label className="flex items-center space-x-2">
+      <Checkbox {...args} />
+      <span>Chấp nhận điều khoản</span>
+    </label>
+  ),
+}
