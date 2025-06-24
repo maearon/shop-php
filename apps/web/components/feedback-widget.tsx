@@ -3,6 +3,7 @@
 import * as React from "react"
 import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import AdidasLogo from "@/components/adidas-logo"
 
 export default function FeedbackWidget() {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -51,7 +52,8 @@ export default function FeedbackWidget() {
           <div className="flex items-center justify-between border-b p-6">
             <div className="flex items-center space-x-3">
               {/* Adidas logo */}
-              <div className="h-8 w-12 bg-black" />
+              {/* <div className="h-8 w-12 bg-black" /> */}
+              <AdidasLogo />
             </div>
             <button onClick={togglePanel} className="rounded-full p-1 hover:bg-gray-100">
               <X className="h-5 w-5" />
