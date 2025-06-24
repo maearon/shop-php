@@ -5,7 +5,7 @@ import { X, ChevronDown, ChevronUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
-import type { SearchFilters as SearchFiltersType } from "@/api/client"
+import { SearchFiltersType } from "@/api/endpoints/searchApi"
 
 interface SearchFiltersProps {
   isOpen: boolean
