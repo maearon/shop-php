@@ -14,22 +14,24 @@ import { useLogout } from "@/api/hooks/useLogout"
 interface UserAccountSlideoutProps {
   isOpen: boolean
   onClose: () => void
+  user?: { name?: string, email?: string }
+  onLogout?: () => Promise<void>
 }
 
-export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlideoutProps) {
+export default function UserAccountSlideout({ isOpen, onClose, user, onLogout }: UserAccountSlideoutProps) {
   const [activeTab, setActiveTab] = useState("JUST FOR YOU")
-  const userData = useAppSelector(selectUser)
+
+  // Cho phép inject user từ props, fallback về Redux nếu không có
+  const userData = user || useAppSelector(selectUser)?.value || { name: undefined }
+
   const dispatch = useDispatch<AppDispatch>()
-  if (typeof window !== "undefined") {
-  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-  }
-  const logoutHandler = useLogout()
+  const logoutHandler = onLogout || useLogout()
 
   const handleLogoutWithClose = async () => {
     try {
-      await logoutHandler()           // 🟢 Gọi logout  
+      await logoutHandler()
       flashMessage("success", "Logged out successfully")
-      onClose()                       // ✅ Đóng slideout
+      onClose()
     } catch (error) {
       flashMessage("error", "Logout failed")
     }
@@ -66,20 +68,17 @@ export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlid
 
   return (
     <>
-      {/* Overlay */}
-      {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={onClose} />}
+      {isOpen && <div className="fixed inset-0 w-screen h-screen bg-black bg-opacity-50 z-40" onClick={onClose} />}
 
-      {/* Slideout Panel */}
       <div
         className={`fixed top-0 right-0 h-full w-96 bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
-          {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
             <div>
-              <h2 className="text-xl font-bold">HI {userData.value?.name?.toUpperCase() || "MEMBER"}</h2>
+              <h2 className="text-xl font-bold">HI {userData?.name?.toUpperCase() || "MEMBER"}</h2>
               <div className="flex items-center mt-2">
                 <div className="flex items-center">
                   <span className="text-sm font-bold">adi</span>
@@ -96,7 +95,6 @@ export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlid
             </button>
           </div>
 
-          {/* Points */}
           <div className="px-6 py-4 border-b">
             <div className="flex items-center justify-between">
               <span className="text-sm">Points to spend</span>
@@ -109,7 +107,6 @@ export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlid
             </div>
           </div>
 
-          {/* Menu Items */}
           <div className="px-6 py-4 border-b">
             <Link
               href="/my-account"
@@ -125,7 +122,6 @@ export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlid
             </button>
           </div>
 
-          {/* Tabs */}
           <div className="border-b">
             <div className="flex">
               {tabs.map((tab) => (
@@ -144,7 +140,6 @@ export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlid
             </div>
           </div>
 
-          {/* Content */}
           <div className="flex-1 overflow-y-auto">
             {activeTab === "JUST FOR YOU" && (
               <div className="p-6 space-y-4">
@@ -175,7 +170,6 @@ export default function UserAccountSlideout({ isOpen, onClose }: UserAccountSlid
             )}
           </div>
 
-          {/* Logout Button */}
           <div className="p-6 border-t">
             <Button onClick={handleLogoutWithClose} variant="outline" className="w-full">
               Log Out

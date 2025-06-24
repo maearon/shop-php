@@ -3,6 +3,18 @@ import '@/app/globals.css';
 import { ReduxProviderDecorator } from "../stories/storybook-redux-provider"
 import { AppProviders } from "../stories//app-providers"
 
+// export const parametters = {
+//   layout: "fullscreeen";
+// }
+
+// export const decorators = {
+//   (Story) => {
+//     <div className="w-screen h-screen">
+//       <Story
+//     </div>
+//   }
+// }
+
 const preview: Preview = {
   decorators: [ReduxProviderDecorator],
   parameters: {
