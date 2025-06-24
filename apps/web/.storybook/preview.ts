@@ -1,7 +1,10 @@
 import type { Preview } from '@storybook/nextjs-vite'
 import '@/app/globals.css';
+import { ReduxProviderDecorator } from "../stories/storybook-redux-provider"
+import { AppProviders } from "../stories//app-providers"
 
 const preview: Preview = {
+  decorators: [ReduxProviderDecorator],
   parameters: {
     controls: {
       matchers: {

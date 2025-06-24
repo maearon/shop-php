@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { X } from "lucide-react"
+// import { X } from "lucide-react"
 
 interface FeedbackModalProps {
   isOpen: boolean
@@ -60,12 +60,12 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
       <DialogContent className="sm:max-w-md p-0 bg-white border-0 shadow-2xl">
         <div className="relative">
           {/* Close button */}
-          <button
+          {/* <button
             onClick={onClose}
             className="absolute top-4 right-4 z-10 p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
             <X className="h-5 w-5 text-gray-600" />
-          </button>
+          </button> */}
 
           <div className="p-8">
             {/* Adidas Logo */}
