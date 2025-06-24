@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "../globals.css"
 import { Providers } from "@/components/providers"
 import CheckoutHeader from "@/components/checkout-header"
+import { useAppSelector } from "@/store/hooks"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -17,12 +18,13 @@ export default function CheckoutLayout({
 }: {
   children: React.ReactNode
 }) {
+  const cartCount = useAppSelector((state) => state.cart.items.length)
   return (
     <html lang="en">
       <body className={inter.className}>
         <Providers>
           <div className="min-h-screen bg-white">
-            <CheckoutHeader />
+            <CheckoutHeader userName="Manh" cartCount={cartCount} />
             {children}
             <CheckoutFooter />
           </div>
