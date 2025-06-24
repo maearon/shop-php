@@ -1,5 +1,5 @@
 import ProductTabs from "@/components/product-tabs"
-import PromoCarousel from "@/components/promo-carousel"
+import PromoCarousel, { Slide } from "@/components/promo-carousel"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -9,6 +9,42 @@ import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
 
 export default function HomePage() {
+  // ✅ Fake slide data
+  const mockSlides: Slide[] = [
+    {
+      id: 1,
+      title: "PAST, PRESENT, FUTURE",
+      description: "Explore the Superstar in all its iconic glory, now with more comfort.",
+      image: "https://via.placeholder.com/600x400?text=Superstar",
+      cta: "SHOP NOW",
+      href: "/superstar",
+    },
+    {
+      id: 2,
+      title: "DROPSET 3",
+      description: "Rooted in Strength.",
+      image: "https://via.placeholder.com/600x400?text=Dropset",
+      cta: "SHOP NOW",
+      href: "/dropset",
+    },
+    {
+      id: 3,
+      title: "A TRUE MIAMI ORIGINAL",
+      description: "Rep the Magic City during every match in this signature blue jersey.",
+      image: "https://via.placeholder.com/600x400?text=Miami",
+      cta: "SHOP NOW",
+      href: "/miami",
+    },
+    {
+      id: 4,
+      title: "SAMBA",
+      description: "Always iconic, always in style.",
+      image: "https://via.placeholder.com/600x400?text=Samba",
+      cta: "SHOP NOW",
+      href: "/samba",
+    },
+  ] 
+
   const stillInterestedProducts = [
     {
       id: 1,
@@ -174,7 +210,7 @@ export default function HomePage() {
       <ProductTabs />
 
       {/* Promo Carousel */}
-      <PromoCarousel />
+      <PromoCarousel slides={mockSlides} />
 
       {/* Still Interested Section */}
       <section className="container mx-auto px-4 py-12">

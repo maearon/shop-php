@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import WishButton from "./wish-button"
-import type { Product } from "@/api/client"
+import { Product } from "@/api/endpoints/productApi"
 
 type ProductGridProps = {
   products: Product[]
@@ -42,8 +42,8 @@ export default function ProductGrid({ products = [], columns = 3 }: ProductGridP
                 <WishButton
                   item={{
                     id: product.id,
-                    name: product.name,
-                    price: `$${product.price}`,
+                    name: product.name ?? "",
+                    price: `$${product.variants[0]?.price ?? ""}`,
                     image: product.image_url,
                   }}
                 />
@@ -52,13 +52,13 @@ export default function ProductGrid({ products = [], columns = 3 }: ProductGridP
               {product.jan_code?.includes("NEW") && (
                 <Badge className="absolute top-3 left-3 bg-black text-white">NEW</Badge>
               )}
-              {product.price && product.price < 50 && (
+              {product.variants[0]?.price && product.variants[0].price < 50 && (
                 <Badge className="absolute top-3 left-3 bg-red-600 text-white">SALE</Badge>
               )}
             </div>
             <div className="space-y-1">
               <h3 className="font-medium text-sm leading-tight group-hover:underline">{product.name}</h3>
-              <p className="font-bold">${product.price}</p>
+              <p className="font-bold">${product.variants[0]?.price ?? ""}</p>
               {product.variants && product.variants.length > 0 && (
                 <p className="text-xs text-gray-600">
                   {product.variants.length} color{product.variants.length > 1 ? "s" : ""}
