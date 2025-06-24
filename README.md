@@ -66,6 +66,24 @@ This monorepo implements a sophisticated microservices architecture designed to 
 ### Frontend
 - **Next.js 14** - App Router, Server Components
 ```
+cd apps/web
+
+
+maearon@maearon:~/code/shop-php/apps/web$ npx create-storybook@latest 0 Enter
+
+
+maearon@maearon:~/code/shop-php/apps/web$ cd .storybook/
+maearon@maearon:~/code/shop-php/apps/web/.storybook$ ls
+main.ts  preview.ts  vitest.setup.ts
+maearon@maearon:~/code/shop-php/apps/web$ cd stories/
+maearon@maearon:~/code/shop-php/apps/web/stories$ ls
+assets  button.css  Button.stories.ts  Button.tsx  Configure.mdx  header.css  Header.stories.ts  Header.tsx  page.css  Page.stories.ts  Page.tsx
+
+
+---> http://localhost:6006/?path=/story/example-button--primary&args=primary:!false&onboarding=true
+
+```
+```
 header.tsx
 └─ useInitSession()
    └─ Call dispatch(fetchUser())

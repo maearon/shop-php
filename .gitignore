@@ -32,6 +32,8 @@ out/
 .parcel-cache/
 .storybook-out
 .out
+*storybook.log
+/apps/web/storybook-static
 
 # ----------------------------------
 # Ruby / Rails
@@ -159,3 +161,6 @@ obj/
 *.booproj
 [Tt]est[Rr]esults
 *.publishproj
+
+*storybook.log
+storybook-static
