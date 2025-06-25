@@ -14,10 +14,7 @@ export default function HeroBanner() {
     <section className="relative h-[90vh] bg-gradient-to-r from-black to-gray-800 text-white">
       <div className="absolute inset-0 bg-black/40" />
 
-      <div
-        className="absolute inset-0 z-0 w-full h-full bg-cover bg-no-repeat bg-top bg-hero-mobile sm:bg-hero-tablet lg:bg-hero-desktop"
-      />
-
+      <section className="bg-hero h-[90vh] relative text-white"></section>
 
       {/* <div className="relative z-10 flex h-full items-center"> */}
       <div className="relative container mx-auto px-4 h-full flex items-end pb-12">
