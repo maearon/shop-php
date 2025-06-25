@@ -29,55 +29,49 @@ export default function HeroBanner() {
       <div className="relative container mx-auto px-4 h-full flex items-end pb-12">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl">
-            <h1 className="inline-block bg-white text-black text-5xl font-bold px-2 py-1 mb-4">
+            <h1 className="inline-block bg-white text-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold px-2 py-1 mb-3">
               PAST, PRESENT, FUTURE
             </h1>
-            <p className="inline-block bg-white text-black text-xl px-2 py-1 mb-8">
+            <p className="inline-block bg-white text-black text-sm sm:text-base md:text-lg lg:text-xl px-2 py-1 mb-6">
               Explore the Superstar, now updated for the next generation.
             </p>
-            <div className="grid grid-cols-2 gap-4 md:flex md:flex-wrap">
-              {/* <Link href="/women-superstar"> */}
+
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 md:flex md:flex-wrap md:gap-4">
               <Button
                 size="sm"
                 variant="outline"
-                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-black transition"
+                className="border border-black text-black font-bold px-3 py-2 text-xs sm:text-sm md:px-4 md:py-2 md:text-base flex items-center gap-1 sm:gap-2 hover:bg-gray-100 hover:text-black transition"
                 onClick={() => router.push("/women-superstar")}
               >
-                SHOP WOMEN
-                <span aria-hidden>→</span>
+                SHOP WOMEN <span aria-hidden>→</span>
               </Button>
-            {/* </Link>
-            <Link href="/men-superstar"> */}
+
               <Button
                 size="sm"
                 variant="outline"
-                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-black transition"
+                className="border border-black text-black font-bold px-3 py-2 text-xs sm:text-sm md:px-4 md:py-2 md:text-base flex items-center gap-1 sm:gap-2 hover:bg-gray-100 hover:text-black transition"
                 onClick={() => router.push("/men-superstar")}
               >
-                SHOP MEN
-                <span aria-hidden>→</span>
+                SHOP MEN <span aria-hidden>→</span>
               </Button>
-            {/* </Link>   
-            <Link href="/kids-superstar"> */}
+
               <Button
                 size="sm"
                 variant="outline"
-                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-black transition"
+                className="border border-black text-black font-bold px-3 py-2 text-xs sm:text-sm md:px-4 md:py-2 md:text-base flex items-center gap-1 sm:gap-2 hover:bg-gray-100 hover:text-black transition"
                 onClick={() => router.push("/kids-superstar")}
               >
-                SHOP KIDS
-                <span aria-hidden>→</span>
+                SHOP KIDS <span aria-hidden>→</span>
               </Button>
-              {/* </Link> */}
+
               <Button
                 size="sm"
                 variant="outline"
-                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-black transition"
+                className="border border-black text-black font-bold px-3 py-2 text-xs sm:text-sm md:px-4 md:py-2 md:text-base flex items-center gap-1 sm:gap-2 hover:bg-gray-100 hover:text-black transition"
                 onClick={() => setShowVideo(true)}
               >
-                <Play className="mr-2 h-4 w-4" />
-                Watch video
-                <span aria-hidden>→</span>
+                <Play className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                Watch video <span aria-hidden>→</span>
               </Button>
             </div>
           </div>
