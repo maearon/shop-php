@@ -29,8 +29,10 @@ export default function HeroBanner() {
       <div className="relative container mx-auto px-4 h-full flex items-end pb-12">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl">
-            <h1 className="text-5xl font-bold mb-6">PAST, PRESENT, FUTURE</h1>
-            <p className="text-xl mb-8">
+            <h1 className="inline-block bg-white text-black text-5xl font-bold px-2 py-1 mb-4">
+              PAST, PRESENT, FUTURE
+            </h1>
+            <p className="inline-block bg-white text-black text-xl px-2 py-1 mb-8">
               Explore the Superstar, now updated for the next generation.
             </p>
             <div className="grid grid-cols-2 gap-4 md:flex md:flex-wrap">
