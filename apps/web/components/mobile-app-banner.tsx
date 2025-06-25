@@ -20,7 +20,7 @@ export default function MobileAppBanner({ isOpen, onClose }: MobileAppBannerProp
 
         <div className="flex items-center space-x-3 flex-1 mx-4">
           {/* App Icon */}
-          <div className="relative w-14 h-14 bg-black rounded-2xl overflow-hidden">
+          <div className="relative w-16 h-16 bg-black rounded-2xl overflow-hidden">
             <Image
               src="/logo-app.png"
               alt="App Logo"
