@@ -3,6 +3,7 @@
 import type React from "react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Search, ShoppingBag, User, Heart, MenuIcon, LogOut, LogIn, ChevronDown } from "lucide-react"
@@ -135,7 +136,13 @@ export default function Header() {
             <Link href="/gift-cards" className="hover:underline mr-3">gift cards</Link>
             <Link href="/join" className="hover:underline mr-3">join adiClub</Link>
             <div className="flex items-center space-x-1">
-              <span role="img" aria-label="us flag">🇺🇸</span>
+              <Image
+                src="/flag/us.svg"
+                alt="US Flag"
+                width={16}
+                height={12}
+                className="inline-block"
+              />
               <select defaultValue="US" className="bg-transparent border-none outline-none text-xs cursor-pointer">
                 <option value="US">United States</option>
                 <option value="VN">Vietnam</option>

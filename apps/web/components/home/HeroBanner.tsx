@@ -4,20 +4,26 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Play } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export default function HeroBanner() {
+  const router = useRouter()
   const [showVideo, setShowVideo] = useState(false)
 
   return (
     <section className="relative h-[90vh] bg-gradient-to-r from-black to-gray-800 text-white">
       <div className="absolute inset-0 bg-black/40" />
 
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?height=1200&width=1200')",
-        }}
-      />
+      <picture className="absolute inset-0 z-0">
+        <source media="(min-width: 1024px)" srcSet="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?height=1280" />
+        <source media="(min-width: 768px)" srcSet="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_t_c8212de2ad.jpg?width=1024" />
+        <source media="(min-width: 640px)" srcSet="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_m_1e9e83f7e9.jpg?width=768" />
+        <img
+          src="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?width=1280"
+          alt="Superstar"
+          className="w-full h-full object-cover"
+        />
+      </picture>
 
       {/* <div className="relative z-10 flex h-full items-center"> */}
       <div className="relative container mx-auto px-4 h-full flex items-end pb-12">
@@ -27,24 +33,49 @@ export default function HeroBanner() {
             <p className="text-xl mb-8">
               Explore the Superstar, now updated for the next generation.
             </p>
-            <div className="flex gap-4">
-              <Link href="/women-superstar">
-                <Button size="sm" className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP WOMEN</Button>
-              </Link>
-              <Link href="/men-superstar">
-                <Button size="sm" className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP MEN</Button>
-              </Link>   
-              <Link href="/kids-superstar">
-                <Button size="sm" className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP KIDS</Button>
-              </Link>
+            <div className="grid grid-cols-2 gap-4 md:flex md:flex-wrap">
+              {/* <Link href="/women-superstar"> */}
               <Button
                 size="sm"
                 variant="outline"
-                className="border-white text-black hover:bg-black hover:text-white"
+                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-white transition"
+                onClick={() => router.push("/women-superstar")}
+              >
+                SHOP WOMEN
+                <span aria-hidden>→</span>
+              </Button>
+            {/* </Link>
+            <Link href="/men-superstar"> */}
+              <Button
+                size="sm"
+                variant="outline"
+                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-white transition"
+                onClick={() => router.push("/men-superstar")}
+              >
+                SHOP MEN
+                <span aria-hidden>→</span>
+              </Button>
+            {/* </Link>   
+            <Link href="/kids-superstar"> */}
+              <Button
+                size="sm"
+                variant="outline"
+                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-white transition"
+                onClick={() => router.push("/kids-superstar")}
+              >
+                SHOP KIDS
+                <span aria-hidden>→</span>
+              </Button>
+              {/* </Link> */}
+              <Button
+                size="sm"
+                variant="outline"
+                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-white transition"
                 onClick={() => setShowVideo(true)}
               >
                 <Play className="mr-2 h-4 w-4" />
-                Xem video
+                Watch video
+                <span aria-hidden>→</span>
               </Button>
             </div>
           </div>

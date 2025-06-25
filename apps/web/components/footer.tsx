@@ -2,6 +2,7 @@
 
 import { Facebook, Instagram, Twitter, Youtube, Music, MapPin, ChevronUp } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function Footer() {
   const footerSections = {
@@ -255,7 +256,13 @@ export default function Footer() {
 
             {/* Country Selector */}
             <div className="flex items-center gap-2 text-sm">
-              <span className="text-2xl">🇺🇸</span>
+              <Image
+                src="/flag/us.svg"
+                alt="US Flag"
+                width={20}
+                height={14}
+                className="inline-block"
+              />
               <span>United States</span>
             </div>
           </div>
