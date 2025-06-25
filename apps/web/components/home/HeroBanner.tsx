@@ -19,7 +19,8 @@ export default function HeroBanner() {
         }}
       />
 
-      <div className="relative z-10 flex h-full items-center">
+      {/* <div className="relative z-10 flex h-full items-center"> */}
+      <div className="relative container mx-auto px-4 h-full flex items-end pb-12">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl">
             <h1 className="text-5xl font-bold mb-6">PAST, PRESENT, FUTURE</h1>
