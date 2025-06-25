@@ -1,6 +1,7 @@
 "use client"
 
 import { X } from "lucide-react"
+import Image from "next/image"
 
 interface MobileAppBannerProps {
   isOpen: boolean
@@ -19,10 +20,14 @@ export default function MobileAppBanner({ isOpen, onClose }: MobileAppBannerProp
 
         <div className="flex items-center space-x-3 flex-1 mx-4">
           {/* App Icon */}
-          <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center">
-            <svg viewBox="0 0 24 24" className="w-8 h-8 fill-white">
-              <path d="M12.01 2.011c-5.52 0-9.99 4.47-9.99 9.99s4.47 9.99 9.99 9.99 9.99-4.47 9.99-9.99-4.47-9.99-9.99-9.99zm4.99 16.49c-.39.39-1.02.39-1.41 0L12 15.01l-3.59 3.59c-.39.39-1.02.39-1.41 0-.39-.39-.39-1.02 0-1.41L10.59 13.6 7 10.01c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L12 12.19l3.59-3.59c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41L13.41 13.6l3.59 3.59c.39.39.39 1.02 0 1.41z" />
-            </svg>
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden">
+            <Image
+              src="/logo.png"
+              alt="App Logo"
+              fill
+              className="object-cover"
+              priority
+            />
           </div>
 
           {/* App Info */}
