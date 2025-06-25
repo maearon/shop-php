@@ -21,7 +21,7 @@ export default function HeroBanner() {
         <img
           src="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?width=1280"
           alt="Superstar"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
         />
       </picture>
 
