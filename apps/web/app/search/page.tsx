@@ -9,7 +9,7 @@ import ProductGrid from "@/components/product-grid"
 import SearchFilters from "@/components/search-filters"
 import { Product } from "@/@types/product"
 import { SearchFilters as SearchFiltersType } from "@/@types/search"
-import pythonService from "@/api/services/pythonService"
+import javaService from "@/api/services/javaService"
 
 function SearchPageContent() {
   const searchParams = useSearchParams()
@@ -60,7 +60,7 @@ function SearchPageContent() {
     setError(null)
 
     try {
-      const response = await pythonService.searchProducts(searchFilters)
+      const response = await javaService.searchProducts(searchFilters)
       setProducts(response.products)
       setTotalResults(response.total)
       setCurrentPage(searchFilters.page || 1)
