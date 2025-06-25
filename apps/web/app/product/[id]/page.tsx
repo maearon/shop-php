@@ -14,7 +14,7 @@ import Footer from "@/components/footer"
 import WishButton from "@/components/wish-button"
 import FullScreenLoader from "@/components/ui/FullScreenLoader"
 import { ProductDetails } from "@/@types/product"
-import { rubyService } from "@/api/services/rubyService"
+import { javaService } from "@/api/services/javaService"
 
 // Mock product data - in real app this would come from API
 const getProductById = (id: string) => {
@@ -79,7 +79,7 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const id = params?.id as string
     if (!id) return
-    rubyService.getProduct(id, { page })
+    javaService.getProduct(id, { page })
       .then(response => {
         setProduct(response.data)
         setSelectedColor(response.data.variants?.[0]?.color || "")

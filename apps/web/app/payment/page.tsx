@@ -7,7 +7,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
 import flashMessage from "@/components/shared/flashMessages"
 import paymentService from "@/api/services/paymentService"
-import { rubyService } from "@/api/services/rubyService"
+import { javaService } from "@/api/services/javaService"
 
 const validationSchema = Yup.object({
   cardNumber: Yup.string().required("Card number is required"),
@@ -84,7 +84,7 @@ export default function CheckoutPaymentPage() {
           payment_method: values.paymentMethod,
         }
 
-        const order = await rubyService.createOrder(orderData)
+        const order = await javaService.createOrder(orderData)
 
         flashMessage("success", "Order placed successfully!")
         router.push(`/order-confirmation/${order.id}`)

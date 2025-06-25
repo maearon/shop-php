@@ -7,7 +7,7 @@ import { selectUser } from '@/store/sessionSlice'
 import flashMessage from '@/components/shared/flashMessages'
 import Pagination from 'react-js-pagination'
 import { IUserFollow, UserFollow } from "@/@types/user";
-import { rubyService } from "@/api/services/rubyService";
+import { javaService } from "@/api/services/javaService";
 import javaService from "@/api/services/javaService";
 
 const ShowFollow = ({params}: {params: {slug: string[]}}) =>{
@@ -20,7 +20,7 @@ const ShowFollow = ({params}: {params: {slug: string[]}}) =>{
   const { id, follow } = params.slug.length === 2 ? { id: params.slug[0], follow: params.slug[1] } : { id: '', follow: '' };
 
   const setFollowPage= useCallback(async () => { 
-    rubyService.followProduct(id, page, follow as string
+    javaService.followProduct(id, page, follow as string
     ).then(response => {
       setUsers(response.products)
       setXusers(response.xproducts)

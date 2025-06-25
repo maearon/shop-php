@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { UserShow } from '@/@types/user';
 import { Micropost } from '@/@types/micropost';
 import javaService from '@/api/services/javaService';
-import { rubyService } from '@/api/services/rubyService';
+import { javaService } from '@/api/services/javaService';
 
 const Show = ({ params }: { params: { id: string } }) => {
   const [user, setUser] = useState<UserShow | null>(null);
@@ -53,7 +53,7 @@ const Show = ({ params }: { params: { id: string } }) => {
   const handleFollow = async (e: { preventDefault: () => void })  => {
     e.preventDefault();
     try {
-      const response = await rubyService.createRelationship({ followed_id: id });
+      const response = await javaService.createRelationship({ followed_id: id });
       if (response.follow) {
         setWall();
       }
@@ -65,7 +65,7 @@ const Show = ({ params }: { params: { id: string } }) => {
   const handleUnfollow = async (e: { preventDefault: () => void })  => {
     e.preventDefault();
     try {
-      const response = await rubyService.destroyRelationship(id);
+      const response = await javaService.destroyRelationship(id);
       if (response.unfollow) {
         setWall();
       }
@@ -77,7 +77,7 @@ const Show = ({ params }: { params: { id: string } }) => {
   const removeMicropost = async (micropostId: number) => {
     if (window.confirm("Are you sure?")) {
       try {
-        const response = await rubyService.deleteMicropost(micropostId);
+        const response = await javaService.deleteMicropost(micropostId);
         if (response.flash) {
           flashMessage(...response.flash);
           setWall();
