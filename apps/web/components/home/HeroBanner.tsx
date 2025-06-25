@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Play } from "lucide-react"
+import Link from "next/link"
 
 export default function HeroBanner() {
   const [showVideo, setShowVideo] = useState(false)
@@ -14,7 +15,7 @@ export default function HeroBanner() {
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?height=800&width=1200')",
+          backgroundImage: "url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?height=1000&width=1200')",
         }}
       />
 
@@ -50,7 +51,16 @@ export default function HeroBanner() {
               ✕
             </button>
             <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
-              <p className="text-white">Video demo sẽ được phát ở đây</p>
+              {/* <p className="text-white">Video demo sẽ được phát ở đây</p> */}
+              <span className="content">
+              {/* <b>SƠN TÙNG M-TP | SKY DECADE | Nắng Ấm Ngang Qua</b> */}
+              {/* <Link target="_blank" href="https://www.youtube.com/results?search_query=Sơn Tùng M-TP Official"> (Sơn Tùng M-TP Official)</Link> */}
+                <div className="videoWrapper">
+                  <iframe src="https://www.youtube.com/embed/A6ARaYK1UUQ?si=PWa6JjaJoW6AaMtS?autoplay=1" allow="autoplay; encrypted-media" allowFullScreen></iframe>
+                </div>
+                {/* <div className="btn btn-primary" onClick={() => handleRate("Zuk5zGv5Un4", "like")}>Like</div>
+                <div className="btn btn-primary" onClick={() => handleRate("Zuk5zGv5Un4", "dislike")}>Dislike</div> */}
+              </span>
             </div>
           </div>
         </div>
