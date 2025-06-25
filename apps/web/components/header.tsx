@@ -17,7 +17,7 @@ import TopBarDropdown from "./top-bar-dropdown"
 import MobileMenu from "./mobile-menu"
 import MobileAppBanner from "./mobile-app-banner"
 import MobileSearchOverlay from "./mobile-search-overlay"
-import { useLogout } from "@/api/hooks/useLogout";
+import { useLogout } from "@/api/hooks/useLogout"
 import { useInitSession } from "@/api/hooks/useInitSession"
 import { useSelector, useDispatch } from "react-redux"
 import { selectUser } from "@/store/sessionSlice"
@@ -80,13 +80,8 @@ export default function Header() {
     }
   }, [user?.email])
 
-  const handleMouseEnter = (menuName: string) => {
-    setActiveMenu(menuName)
-  }
-
-  const handleMouseLeave = () => {
-    setActiveMenu(null)
-  }
+  const handleMouseEnter = (menuName: string) => setActiveMenu(menuName)
+  const handleMouseLeave = () => setActiveMenu(null)
 
   const handleUserIconClick = () => {
     if (user?.email) setShowUserSlideout(true)
@@ -107,9 +102,7 @@ export default function Header() {
     }
   }
 
-  const handleMobileSearchClick = () => {
-    setShowMobileSearch(true)
-  }
+  const handleMobileSearchClick = () => setShowMobileSearch(true)
 
   if (!hasMounted || userLoading) return <FullScreenLoader />
 
@@ -122,18 +115,21 @@ export default function Header() {
         <div className="bg-black text-white text-xs py-3 text-center font-semibold">
           <span>
             {["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIVERY WITH PRIME"][currentMessageIndex]}
-            <button
-              className="ml-1 inline-flex items-center"
-              onClick={() => setShowTopBarDropdown(!showTopBarDropdown)}
-            >
+            <button className="ml-1 inline-flex items-center" onClick={() => setShowTopBarDropdown(!showTopBarDropdown)}>
               <ChevronDown className="w-3 h-3" />
             </button>
           </span>
         </div>
 
         {/* Desktop layout */}
-        <div className="hidden md:block border-b border-gray-200">
-          <div className="flex justify-end items-center text-xs text-gray-700 px-5 py-2">
+        <div className="hidden md:block border-b border-gray-200 relative">
+          <div className="absolute left-5 top-1/2 -translate-y-1/2 z-20">
+            <Link href="/" className="flex items-center">
+              <AdidasLogo />
+            </Link>
+          </div>
+
+          <div className="flex justify-end items-center text-xs text-gray-700 px-5 py-2 w-full">
             <Link href="/help" className="hover:underline mr-4">help</Link>
             <Link href="/orders" className="hover:underline mr-4">orders and returns</Link>
             <Link href="/gift-cards" className="hover:underline mr-4">gift cards</Link>
@@ -148,31 +144,27 @@ export default function Header() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 items-center px-5 py-2 max-w-screen-xl mx-auto">
-            <div className="flex justify-start">
-              <Link href="/" className="flex items-center">
-                <AdidasLogo />
-              </Link>
+          <div className="grid grid-cols-3 items-center px-5 py-2 mx-0 w-full">
+            <div></div>
+            <div className="w-full justify-self-start xl:justify-self-center">
+              <nav className="flex space-x-8 justify-center">
+                {navItems.map((item) => (
+                  <div key={item.href} onMouseEnter={() => handleMouseEnter(item.name)}>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "text-sm hover:underline py-2",
+                        (item.name === "MEN" || item.name === "WOMEN" || item.name === "KIDS") ? "font-bold uppercase" : "font-medium",
+                        pathname === item.href && "border-b-2 border-black",
+                        activeMenu === item.name && "border-b-2 border-black",
+                      )}
+                    >
+                      {item.name}
+                    </Link>
+                  </div>
+                ))}
+              </nav>
             </div>
-
-            <nav className="flex justify-center space-x-8">
-              {navItems.map((item) => (
-                <div key={item.href} onMouseEnter={() => handleMouseEnter(item.name)}>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "text-sm hover:underline py-2",
-                      (item.name === "MEN" || item.name === "WOMEN" || item.name === "KIDS") ? "font-bold uppercase" : "font-medium",
-                      pathname === item.href && "border-b-2 border-black",
-                      activeMenu === item.name && "border-b-2 border-black",
-                    )}
-                  >
-                    {item.name}
-                  </Link>
-                </div>
-              ))}
-            </nav>
-
             <div className="flex justify-end items-center space-x-4">
               <form onSubmit={handleSearchSubmit} className="flex items-center space-x-2">
                 <Input
