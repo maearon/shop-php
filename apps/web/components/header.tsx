@@ -266,6 +266,15 @@ export default function Header() {
                 </span>
               )}
             </Link>
+            {user?.email ? (
+              <button onClick={logoutHandler}>
+                <LogOut className="h-5 w-5" />
+              </button>
+            ) : (
+              <Link href="/account-login">
+                <LogIn className="h-5 w-5" />
+              </Link>
+            )}
           </div>
         </div>
 
