@@ -23,13 +23,14 @@ export default function ProductTabs() {
   return (
     <section className="container mx-auto px-4 py-12">
       {/* Tabs Navigation */}
-      <div className="flex justify-between items-center mb-8">
-        <div className="flex items-center space-x-1">
+      <div className="flex flex-wrap justify-between items-start gap-4 mb-8 sm:flex-nowrap sm:items-center">
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-1">
           {tabs.map((tab) => (
             <Button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-2 text-sm font-medium rounded-none ${
+              className={`px-4 py-2 text-sm font-medium rounded-none ${
                 activeTab === tab.id ? "bg-black text-white" : "bg-transparent text-gray-600 hover:bg-gray-100"
               }`}
             >
@@ -37,9 +38,11 @@ export default function ProductTabs() {
             </Button>
           ))}
         </div>
+
+        {/* VIEW ALL */}
         <Button
           variant="link"
-          className="text-sm font-bold underline"
+          className="text-sm font-bold underline whitespace-nowrap px-0"
           onClick={() => {
             const activeTabData = tabs.find((tab) => tab.id === activeTab)
             window.location.href = `/${activeTabData?.endpoint}`
