@@ -20,7 +20,7 @@ import MobileSearchOverlay from "./mobile-search-overlay"
 import { useLogout } from "@/api/hooks/useLogout";
 import { useInitSession } from "@/api/hooks/useInitSession"
 import { useSelector, useDispatch } from "react-redux"
-import { selectUser, logout } from "@/store/sessionSlice"
+import { selectUser } from "@/store/sessionSlice"
 import FullScreenLoader from "@/components/ui/FullScreenLoader"
 
 export default function Header() {
@@ -35,10 +35,6 @@ export default function Header() {
 
   useInitSession()
 
-
-
-
-
   const logoutHandler = useLogout()
   const pathname = usePathname()
   const router = useRouter()
@@ -52,20 +48,27 @@ export default function Header() {
   const [showAppBanner, setShowAppBanner] = useState(true)
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const [loginBadgeAnimate, setLoginBadgeAnimate] = useState(false)
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") || sessionStorage.getItem("token") : null
 
-  // Top bar messages
-  const topBarMessages = ["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIVERY WITH PRIME"]
+  const cartItemsCount = useAppSelector((state) =>
+    state.cart.items.reduce((total, item) => total + item.quantity, 0)
+  )
+  const wishlistItemsCount = useAppSelector((state) => state.wishlist.items.length)
 
-  // Auto-rotate top bar messages
+  const navItems = [
+    { name: "MEN", href: "/men" },
+    { name: "WOMEN", href: "/women" },
+    { name: "KIDS", href: "/kids" },
+    { name: "SALE", href: "/sale" },
+    { name: "NEW & TRENDING", href: "/trending" },
+  ]
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentMessageIndex((prev) => (prev + 1) % topBarMessages.length)
+      setCurrentMessageIndex((prev) => (prev + 1) % 2)
     }, 3000)
     return () => clearInterval(interval)
   }, [])
 
-  // Login badge animation - bounce 3 times every 3 seconds
   useEffect(() => {
     if (!user?.email) {
       const interval = setInterval(() => {
@@ -77,21 +80,6 @@ export default function Header() {
     }
   }, [user?.email])
 
-  // Get cart and wishlist counts from Redux
-  const cartItemsCount = useAppSelector((state) => state.cart.items.reduce((total, item) => total + item.quantity, 0))
-  const wishlistItemsCount = useAppSelector((state) => state.wishlist.items.length)
-
-  const navItems = [
-    { name: "MEN", href: "/men" },
-    { name: "WOMEN", href: "/women" },
-    { name: "KIDS", href: "/kids" },
-    { name: "SALE", href: "/sale" },
-    { name: "NEW & TRENDING", href: "/trending" },
-  ]
-
-
-
-
   const handleMouseEnter = (menuName: string) => {
     setActiveMenu(menuName)
   }
@@ -101,11 +89,8 @@ export default function Header() {
   }
 
   const handleUserIconClick = () => {
-    if (user?.email) {
-      setShowUserSlideout(true)
-    } else {
-      setShowLoginModal(true)
-    }
+    if (user?.email) setShowUserSlideout(true)
+    else setShowLoginModal(true)
   }
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -130,232 +115,173 @@ export default function Header() {
 
   return (
     <>
-      {/* Mobile App Banner */}
       <MobileAppBanner isOpen={showAppBanner} onClose={() => setShowAppBanner(false)} />
 
       <header className="relative border-b border-gray-200">
         {/* Top bar */}
         <div className="bg-black text-white text-xs py-3 text-center font-semibold">
           <span>
-            {topBarMessages[currentMessageIndex]}
-            <button 
-            className="ml-1 inline-flex items-center"
-            onClick={() => setShowTopBarDropdown(!showTopBarDropdown)}
+            {["FREE STANDARD SHIPPING WITH ADICLUB", "FAST, FREE DELIVERY WITH PRIME"][currentMessageIndex]}
+            <button
+              className="ml-1 inline-flex items-center"
+              onClick={() => setShowTopBarDropdown(!showTopBarDropdown)}
             >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-3 h-3"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
+              <ChevronDown className="w-3 h-3" />
             </button>
           </span>
         </div>
 
-        {/* Main header */}
-        <div className="container mx-0 px-5 py-0">
-          {/* Desktop Layout */}
-          <div className="hidden md:flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center">
+        {/* Desktop layout */}
+        <div className="hidden md:block border-b border-gray-200">
+          <div className="flex justify-end items-center text-xs text-gray-700 px-5 py-2">
+            <Link href="/help" className="hover:underline mr-4">help</Link>
+            <Link href="/orders" className="hover:underline mr-4">orders and returns</Link>
+            <Link href="/gift-cards" className="hover:underline mr-4">gift cards</Link>
+            <Link href="/join" className="hover:underline mr-4">join adiClub</Link>
+            <div className="flex items-center space-x-1">
+              <span role="img" aria-label="us flag">🇺🇸</span>
+              <select defaultValue="US" className="bg-transparent border-none outline-none text-xs cursor-pointer">
+                <option value="US">United States</option>
+                <option value="VN">Vietnam</option>
+                <option value="UK">United Kingdom</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 items-center px-5 py-2 max-w-screen-xl mx-auto">
+            <div className="flex justify-start">
               <Link href="/" className="flex items-center">
                 <AdidasLogo />
               </Link>
             </div>
 
-            <div className="hidden md:flex flex-col pl-40">
-              {/* Top Header */}
-              <div className="flex justify-end items-center text-xs text-gray-700 py-2">
-                <Link href="/help" className="hover:underline mr-4">help</Link>
-                <Link href="/orders" className="hover:underline mr-4">orders and returns</Link>
-                <Link href="/gift-cards" className="hover:underline mr-4">gift cards</Link>
-                <Link href="/join" className="hover:underline mr-4">join adiClub</Link>
-                <div className="flex items-center space-x-1">
-                  <span role="img" aria-label="us flag">🇺🇸</span>
-                  <select defaultValue="US" className="bg-transparent border-none outline-none text-xs cursor-pointer">
-                    <option value="US">United States</option>
-                    <option value="VN">Vietnam</option>
-                    <option value="UK">United Kingdom</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Nav and Icons */}
-              <div className="flex items-center justify-between">
-                {/* Desktop Navigation */}
-                <nav className="flex space-x-8">
-                  {navItems.map((item) => (
-                    <div key={item.href} className="relative" onMouseEnter={() => handleMouseEnter(item.name)}>
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          "text-sm font-medium hover:underline py-2",
-                          (item.name === "MEN" || item.name === "WOMEN" || item.name === "KIDS") ? "font-bold uppercase" : "font-medium",
-                          pathname === item.href && "border-b-2 border-black",
-                          activeMenu === item.name && "border-b-2 border-black",
-                        )}
-                      >
-                        {item.name}
-                      </Link>
-                    </div>
-                  ))}
-                </nav>
-
-                {/* Right side icons */}
-                <div className="flex items-center space-x-4">
-                  {/* Desktop Search */}
-                  <form onSubmit={handleSearchSubmit} className="flex items-center space-x-2">
-                    <Input
-                      placeholder="Search"
-                      className="w-48"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <button type="button" onClick={handleSearchClick}>
-                      <Search className="h-5 w-5 cursor-pointer" />
-                    </button>
-                  </form>
-
-                  {/* User Icon */}
-                  <button
-                    onClick={handleUserIconClick}
-                    className="relative"
-                    title={user?.email ? "Account" : "Login"}
+            <nav className="flex justify-center space-x-8">
+              {navItems.map((item) => (
+                <div key={item.href} onMouseEnter={() => handleMouseEnter(item.name)}>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "text-sm hover:underline py-2",
+                      (item.name === "MEN" || item.name === "WOMEN" || item.name === "KIDS") ? "font-bold uppercase" : "font-medium",
+                      pathname === item.href && "border-b-2 border-black",
+                      activeMenu === item.name && "border-b-2 border-black",
+                    )}
                   >
-                    <User className="h-5 w-5 cursor-pointer" />
-                    {!user?.email && (
-                      <span
-                        className={cn(
-                          "absolute -top-2 -right-2 bg-yellow-500 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold transition-transform duration-100",
-                          loginBadgeAnimate && "animate-bounce",
-                        )}
-                      >
-                        1
-                      </span>
-                    )}
-                  </button>
-
-                  {/* Wishlist with count */}
-                  <Link href="/wishlist" className="relative">
-                    <Heart className="h-5 w-5 cursor-pointer" />
-                    {wishlistItemsCount > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                        {wishlistItemsCount}
-                      </span>
-                    )}
+                    {item.name}
                   </Link>
-
-                  {/* Cart with count */}
-                  <Link href="/cart" className="relative group">
-                    <ShoppingBag className="h-5 w-5 cursor-pointer" />
-                    {cartItemsCount > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                        {cartItemsCount}
-                      </span>
-                    )}
-                    {/* Cart Empty Tooltip */}
-                    {cartItemsCount === 0 && (
-                      <div className="absolute top-8 right-0 bg-white border shadow-lg p-4 rounded hidden group-hover:block z-10 whitespace-nowrap">
-                        <p className="font-bold">YOUR CART IS EMPTY</p>
-                      </div>
-                    )}
-                  </Link>
-
-                  {/* Desktop Login/Logout */}
-                  {userLoading ? (
-                    <span>Loading...</span>
-                  ) : user?.email ? (
-                    <button onClick={logoutHandler}>
-                      <LogOut className="h-5 w-5 cursor-pointer" />
-                    </button>
-                  ) : (
-                    <Link href="/account-login">
-                      <LogIn className="h-5 w-5 cursor-pointer" />
-                    </Link>
-                  )}
                 </div>
-              </div>
-            </div>
-          </div>
+              ))}
+            </nav>
 
-          {/* Mobile Layout */}
-          <div className="md:hidden flex items-center justify-between">
-            {/* Left side - Hamburger and Wishlist */}
-            <div className="flex items-center space-x-4">
-              <button onClick={() => setShowMobileMenu(true)}>
-                <MenuIcon className="h-6 w-6" />
+            <div className="flex justify-end items-center space-x-4">
+              <form onSubmit={handleSearchSubmit} className="flex items-center space-x-2">
+                <Input
+                  placeholder="Search"
+                  className="w-48"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button type="button" onClick={handleSearchClick}>
+                  <Search className="h-5 w-5 cursor-pointer" />
+                </button>
+              </form>
+
+              <button onClick={handleUserIconClick} className="relative">
+                <User className="h-5 w-5" />
+                {!user?.email && (
+                  <span className={cn(
+                    "absolute -top-2 -right-2 bg-yellow-500 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold transition-transform duration-100",
+                    loginBadgeAnimate && "animate-bounce",
+                  )}>1</span>
+                )}
               </button>
 
               <Link href="/wishlist" className="relative">
-                <Heart className="h-5 w-5 cursor-pointer" />
+                <Heart className="h-5 w-5" />
                 {wishlistItemsCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                     {wishlistItemsCount}
                   </span>
                 )}
               </Link>
-            </div>
 
-            {/* Center - Logo */}
-            <Link href="/" className="flex items-center">
-              <AdidasLogo />
-            </Link>
-
-            {/* Right side - User, Search, Cart */}
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={handleUserIconClick}
-                className="relative"
-                title={user?.email ? "Account" : "Login"}
-              >
-                <User className="h-5 w-5 cursor-pointer" />
-                {!user?.email && (
-                  <span
-                    className={cn(
-                      "absolute -top-2 -right-2 bg-yellow-500 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold transition-transform duration-100",
-                      loginBadgeAnimate && "animate-bounce",
-                    )}
-                  >
-                    1
-                  </span>
-                )}
-              </button>
-
-              <button onClick={handleMobileSearchClick}>
-                <Search className="h-5 w-5 cursor-pointer" />
-              </button>
-
-              <Link href="/cart" className="relative">
-                <ShoppingBag className="h-5 w-5 cursor-pointer" />
+              <Link href="/cart" className="relative group">
+                <ShoppingBag className="h-5 w-5" />
                 {cartItemsCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                     {cartItemsCount}
                   </span>
                 )}
+                {/* Cart Empty Tooltip */}
+                    {cartItemsCount === 0 && (
+                      <div className="absolute top-8 right-0 bg-white border shadow-lg p-4 rounded hidden group-hover:block z-10 whitespace-nowrap">
+                        <p className="font-bold">YOUR CART IS EMPTY</p>
+                      </div>
+                    )}
               </Link>
+
+              {user?.email ? (
+                <button onClick={logoutHandler}>
+                  <LogOut className="h-5 w-5" />
+                </button>
+              ) : (
+                <Link href="/account-login">
+                  <LogIn className="h-5 w-5" />
+                </Link>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Desktop Mega Menu */}
+        {/* Mobile layout */}
+        <div className="md:hidden flex items-center justify-between px-4 py-2">
+          <div className="flex items-center space-x-4">
+            <button onClick={() => setShowMobileMenu(true)}>
+              <MenuIcon className="h-6 w-6" />
+            </button>
+            <Link href="/wishlist" className="relative">
+              <Heart className="h-5 w-5" />
+              {wishlistItemsCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {wishlistItemsCount}
+                </span>
+              )}
+            </Link>
+          </div>
+
+          <Link href="/" className="flex items-center">
+            <AdidasLogo />
+          </Link>
+
+          <div className="flex items-center space-x-4">
+            <button onClick={handleUserIconClick} className="relative">
+              <User className="h-5 w-5" />
+              {!user?.email && (
+                <span className={cn(
+                  "absolute -top-2 -right-2 bg-yellow-500 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold transition-transform duration-100",
+                  loginBadgeAnimate && "animate-bounce",
+                )}>1</span>
+              )}
+            </button>
+            <button onClick={handleMobileSearchClick}>
+              <Search className="h-5 w-5" />
+            </button>
+            <Link href="/cart" className="relative">
+              <ShoppingBag className="h-5 w-5" />
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartItemsCount}
+                </span>
+              )}
+            </Link>
+          </div>
+        </div>
+
         <MegaMenu activeMenu={activeMenu} onClose={handleMouseLeave} />
       </header>
 
-      {/* Top Bar Dropdown */}
       <TopBarDropdown isOpen={showTopBarDropdown} onClose={() => setShowTopBarDropdown(false)} />
-
-      {/* Mobile Menu */}
       <MobileMenu isOpen={showMobileMenu} onClose={() => setShowMobileMenu(false)} />
-
-      {/* Mobile Search Overlay */}
       <MobileSearchOverlay
         isOpen={showMobileSearch}
         onClose={() => setShowMobileSearch(false)}
@@ -363,11 +289,7 @@ export default function Header() {
         setSearchQuery={setSearchQuery}
         onSearch={handleSearchSubmit}
       />
-
-      {/* Login Modal */}
       <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
-
-      {/* User Account Slideout */}
       <UserAccountSlideout isOpen={showUserSlideout} onClose={() => setShowUserSlideout(false)} />
     </>
   )
