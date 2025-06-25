@@ -14,16 +14,29 @@ export default function HeroBanner() {
     <section className="relative h-[90vh] bg-gradient-to-r from-black to-gray-800 text-white">
       <div className="absolute inset-0 bg-black/40" />
 
-      <picture className="absolute inset-0 z-0">
-        <source media="(min-width: 1024px)" srcSet="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?height=1280" />
-        <source media="(min-width: 768px)" srcSet="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_t_c8212de2ad.jpg?width=1024" />
-        <source media="(min-width: 640px)" srcSet="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_m_1e9e83f7e9.jpg?width=768" />
-        <img
-          src="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?width=1280"
-          alt="Superstar"
-          className="w-full h-full object-contain"
-        />
-      </picture>
+      <div className="absolute inset-0 z-0 w-full h-full">
+        <picture className="w-full h-full">
+          <source
+            media="(min-width: 1024px)"
+            srcSet="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?height=1280"
+          />
+          <source
+            media="(min-width: 768px)"
+            srcSet="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_t_c8212de2ad.jpg?width=1024"
+          />
+          <source
+            media="(min-width: 640px)"
+            srcSet="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_m_1e9e83f7e9.jpg?width=768"
+          />
+          <img
+            src="/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?width=1280"
+            alt="Superstar"
+            className="w-full h-full object-cover object-top"
+            loading="eager"
+          />
+        </picture>
+      </div>
+
 
       {/* <div className="relative z-10 flex h-full items-center"> */}
       <div className="relative container mx-auto px-4 h-full flex items-end pb-12">
