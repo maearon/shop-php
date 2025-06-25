@@ -45,3 +45,19 @@
     opacity: 0.1;
   }
 }
+
+/* globals.css hoặc một file style được import vào app */
+.bg-hero-mobile {
+  background-image: url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_m_1e9e83f7e9.jpg?width=768');
+}
+@media (min-width: 768px) {
+  .bg-hero-tablet {
+    background-image: url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_t_c8212de2ad.jpg?width=1024');
+  }
+}
+@media (min-width: 1024px) {
+  .bg-hero-desktop {
+    background-image: url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?width=1280');
+  }
+}
+
