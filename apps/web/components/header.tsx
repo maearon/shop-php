@@ -123,17 +123,17 @@ export default function Header() {
 
         {/* Desktop layout */}
         <div className="hidden md:block border-b border-gray-200 relative">
-          <div className="absolute left-5 top-1/2 -translate-y-1/2 z-20">
+          <div className="absolute left-8 top-1/2 -translate-y-1/2 z-20">
             <Link href="/" className="flex items-center">
               <AdidasLogo />
             </Link>
           </div>
 
-          <div className="flex justify-end items-center text-xs text-gray-700 px-5 py-2 w-full">
-            <Link href="/help" className="hover:underline mr-4">help</Link>
-            <Link href="/orders" className="hover:underline mr-4">orders and returns</Link>
-            <Link href="/gift-cards" className="hover:underline mr-4">gift cards</Link>
-            <Link href="/join" className="hover:underline mr-4">join adiClub</Link>
+          <div className="flex justify-end items-center text-xs text-gray-700 px-12 py-2 w-full">
+            <Link href="/help" className="hover:underline mr-3">help</Link>
+            <Link href="/orders" className="hover:underline mr-3">orders and returns</Link>
+            <Link href="/gift-cards" className="hover:underline mr-3">gift cards</Link>
+            <Link href="/join" className="hover:underline mr-3">join adiClub</Link>
             <div className="flex items-center space-x-1">
               <span role="img" aria-label="us flag">🇺🇸</span>
               <select defaultValue="US" className="bg-transparent border-none outline-none text-xs cursor-pointer">
@@ -144,7 +144,7 @@ export default function Header() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 items-center px-5 py-2 mx-0 w-full">
+          <div className="grid grid-cols-3 items-center px-12 pb-2 mx-0 w-full">
             <div></div>
             <div className="w-full justify-self-start xl:justify-self-center">
               <nav className="flex space-x-8 justify-center">
