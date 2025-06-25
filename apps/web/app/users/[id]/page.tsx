@@ -5,12 +5,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Pagination from 'react-js-pagination';
 import { useAppSelector } from '@/store/hooks';
 import { selectUser } from '@/store/sessionSlice';
-import micropostApi, { Micropost } from '@/api/endpoints/micropostApi';
-import relationshipApi from '@/api/endpoints/relationshipApi';
-import userApi, { UserShow } from '@/api/endpoints/userApi';
 import flashMessage from '@/components/shared/flashMessages';
 import FollowForm from '@/components/users/FollowForm';
 import Link from 'next/link';
+import { UserShow } from '@/@types/user';
+import { Micropost } from '@/@types/micropost';
+import javaService from '@/api/services/javaService';
+import { rubyService } from '@/api/services/rubyService';
 
 const Show = ({ params }: { params: { id: string } }) => {
   const [user, setUser] = useState<UserShow | null>(null);
@@ -24,7 +25,7 @@ const Show = ({ params }: { params: { id: string } }) => {
 
   const setWall = useCallback(async () => {
     try {
-      const response = await userApi.show(params.id, { page });
+      const response = await javaService.getUser(params.id, { page });
       if (response.microposts) {
         setUser(response.user);
         setMicroposts(response.microposts);
@@ -52,7 +53,7 @@ const Show = ({ params }: { params: { id: string } }) => {
   const handleFollow = async (e: { preventDefault: () => void })  => {
     e.preventDefault();
     try {
-      const response = await relationshipApi.create({ followed_id: id });
+      const response = await rubyService.createRelationship({ followed_id: id });
       if (response.follow) {
         setWall();
       }
@@ -64,7 +65,7 @@ const Show = ({ params }: { params: { id: string } }) => {
   const handleUnfollow = async (e: { preventDefault: () => void })  => {
     e.preventDefault();
     try {
-      const response = await relationshipApi.destroy(id);
+      const response = await rubyService.destroyRelationship(id);
       if (response.unfollow) {
         setWall();
       }
@@ -76,7 +77,7 @@ const Show = ({ params }: { params: { id: string } }) => {
   const removeMicropost = async (micropostId: number) => {
     if (window.confirm("Are you sure?")) {
       try {
-        const response = await micropostApi.remove(micropostId);
+        const response = await rubyService.deleteMicropost(micropostId);
         if (response.flash) {
           flashMessage(...response.flash);
           setWall();
@@ -126,7 +127,7 @@ const Show = ({ params }: { params: { id: string } }) => {
       </aside>
 
       <div className="col-md-8">
-        {currentUser && currentUser.value.id !== id && (
+        {currentUser && currentUser.value && String(currentUser.value.id) !== String(id) && (
           <FollowForm
             id={id}
             user={user}
@@ -167,7 +168,7 @@ const Show = ({ params }: { params: { id: string } }) => {
                   </span>
                   <span className="timestamp">
                     {`Posted ${micropost.timestamp} ago. `}
-                    {currentUser.value.id === micropost.user_id && (
+                    {currentUser.value && String(currentUser.value.id) === String(micropost.user_id) && (
                       <Link href={`#/microposts/${micropost.id}`} onClick={() => removeMicropost(micropost.id)}>
                         delete
                       </Link>

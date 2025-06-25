@@ -8,11 +8,11 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { X, Apple } from "lucide-react"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
-import sessionApi from "../api/endpoints/sessionApi"
 import { useDispatch } from "react-redux"
 import type { AppDispatch } from "@/store/store"
 import { fetchUser } from "@/store/sessionSlice"
 import flashMessage from "./shared/flashMessages"
+import javaService from "@/api/services/javaService"
 
 interface LoginModalProps {
   isOpen: boolean
@@ -33,12 +33,15 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const handleSubmit = async (values: { email: string; keepLoggedIn: boolean }) => {
     setIsLoading(true)
     try {
-      const response = await sessionApi.create({
+      const response = await javaService.login({
+        session: {
         email: values.email,
-        remember_me: values.keepLoggedIn,
+        password: 'Abc@0974006087',
+        }
       })
 
-      if (response.success) {
+      // Adjust this check according to the actual response structure
+      if (response.success) { // Use the correct property, e.g., 'success'
         if (token) {
          await dispatch(fetchUser())
         }

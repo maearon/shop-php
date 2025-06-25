@@ -6,8 +6,8 @@ import { useAppSelector } from "@/store/hooks"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
 import flashMessage from "@/components/shared/flashMessages"
-import { paymentApiClient } from "@/api/endpoints/paymentApi"
-import orderApi from "@/api/endpoints/orderApi"
+import paymentService from "@/api/services/paymentService"
+import { rubyService } from "@/api/services/rubyService"
 
 const validationSchema = Yup.object({
   cardNumber: Yup.string().required("Card number is required"),
@@ -67,12 +67,16 @@ export default function CheckoutPaymentPage() {
     setLoading(true)
     try {
       // Create payment intent
-      const paymentIntent = await paymentApiClient.createPaymentIntent(Math.round(total * 100), "USD")
+      const paymentIntent = await paymentService.createPaymentIntent(Math.round(total * 100), "USD")
 
       // Process payment
-      const paymentResult = await paymentApiClient.confirmPayment(paymentIntent.id, values.cardNumber)
+      const paymentResult = await paymentService.confirmPayment({
+        payment_intent_id: paymentIntent.id,
+        payment_method_id: values.cardNumber,
+      })
 
-      if (paymentResult.success) {
+      // Adjust this condition based on the actual PaymentIntentResponse type
+      if (paymentResult.status === "succeeded") {
         // Create order
         const orderData = {
           shipping_address: values.billingAddress,
@@ -80,7 +84,7 @@ export default function CheckoutPaymentPage() {
           payment_method: values.paymentMethod,
         }
 
-        const order = await orderApi.createOrder(orderData)
+        const order = await rubyService.createOrder(orderData)
 
         flashMessage("success", "Order placed successfully!")
         router.push(`/order-confirmation/${order.id}`)

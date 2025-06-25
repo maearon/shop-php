@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import sessionApi from '@/api/endpoints/sessionApi'
 import flashMessage from '@/components/shared/flashMessages'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
@@ -13,6 +12,7 @@ import FullScreenLoader from '@/components/ui/FullScreenLoader';
 import { fetchUser, selectUser } from '@/store/sessionSlice';
 import { AppDispatch } from '@/store/store';
 import { useAppSelector } from '@/store/hooks';
+import javaService from '@/api/services/javaService';
 if (typeof window !== "undefined") {
 const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 }
@@ -43,13 +43,17 @@ const LoginPage: NextPage = () => {
       const fetchUserData = async () => {
         try {
           setLoading(false)
-          if (token) {
-          const resultAction = await dispatch(fetchUser())
-          if (fetchUser.fulfilled.match(resultAction) && resultAction.payload?.user?.email) {
-            router.push("/")
-          } else if (fetchUser.rejected.match(resultAction)) {
-            setLoading(false)
+          let token: string | null = null;
+          if (typeof window !== "undefined") {
+            token = localStorage.getItem("token") || sessionStorage.getItem("token");
           }
+          if (token) {
+            const resultAction = await dispatch(fetchUser())
+            if (fetchUser.fulfilled.match(resultAction) && resultAction.payload?.user?.email) {
+              router.push("/")
+            } else if (fetchUser.rejected.match(resultAction)) {
+              setLoading(false)
+            }
           }
           setLoading(false)
         } catch (error) {
@@ -72,7 +76,7 @@ const LoginPage: NextPage = () => {
 
   const onSubmit = (values: MyFormValues) => {
     flashMessage("error", "User or password incorrect")
-    sessionApi.create({
+    javaService.login({
       session: {
         email: values.email,
         password: values.password,
@@ -101,9 +105,10 @@ const LoginPage: NextPage = () => {
         }
         router.push("/")
       }
-      if (response.flash) flashMessage(...response.flash)
-      if (response.status === 401) {
-        setErrors(response.errors)
+      // if (response.flash) flashMessage(...response.flash)
+      // Handle possible error messages if present in response
+      if ('errors' in response && Array.isArray((response as any).errors) && (response as any).errors.length > 0) {
+        setErrors((response as any).errors)
       }
     })
     .catch(error => {
@@ -114,7 +119,7 @@ const LoginPage: NextPage = () => {
 
   if (loading) return <FullScreenLoader />
 
-  return userData.value.email ? (
+  return userData.value && userData.value.email ? (
     <div className="p-8 text-center text-xl">Bạn đã đăng nhập.</div>
   ) : (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">

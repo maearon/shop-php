@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import accountActivationApi from "@/api/endpoints/accountActivationApi";
 import flashMessage from "@/components/shared/flashMessages";
+import javaService from "@/api/services/javaService";
 
 // Kiểu dữ liệu cho params
 interface EditProps {
@@ -28,8 +28,8 @@ export default function Edit({ params }: EditProps) {
     }
 
     // Gọi API kích hoạt tài khoản
-    accountActivationApi
-      .update(activation_token, email)
+    javaService
+      .activate(activation_token, email)
       .then((response) => {
         flashMessage("success", "The account has been activated. Please log in.");
         setTimeout(() => {

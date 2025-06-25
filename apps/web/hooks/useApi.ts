@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation"
 import { useCallback } from "react"
 import { useDispatch } from "react-redux"
-import authApi from "@/api/endpoints/authApi"
 import { setTokens } from "@/lib/token"
 import { fetchUser } from "@/store/sessionSlice"
 import type { AppDispatch } from "@/store/store"
+import javaService from "@/api/services/javaService"
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -14,7 +14,7 @@ export const useAuth = () => {
 
   const loginWithGoogle = useCallback(async (idToken: string) => {
     try {
-      const res = await authApi.oauth({
+      const res = await javaService.oauth({
         id_token: idToken,
         provider: "google",
       })

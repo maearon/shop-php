@@ -2,9 +2,9 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/navigation'
 import React, { MutableRefObject, useRef, useState } from 'react'
-import accountActivationApi from '@/api/endpoints/accountActivationApi'
 import flashMessage from '@/components/shared/flashMessages'
 import ShowErrors, { ErrorMessageType } from '@/components/shared/errorMessages';
+import javaService from '@/api/services/javaService';
 
 const initialState = {
   name: '',
@@ -32,7 +32,7 @@ const New: NextPage = () => {
     e.preventDefault()
     const { email } = state
 
-    accountActivationApi.create(
+    javaService.create(
       {
         resend_activation_email: {
           email: email,

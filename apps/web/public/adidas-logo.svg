@@ -1,8 +1,0 @@
-<!-- adidas-logo.svg -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <g fill="#000000" transform="rotate(-45 256 256)">
-    <rect x="100" y="200" width="40" height="200" rx="2"></rect>
-    <rect x="180" y="180" width="40" height="220" rx="2"></rect>
-    <rect x="260" y="160" width="40" height="240" rx="2"></rect>
-  </g>
-</svg>

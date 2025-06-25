@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query"
-import sessionApi from "../endpoints/sessionApi"
 import { useDispatch } from "react-redux"
 import { fetchUser } from "@/store/sessionSlice"
 import type { AppDispatch } from "@/store/store"
 import { setTokens } from "@/lib/token" // ✅ Dùng hàm có sẵn
+import javaService from "@/api/services/javaService"
 
 interface LoginPayload {
   email: string
@@ -16,7 +16,7 @@ export const useLoginMutation = () => {
 
   return useMutation({
     mutationFn: async ({ email, password, rememberMe = true }: LoginPayload) => {
-      const response = await sessionApi.create({
+      const response = await javaService.login({
         session: { email, password },
       })
 

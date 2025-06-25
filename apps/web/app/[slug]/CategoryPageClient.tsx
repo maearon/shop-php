@@ -10,9 +10,10 @@ import { Button } from "@/components/ui/button"
 import { ChevronDown, SlidersHorizontal, Loader2 } from "lucide-react"
 import { categoryConfig } from "@/utils/category-config"
 import api from "@/api/client"
-import productApi, { ProductsResponse, type Product as OriginalProduct } from "@/api/endpoints/productApi"
+import { ProductsResponse, Product as ProductOriginal } from "@/@types/product"
+import { javaService } from "@/api/services/javaService"
 
-type Product = OriginalProduct & {
+type Product = ProductOriginal & {
   price: number | string
 }
 
@@ -60,7 +61,7 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
         sort: sortBy,
       }
 
-      const response = await productApi.index(filters)
+      const response = await javaService.getProducts(filters)
 
       if (append) {
         setProducts((prev) => [

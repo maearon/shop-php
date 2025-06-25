@@ -4,9 +4,10 @@ import { ErrorMessage, Field, FieldArray, Form, Formik } from 'formik'
 import { useRouter } from 'next/navigation'
 import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
 import * as Yup from 'yup'
-import userApi, { UserEdit } from '@/api/endpoints/userApi'
 import errorMessage from '@/components/shared/errorMessages'
 import flashMessage from '@/components/shared/flashMessages'
+import { UserEdit } from '@/@types/user';
+import javaService from '@/api/services/javaService';
 // import TextError from '@/components/shared/TextError'
 
 const initialValues = {
@@ -58,16 +59,26 @@ const Edit = ({params}: {params: {id: string}}) => {
   // const inputEl = useRef() as MutableRefObject<HTMLInputElement>
 
   const getUserInfo= useCallback(async () => { 
-    userApi.edit(id as string
-    ).then(response => {
+    javaService.updateUser(id as string, {
+      user: {
+        name: user.name,
+        email: user.email,
+        password: '',
+        password_confirmation: ''
+      }
+    }).then(response => {
       if (response.user) {
         setUser(response.user)
         initialValues.name = response.user.name
         initialValues.email = response.user.email
-        setGravatar(response.gravatar)
+        setGravatar(response.user.gravatar)
       }
-      if (response.flash) {
-        flashMessage(...response.flash)
+      if (response.flash_success) {
+        if (Array.isArray(response.flash_success)) {
+          flashMessage(...response.flash_success);
+        } else if (typeof response.flash_success === 'string') {
+          flashMessage("success", response.flash_success);
+        }
         router?.push('/')
       }
     })
@@ -89,7 +100,7 @@ const Edit = ({params}: {params: {id: string}}) => {
 
   const onSubmit = (values: MyFormValues, submitProps: { setSubmitting: (arg0: boolean) => void; resetForm: () => void }) => {
     console.log('Form data', values)
-    userApi.update(id as string,
+    javaService.updateUser(id as string,
       { 
         user: {
           name: values.name,

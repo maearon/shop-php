@@ -1,5 +1,5 @@
+import { UserShow } from "@/@types/user";
 import React from "react";
-import { UserShow } from "../../api/endpoints/userApi";
 
 // export interface FollowFormProps {
 //   data: FormData;

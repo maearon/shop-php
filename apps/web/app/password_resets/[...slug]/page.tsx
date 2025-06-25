@@ -2,8 +2,8 @@
 import { useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 import flashMessage from '@/components/shared/flashMessages'
-import passwordResetApi from '@/api/endpoints/passwordResetApi'
 import { MutableRefObject, useRef, useState } from 'react'
+import javaService from '@/api/services/javaService';
 // import errorMessage from '../../components/shared/errorMessages'
 
 const initialState = {
@@ -38,7 +38,7 @@ const Edit = ({params}: {params: {slug: string[]}}) =>{
   const handleSubmit = (e: { preventDefault: () => void }) => {
     const { password, password_confirmation } = state
 
-    passwordResetApi.update(reset_token as string,
+    javaService.updatePassword(reset_token as string,
       {
         email: email as string,
         user: {

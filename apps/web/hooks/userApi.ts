@@ -1,6 +1,6 @@
 // import { ListParams, ListResponse, Student } from 'models';
+import { Micropost } from "@/@types/micropost";
 import api from "@/api/client";
-import { Micropost } from '@/api/endpoints/micropostApi';
 import { User as UserCreate } from '@/store/sessionSlice';
 
 export interface ListParams {

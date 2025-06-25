@@ -1,15 +1,14 @@
 // apps\web\store\sessionSlice.ts
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '@/store/store'
-import sessionApi from '@/api/endpoints/sessionApi'
+import javaService from '@/api/services/javaService'
 
 // ---- User model định nghĩa nhất quán với BE JWT response ----
 export interface User {
-  readonly id: string
+  id: number
   email: string
   name: string
-  admin: boolean
-  gravatar: string
+  avatar?: string
 }
 
 // ---- Slice state ----
@@ -32,10 +31,20 @@ export const fetchUser = createAsyncThunk(
   'session/fetchUser',
   async (_, thunkAPI) => {
     try {
-      const response = await sessionApi.me()
-      return response.user
+      const response = await javaService.getCurrentSession()
+      // Ensure the returned user matches the User interface
+      const user = response.user
+      if (user) {
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          avatar: user.avatar ?? '',
+        } as User
+      }
+      return thunkAPI.rejectWithValue('Cannot fetch user')
     } catch (error: any) {
-      return thunkapi.rejectWithValue('Cannot fetch user')
+      return thunkAPI.rejectWithValue(error?.message || 'Cannot fetch user')
     }
   }
 )

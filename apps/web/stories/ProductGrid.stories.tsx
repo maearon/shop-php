@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 import ProductGrid from "@/components/product-grid"
 import { Provider } from "react-redux"
 import { store } from "@/store/store"
-import type { Product } from "@/api/endpoints/productApi"
+import { Product } from "@/@types/product"
 
 const meta: Meta<typeof ProductGrid> = {
   title: "Components/ProductGrid",

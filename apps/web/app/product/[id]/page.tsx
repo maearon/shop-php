@@ -12,8 +12,9 @@ import { toggleWishlist } from "@/store/wishlistSlice"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import WishButton from "@/components/wish-button"
-import productApi, { ProductDetails } from "@/api/endpoints/productApi"
 import FullScreenLoader from "@/components/ui/FullScreenLoader"
+import { ProductDetails } from "@/@types/product"
+import { rubyService } from "@/api/services/rubyService"
 
 // Mock product data - in real app this would come from API
 const getProductById = (id: string) => {
@@ -78,10 +79,10 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const id = params?.id as string
     if (!id) return
-    productApi.show(id, { page })
+    rubyService.getProduct(id, { page })
       .then(response => {
-        setProduct(response)
-        setSelectedColor(response.variants?.[0]?.color || "")
+        setProduct(response.data)
+        setSelectedColor(response.data.variants?.[0]?.color || "")
       })
       .catch(console.error)
   }, [params?.id, page])
@@ -96,7 +97,7 @@ const ProductDetailPage = () => {
     dispatch(
       addToCart({
         id: product.id,
-        name: product.name,
+        name: product.name ?? "",
         price: (product.variants?.[0]?.price?.toString() ?? "0"),
         image: product.variants?.[0]?.images?.[0] || "/placeholder.png",
         color: selectedColor,
@@ -110,7 +111,7 @@ const ProductDetailPage = () => {
     dispatch(
       toggleWishlist({
         id: product.id,
-        name: product.name,
+        name: product.name ?? "",
         price: (product.variants?.[0]?.price?.toString() ?? "0"),
         image: product.variants?.[0]?.images?.[0] || "/placeholder.png",
       })

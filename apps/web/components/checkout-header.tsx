@@ -1,12 +1,15 @@
 import Link from "next/link"
 import { ShoppingBag } from "lucide-react"
+import { useAppSelector } from "@/store/hooks"
 
-type Props = {
-  userName: string
-  cartCount: number
-}
+// type Props = {
+//   userName: string
+//   cartCount: number
+// }
 
-export default function CheckoutHeader({ userName, cartCount }: Props) {
+export default function CheckoutHeader() {
+  const cartCount = useAppSelector((state) => state.cart.items.length)
+  const userName = "mark nguyen"
   return (
     <header className="border-b border-gray-200 py-4">
       <div className="container mx-auto px-4">

@@ -1,9 +1,9 @@
 "use client";
 import { useMutation } from "@tanstack/react-query";
-import userApi from "@/api/endpoints/userApi";
+import javaService from "../services/javaService";
 
 export const useSignupMutation = () => {
   return useMutation({
-    mutationFn: (data: any) => userApi.create({ user: data }),
+    mutationFn: (data: any) => javaService.test(),
   });
 };

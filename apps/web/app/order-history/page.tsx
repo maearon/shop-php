@@ -1,8 +1,8 @@
 "use client"
 
+import { rubyService } from "@/api/services/rubyService"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import orderApi from "@/api/endpoints/orderApi"
 
 interface Order {
   id: number
@@ -20,7 +20,7 @@ export default function OrderHistoryPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await orderApi.getOrders()
+        const response = await rubyService.getOrders()
         setOrders(response)
       } catch (error) {
         console.error("Failed to fetch orders:", error)

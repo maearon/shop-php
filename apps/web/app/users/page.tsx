@@ -5,10 +5,11 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Pagination from 'react-js-pagination'
 import { useAppSelector } from '@/store/hooks'
 import { selectUser } from '@/store/sessionSlice'
-import userApi, { User } from '../../api/endpoints/userApi'
 import flashMessage from '../../components/shared/flashMessages'
 import { request, gql } from 'graphql-request'
 import useUserApi from '../../graphql/userApi'
+import { User } from '@/@types/user';
+import javaService from '@/api/services/javaService';
 
 const Index: NextPage = () => {
   const [users, setUsers] = useState([] as User[])
@@ -17,7 +18,7 @@ const Index: NextPage = () => {
   const current_user = useAppSelector(selectUser);
 
   const setUsersList= useCallback(async () => { 
-    userApi.index({page: page}
+    javaService.getUsers({page: page}
     ).then(response => {
       if (response.users) {
         setUsers(response.users)
@@ -45,10 +46,12 @@ const Index: NextPage = () => {
   const removeUser = (index: number, userid: string) => {
     let sure = window.confirm("You sure?")
     if (sure === true) {
-      userApi.destroy(userid
+      javaService.deleteUser(userid
       ).then(response => {
           if (response.flash) {
-            flashMessage(...response.flash)
+            Array.isArray(response.flash)
+              ? flashMessage(response.flash[0], response.flash[1])
+              : flashMessage("info", response.flash)
             setUsersList()
           }
         })
@@ -83,7 +86,7 @@ const Index: NextPage = () => {
         />
         <a href={'/users/'+u.id}>{u.name}</a>
         {
-          current_user.value.role && current_user.value.id !== u.id ? (
+          current_user.value && current_user.value.role && current_user.value.id !== u.id ? (
             <>
             | <a href={'#/users/'+u.id} onClick={() => removeUser(i, u.id)}>delete</a>
             </>

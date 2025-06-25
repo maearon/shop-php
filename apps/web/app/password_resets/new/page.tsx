@@ -2,8 +2,8 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/navigation'
 import React, { MutableRefObject, useRef, useState } from 'react'
-import passwordResetApi from '@/api/endpoints/passwordResetApi';
 import flashMessage from '@/components/shared/flashMessages';
+import javaService from '@/api/services/javaService';
 
 const initialState = {
   email: '',
@@ -29,7 +29,7 @@ const New: NextPage = () => {
   const handleSubmit = (e: { preventDefault: () => void }) => {
     const { email } = state
 
-    passwordResetApi.create(
+    javaService.createPasswordReset(
       {
         password_reset: {
           email: email,

@@ -1,7 +1,8 @@
 "use client"
 
+import { ProductFilters, ProductsResponse } from "@/@types/product"
+import javaService from "@/api/services/javaService"
 import { useState, useEffect } from "react"
-import productApi, { ProductFilters, ProductsResponse } from '@/api/endpoints/productApi';
 
 export function useProducts(initialFilters: ProductFilters = {}) {
   const [data, setData] = useState<ProductsResponse | null>(null)
@@ -15,7 +16,7 @@ export function useProducts(initialFilters: ProductFilters = {}) {
       setError(null)
 
       const mergedFilters = { ...filters, ...newFilters }
-      const response = await productApi.index(mergedFilters)
+      const response = await javaService.test()
 
       setData(response)
       setFilters(mergedFilters)
@@ -116,6 +117,11 @@ function generateFallbackProducts(slug: string, count: number) {
         {
           id: i * 10,
           color: ["Black", "White", "Blue", "Red"][i % 4],
+          size: ["M"],
+          images: ["/placeholder.svg?height=400&width=400"],
+          product_id: i,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
           sizes: [
             { id: i * 100, label: "S", system: "US", available: true },
             { id: i * 100 + 1, label: "M", system: "US", available: true },
@@ -124,6 +130,8 @@ function generateFallbackProducts(slug: string, count: number) {
         },
       ],
       slug: `${slug}-${i}`,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     })
   }
 

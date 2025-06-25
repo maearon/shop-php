@@ -4,9 +4,11 @@ import Link from 'next/link'
 import { SetStateAction, useCallback, useEffect, useState } from 'react'
 import { useAppSelector } from '@/store/hooks'
 import { selectUser } from '@/store/sessionSlice'
-import userApi, { IUserFollow, UserFollow } from '@/api/endpoints/userApi'
 import flashMessage from '@/components/shared/flashMessages'
 import Pagination from 'react-js-pagination'
+import { IUserFollow, UserFollow } from "@/@types/user";
+import { rubyService } from "@/api/services/rubyService";
+import javaService from "@/api/services/javaService";
 
 const ShowFollow = ({params}: {params: {slug: string[]}}) =>{
   const [users, setUsers] = useState([] as UserFollow[])
@@ -18,12 +20,12 @@ const ShowFollow = ({params}: {params: {slug: string[]}}) =>{
   const { id, follow } = params.slug.length === 2 ? { id: params.slug[0], follow: params.slug[1] } : { id: '', follow: '' };
 
   const setFollowPage= useCallback(async () => { 
-    userApi.follow(id, page, follow as string
+    rubyService.followProduct(id, page, follow as string
     ).then(response => {
-      setUsers(response.users)
-      setXusers(response.xusers)
+      setUsers(response.products)
+      setXusers(response.xproducts)
       setTotalCount(response.total_count)
-      setUser(response.user)
+      setUser(response.product)
     })
     .catch((error: any) => {
       console.log(error)
@@ -42,10 +44,12 @@ const ShowFollow = ({params}: {params: {slug: string[]}}) =>{
   const removeUser = (id: string) => {
     let sure = window.confirm("You sure?")
     if (sure === true) {
-      userApi.destroy(id)
+      javaService.deleteUser(id)
         .then(response => {
           if (response.flash) {
-            flashMessage(...response.flash)
+            Array.isArray(response.flash)
+              ? flashMessage.apply(null, response.flash)
+              : flashMessage(response.flash[0], response.flash[1])
             setFollowPage()
           }
         })
@@ -125,7 +129,7 @@ const ShowFollow = ({params}: {params: {slug: string[]}}) =>{
           />
           <Link href={'/users/'+u.id}>{u.name}</Link>
           {
-            current_user.value.role && current_user.value.id !== u.id ? (
+            current_user.value && current_user.value.role && current_user.value.id !== u.id ? (
               <>
               | <Link href={'#/users/'+u.id} onClick={() => removeUser(u.id)}>delete</Link>
               </>
