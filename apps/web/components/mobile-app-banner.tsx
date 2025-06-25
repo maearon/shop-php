@@ -20,12 +20,12 @@ export default function MobileAppBanner({ isOpen, onClose }: MobileAppBannerProp
 
         <div className="flex items-center space-x-3 flex-1 mx-4">
           {/* App Icon */}
-          <div className="relative w-12 h-12 rounded-xl overflow-hidden">
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-black p-1">
             <Image
-              src="/logo.png"
+              src="/logo-app.png"
               alt="App Logo"
               fill
-              className="object-cover"
+              className="object-contain"
               priority
             />
           </div>
