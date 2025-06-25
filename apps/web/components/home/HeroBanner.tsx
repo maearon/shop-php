@@ -11,10 +11,6 @@ export default function HeroBanner() {
 
   return (
     <section className="relative h-[90vh] bg-hero bg-cover bg-top text-white">
-      {/* Overlay tối mờ trên ảnh */}
-      <div className="absolute inset-0 bg-black/40 z-0" />
-
-      {/* Nội dung chữ và nút */}
       <div className="relative z-10 container mx-auto px-4 h-full flex items-end pb-12">
         <div className="max-w-2xl">
           <h1 className="inline-block bg-white text-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold px-2 py-1 mb-3">
