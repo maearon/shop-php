@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
+import HeroBanner from "@/components/home/HeroBanner"
 
 export default function HomePage() {
   // ✅ Fake slide data
@@ -180,31 +181,8 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       {/* <Header /> */}
 
-      {/* Hero Section */}
-      <section className="relative h-[500px] bg-gray-100 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: "url('/placeholder.png?height=500&width=1200')",
-          }}
-        >
-          <div className="absolute inset-0 bg-black bg-opacity-10"></div>
-        </div>
-        <div className="relative container mx-auto px-4 h-full flex items-end pb-12">
-          <div className="text-white">
-            <h1 className="text-4xl font-bold mb-2">ADIZERO EVO SL</h1>
-            <p className="text-lg mb-4">Fast feels. For the speed of the city.</p>
-            <div className="flex space-x-4">
-              <Link href="/men">
-                <Button className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP MEN</Button>
-              </Link>
-              <Link href="/women">
-                <Button className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP WOMEN</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hero Banner */}
+      <HeroBanner />
 
       {/* Hero Section */}
       <section className="relative h-[500px] bg-gray-100 overflow-hidden">
