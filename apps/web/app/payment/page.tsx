@@ -6,7 +6,7 @@ import { useAppSelector } from "@/store/hooks"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
 import flashMessage from "@/components/shared/flashMessages"
-import paymentService from "@/api/services/paymentService"
+import javaService from "@/api/services/javaService"
 import { javaService } from "@/api/services/javaService"
 
 const validationSchema = Yup.object({
@@ -67,10 +67,10 @@ export default function CheckoutPaymentPage() {
     setLoading(true)
     try {
       // Create payment intent
-      const paymentIntent = await paymentService.createPaymentIntent(Math.round(total * 100), "USD")
+      const paymentIntent = await javaService.createPaymentIntent(Math.round(total * 100), "USD")
 
       // Process payment
-      const paymentResult = await paymentService.confirmPayment({
+      const paymentResult = await javaService.confirmPayment({
         payment_intent_id: paymentIntent.id,
         payment_method_id: values.cardNumber,
       })
