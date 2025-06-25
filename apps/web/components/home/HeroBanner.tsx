@@ -38,7 +38,7 @@ export default function HeroBanner() {
               <Button
                 size="sm"
                 variant="outline"
-                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-white transition"
+                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-black transition"
                 onClick={() => router.push("/women-superstar")}
               >
                 SHOP WOMEN
@@ -49,7 +49,7 @@ export default function HeroBanner() {
               <Button
                 size="sm"
                 variant="outline"
-                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-white transition"
+                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-black transition"
                 onClick={() => router.push("/men-superstar")}
               >
                 SHOP MEN
@@ -60,7 +60,7 @@ export default function HeroBanner() {
               <Button
                 size="sm"
                 variant="outline"
-                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-white transition"
+                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-black transition"
                 onClick={() => router.push("/kids-superstar")}
               >
                 SHOP KIDS
@@ -70,7 +70,7 @@ export default function HeroBanner() {
               <Button
                 size="sm"
                 variant="outline"
-                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-white transition"
+                className="border border-black text-black font-bold px-6 py-3 flex items-center gap-2 hover:bg-gray-100 hover:text-black transition"
                 onClick={() => setShowVideo(true)}
               >
                 <Play className="mr-2 h-4 w-4" />
