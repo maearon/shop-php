@@ -8,7 +8,7 @@ export default function RedirectListener() {
 
   useEffect(() => {
     const handler = () => {
-      router.push("/account-login")
+      router.push("/") // Keep user on home page even if not logged in
     }
 
     window.addEventListener("customRedirectToLogin", handler)
