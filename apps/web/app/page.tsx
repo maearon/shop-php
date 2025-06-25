@@ -185,7 +185,7 @@ export default function HomePage() {
       <HeroBanner />
 
       {/* Hero Section */}
-      <section className="relative h-[500px] bg-gray-100 overflow-hidden">
+      {/* <section className="relative h-[90vh] bg-gray-100 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -208,7 +208,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Product Tabs Section */}
       <ProductTabs />

@@ -9,13 +9,13 @@ export default function HeroBanner() {
   const [showVideo, setShowVideo] = useState(false)
 
   return (
-    <section className="relative h-[70vh] bg-gradient-to-r from-black to-gray-800 text-white">
+    <section className="relative h-[90vh] bg-gradient-to-r from-black to-gray-800 text-white">
       <div className="absolute inset-0 bg-black/40" />
 
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?height=800&width=1200')",
+          backgroundImage: "url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?height=1200&width=1200')",
         }}
       />
 
