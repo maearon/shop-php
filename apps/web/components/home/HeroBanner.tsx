@@ -22,16 +22,22 @@ export default function HeroBanner() {
       <div className="relative z-10 flex h-full items-center">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl">
-            <h1 className="text-5xl font-bold mb-6">IMPOSSIBLE IS NOTHING</h1>
+            <h1 className="text-5xl font-bold mb-6">PAST, PRESENT, FUTURE</h1>
             <p className="text-xl mb-8">
-              Khám phá bộ sưu tập mới nhất từ adidas. Giày dép, quần áo và phụ kiện thể thao chính hãng.
+              Explore the Superstar, now updated for the next generation.
             </p>
             <div className="flex gap-4">
-              <Button size="lg" className="bg-white text-black hover:bg-gray-100">
-                Mua ngay
-              </Button>
+              <Link href="/women-superstar">
+                <Button size="sm" className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP WOMEN</Button>
+              </Link>
+              <Link href="/men-superstar">
+                <Button size="sm" className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP MEN</Button>
+              </Link>   
+              <Link href="/kids-superstar">
+                <Button size="sm" className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP KIDS</Button>
+              </Link>
               <Button
-                size="lg"
+                size="sm"
                 variant="outline"
                 className="border-white text-black hover:bg-black hover:text-white"
                 onClick={() => setShowVideo(true)}
@@ -53,7 +59,7 @@ export default function HeroBanner() {
             <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
               <iframe
                 className="w-full h-full"
-                src="https://www.youtube.com/embed/A6ARaYK1UUQ?si=PWa6JjaJoW6AaMtS&autoplay=1"
+                src="https://www.youtube.com/embed/DM73WSHqY2Q?si=wtWftWG7GOlBGHbF&autoplay=1"
                 allow="autoplay; encrypted-media"
                 allowFullScreen
               ></iframe>
