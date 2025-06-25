@@ -15,7 +15,7 @@ export default function HeroBanner() {
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?height=1000&width=1200')",
+          backgroundImage: "url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?height=800&width=1200')",
         }}
       />
 
@@ -33,7 +33,7 @@ export default function HeroBanner() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white hover:text-black"
+                className="border-white text-black hover:bg-black hover:text-white"
                 onClick={() => setShowVideo(true)}
               >
                 <Play className="mr-2 h-4 w-4" />
@@ -50,17 +50,13 @@ export default function HeroBanner() {
             <button onClick={() => setShowVideo(false)} className="absolute -top-12 right-0 text-white text-2xl">
               ✕
             </button>
-            <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
-              {/* <p className="text-white">Video demo sẽ được phát ở đây</p> */}
-              <span className="content">
-              {/* <b>SƠN TÙNG M-TP | SKY DECADE | Nắng Ấm Ngang Qua</b> */}
-              {/* <Link target="_blank" href="https://www.youtube.com/results?search_query=Sơn Tùng M-TP Official"> (Sơn Tùng M-TP Official)</Link> */}
-                <div className="videoWrapper">
-                  <iframe src="https://www.youtube.com/embed/A6ARaYK1UUQ?si=PWa6JjaJoW6AaMtS?autoplay=1" allow="autoplay; encrypted-media" allowFullScreen></iframe>
-                </div>
-                {/* <div className="btn btn-primary" onClick={() => handleRate("Zuk5zGv5Un4", "like")}>Like</div>
-                <div className="btn btn-primary" onClick={() => handleRate("Zuk5zGv5Un4", "dislike")}>Dislike</div> */}
-              </span>
+            <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
+              <iframe
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/A6ARaYK1UUQ?si=PWa6JjaJoW6AaMtS&autoplay=1"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+              ></iframe>
             </div>
           </div>
         </div>
