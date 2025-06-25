@@ -195,7 +195,7 @@ export default function Header() {
       {/* </div> */}
 
         {/* Main header */}
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-0 px-5 py-0">
           {/* Desktop Layout */}
           <div className="hidden md:flex items-center justify-between">
             {/* Logo */}
@@ -211,6 +211,7 @@ export default function Header() {
                     href={item.href}
                     className={cn(
                       "text-sm font-medium hover:underline py-2",
+                      (item.name === "MEN" || item.name === "WOMEN" || item.name === "KIDS") ? "font-bold uppercase" : "font-medium",
                       pathname === item.href && "border-b-2 border-black",
                       activeMenu === item.name && "border-b-2 border-black",
                     )}
