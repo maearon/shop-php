@@ -14,7 +14,7 @@ export default function HeroBanner() {
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url('/placeholder.png?height=800&width=1200')",
+          backgroundImage: "url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?height=800&width=1200')",
         }}
       />
 
