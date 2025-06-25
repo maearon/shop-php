@@ -11,7 +11,7 @@ import { ChevronDown, SlidersHorizontal, Loader2 } from "lucide-react"
 import { categoryConfig } from "@/utils/category-config"
 import api from "@/api/client"
 import { ProductsResponse, Product as ProductOriginal } from "@/@types/product"
-import { javaService } from "@/api/services/javaService"
+import javaService from "@/api/services/javaService"
 
 type Product = ProductOriginal & {
   price: number | string

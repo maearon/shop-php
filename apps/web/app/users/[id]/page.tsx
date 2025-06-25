@@ -11,7 +11,6 @@ import Link from 'next/link';
 import { UserShow } from '@/@types/user';
 import { Micropost } from '@/@types/micropost';
 import javaService from '@/api/services/javaService';
-import { javaService } from '@/api/services/javaService';
 
 const Show = ({ params }: { params: { id: string } }) => {
   const [user, setUser] = useState<UserShow | null>(null);

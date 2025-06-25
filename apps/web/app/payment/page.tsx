@@ -7,7 +7,6 @@ import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
 import flashMessage from "@/components/shared/flashMessages"
 import javaService from "@/api/services/javaService"
-import { javaService } from "@/api/services/javaService"
 
 const validationSchema = Yup.object({
   cardNumber: Yup.string().required("Card number is required"),

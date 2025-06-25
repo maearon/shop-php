@@ -5,7 +5,7 @@ import { X, ChevronDown, ChevronUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
-import { javaService } from "@/api/services/javaService"
+import javaService from "@/api/services/javaService"
 
 interface FiltersSidebarProps {
   isOpen: boolean

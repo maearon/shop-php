@@ -1,6 +1,6 @@
 "use client"
 
-import { javaService } from "@/api/services/javaService"
+import javaService from "@/api/services/javaService"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 

@@ -14,7 +14,7 @@ import Footer from "@/components/footer"
 import WishButton from "@/components/wish-button"
 import FullScreenLoader from "@/components/ui/FullScreenLoader"
 import { ProductDetails } from "@/@types/product"
-import { javaService } from "@/api/services/javaService"
+import javaService from "@/api/services/javaService"
 
 // Mock product data - in real app this would come from API
 const getProductById = (id: string) => {

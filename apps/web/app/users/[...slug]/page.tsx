@@ -7,7 +7,6 @@ import { selectUser } from '@/store/sessionSlice'
 import flashMessage from '@/components/shared/flashMessages'
 import Pagination from 'react-js-pagination'
 import { IUserFollow, UserFollow } from "@/@types/user";
-import { javaService } from "@/api/services/javaService";
 import javaService from "@/api/services/javaService";
 
 const ShowFollow = ({params}: {params: {slug: string[]}}) =>{
