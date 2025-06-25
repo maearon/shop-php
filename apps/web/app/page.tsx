@@ -351,8 +351,8 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stillInterestedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {stillInterestedProducts.map((product, index) => (
+            <ProductCard key={`${product.product.id}-${index}`} product={product} />
           ))}
         </div>
       </section>
@@ -376,8 +376,8 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stillInterestedProducts.map((product) => (
-            <ProductCard key={product.product.id} product={product} />
+          {stillInterestedProducts.map((product, index) => (
+            <ProductCard key={`${product.product.id}-${index}`} product={product} />
           ))}
         </div>
       </section>
@@ -400,22 +400,22 @@ export default function HomePage() {
       {/* Promo Tiles */}
       <section className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {promoTiles.map((tile, index) => (
-            <Card key={index} className="relative overflow-hidden h-80 border-0 rounded-none">
+          {promoTiles.map((title, index) => (
+            <Card key={`${title}-${index}`} className="relative overflow-hidden h-80 border-0 rounded-none">
               <div
                 className="absolute inset-0 bg-cover bg-center"
                 style={{
-                  backgroundImage: `url('${tile.image}')`,
+                  backgroundImage: `url('${title.image}')`,
                 }}
               >
                 <div className="absolute inset-0 bg-black bg-opacity-30"></div>
               </div>
               <CardContent className="relative h-full flex flex-col justify-end p-6 text-white">
-                <h3 className="font-bold text-lg mb-1">{tile.title}</h3>
-                {tile.subtitle && <p className="text-sm mb-2">{tile.subtitle}</p>}
-                <p className="text-sm mb-4">{tile.description}</p>
+                <h3 className="font-bold text-lg mb-1">{title.title}</h3>
+                {title.subtitle && <p className="text-sm mb-2">{title.subtitle}</p>}
+                <p className="text-sm mb-4">{title.description}</p>
                 <Button variant="outline" size="sm" className="w-fit bg-white text-black hover:bg-gray-100 font-bold">
-                  {tile.cta} →
+                  {title.cta} →
                 </Button>
               </CardContent>
             </Card>
@@ -428,7 +428,7 @@ export default function HomePage() {
         <h2 className="text-xl font-bold mb-8">Popular right now</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {popularCategories.map((category, index) => (
-            <Button key={index} variant="outline" className="h-12 text-lg font-medium hover:bg-gray-50 rounded-none">
+            <Button key={`${category}-${index}`} variant="outline" className="h-12 text-lg font-medium hover:bg-gray-50 rounded-none">
               {category}
             </Button>
           ))}
@@ -440,7 +440,7 @@ export default function HomePage() {
         <h2 className="text-xl font-bold mb-8">RELATED RESOURCES</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {relatedResources.map((resource, index) => (
-            <Card key={index} className="border-none shadow-none">
+            <Card key={`${resource}-${index}`} className="border-none shadow-none">
               <CardContent className="p-0">
                 <img
                   src={resource.image || "/placeholder.png"}
@@ -459,12 +459,12 @@ export default function HomePage() {
       <section className="bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {Object.entries(footerCategories).map(([category, items]) => (
-              <div key={category}>
+            {Object.entries(footerCategories).map(([category, items], index) => (
+              <div key={`${category}-${index}`}>
                 <h3 className="font-bold mb-4 text-sm">{category}</h3>
                 <ul className="space-y-2">
                   {items.map((item, index) => (
-                    <li key={index}>
+                    <li key={`${item}-${index}`}>
                       <a href="#" className="text-sm text-gray-600 hover:underline">
                         {item}
                       </a>
