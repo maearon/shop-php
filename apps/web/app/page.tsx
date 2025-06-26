@@ -14,6 +14,7 @@ import { useState, useEffect } from "react"
 import { LastVisitedProduct, Product } from "@/types/product"
 import { fakeLastVisitedProducts } from "@/data/fake-last-visited-products"
 import { newArrivalProducts } from "@/data/fake-new-arrival-products"
+import ProductCarousel from "@/components/product-carousel"
 
 export default function HomePage() {
   const [stillInterestedProducts, setStillInterestedProducts] = useState<any[]>([])
@@ -178,22 +179,18 @@ export default function HomePage() {
       {/* Hero Banner */}
       <HeroBanner />
 
-      {/* Still Interested Section */}
+      {/* History Products Section */}
       <section className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight leading-tight break-words">
-            STILL <br className="sm:hidden" /> INTERESTED?
+          <h2 className="text-xl sm:text-2xl md:text-3xl xl:text-3xl font-extrabold tracking-tight leading-tight break-words">
+            STILL <br className="xl:hidden" /> INTERESTED?
           </h2>
           {/* <Button variant="link" className="text-sm font-bold">
             VIEW ALL
           </Button> */}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stillInterestedProducts.map((product, index) => (
-            <ProductCard key={`${product.product.id}-${index}`} product={product.product} />
-          ))}
-        </div>
+        <ProductCarousel products={stillInterestedProducts.map((p) => p.product)} />
       </section>
 
       {/* Product Tabs Section */}
@@ -204,10 +201,10 @@ export default function HomePage() {
       }} />
 
       {/* Promo Carousel */}
-      <PromoCarousel slides={mockSlides} />
+      {/* <PromoCarousel slides={mockSlides} /> */}
 
       {/* New Products Section */}
-      <section className="container mx-auto px-4 py-12">
+      {/* <section className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center space-x-4">
             <Badge className="bg-black text-white">New Arrivals</Badge>
@@ -230,7 +227,7 @@ export default function HomePage() {
             />
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Prime Section */}
       <section className="bg-black text-white py-16">

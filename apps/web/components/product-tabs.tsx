@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import ProductGrid from "@/components/product-grid"
+import ProductCarousel from "@/components/product-carousel"
 import { useProducts } from "@/hooks/useProducts"
 import { Product } from "@/types/product"
 
@@ -11,7 +11,6 @@ type ProductTabsProps = {
     [key: string]: Product[]
   }
 }
-
 
 const tabs = [
   { id: "new-arrivals", label: "New Arrivals", endpoint: "new-arrivals" },
@@ -26,10 +25,14 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
     category: activeTab,
     limit: 4,
   })
+
   const products =
-  (!data?.products || error)
-    ? initialProductsByTab?.[activeTab] ?? []
-    : data.products
+    !data?.products || error
+      ? initialProductsByTab?.[activeTab] ?? []
+      : data.products
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label
+
   return (
     <section className="container mx-auto px-4 py-12">
       {/* Tabs Navigation */}
@@ -41,7 +44,9 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 text-sm font-medium rounded-none ${
-                activeTab === tab.id ? "bg-black text-white" : "bg-transparent text-gray-600 hover:bg-gray-100"
+                activeTab === tab.id
+                  ? "bg-black text-white"
+                  : "bg-transparent text-gray-600 hover:bg-gray-100"
               }`}
             >
               {tab.label}
@@ -62,9 +67,8 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
         </Button>
       </div>
 
-      {/* Products Grid */}
+      {/* Products Carousel */}
       {loading ? (
-        // Loading skeleton
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="animate-pulse">
@@ -75,14 +79,15 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
           ))}
         </div>
       ) : products.length > 0 ? (
-        // Có sản phẩm → hiển thị
-        <ProductGrid products={products} />
+        <ProductCarousel products={products} title={activeTabLabel} />
       ) : error ? (
-        // Không có data và có lỗi → hiển thị lỗi
-        <div className="text-center py-8 text-gray-500">Failed to load products. Please try again.</div>
+        <div className="text-center py-8 text-gray-500">
+          Failed to load products. Please try again.
+        </div>
       ) : (
-        // Không lỗi, không sản phẩm
-        <div className="text-center py-8 text-gray-500">No products available.</div>
+        <div className="text-center py-8 text-gray-500">
+          No products available.
+        </div>
       )}
     </section>
   )
