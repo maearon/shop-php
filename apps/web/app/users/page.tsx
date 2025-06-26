@@ -8,7 +8,7 @@ import { selectUser } from '@/store/sessionSlice'
 import flashMessage from '../../components/shared/flashMessages'
 import { request, gql } from 'graphql-request'
 import useUserApi from '../../graphql/userApi'
-import { User } from '@/@types/user';
+import { User } from '@/types/user/user';
 import javaService from '@/api/services/javaService';
 
 const Index: NextPage = () => {

@@ -1,16 +1,5 @@
+import { WishlistItem, WishlistState } from "@/types/wish"
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-
-export interface WishlistItem {
-  id: number
-  name: string
-  price: string
-  image: string
-  category?: string
-}
-
-interface WishlistState {
-  items: WishlistItem[]
-}
 
 const initialState: WishlistState = {
   items: [],

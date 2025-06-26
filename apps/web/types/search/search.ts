@@ -1,3 +1,5 @@
+import { Product } from "../product/product";
+
 // 📦 SearchFilters: filter params sent to search APIs
 export interface SearchFilters {
   query?: string;
@@ -25,8 +27,6 @@ export interface SearchResponse {
 // TODO: Add code here...
 
 // 📁 @types/search.ts
-
-import { Product } from "./product";
 
 /** 🔍 Query filters used in product search */
 export interface SearchFilters {

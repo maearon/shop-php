@@ -7,8 +7,8 @@ import { ArrowLeft, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import ProductGrid from "@/components/product-grid"
 import SearchFilters from "@/components/search-filters"
-import { Product } from "@/@types/product"
-import { SearchFilters as SearchFiltersType } from "@/@types/search"
+import { Product } from "@/types/product/product"
+import { SearchFilters as SearchFiltersType } from "@/types/search"
 import javaService from "@/api/services/javaService"
 
 function SearchPageContent() {

@@ -1,3 +1,5 @@
+"use client"
+
 import ProductTabs from "@/components/product-tabs"
 import PromoCarousel, { Slide } from "@/components/promo-carousel"
 import Link from "next/link"
@@ -8,9 +10,166 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
 import HeroBanner from "@/components/home/HeroBanner"
+import { useState, useEffect } from "react"
+import { LastVisitedProduct } from "@/types/product"
 
 export default function HomePage() {
+  const [stillInterestedProducts, setStillInterestedProducts] = useState<any[]>([])
+
+    useEffect(() => {
+    const visitedProducts: LastVisitedProduct[] = fakeLastVisitedProducts
+    localStorage.setItem("lastVisitedProducts", JSON.stringify(visitedProducts))
+
+    try {
+      const lastVisitedProductsStr = localStorage.getItem("lastVisitedProducts") ?? "[]"
+      const parsed: LastVisitedProduct[] = JSON.parse(lastVisitedProductsStr)
+      const reversed = parsed.slice().reverse()
+
+      setStillInterestedProducts(reversed)
+    } catch (err) {
+      console.error("Failed to parse lastVisitedProducts", err)
+    }
+  }, [])
+
   // ✅ Fake slide data
+  const fakeLastVisitedProducts = [
+    {
+      product: {
+        id: "JV9858",
+        display_name: "Soft Lux Mesh Full-Zip Hoodie",
+        name: "Soft Lux Mesh Full-Zip Hoodie",
+        price: "$70",
+        price_information: [
+          {
+            value: 70,
+            value_no_vat: 70,
+            type: "original"
+          }
+        ],
+        pricing_information: { 
+          currentPrice: 70, 
+          standard_price: 70, 
+          standard_price_no_vat: 70, 
+        },
+        thumbnail: "https://assets.adidas.com/images/w_600,f_auto,q_auto/soft-lux-mesh.jpg",
+        image_url: "https://assets.adidas.com/images/w_600,f_auto,q_auto/soft-lux-mesh.jpg",
+        model_number: "KLH81",
+        base_model_number: "KLH81",
+        product_type: "inline",
+      },
+      timestamp: Date.now(),
+      url: "/us/soft-lux-mesh-full-zip-hoodie/JV9858.html",
+    },
+    {
+      product: {
+        id: "KD9839",
+        display_name: "Minecraft Jersey Kids",
+        name: "Minecraft Jersey Kids",
+        price: "$45",
+        price_information: [
+          {
+            value: 40,
+            value_no_vat: 40,
+            type: "original"
+          }
+        ],
+        pricing_information: { 
+          currentPrice: 40, 
+          standard_price: 40, 
+          standard_price_no_vat: 40, 
+        },
+        thumbnail: "https://assets.adidas.com/images/w_600,f_auto,q_auto/minecraft-jersey.jpg",
+        image_url: "https://assets.adidas.com/images/w_600,f_auto,q_auto/minecraft-jersey.jpg",
+        model_number: "DB724",
+        base_model_number: "DB724",
+        product_type: "inline",
+      },
+      timestamp: Date.now() - 10000,
+      url: "/us/adidas-originals-x-minecraft-jersey-kids/KD9839.html",
+    },
+    {
+      product: {
+        id: "JV7492",
+        display_name: "Adicolor Firebird Oversized Track Pants",
+        name: "Adicolor Firebird Oversized Track Pants",
+        price: "$80",
+        price_information: [
+          {
+            value: 80,
+            value_no_vat: 75,
+            type: "original"
+          }
+        ],
+        pricing_information: { 
+          currentPrice: 80, 
+          standard_price: 80, 
+          standard_price_no_vat: 80, 
+        },
+        thumbnail: "https://assets.adidas.com/images/w_600,f_auto,q_auto/firebird-trackpants.jpg",
+        image_url: "https://assets.adidas.com/images/w_600,f_auto,q_auto/firebird-trackpants.jpg",
+        model_number: "KSU13",
+        base_model_number: "KSU13",
+        product_type: "inline",
+      },
+      timestamp: Date.now() - 20000,
+      url: "/us/adicolor-firebird-oversized-track-pants/JV7492.html",
+    },
+    {
+      product: {
+        id: "JZ8277",
+        display_name: "Teamgeist Adicolor Cropped Track Top",
+        name: "Teamgeist Adicolor Cropped Track Top",
+        price: "$70",
+        price_information: [
+          {
+            value: 70,
+            value_no_vat: 70,
+            type: "original"
+          }
+        ],
+        pricing_information: { 
+          currentPrice: 70, 
+          standard_price: 70, 
+          standard_price_no_vat: 70, 
+        },
+        thumbnail: "https://assets.adidas.com/images/w_600,f_auto,q_auto/teamgeist-top.jpg",
+        image_url: "https://assets.adidas.com/images/w_600,f_auto,q_auto/teamgeist-top.jpg",
+        model_number: "DL921",
+        base_model_number: "DL921",
+        product_type: "inline",
+      },
+      timestamp: Date.now() - 30000,
+      url: "/us/teamgeist-adicolor-cropped-track-top/JZ8277.html",
+    },
+    {
+      product: {
+        id: "JR8820",
+        display_name: "Adifom Stan Smith Mule Shoes",
+        name: "Adifom Stan Smith Mule Shoes",
+        price: "$70",
+        price_information: [
+          {
+            value: 70,
+            value_no_vat: 70,
+            type: "original"
+          }
+        ],
+        pricing_information: { 
+          currentPrice: 70, 
+          standard_price: 70, 
+          standard_price_no_vat: 70, 
+        },
+        thumbnail: "https://assets.adidas.com/images/w_600,f_auto,q_auto/adifom-mules.jpg",
+        image_url: "https://assets.adidas.com/images/w_600,f_auto,q_auto/adifom-mules.jpg",
+        model_number: "LYT60",
+        base_model_number: "LYT60",
+        product_type: "inline",
+      },
+      timestamp: Date.now() - 40000,
+      url: "/us/adifom-stan-smith-mule-shoes/JR8820.html",
+    },
+  ];
+
   const mockSlides: Slide[] = [
     {
       id: 1,
@@ -46,7 +205,7 @@ export default function HomePage() {
     },
   ] 
 
-  const stillInterestedProducts = [
+  const stillInterestedProducts2 = [
     {
       id: 1,
       name: "Own The Run Shorts",
@@ -179,50 +338,16 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* <Header /> */}
-
       {/* Hero Banner */}
       <HeroBanner />
-
-      {/* Hero Section */}
-      {/* <section className="relative h-[90vh] bg-gray-100 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: "url('/placeholder.png?height=500&width=1200')",
-          }}
-        >
-          <div className="absolute inset-0 bg-black bg-opacity-10"></div>
-        </div>
-        <div className="relative container mx-auto px-4 h-full flex items-end pb-12">
-          <div className="text-white">
-            <h1 className="text-4xl font-bold mb-2">ADIZERO EVO SL</h1>
-            <p className="text-lg mb-4">Fast feels. For the speed of the city.</p>
-            <div className="flex space-x-4">
-              <Link href="/men">
-                <Button className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP MEN</Button>
-              </Link>
-              <Link href="/women">
-                <Button className="bg-white text-black hover:bg-gray-100 font-bold px-6 py-3">SHOP WOMEN</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section> */}
-
-      {/* Product Tabs Section */}
-      <ProductTabs />
-
-      {/* Promo Carousel */}
-      <PromoCarousel slides={mockSlides} />
 
       {/* Still Interested Section */}
       <section className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-xl font-bold">STILL INTERESTED?</h2>
-          <Button variant="link" className="text-sm font-bold">
+          {/* <Button variant="link" className="text-sm font-bold">
             VIEW ALL
-          </Button>
+          </Button> */}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -231,6 +356,12 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Product Tabs Section */}
+      <ProductTabs />
+
+      {/* Promo Carousel */}
+      <PromoCarousel slides={mockSlides} />
 
       {/* New Products Section */}
       <section className="container mx-auto px-4 py-12">
@@ -245,8 +376,8 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {newProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {stillInterestedProducts.map((product) => (
+            <ProductCard key={product.product.id} product={product} />
           ))}
         </div>
       </section>

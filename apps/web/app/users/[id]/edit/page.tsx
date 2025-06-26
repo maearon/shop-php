@@ -6,7 +6,7 @@ import React, { MutableRefObject, useCallback, useEffect, useRef, useState } fro
 import * as Yup from 'yup'
 import errorMessage from '@/components/shared/errorMessages'
 import flashMessage from '@/components/shared/flashMessages'
-import { UserEdit } from '@/@types/user';
+import { UserEdit } from '@/types/user/user';
 import javaService from '@/api/services/javaService';
 // import TextError from '@/components/shared/TextError'
 

@@ -42,7 +42,7 @@ export interface UserUpdateResponse<UserEdit> {
 
 // 📁 @types/user.ts
 
-import { Micropost } from "@/@types/micropost";
+import { Micropost } from "@/types/micropost/micropost";
 
 /** 👤 Thông tin user cơ bản */
 export interface User {

@@ -1,12 +1,8 @@
-// 👟 Size type (used in Product Variant and CartItem)
-export interface Size {
-  id: number
-  label: string
-  system: string
-  available: boolean
-}
+
 
 // Product-related types
+
+import { Variant } from "./variant";
 
 // TODO: Add code here...
 
@@ -35,37 +31,6 @@ export interface Product {
   variants: Variant[];
   slug: string;
   score?: number;
-}
-
-/** 🎨 Product variant */
-export interface Variant {
-  id: number;
-  color?: string;
-  price?: number;
-  originalprice?: number;
-  sku?: string;
-  stock?: number;
-  size: string[];
-  images: string[];
-  product_id: number;
-  created_at: string;
-  updated_at: string;
-}
-
-/** 📦 Product list query filters */
-export interface ProductFilters {
-  slug?: string;
-  q?: string;
-  gender?: string;
-  category?: string;
-  sport?: string;
-  brand?: string;
-  min_price?: number;
-  max_price?: number;
-  size?: string;
-  color?: string;
-  page?: number;
-  per_page?: number;
 }
 
 /** 📄 Product listing response */

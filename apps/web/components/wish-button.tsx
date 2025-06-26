@@ -4,8 +4,9 @@ import type React from "react"
 
 import { Heart } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { toggleWishlist, type WishlistItem } from "@/store/wishlistSlice"
+import { toggleWishlist } from "@/store/wishlistSlice"
 import { cn } from "@/lib/utils"
+import { WishlistItem } from "@/types/wish"
 
 interface WishButtonProps {
   item: WishlistItem

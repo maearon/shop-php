@@ -1,5 +1,5 @@
 // import { ListParams, ListResponse, Student } from 'models';
-import { Micropost } from "@/@types/micropost";
+import { Micropost } from "@/types/micropost/micropost";
 import api from "@/api/client";
 import { User as UserCreate } from '@/store/sessionSlice';
 

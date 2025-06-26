@@ -3,7 +3,7 @@ import ProductTabs from "@/components/product-tabs"
 import { Provider } from "react-redux"
 import { store } from "@/store/store"
 import * as useProductsHook from "@/hooks/useProducts"
-import { Product } from "@/@types/product"
+import { Product } from "@/types/product/product"
 
 const meta: Meta<typeof ProductTabs> = {
   title: "Components/ProductTabs",

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs"
 import SearchFilters from "@/components/search-filters"
-import type { SearchFilters as SearchFiltersType } from "@/@types/search"
+import type { SearchFilters as SearchFiltersType } from "@/types/search"
 import { useState } from "react"
 
 const meta: Meta<typeof SearchFilters> = {

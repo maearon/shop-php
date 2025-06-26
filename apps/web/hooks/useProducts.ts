@@ -1,6 +1,6 @@
 "use client"
 
-import { ProductFilters, ProductsResponse } from "@/@types/product"
+import { ProductFilters, ProductsResponse } from "@/types/product/product"
 import javaService from "@/api/services/javaService"
 import { useState, useEffect } from "react"
 

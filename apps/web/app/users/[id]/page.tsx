@@ -8,8 +8,8 @@ import { selectUser } from '@/store/sessionSlice';
 import flashMessage from '@/components/shared/flashMessages';
 import FollowForm from '@/components/users/FollowForm';
 import Link from 'next/link';
-import { UserShow } from '@/@types/user';
-import { Micropost } from '@/@types/micropost';
+import { UserShow } from '@/types/user/user';
+import { Micropost } from '@/types/micropost/micropost';
 import javaService from '@/api/services/javaService';
 
 const Show = ({ params }: { params: { id: string } }) => {

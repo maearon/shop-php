@@ -4,7 +4,7 @@
 
 // 📦 Type definitions for Cart (Ruby Service)
 
-import { Micropost } from "@/@types/micropost";
+import { Micropost } from "@/types/micropost/micropost";
 
 export interface CartCreate {
   readonly id: string;

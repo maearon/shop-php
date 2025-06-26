@@ -1,4 +1,4 @@
-import { UserShow } from "@/@types/user";
+import { UserShow } from "@/types/user/user";
 import React from "react";
 
 // export interface FollowFormProps {
