@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import ProductCard from "@/components/product-card"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { Product } from "@/types/product"
 
 interface ProductCarouselProps {
@@ -22,41 +22,37 @@ export default function ProductCarousel({
   showAddToBag = false,
   showIndicators = true,
   carouselModeInMobile = true,
-  viewMoreHref = undefined,
+  viewMoreHref,
 }: ProductCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [hovering, setHovering] = useState(false)
   const [itemsPerView, setItemsPerView] = useState(4)
 
   useEffect(() => {
-    const calculateItemsPerView = () => {
-      const width = window.innerWidth
-      if (width < 640) setItemsPerView(carouselModeInMobile ? 2 : 8)
-      else if (width < 768) setItemsPerView(2)
-      else if (width < 1024) setItemsPerView(3)
+    const updateItemsPerView = () => {
+      const w = window.innerWidth
+      if (w < 640) setItemsPerView(carouselModeInMobile ? 2 : 8)
+      else if (w < 768) setItemsPerView(2)
+      else if (w < 1024) setItemsPerView(3)
       else setItemsPerView(4)
     }
-
-    calculateItemsPerView()
-    window.addEventListener("resize", calculateItemsPerView)
-    return () => window.removeEventListener("resize", calculateItemsPerView)
+    updateItemsPerView()
+    window.addEventListener("resize", updateItemsPerView)
+    return () => window.removeEventListener("resize", updateItemsPerView)
   }, [carouselModeInMobile])
 
   const totalSlides = Math.ceil(products.length / itemsPerView)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const nextSlide = () => {
-    if (currentSlide < totalSlides - 1) {
-      setCurrentSlide((prev) => prev + 1)
-    }
+    if (currentSlide < totalSlides - 1) setCurrentSlide((prev) => prev + 1)
   }
 
   const prevSlide = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide((prev) => prev - 1)
-    }
+    if (currentSlide > 0) setCurrentSlide((prev) => prev - 1)
   }
 
-  // 👉 Nếu không phải carousel ở mobile => hiện 6 sản phẩm dạng grid
+  // 👉 Nếu là mobile và không cần carousel
   if (!carouselModeInMobile && itemsPerView >= 6 && viewMoreHref) {
     return (
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
@@ -67,7 +63,7 @@ export default function ProductCarousel({
           <Button
             variant="outline"
             className="rounded-none border-black text-black font-bold hover:bg-gray-100"
-            onClick={() => window.location.href = viewMoreHref || "/new-arrivals"}
+            onClick={() => (window.location.href = viewMoreHref || "/new-arrivals")}
           >
             VIEW ALL
           </Button>
@@ -76,8 +72,9 @@ export default function ProductCarousel({
     )
   }
 
-  const start = currentSlide * itemsPerView
-  const slicedProducts = products.slice(start, start + itemsPerView)
+  const trackWidth = `${(products.length / itemsPerView) * 100}%`
+  const itemWidth = `${100 / products.length}%`
+  const offset = `-${(100 / products.length) * itemsPerView * currentSlide}%`
 
   return (
     <div
@@ -88,20 +85,20 @@ export default function ProductCarousel({
       {title && <h2 className="text-xl font-bold mb-8">{title}</h2>}
 
       <div className="relative min-h-[28rem]">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.4 }}
-            className="grid gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 absolute inset-0"
-          >
-            {slicedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} showAddToBag={showAddToBag} />
-            ))}
-          </motion.div>
-        </AnimatePresence>
+        <motion.div
+          ref={containerRef}
+          className="flex gap-6 transition-transform duration-700 ease-in-out will-change-transform"
+          style={{
+            width: trackWidth,
+            transform: `translateX(${offset})`,
+          }}
+        >
+          {products.map((product) => (
+            <div key={product.id} style={{ width: itemWidth }}>
+              <ProductCard product={product} showAddToBag={showAddToBag} />
+            </div>
+          ))}
+        </motion.div>
       </div>
 
       {/* Navigation Arrows */}
@@ -132,7 +129,7 @@ export default function ProductCarousel({
 
       {/* Slide indicator bar (desktop only) */}
       {showIndicators && totalSlides > 1 && (
-        <div className="mt-6 mx-auto w-full max-w-md h-1 bg-gray-200 rounded overflow-hidden hidden sm:block">
+        <div className="mt-6 mx-auto w-full max-w-md h-1 bg-gray-200 overflow-hidden hidden sm:block">
           <div
             className="h-full bg-black transition-all duration-300"
             style={{ width: `${((currentSlide + 1) / totalSlides) * 100}%` }}
