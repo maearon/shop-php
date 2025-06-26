@@ -79,7 +79,7 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
           ))}
         </div>
       ) : products.length > 0 ? (
-        <ProductCarousel products={products} title={activeTabLabel} />
+        <ProductCarousel products={products} carouselModeInMobile={false} />
       ) : error ? (
         <div className="text-center py-8 text-gray-500">
           Failed to load products. Please try again.

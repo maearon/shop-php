@@ -190,7 +190,7 @@ export default function HomePage() {
           </Button> */}
         </div>
 
-        <ProductCarousel products={stillInterestedProducts.map((p) => p.product)} />
+        <ProductCarousel products={stillInterestedProducts.map((p) => p.product)} showIndicators={false} />
       </section>
 
       {/* Product Tabs Section */}
