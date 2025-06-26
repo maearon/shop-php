@@ -23,9 +23,9 @@ export default function HomePage() {
     try {
       const lastVisitedProductsStr = localStorage.getItem("lastVisitedProducts") ?? "[]"
       const parsed: LastVisitedProduct[] = JSON.parse(lastVisitedProductsStr)
-      const reversed = parsed.slice().reverse()
+      const sliced = parsed.slice()
 
-      setStillInterestedProducts(reversed)
+      setStillInterestedProducts(sliced)
     } catch (err) {
       console.error("Failed to parse lastVisitedProducts", err)
     }
@@ -35,10 +35,13 @@ export default function HomePage() {
   const fakeLastVisitedProducts = [
     {
       product: {
-        id: "JV9858",
+        id: "1",
         display_name: "Soft Lux Mesh Full-Zip Hoodie",
         name: "Soft Lux Mesh Full-Zip Hoodie",
         price: "$70",
+        attribute_list: {
+          brand: "Sportswear"
+        },
         price_information: [
           {
             value: 70,
@@ -51,8 +54,8 @@ export default function HomePage() {
           standard_price: 70, 
           standard_price_no_vat: 70, 
         },
-        thumbnail: "https://assets.adidas.com/images/w_600,f_auto,q_auto/soft-lux-mesh.jpg",
-        image_url: "https://assets.adidas.com/images/w_600,f_auto,q_auto/soft-lux-mesh.jpg",
+        thumbnail: "/images/Soft_Lux_Mesh_Full-Zip_Hoodie_Beige_JV9858_000_plp_model.jpg",
+        image_url: "/images/Soft_Lux_Mesh_Full-Zip_Hoodie_Beige_JV9858_000_plp_model.jpg",
         model_number: "KLH81",
         base_model_number: "KLH81",
         product_type: "inline",
@@ -62,41 +65,17 @@ export default function HomePage() {
     },
     {
       product: {
-        id: "KD9839",
-        display_name: "Minecraft Jersey Kids",
-        name: "Minecraft Jersey Kids",
-        price: "$45",
-        price_information: [
-          {
-            value: 40,
-            value_no_vat: 40,
-            type: "original"
-          }
-        ],
-        pricing_information: { 
-          currentPrice: 40, 
-          standard_price: 40, 
-          standard_price_no_vat: 40, 
-        },
-        thumbnail: "https://assets.adidas.com/images/w_600,f_auto,q_auto/minecraft-jersey.jpg",
-        image_url: "https://assets.adidas.com/images/w_600,f_auto,q_auto/minecraft-jersey.jpg",
-        model_number: "DB724",
-        base_model_number: "DB724",
-        product_type: "inline",
-      },
-      timestamp: Date.now() - 10000,
-      url: "/us/adidas-originals-x-minecraft-jersey-kids/KD9839.html",
-    },
-    {
-      product: {
-        id: "JV7492",
-        display_name: "Adicolor Firebird Oversized Track Pants",
-        name: "Adicolor Firebird Oversized Track Pants",
+        id: "2",
+        display_name: "adicolor Firebird Oversized Track Pants",
+        name: "adicolor Firebird Oversized Track Pants",
         price: "$80",
+        attribute_list: {
+          brand: "Originals"
+        },
         price_information: [
           {
             value: 80,
-            value_no_vat: 75,
+            value_no_vat: 80,
             type: "original"
           }
         ],
@@ -105,21 +84,54 @@ export default function HomePage() {
           standard_price: 80, 
           standard_price_no_vat: 80, 
         },
-        thumbnail: "https://assets.adidas.com/images/w_600,f_auto,q_auto/firebird-trackpants.jpg",
-        image_url: "https://assets.adidas.com/images/w_600,f_auto,q_auto/firebird-trackpants.jpg",
+        thumbnail: "/images/adicolor_Firebird_Oversized_Track_Pants_Blue_JV7492_000_plp_model.jpg",
+        image_url: "/images/adicolor_Firebird_Oversized_Track_Pants_Blue_JV7492_000_plp_model.jpg",
+        model_number: "DB724",
+        base_model_number: "DB724",
+        product_type: "inline",
+      },
+      timestamp: Date.now() - 10000,
+      url: "/us/adidas-originals-x-minecraft-jersey-kids/JV7492.html",
+    },
+    {
+      product: {
+        id: "3",
+        display_name: "Adicolor Firebird Oversized Track Pants",
+        name: "Adicolor Firebird Oversized Track Pants",
+        price: "$70",
+        attribute_list: {
+          brand: "Originals"
+        },
+        price_information: [
+          {
+            value: 70,
+            value_no_vat: 70,
+            type: "original"
+          }
+        ],
+        pricing_information: { 
+          currentPrice: 70, 
+          standard_price: 70, 
+          standard_price_no_vat: 70, 
+        },
+        thumbnail: "/images/Teamgeist_Adicolor_Cropped_Track_Top_Blue_JZ8277_000_plp_model.jpg",
+        image_url: "/images/Teamgeist_Adicolor_Cropped_Track_Top_Blue_JZ8277_000_plp_model.jpg",
         model_number: "KSU13",
         base_model_number: "KSU13",
         product_type: "inline",
       },
       timestamp: Date.now() - 20000,
-      url: "/us/adicolor-firebird-oversized-track-pants/JV7492.html",
+      url: "/us/adicolor-firebird-oversized-track-pants/JZ8277.html",
     },
     {
       product: {
-        id: "JZ8277",
-        display_name: "Teamgeist Adicolor Cropped Track Top",
-        name: "Teamgeist Adicolor Cropped Track Top",
+        id: "4",
+        display_name: "Adifom Stan Smith Mule Shoes",
+        name: "Adifom Stan Smith Mule Shoes",
         price: "$70",
+        attribute_list: {
+          brand: "Originals"
+        },
         price_information: [
           {
             value: 70,
@@ -132,41 +144,95 @@ export default function HomePage() {
           standard_price: 70, 
           standard_price_no_vat: 70, 
         },
-        thumbnail: "https://assets.adidas.com/images/w_600,f_auto,q_auto/teamgeist-top.jpg",
-        image_url: "https://assets.adidas.com/images/w_600,f_auto,q_auto/teamgeist-top.jpg",
+        thumbnail: "/images/Adifom_Stan_Smith_Mule_Shoes_Blue_JR8820_00_plp_standard.jpg",
+        image_url: "/images/Adifom_Stan_Smith_Mule_Shoes_Blue_JR8820_00_plp_standard.jpg",
         model_number: "DL921",
         base_model_number: "DL921",
         product_type: "inline",
       },
       timestamp: Date.now() - 30000,
-      url: "/us/teamgeist-adicolor-cropped-track-top/JZ8277.html",
+      url: "/us/teamgeist-adicolor-cropped-track-top/JR8820.html",
     },
     {
       product: {
-        id: "JR8820",
-        display_name: "Adifom Stan Smith Mule Shoes",
-        name: "Adifom Stan Smith Mule Shoes",
-        price: "$70",
+        id: "5",
+        display_name: "Soft Lux Mesh Tee",
+        name: "Soft Lux Mesh Tee",
+        price: "$35",
         price_information: [
           {
-            value: 70,
-            value_no_vat: 70,
+            value: 35,
+            value_no_vat: 35,
             type: "original"
           }
         ],
         pricing_information: { 
-          currentPrice: 70, 
-          standard_price: 70, 
-          standard_price_no_vat: 70, 
+          currentPrice: 35, 
+          standard_price: 35, 
+          standard_price_no_vat: 35, 
         },
-        thumbnail: "https://assets.adidas.com/images/w_600,f_auto,q_auto/adifom-mules.jpg",
-        image_url: "https://assets.adidas.com/images/w_600,f_auto,q_auto/adifom-mules.jpg",
+        thumbnail: "/images/Soft_Lux_Mesh_Tee_Beige_JV9873_000_plp_model.jpg",
+        image_url: "/images/Soft_Lux_Mesh_Tee_Beige_JV9873_000_plp_model.jpg",
         model_number: "LYT60",
         base_model_number: "LYT60",
         product_type: "inline",
       },
       timestamp: Date.now() - 40000,
-      url: "/us/adifom-stan-smith-mule-shoes/JR8820.html",
+      url: "/us/adifom-stan-smith-mule-shoes/JV9873.html",
+    },
+    {
+      product: {
+        id: "6",
+        display_name: "Superstar 82 Roller Skates",
+        name: "Superstar 82 Roller Skates",
+        price: "$200",
+        price_information: [
+          {
+            value: 200,
+            value_no_vat: 200,
+            type: "original"
+          }
+        ],
+        pricing_information: { 
+          currentPrice: 200, 
+          standard_price: 200, 
+          standard_price_no_vat: 200, 
+        },
+        thumbnail: "/images/Superstar_82_Roller_Skates_Black_JI3535_00_plp_standard.jpg",
+        image_url: "/images/Superstar_82_Roller_Skates_Black_JI3535_00_plp_standard.jpg",
+        model_number: "LYT60",
+        base_model_number: "LYT60",
+        product_type: "inline",
+      },
+      timestamp: Date.now() - 40000,
+      url: "/us/adifom-stan-smith-mule-shoes/JI3535.html",
+    },
+    {
+      product: {
+        id: "7",
+        display_name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
+        name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
+        price: "$60",
+        price_information: [
+          {
+            value: 60,
+            value_no_vat: 60,
+            type: "original"
+          }
+        ],
+        pricing_information: { 
+          currentPrice: 60, 
+          standard_price: 60, 
+          standard_price_no_vat: 60, 
+        },
+        thumbnail: "/images/Tiro_Cut_3-Stripes_Soft_Mesh_Long_Dress_Burgundy_JX5160_000_plp_model.jpg",
+        image_url: "/images/Tiro_Cut_3-Stripes_Soft_Mesh_Long_Dress_Burgundy_JX5160_000_plp_model.jpg",
+        model_number: "LYT60",
+        base_model_number: "LYT60",
+        product_type: "inline",
+      },
+      timestamp: Date.now() - 40000,
+      url: "/us/adifom-stan-smith-mule-shoes/JX5160.html",
     },
   ];
 
@@ -352,7 +418,7 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stillInterestedProducts.map((product, index) => (
-            <ProductCard key={`${product.product.id}-${index}`} product={product} />
+            <ProductCard key={`${product.product.id}-${index}`} product={product} showAddToBag={true} />
           ))}
         </div>
       </section>

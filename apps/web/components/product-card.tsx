@@ -40,18 +40,21 @@ export default function ProductCard({ product, showAddToBag = false }: ProductCa
         <CardContent className="p-0">
           <div className="relative mb-4">
             <img
-              src={p.image_url || "/placeholder.png?height=300&width=250"}
+              src={p.image_url || "/placeholder.png?height=600&width=600"}
               alt={p.name}
               className="w-full h-64 object-cover"
             />
+            {/* <div className="absolute top-4 right-4" onClick={(e) => e.preventDefault()}>
+              <WishButton item={mapProductToWishItem(p)} />
+            </div> */}
             <div className="absolute top-4 right-4" onClick={(e) => e.preventDefault()}>
               <WishButton item={mapProductToWishItem(p)} />
             </div>
           </div>
           <div className="space-y-2">
-            {p.attribute_list?.brand && <p className="text-sm text-gray-600">{p.attribute_list.brand}</p>}
-            <h3 className="font-medium">{p.name}</h3>
             <p className="font-bold">${p.pricing_information.currentPrice}</p>
+            <h3 className="font-medium">{p.name}</h3>
+            {p.attribute_list?.brand && <p className="text-sm text-gray-600">{p.attribute_list.brand}</p>}
             {showAddToBag && (
               <Button className="w-full bg-black text-white hover:bg-gray-800" onClick={handleAddToBag}>
                 ADD TO BAG
