@@ -56,6 +56,7 @@ export default function HomePage() {
         },
         thumbnail: "/images/Soft_Lux_Mesh_Full-Zip_Hoodie_Beige_JV9858_000_plp_model.jpg",
         image_url: "/images/Soft_Lux_Mesh_Full-Zip_Hoodie_Beige_JV9858_000_plp_model.jpg",
+        image: "/images/Soft_Lux_Mesh_Full-Zip_Hoodie_Beige_JV9858_000_plp_model.jpg",
         model_number: "KLH81",
         base_model_number: "KLH81",
         product_type: "inline",
@@ -86,6 +87,7 @@ export default function HomePage() {
         },
         thumbnail: "/images/adicolor_Firebird_Oversized_Track_Pants_Blue_JV7492_000_plp_model.jpg",
         image_url: "/images/adicolor_Firebird_Oversized_Track_Pants_Blue_JV7492_000_plp_model.jpg",
+        image: "/images/adicolor_Firebird_Oversized_Track_Pants_Blue_JV7492_000_plp_model.jpg",
         model_number: "DB724",
         base_model_number: "DB724",
         product_type: "inline",
@@ -116,6 +118,7 @@ export default function HomePage() {
         },
         thumbnail: "/images/Teamgeist_Adicolor_Cropped_Track_Top_Blue_JZ8277_000_plp_model.jpg",
         image_url: "/images/Teamgeist_Adicolor_Cropped_Track_Top_Blue_JZ8277_000_plp_model.jpg",
+        image: "/images/Teamgeist_Adicolor_Cropped_Track_Top_Blue_JZ8277_000_plp_model.jpg",
         model_number: "KSU13",
         base_model_number: "KSU13",
         product_type: "inline",
@@ -146,6 +149,7 @@ export default function HomePage() {
         },
         thumbnail: "/images/Adifom_Stan_Smith_Mule_Shoes_Blue_JR8820_00_plp_standard.jpg",
         image_url: "/images/Adifom_Stan_Smith_Mule_Shoes_Blue_JR8820_00_plp_standard.jpg",
+        image: "/images/Adifom_Stan_Smith_Mule_Shoes_Blue_JR8820_00_plp_standard.jpg",
         model_number: "DL921",
         base_model_number: "DL921",
         product_type: "inline",
@@ -173,6 +177,7 @@ export default function HomePage() {
         },
         thumbnail: "/images/Soft_Lux_Mesh_Tee_Beige_JV9873_000_plp_model.jpg",
         image_url: "/images/Soft_Lux_Mesh_Tee_Beige_JV9873_000_plp_model.jpg",
+        image: "/images/Soft_Lux_Mesh_Tee_Beige_JV9873_000_plp_model.jpg",
         model_number: "LYT60",
         base_model_number: "LYT60",
         product_type: "inline",
@@ -200,6 +205,7 @@ export default function HomePage() {
         },
         thumbnail: "/images/Superstar_82_Roller_Skates_Black_JI3535_00_plp_standard.jpg",
         image_url: "/images/Superstar_82_Roller_Skates_Black_JI3535_00_plp_standard.jpg",
+        image: "/images/Superstar_82_Roller_Skates_Black_JI3535_00_plp_standard.jpg",
         model_number: "LYT60",
         base_model_number: "LYT60",
         product_type: "inline",
@@ -227,6 +233,7 @@ export default function HomePage() {
         },
         thumbnail: "/images/Tiro_Cut_3-Stripes_Soft_Mesh_Long_Dress_Burgundy_JX5160_000_plp_model.jpg",
         image_url: "/images/Tiro_Cut_3-Stripes_Soft_Mesh_Long_Dress_Burgundy_JX5160_000_plp_model.jpg",
+        image: "/images/Tiro_Cut_3-Stripes_Soft_Mesh_Long_Dress_Burgundy_JX5160_000_plp_model.jpg",
         model_number: "LYT60",
         base_model_number: "LYT60",
         product_type: "inline",
@@ -418,7 +425,7 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stillInterestedProducts.map((product, index) => (
-            <ProductCard key={`${product.product.id}-${index}`} product={product} showAddToBag={true} />
+            <ProductCard key={`${product.product.id}-${index}`} product={product.product} showAddToBag={true} />
           ))}
         </div>
       </section>
@@ -443,7 +450,7 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stillInterestedProducts.map((product, index) => (
-            <ProductCard key={`${product.product.id}-${index}`} product={product} />
+            <ProductCard key={`${product.product.id}-${index}`} product={product.product} />
           ))}
         </div>
       </section>
