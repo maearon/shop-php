@@ -72,40 +72,28 @@ export default function ProductCard({ product, showAddToBag = false }: ProductCa
 
   return (
     <Link href={`/product/${product.id}`}>
-      <Card className="w-full max-w-[420px] mx-auto sm:mx-0 border border-transparent hover:border-black transition-all shadow-none cursor-pointer rounded-none">
-        <CardContent className="p-2 sm:p-0">
-          {/* Ảnh vuông + overlay Wish */}
-          <div className="relative aspect-[3/4] overflow-hidden mb-4">
+      <Card className="min-h-[28rem] flex flex-col justify-between border border-transparent hover:border-black transition-all shadow-none cursor-pointer rounded-none">
+        <CardContent className="p-0 flex flex-col h-full">
+          <div className="relative aspect-square overflow-hidden mb-4">
             <img
               src={product.image || "/placeholder.png"}
               alt={product.name}
               className="w-full h-full object-cover"
             />
-            <div
-              className="absolute top-2 right-2 sm:top-4 sm:right-4"
-              onClick={(e) => e.preventDefault()}
-            >
+            <div className="absolute top-4 right-4" onClick={(e) => e.preventDefault()}>
               <WishButton item={product} />
             </div>
           </div>
 
-          {/* Thông tin sản phẩm */}
-          <div className="space-y-1 px-2 pb-2 text-sm sm:text-base">
-            {product.category && (
-              <p className="text-gray-600">{product.category}</p>
-            )}
-            <p className="font-bold">
-              ${product.pricing_information?.currentPrice ?? product.price}
-            </p>
+          <div className="space-y-2 px-2 pb-2 mt-auto">
+            {product.category && <p className="text-sm text-gray-600">{product.category}</p>}
+            <p className="font-bold">${product.pricing_information?.currentPrice ?? product.price}</p>
             <h3 className="font-medium">{product.name}</h3>
             {product.attribute_list?.brand && (
-              <p className="text-gray-600">{product.attribute_list.brand}</p>
+              <p className="text-sm text-gray-600">{product.attribute_list.brand}</p>
             )}
             {showAddToBag && (
-              <Button
-                className="w-full bg-black text-white hover:bg-gray-800"
-                onClick={handleAddToBag}
-              >
+              <Button className="w-full bg-black text-white hover:bg-gray-800" onClick={handleAddToBag}>
                 ADD TO BAG
               </Button>
             )}

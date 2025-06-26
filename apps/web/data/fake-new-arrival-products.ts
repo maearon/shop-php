@@ -136,6 +136,9 @@ export const newArrivalProducts: Product[] = [
       display_name: "Soft Lux Mesh Tee",
       name: "Soft Lux Mesh Tee",
       price: "$35",
+      attribute_list: {
+        brand: "Originals"
+      },
       price_information: [
         {
           value: 35,
@@ -165,6 +168,9 @@ export const newArrivalProducts: Product[] = [
       display_name: "Superstar 82 Roller Skates",
       name: "Superstar 82 Roller Skates",
       price: "$200",
+      attribute_list: {
+        brand: "Originals"
+      },
       price_information: [
         {
           value: 200,
@@ -194,6 +200,9 @@ export const newArrivalProducts: Product[] = [
       display_name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       price: "$60",
+      attribute_list: {
+        brand: "Originals"
+      },
       price_information: [
         {
           value: 60,
@@ -223,6 +232,9 @@ export const newArrivalProducts: Product[] = [
       display_name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       price: "$60",
+      attribute_list: {
+        brand: "Originals"
+      },
       price_information: [
         {
           value: 60,
@@ -252,6 +264,9 @@ export const newArrivalProducts: Product[] = [
       display_name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       price: "$60",
+      attribute_list: {
+        brand: "Originals"
+      },
       price_information: [
         {
           value: 60,
@@ -281,6 +296,9 @@ export const newArrivalProducts: Product[] = [
       display_name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       price: "$60",
+      attribute_list: {
+        brand: "Originals"
+      },
       price_information: [
         {
           value: 60,

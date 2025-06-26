@@ -57,7 +57,7 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
         {/* VIEW ALL */}
         <Button
           variant="link"
-          className="text-sm font-bold underline whitespace-nowrap px-0"
+          className="hidden sm:block text-sm font-bold underline whitespace-nowrap px-0"
           onClick={() => {
             const activeTabData = tabs.find((tab) => tab.id === activeTab)
             window.location.href = `/${activeTabData?.endpoint}`

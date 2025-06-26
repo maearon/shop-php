@@ -54,20 +54,20 @@ export default function ProductCarousel({
     }
   }
 
-  // Nếu không phải chế độ carousel (hiện grid luôn)
-  if (!carouselModeInMobile && itemsPerView >= 8) {
+  // 👉 Nếu không phải carousel ở mobile => hiện 6 sản phẩm dạng grid
+  if (!carouselModeInMobile && itemsPerView >= 6) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
+      <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
+        {products.slice(0, 6).map((product) => (
           <ProductCard key={product.id} product={product} showAddToBag={showAddToBag} />
         ))}
         <div className="col-span-full mt-4 flex justify-center">
           <Button
-            variant="link"
-            className="text-sm font-bold underline px-0"
+            variant="outline"
+            className="rounded-none border-black text-black font-bold hover:bg-gray-100"
             onClick={() => window.location.href = "/new-arrivals"}
           >
-            VIEW MORE
+            VIEW All
           </Button>
         </div>
       </div>
