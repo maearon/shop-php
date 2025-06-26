@@ -32,6 +32,8 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
       : data.products
 
   const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label
+  const activeTabInfo = tabs.find((tab) => tab.id === activeTab)
+  const viewMoreHref = activeTabInfo ? `/${activeTabInfo.endpoint}` : undefined
 
   return (
     <section className="container mx-auto px-4 py-12">
@@ -79,7 +81,11 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
           ))}
         </div>
       ) : products.length > 0 ? (
-        <ProductCarousel products={products} carouselModeInMobile={false} />
+        <ProductCarousel
+          products={products}
+          carouselModeInMobile={false}
+          viewMoreHref={viewMoreHref}
+        />
       ) : error ? (
         <div className="text-center py-8 text-gray-500">
           Failed to load products. Please try again.

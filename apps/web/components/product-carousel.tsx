@@ -13,6 +13,7 @@ interface ProductCarouselProps {
   showAddToBag?: boolean
   showIndicators?: boolean
   carouselModeInMobile?: boolean
+  viewMoreHref?: string
 }
 
 export default function ProductCarousel({
@@ -21,6 +22,7 @@ export default function ProductCarousel({
   showAddToBag = false,
   showIndicators = true,
   carouselModeInMobile = true,
+  viewMoreHref = undefined,
 }: ProductCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [hovering, setHovering] = useState(false)
@@ -55,7 +57,7 @@ export default function ProductCarousel({
   }
 
   // 👉 Nếu không phải carousel ở mobile => hiện 6 sản phẩm dạng grid
-  if (!carouselModeInMobile && itemsPerView >= 6) {
+  if (!carouselModeInMobile && itemsPerView >= 6 && viewMoreHref) {
     return (
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
         {products.slice(0, 6).map((product) => (
@@ -65,9 +67,9 @@ export default function ProductCarousel({
           <Button
             variant="outline"
             className="rounded-none border-black text-black font-bold hover:bg-gray-100"
-            onClick={() => window.location.href = "/new-arrivals"}
+            onClick={() => window.location.href = viewMoreHref || "/new-arrivals"}
           >
-            VIEW All
+            VIEW ALL
           </Button>
         </div>
       </div>
