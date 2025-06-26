@@ -2,6 +2,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '@/store/store'
 import javaService from '@/api/services/javaService'
+import { Nullable } from '@/types/common'
 
 // ---- User model định nghĩa nhất quán với BE JWT response ----
 export interface User {
@@ -16,7 +17,7 @@ export interface UserState {
   loggedIn: boolean
   value: User | null
   status: 'idle' | 'loading' | 'failed'
-  error: string | null
+  error: Nullable<string>
 }
 
 const initialState: UserState = {

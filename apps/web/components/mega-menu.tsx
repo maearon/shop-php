@@ -1,4 +1,5 @@
 "use client"
+import { Nullable } from "@/types/common"
 import Link from "next/link"
 
 type MenuCategory = {
@@ -7,7 +8,7 @@ type MenuCategory = {
 }
 
 type MegaMenuProps = {
-  activeMenu: string | null
+  activeMenu: Nullable<string>
   onClose: () => void
 }
 

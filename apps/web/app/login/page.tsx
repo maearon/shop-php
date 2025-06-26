@@ -13,6 +13,7 @@ import { fetchUser, selectUser } from '@/store/sessionSlice';
 import { AppDispatch } from '@/store/store';
 import { useAppSelector } from '@/store/hooks';
 import javaService from '@/api/services/javaService';
+import { Nullable } from '@/types/common';
 if (typeof window !== "undefined") {
 const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 }
@@ -43,7 +44,7 @@ const LoginPage: NextPage = () => {
       const fetchUserData = async () => {
         try {
           setLoading(false)
-          let token: string | null = null;
+          let token: Nullable<string> = null;
           if (typeof window !== "undefined") {
             token = localStorage.getItem("token") || sessionStorage.getItem("token");
           }

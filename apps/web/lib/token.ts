@@ -1,3 +1,5 @@
+import { Nullable } from "@/types/common"
+
 // 📦 apps/web/lib/token.ts
 export const setTokens = (access: string, refresh: string, remember: boolean) => {
   if (typeof window !== "undefined") {
@@ -16,14 +18,14 @@ export const clearTokens = () => {
   }
 }
 
-export const getAccessToken = (): string | null => {
+export const getAccessToken = (): Nullable<string> => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("token") || sessionStorage.getItem("token")
   }
   return null
 }
 
-export const getRefreshToken = (): string | null => {
+export const getRefreshToken = (): Nullable<string> => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("refresh_token") || sessionStorage.getItem("refresh_token")
   }

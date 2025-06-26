@@ -10,13 +10,14 @@ import SearchFilters from "@/components/search-filters"
 import { Product } from "@/types/product/product"
 import { SearchFilters as SearchFiltersType } from "@/types/search"
 import javaService from "@/api/services/javaService"
+import { Nullable } from "@/types/common"
 
 function SearchPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<Nullable<string>>(null)
   const [totalResults, setTotalResults] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [isFiltersOpen, setIsFiltersOpen] = useState(false)

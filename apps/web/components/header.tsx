@@ -23,6 +23,7 @@ import { useInitSession } from "@/api/hooks/useInitSession"
 import { useSelector, useDispatch } from "react-redux"
 import { selectUser } from "@/store/sessionSlice"
 import FullScreenLoader from "@/components/ui/FullScreenLoader"
+import { Nullable } from "@/types/common"
 
 export default function Header() {
   const dispatch = useDispatch<AppDispatch>()
@@ -39,7 +40,7 @@ export default function Header() {
   const logoutHandler = useLogout()
   const pathname = usePathname()
   const router = useRouter()
-  const [activeMenu, setActiveMenu] = useState<string | null>(null)
+  const [activeMenu, setActiveMenu] = useState<Nullable<string>>(null)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showUserSlideout, setShowUserSlideout] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")

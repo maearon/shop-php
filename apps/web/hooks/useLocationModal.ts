@@ -1,5 +1,6 @@
 "use client"
 
+import { Nullable } from "@/types/common";
 import { useState, useEffect } from "react"
 
 export function useLocationModal() {
@@ -7,8 +8,8 @@ export function useLocationModal() {
 
   useEffect(() => {
     // Check if user has already selected a location
-    let savedLocation: string | null = null;
-    let hasSeenModal: string | null = null;
+    let savedLocation: Nullable<string> = null;
+    let hasSeenModal: Nullable<string> = null;
     if (typeof window !== "undefined") {
       savedLocation = localStorage.getItem("delivery-location");
       hasSeenModal = localStorage.getItem("location-modal-seen");

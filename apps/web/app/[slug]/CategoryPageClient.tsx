@@ -12,6 +12,7 @@ import { categoryConfig } from "@/utils/category-config"
 import api from "@/api/client"
 import { ProductsResponse, Product as ProductOriginal } from "@/types/product/product"
 import javaService from "@/api/services/javaService"
+import { Nullable } from "@/types/common"
 
 type Product = ProductOriginal & {
   price: number | string
@@ -29,7 +30,7 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
   const [sortBy, setSortBy] = useState("newest")
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<Nullable<string>>(null)
   const [meta, setMeta] = useState<ProductsResponse["meta"] | null>(null)
   const [loadingMore, setLoadingMore] = useState(false)
 

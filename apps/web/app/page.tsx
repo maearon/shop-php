@@ -11,237 +11,28 @@ import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
 import HeroBanner from "@/components/home/HeroBanner"
 import { useState, useEffect } from "react"
-import { LastVisitedProduct } from "@/types/product"
+import { LastVisitedProduct, Product } from "@/types/product"
+import { fakeLastVisitedProducts } from "@/data/fake-last-visited-products"
+import { newArrivalProducts } from "@/data/fake-new-arrival-products"
 
 export default function HomePage() {
   const [stillInterestedProducts, setStillInterestedProducts] = useState<any[]>([])
+  const [newArrivalProductsTab, setNewArrivalProductsTab] = useState<Product[]>([])
 
     useEffect(() => {
-    const visitedProducts: LastVisitedProduct[] = fakeLastVisitedProducts
+    const visitedProducts: LastVisitedProduct[] = fakeLastVisitedProducts;
     localStorage.setItem("lastVisitedProducts", JSON.stringify(visitedProducts))
-
     try {
       const lastVisitedProductsStr = localStorage.getItem("lastVisitedProducts") ?? "[]"
       const parsed: LastVisitedProduct[] = JSON.parse(lastVisitedProductsStr)
-      const sliced = parsed.slice()
+      const sliced = parsed.slice().reverse()
 
       setStillInterestedProducts(sliced)
+      setNewArrivalProductsTab(newArrivalProducts)
     } catch (err) {
       console.error("Failed to parse lastVisitedProducts", err)
     }
   }, [])
-
-  // ✅ Fake slide data
-  const fakeLastVisitedProducts = [
-    {
-      product: {
-        id: "1",
-        display_name: "Soft Lux Mesh Full-Zip Hoodie",
-        name: "Soft Lux Mesh Full-Zip Hoodie",
-        price: "$70",
-        attribute_list: {
-          brand: "Sportswear"
-        },
-        price_information: [
-          {
-            value: 70,
-            value_no_vat: 70,
-            type: "original"
-          }
-        ],
-        pricing_information: { 
-          currentPrice: 70, 
-          standard_price: 70, 
-          standard_price_no_vat: 70, 
-        },
-        thumbnail: "/images/Soft_Lux_Mesh_Full-Zip_Hoodie_Beige_JV9858_000_plp_model.jpg",
-        image_url: "/images/Soft_Lux_Mesh_Full-Zip_Hoodie_Beige_JV9858_000_plp_model.jpg",
-        image: "/images/Soft_Lux_Mesh_Full-Zip_Hoodie_Beige_JV9858_000_plp_model.jpg",
-        model_number: "KLH81",
-        base_model_number: "KLH81",
-        product_type: "inline",
-      },
-      timestamp: Date.now(),
-      url: "/us/soft-lux-mesh-full-zip-hoodie/JV9858.html",
-    },
-    {
-      product: {
-        id: "2",
-        display_name: "adicolor Firebird Oversized Track Pants",
-        name: "adicolor Firebird Oversized Track Pants",
-        price: "$80",
-        attribute_list: {
-          brand: "Originals"
-        },
-        price_information: [
-          {
-            value: 80,
-            value_no_vat: 80,
-            type: "original"
-          }
-        ],
-        pricing_information: { 
-          currentPrice: 80, 
-          standard_price: 80, 
-          standard_price_no_vat: 80, 
-        },
-        thumbnail: "/images/adicolor_Firebird_Oversized_Track_Pants_Blue_JV7492_000_plp_model.jpg",
-        image_url: "/images/adicolor_Firebird_Oversized_Track_Pants_Blue_JV7492_000_plp_model.jpg",
-        image: "/images/adicolor_Firebird_Oversized_Track_Pants_Blue_JV7492_000_plp_model.jpg",
-        model_number: "DB724",
-        base_model_number: "DB724",
-        product_type: "inline",
-      },
-      timestamp: Date.now() - 10000,
-      url: "/us/adidas-originals-x-minecraft-jersey-kids/JV7492.html",
-    },
-    {
-      product: {
-        id: "3",
-        display_name: "Adicolor Firebird Oversized Track Pants",
-        name: "Adicolor Firebird Oversized Track Pants",
-        price: "$70",
-        attribute_list: {
-          brand: "Originals"
-        },
-        price_information: [
-          {
-            value: 70,
-            value_no_vat: 70,
-            type: "original"
-          }
-        ],
-        pricing_information: { 
-          currentPrice: 70, 
-          standard_price: 70, 
-          standard_price_no_vat: 70, 
-        },
-        thumbnail: "/images/Teamgeist_Adicolor_Cropped_Track_Top_Blue_JZ8277_000_plp_model.jpg",
-        image_url: "/images/Teamgeist_Adicolor_Cropped_Track_Top_Blue_JZ8277_000_plp_model.jpg",
-        image: "/images/Teamgeist_Adicolor_Cropped_Track_Top_Blue_JZ8277_000_plp_model.jpg",
-        model_number: "KSU13",
-        base_model_number: "KSU13",
-        product_type: "inline",
-      },
-      timestamp: Date.now() - 20000,
-      url: "/us/adicolor-firebird-oversized-track-pants/JZ8277.html",
-    },
-    {
-      product: {
-        id: "4",
-        display_name: "Adifom Stan Smith Mule Shoes",
-        name: "Adifom Stan Smith Mule Shoes",
-        price: "$70",
-        attribute_list: {
-          brand: "Originals"
-        },
-        price_information: [
-          {
-            value: 70,
-            value_no_vat: 70,
-            type: "original"
-          }
-        ],
-        pricing_information: { 
-          currentPrice: 70, 
-          standard_price: 70, 
-          standard_price_no_vat: 70, 
-        },
-        thumbnail: "/images/Adifom_Stan_Smith_Mule_Shoes_Blue_JR8820_00_plp_standard.jpg",
-        image_url: "/images/Adifom_Stan_Smith_Mule_Shoes_Blue_JR8820_00_plp_standard.jpg",
-        image: "/images/Adifom_Stan_Smith_Mule_Shoes_Blue_JR8820_00_plp_standard.jpg",
-        model_number: "DL921",
-        base_model_number: "DL921",
-        product_type: "inline",
-      },
-      timestamp: Date.now() - 30000,
-      url: "/us/teamgeist-adicolor-cropped-track-top/JR8820.html",
-    },
-    {
-      product: {
-        id: "5",
-        display_name: "Soft Lux Mesh Tee",
-        name: "Soft Lux Mesh Tee",
-        price: "$35",
-        price_information: [
-          {
-            value: 35,
-            value_no_vat: 35,
-            type: "original"
-          }
-        ],
-        pricing_information: { 
-          currentPrice: 35, 
-          standard_price: 35, 
-          standard_price_no_vat: 35, 
-        },
-        thumbnail: "/images/Soft_Lux_Mesh_Tee_Beige_JV9873_000_plp_model.jpg",
-        image_url: "/images/Soft_Lux_Mesh_Tee_Beige_JV9873_000_plp_model.jpg",
-        image: "/images/Soft_Lux_Mesh_Tee_Beige_JV9873_000_plp_model.jpg",
-        model_number: "LYT60",
-        base_model_number: "LYT60",
-        product_type: "inline",
-      },
-      timestamp: Date.now() - 40000,
-      url: "/us/adifom-stan-smith-mule-shoes/JV9873.html",
-    },
-    {
-      product: {
-        id: "6",
-        display_name: "Superstar 82 Roller Skates",
-        name: "Superstar 82 Roller Skates",
-        price: "$200",
-        price_information: [
-          {
-            value: 200,
-            value_no_vat: 200,
-            type: "original"
-          }
-        ],
-        pricing_information: { 
-          currentPrice: 200, 
-          standard_price: 200, 
-          standard_price_no_vat: 200, 
-        },
-        thumbnail: "/images/Superstar_82_Roller_Skates_Black_JI3535_00_plp_standard.jpg",
-        image_url: "/images/Superstar_82_Roller_Skates_Black_JI3535_00_plp_standard.jpg",
-        image: "/images/Superstar_82_Roller_Skates_Black_JI3535_00_plp_standard.jpg",
-        model_number: "LYT60",
-        base_model_number: "LYT60",
-        product_type: "inline",
-      },
-      timestamp: Date.now() - 40000,
-      url: "/us/adifom-stan-smith-mule-shoes/JI3535.html",
-    },
-    {
-      product: {
-        id: "7",
-        display_name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
-        name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
-        price: "$60",
-        price_information: [
-          {
-            value: 60,
-            value_no_vat: 60,
-            type: "original"
-          }
-        ],
-        pricing_information: { 
-          currentPrice: 60, 
-          standard_price: 60, 
-          standard_price_no_vat: 60, 
-        },
-        thumbnail: "/images/Tiro_Cut_3-Stripes_Soft_Mesh_Long_Dress_Burgundy_JX5160_000_plp_model.jpg",
-        image_url: "/images/Tiro_Cut_3-Stripes_Soft_Mesh_Long_Dress_Burgundy_JX5160_000_plp_model.jpg",
-        image: "/images/Tiro_Cut_3-Stripes_Soft_Mesh_Long_Dress_Burgundy_JX5160_000_plp_model.jpg",
-        model_number: "LYT60",
-        base_model_number: "LYT60",
-        product_type: "inline",
-      },
-      timestamp: Date.now() - 40000,
-      url: "/us/adifom-stan-smith-mule-shoes/JX5160.html",
-    },
-  ];
 
   const mockSlides: Slide[] = [
     {
@@ -275,33 +66,6 @@ export default function HomePage() {
       image: "https://via.placeholder.com/600x400?text=Samba",
       cta: "SHOP NOW",
       href: "/samba",
-    },
-  ] 
-
-  const stillInterestedProducts2 = [
-    {
-      id: 1,
-      name: "Own The Run Shorts",
-      price: "$18",
-      image: "/placeholder.png?height=300&width=250",
-    },
-    {
-      id: 2,
-      name: "Adizero Adios 8 Shoes",
-      price: "$160",
-      image: "/placeholder.png?height=300&width=250",
-    },
-    {
-      id: 3,
-      name: "Essentials Fleece Regular Tapered Pants",
-      price: "$50",
-      image: "/placeholder.png?height=300&width=250",
-    },
-    {
-      id: 4,
-      name: "Z.N.E. Premium Full-Zip Hoodie",
-      price: "$120",
-      image: "/placeholder.png?height=300&width=250",
     },
   ]
 
@@ -425,7 +189,7 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stillInterestedProducts.map((product, index) => (
-            <ProductCard key={`${product.product.id}-${index}`} product={product.product} showAddToBag={true} />
+            <ProductCard key={`${product.product.id}-${index}`} product={product.product} />
           ))}
         </div>
       </section>
@@ -449,8 +213,15 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stillInterestedProducts.map((product, index) => (
-            <ProductCard key={`${product.product.id}-${index}`} product={product.product} />
+          {newArrivalProductsTab.map((product, index) => (
+            <ProductCard
+              key={`${product.id}-${index}`}
+              product={{
+                ...product,
+                price: product.price ?? "N/A",
+                image: product.image ?? "/placeholder.png",
+              }}
+            />
           ))}
         </div>
       </section>

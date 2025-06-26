@@ -2,6 +2,7 @@
 
 // Product-related types
 
+import { Optional } from "../common";
 import { Variant } from "./variant";
 
 // TODO: Add code here...
@@ -11,7 +12,28 @@ import { Variant } from "./variant";
 /** 🛍 Product entity */
 export interface Product {
   id: number;
-  name?: string;
+  name: string;
+  price?: string;
+  attribute_list?: {
+    brand?: string;
+    color?: string;
+    gender?: string;
+    sale?: boolean;
+    // mở rộng tùy vào project
+  }; 
+  image?: Optional<string>;
+  model_number?: string;
+  base_model_number?: string
+  product_type?: string;
+
+  display_name?: string;
+  price_information?: any[];
+  pricing_information?: {
+    currentPrice: number;
+    standard_price: number;
+    standard_price_no_vat: number;
+  };
+  thumbnail?: string;
   jan_code?: string;
   gender?: string;
   franchise?: string;
@@ -25,11 +47,10 @@ export interface Product {
   care?: string;
   created_at: string; // ISO 8601 timestamp
   updated_at: string;
-  image?: string;
   description: string;
   image_url: string;
-  variants: Variant[];
-  slug: string;
+  variants?: Variant[];
+  slug?: string;
   score?: number;
 }
 

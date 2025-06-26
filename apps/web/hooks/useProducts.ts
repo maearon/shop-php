@@ -1,13 +1,14 @@
 "use client"
 
-import { ProductFilters, ProductsResponse } from "@/types/product/product"
 import javaService from "@/api/services/javaService"
 import { useState, useEffect } from "react"
+import { Nullable } from "@/types/common"
+import { ProductFilters, ProductsResponse } from "@/types/product"
 
 export function useProducts(initialFilters: ProductFilters = {}) {
   const [data, setData] = useState<ProductsResponse | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<Nullable<string>>(null)
   const [filters, setFilters] = useState<ProductFilters>(initialFilters)
 
   const fetchProducts = async (newFilters: ProductFilters = {}) => {

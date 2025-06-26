@@ -14,14 +14,18 @@ export interface ProductData {
   model_number: string;
   base_model_number: string;
   product_type: string;
+  display_name: string;
   name: string;
+  price: string;
   price_information: PriceInfo[];
   pricing_information: {
     currentPrice: number;
     standard_price: number;
     standard_price_no_vat: number;
   };
+  thumbnail: string;
   image_url: string;
+  image: string;
   description?: string;
   attribute_list?: {
     brand?: string;

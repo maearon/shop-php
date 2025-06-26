@@ -1,5 +1,6 @@
 import axios, { type InternalAxiosRequestConfig, type AxiosResponse } from "axios"
 import { getAccessToken, getRefreshToken, setTokens, clearTokens } from "@/lib/token"
+import { Nullable } from "@/types/common"
 
 // Base URL config
 const BASE_URL = process.env.NODE_ENV === "development"
@@ -55,7 +56,7 @@ api.interceptors.request.use(
 let isRefreshing = false
 let failedQueue: any[] = []
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: any, token: Nullable<string> = null) => {
   failedQueue.forEach((prom) => {
     error ? prom.reject(error) : prom.resolve(token)
   })

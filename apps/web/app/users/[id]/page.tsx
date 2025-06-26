@@ -11,11 +11,12 @@ import Link from 'next/link';
 import { UserShow } from '@/types/user/user';
 import { Micropost } from '@/types/micropost/micropost';
 import javaService from '@/api/services/javaService';
+import { Nullable } from '@/types/common';
 
 const Show = ({ params }: { params: { id: string } }) => {
   const [user, setUser] = useState<UserShow | null>(null);
   const [microposts, setMicroposts] = useState<Micropost[]>([]);
-  const [idRelationships, setIdRelationships] = useState<string | null>(null);
+  const [idRelationships, setIdRelationships] = useState<Nullable<string>>(null);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(1);
   const currentUser = useAppSelector(selectUser);
