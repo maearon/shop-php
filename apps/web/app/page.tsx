@@ -181,7 +181,9 @@ export default function HomePage() {
       {/* Still Interested Section */}
       <section className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-xl font-bold">STILL INTERESTED?</h2>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight leading-tight break-words">
+            STILL <br className="sm:hidden" /> INTERESTED?
+          </h2>
           {/* <Button variant="link" className="text-sm font-bold">
             VIEW ALL
           </Button> */}
