@@ -15,6 +15,7 @@ import { LastVisitedProduct, Product } from "@/types/product"
 import { fakeLastVisitedProducts } from "@/data/fake-last-visited-products"
 import { newArrivalProducts } from "@/data/fake-new-arrival-products"
 import ProductCarousel from "@/components/product-carousel"
+import PromoBanner from "@/components/home/PromoBanner"
 
 export default function HomePage() {
   const [stillInterestedProducts, setStillInterestedProducts] = useState<any[]>([])
@@ -176,6 +177,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Promo Banner */}
+      <PromoBanner />
+
       {/* Hero Banner */}
       <HeroBanner />
 
