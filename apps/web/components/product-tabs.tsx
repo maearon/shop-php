@@ -4,6 +4,14 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import ProductGrid from "@/components/product-grid"
 import { useProducts } from "@/hooks/useProducts"
+import { Product } from "@/types/product"
+
+type ProductTabsProps = {
+  initialProductsByTab?: {
+    [key: string]: Product[]
+  }
+}
+
 
 const tabs = [
   { id: "new-arrivals", label: "New Arrivals", endpoint: "new-arrivals" },
@@ -11,15 +19,17 @@ const tabs = [
   { id: "new-to-sale", label: "New to Sale", endpoint: "sale" },
 ]
 
-export default function ProductTabs() {
+export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState("new-arrivals")
 
   const { data, loading, error } = useProducts({
     category: activeTab,
     limit: 4,
   })
-  const products = data?.products ?? []
-
+  const products =
+  (!data?.products || error)
+    ? initialProductsByTab?.[activeTab] ?? []
+    : data.products
   return (
     <section className="container mx-auto px-4 py-12">
       {/* Tabs Navigation */}
@@ -54,6 +64,7 @@ export default function ProductTabs() {
 
       {/* Products Grid */}
       {loading ? (
+        // Loading skeleton
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="animate-pulse">
@@ -63,10 +74,15 @@ export default function ProductTabs() {
             </div>
           ))}
         </div>
+      ) : products.length > 0 ? (
+        // Có sản phẩm → hiển thị
+        <ProductGrid products={products} />
       ) : error ? (
+        // Không có data và có lỗi → hiển thị lỗi
         <div className="text-center py-8 text-gray-500">Failed to load products. Please try again.</div>
       ) : (
-        <ProductGrid products={products} />
+        // Không lỗi, không sản phẩm
+        <div className="text-center py-8 text-gray-500">No products available.</div>
       )}
     </section>
   )

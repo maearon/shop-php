@@ -197,7 +197,11 @@ export default function HomePage() {
       </section>
 
       {/* Product Tabs Section */}
-      <ProductTabs />
+      <ProductTabs initialProductsByTab={{
+        "new-arrivals": newArrivalProductsTab,
+        "best-sellers": newArrivalProductsTab,
+        "new-to-sale": newArrivalProductsTab,
+      }} />
 
       {/* Promo Carousel */}
       <PromoCarousel slides={mockSlides} />
