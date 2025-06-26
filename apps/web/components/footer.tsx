@@ -3,6 +3,7 @@
 import { Facebook, Instagram, Twitter, Youtube, Music, MapPin, ChevronUp } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import CcpaIcon from "@/assets/icons/ccpa-privacy-options.svg";
 
 export default function Footer() {
   const footerSections = {
@@ -239,8 +240,8 @@ export default function Footer() {
               <div className="flex items-center gap-2">
                 <span>Your Privacy Choices</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-4 bg-blue-600 rounded flex items-center justify-center">
-                    <span className="text-white text-xs">✓</span>
+                  <div className="w-10 h-5">
+                    <CcpaIcon className="w-full h-full" />
                   </div>
                 </div>
               </div>

@@ -43,7 +43,16 @@ const nextConfig = {
     SCOPE: process.env.SCOPE,
     CLIENT_SECRET: process.env.CLIENT_SECRET,
     API_KEY: process.env.API_KEY
-  ,}
+  },
+  webpack(config) {
+    // 👇 Cấu hình @svgr/webpack
+    config.module.rules.push({
+      test: /\.svg$/i,
+      issuer: /\.[jt]sx?$/,
+      use: ["@svgr/webpack"],
+    });
+    return config;
+  },
 };
 
 export default nextConfig;
