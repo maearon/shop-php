@@ -154,7 +154,7 @@ export default function Footer() {
       </section>
 
       {/* Bottom CTA */}
-      <div className="bg-blue-600 text-white py-8">
+      <div className="hidden md:block bg-blue-600 text-white py-8">
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-2xl font-bold mb-2">JOIN OUR ADICLUB & GET 15% OFF</h3>
           <Link
@@ -168,7 +168,8 @@ export default function Footer() {
 
       {/* Main Footer */}
       <footer className="bg-black text-white py-8 md:py-12">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-0">
+          
           {/* Desktop Footer */}
           <div className="hidden md:grid grid-cols-6 gap-8">
             {Object.entries(footerSections).map(([section, items]) => (
@@ -213,12 +214,36 @@ export default function Footer() {
           </div>
 
           {/* Mobile Footer */}
-          <div className="md:hidden grid grid-cols-2 gap-8">
-            {Object.entries(mobileFooterSections).map(([section, items]) => (
-              <div key={section}>
-                <h3 className="font-bold mb-4 text-sm">{section}</h3>
-                <ul className="space-y-3">
-                  {items.map((item, index) => (
+          <div className="md:hidden">
+
+            {/* Hàng 1: 2 cột tiêu đề */}
+            <div className="grid grid-cols-2 gap-20 px-16 pb-6">
+              <div>
+                <h3 className="font-bold mb-2 text-sm">My account</h3>
+              </div>
+              <div>
+                <h3 className="font-bold mb-2 text-sm">Your bag (2)</h3>
+              </div>
+            </div>
+
+            {/* Hàng 2: CTA không có px-4 */}
+            <div className="col-span-2">
+              <div className="bg-blue-600 text-white py-6 rounded-none text-center">
+                <h3 className="text-xl font-bold mb-2">JOIN OUR ADICLUB & GET 15% OFF</h3>
+                <Link
+                  href="/signup"
+                  className="bg-white text-blue-600 px-5 py-2 rounded font-semibold text-sm hover:bg-gray-100 transition-colors inline-block"
+                >
+                  SIGN UP FOR FREE →
+                </Link>
+              </div>
+            </div>
+
+            {/* Hàng 3: 2 cột nội dung */}
+            <div className="grid grid-cols-2 gap-6 px-16 mt-6">
+              <div>
+                <ul className="space-y-6">
+                  {mobileFooterSections["My account"].map((item, index) => (
                     <li key={index}>
                       <a href="#" className="text-sm text-gray-300 hover:text-white">
                         {item}
@@ -227,8 +252,20 @@ export default function Footer() {
                   ))}
                 </ul>
               </div>
-            ))}
+              <div>
+                <ul className="space-y-6">
+                  {mobileFooterSections["Your bag (2)"].map((item, index) => (
+                    <li key={index}>
+                      <a href="#" className="text-sm text-gray-300 hover:text-white">
+                        {item}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
+
         </div>
       </footer>
 
