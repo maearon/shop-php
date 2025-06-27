@@ -154,7 +154,7 @@ export default function Footer() {
       </section>
 
       {/* Bottom CTA */}
-      <div className="hidden md:block bg-blue-600 text-white py-8">
+      <div className="hidden sm:block bg-blue-600 text-white py-8">
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-2xl font-bold mb-2">JOIN OUR ADICLUB & GET 15% OFF</h3>
           <Link
@@ -167,7 +167,7 @@ export default function Footer() {
       </div>
 
       {/* Main Footer */}
-      <footer className="bg-black text-white pl-10 sm:pl-10 md:pl-10 lg:pl-10 xl:pl-20 2xl:pl-20 py-8 md:py-12">
+      <footer className="bg-black text-white py-8 md:py-12">
         <div className="container mx-auto px-0">
           
           {/* Desktop Footer */}
@@ -214,10 +214,10 @@ export default function Footer() {
           </div>
 
           {/* Mobile Footer */}
-          <div className="md:hidden py-6 space-y-6">
+          <div className="sm:hidden py-6 space-y-6">
 
             {/* Hàng 1: 2 tiêu đề có padding ngang */}
-            <div className="grid grid-cols-2 gap-4 px-4">
+            <div className="grid grid-cols-2 gap-4 pl-14 sm:pl-14 md:pl-14 lg:pl-14 xl:pl-20 2xl:pl-20 2xl:px-20">
               <h3 className="font-bold text-sm">My account</h3>
               <h3 className="font-bold text-sm">Your bag (2)</h3>
             </div>
@@ -234,7 +234,7 @@ export default function Footer() {
             </div>
 
             {/* Hàng 3: 2 cột nội dung có padding ngang */}
-            <div className="grid grid-cols-2 gap-4 px-4">
+            <div className="grid grid-cols-2 gap-4 pl-14 sm:pl-14 md:pl-14 lg:pl-14 xl:pl-20 2xl:pl-20 2xl:px-20">
               <ul className="space-y-2">
                 {mobileFooterSections["My account"].map((item, index) => (
                   <li key={index}>
@@ -261,7 +261,7 @@ export default function Footer() {
 
       {/* Bottom Footer */}
       <div className="bg-black text-white py-6 border-t border-gray-700">
-        <div className="container mx-auto pl-10 sm:pl-10 md:pl-10 lg:pl-10 xl:pl-20 2xl:pl-20 2xl:px-20">
+        <div className="container mx-auto pl-14 sm:pl-14 md:pl-14 lg:pl-14 xl:pl-20 2xl:pl-20 2xl:px-20">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-sm">
             <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
               <div className="flex items-center gap-2">
