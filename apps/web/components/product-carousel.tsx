@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import ProductCard from "@/components/product-card"
 import { motion } from "framer-motion"
 import { Product } from "@/types/product"
+import { Optional } from "@/types/common"
 
 interface ProductCarouselProps {
   products: Product[]
@@ -14,6 +15,7 @@ interface ProductCarouselProps {
   showIndicators?: boolean
   carouselModeInMobile?: boolean
   viewMoreHref?: string
+  minimalMobileForProductCard?: Optional<boolean>
 }
 
 export default function ProductCarousel({
@@ -23,6 +25,7 @@ export default function ProductCarousel({
   showIndicators = true,
   carouselModeInMobile = true,
   viewMoreHref,
+  minimalMobileForProductCard = false,
 }: ProductCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [hovering, setHovering] = useState(false)
@@ -57,7 +60,7 @@ export default function ProductCarousel({
     return (
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
         {products.slice(0, 6).map((product) => (
-          <ProductCard key={product.id} product={product} showAddToBag={showAddToBag} />
+          <ProductCard key={product.id} product={product} minimalMobile={minimalMobileForProductCard} />
         ))}
         <div className="col-span-full mt-4 flex justify-center">
           <Button

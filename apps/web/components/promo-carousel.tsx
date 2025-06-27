@@ -64,7 +64,7 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
   const goToSlide = (i: number) => setCurrentSlide(i)
 
   return (
-    <section className="container mx-auto px-4 py-12">
+    <section className="container mx-auto px-4 py-0">
       <div
         className="relative overflow-hidden"
         onMouseEnter={() => setIsAutoPlaying(false)}

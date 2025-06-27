@@ -51,9 +51,10 @@ interface ProductCardProps {
     view_list?: ProductAsset[]
   }
   showAddToBag?: boolean
+  minimalMobile?: boolean
 }
 
-export default function ProductCard({ product, showAddToBag = false }: ProductCardProps) {
+export default function ProductCard({ product, showAddToBag = false, minimalMobile = false }: ProductCardProps) {
   const dispatch = useAppDispatch()
 
   const handleAddToBag = (e: React.MouseEvent) => {
@@ -75,7 +76,8 @@ export default function ProductCard({ product, showAddToBag = false }: ProductCa
     <Link href={`/product/${product.id}`}>
       <Card className="flex flex-col justify-between border border-transparent hover:border-black transition-all shadow-none cursor-pointer rounded-none">
         <CardContent className="p-0 flex flex-col h-full">
-          <div className="relative aspect-square overflow-hidden mb-4">
+          {/* ảnh */}
+          <div className={`relative aspect-square overflow-hidden ${!minimalMobile ? "mb-4" : ""}`}>
             <Image
               src={product.image || "/placeholder.png"}
               alt={product.name}
@@ -88,19 +90,37 @@ export default function ProductCard({ product, showAddToBag = false }: ProductCa
             </div>
           </div>
 
-          <div className="space-y-2 px-2 pb-2 mt-auto">
-            {product.category && <p className="text-sm text-gray-600">{product.category}</p>}
-            <p className="font-bold">${product.pricing_information?.currentPrice ?? product.price}</p>
-            <h3 className="font-medium">{product.name}</h3>
-            {product.attribute_list?.brand && (
-              <p className="text-sm text-gray-600">{product.attribute_list.brand}</p>
-            )}
-            {showAddToBag && (
-              <Button className="w-full bg-black text-white hover:bg-gray-800" onClick={handleAddToBag}>
-                ADD TO BAG
-              </Button>
-            )}
-          </div>
+          {/* nội dung bên dưới */}
+          {!minimalMobile ? (
+            <div className="space-y-2 px-2 pb-2 mt-auto">
+              {product.category && <p className="text-sm text-gray-600">{product.category}</p>}
+              <p className="font-bold">${product.pricing_information?.currentPrice ?? product.price}</p>
+              <h3 className="font-medium h-[3rem] overflow-hidden">{product.name}</h3>
+<p className="text-sm text-gray-600 min-h-[1.25rem]">
+  {product.attribute_list?.brand ?? ""}
+</p>
+              {showAddToBag && (
+                <Button className="w-full bg-black text-white hover:bg-gray-800" onClick={handleAddToBag}>
+                  ADD TO BAG
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className="hidden sm:block space-y-2 px-2 pb-2 mt-auto">
+              {/* optional: hiển thị lại ở desktop nếu muốn */}
+              {product.category && <p className="text-sm text-gray-600">{product.category}</p>}
+              <p className="font-bold">${product.pricing_information?.currentPrice ?? product.price}</p>
+              <h3 className="font-medium h-[3rem] overflow-hidden">{product.name}</h3>
+              {product.attribute_list?.brand && (
+                <p className="text-sm text-gray-600">{product.attribute_list.brand}</p>
+              )}
+              {showAddToBag && (
+                <Button className="w-full bg-black text-white hover:bg-gray-800" onClick={handleAddToBag}>
+                  ADD TO BAG
+                </Button>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </Link>

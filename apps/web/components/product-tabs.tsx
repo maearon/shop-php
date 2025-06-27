@@ -36,7 +36,7 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
   const viewMoreHref = activeTabInfo ? `/${activeTabInfo.endpoint}` : undefined
 
   return (
-    <section className="container mx-auto px-4 py-12">
+    <section className="container mx-auto px-4 mb-10">
       {/* Tabs Navigation */}
       <div className="flex flex-wrap justify-between items-start gap-4 mb-8 sm:flex-nowrap sm:items-center">
         {/* Tabs */}
@@ -85,6 +85,7 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
           products={products}
           carouselModeInMobile={false}
           viewMoreHref={viewMoreHref}
+          minimalMobileForProductCard={true}
         />
       ) : error ? (
         <div className="text-center py-8 text-gray-500">

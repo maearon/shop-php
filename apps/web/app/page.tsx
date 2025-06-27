@@ -184,7 +184,7 @@ export default function HomePage() {
       <HeroBanner />
 
       {/* History Products Section */}
-      <section className="container mx-auto px-4 py-12">
+      <section className="container mx-auto px-4 mb-10">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-xl sm:text-2xl md:text-3xl xl:text-3xl font-extrabold tracking-tight leading-tight break-words">
             STILL <br className="xl:hidden" /> INTERESTED?
@@ -234,7 +234,7 @@ export default function HomePage() {
       </section> */}
 
       {/* Prime Section */}
-      <section className="bg-black text-white py-16">
+      <section className="bg-black text-white py-2 xl:py-12">
         <div className="container mx-auto px-4 text-center">
           <div className="mb-8">
             <div className="text-6xl font-bold mb-4">prime</div>
@@ -249,7 +249,7 @@ export default function HomePage() {
       </section>
 
       {/* Promo Tiles */}
-      <section className="container mx-auto px-4 py-12">
+      {/* <section className="container mx-auto px-4 mb-">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {promoTiles.map((title, index) => (
             <Card key={`${title}-${index}`} className="relative overflow-hidden h-80 border-0 rounded-none">
@@ -272,11 +272,11 @@ export default function HomePage() {
             </Card>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Popular Categories */}
-      <section className="container mx-auto px-4 py-12">
-        <h2 className="text-xl font-bold mb-8">Popular right now</h2>
+      <section className="container mx-auto px-4 py-0 mb-10">
+        <h2 className="text-xl font-bold mb-2">Popular right now</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {popularCategories.map((category, index) => (
             <Button key={`${category}-${index}`} variant="outline" className="h-12 text-lg font-medium hover:bg-gray-50 rounded-none">
@@ -287,8 +287,8 @@ export default function HomePage() {
       </section>
 
       {/* Related Resources */}
-      <section className="container mx-auto px-4 py-12">
-        <h2 className="text-xl font-bold mb-8">RELATED RESOURCES</h2>
+      <section className="container mx-auto px-4 py-0 mb-10">
+        <h2 className="text-xl font-bold mb-2">RELATED RESOURCES</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {relatedResources.map((resource, index) => (
             <Card key={`${resource}-${index}`} className="border-none shadow-none">
