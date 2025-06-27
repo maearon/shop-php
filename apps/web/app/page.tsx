@@ -111,31 +111,31 @@ export default function HomePage() {
 
   const promoTiles = [
     {
-      title: "SUPERSTAR",
-      subtitle: "PAST, PRESENT, FUTURE",
-      description: "Explore the Superstar, now updated for the next generation.",
-      image: "/placeholder.png?height=400&width=300",
+      title: "ADIZERO EVO SL",
+      subtitle: "",
+      description: "Feel fast. In all aspects of life.",
+      image: "/assets/resource/running_fw25_adizero_evo_sl_card_launch_d_a5b8e55d93.jpg?height=400&width=300",
       cta: "SHOP NOW",
     },
     {
-      title: "UNDENIABLE DUO",
+      title: "TAEKWONDO: NEW AGE CLASSIC",
       subtitle: "",
-      description: "Bring 3-Stripes style that shows your #1 supportive team-mates for seasons to you.",
-      image: "/placeholder.png?height=400&width=300",
+      description: "The low profile style everyone is talking about.",
+      image: "/assets/resource/originals_fw25_taekwondo_card_sustain_d_12978e639b.jpg",
       cta: "SHOP NOW",
     },
     {
-      title: "PLAY YOUR FASTEST",
+      title: "REAL MADRID 25/26 AWAY JERSEY",
       subtitle: "",
-      description: "Ultraboost 5 tennis shoes. Made for speed.",
-      image: "/placeholder.png?height=400&width=300",
+      description: "Bring the Bernabéu Stadium to them.",
+      image: "/assets/resource/global_aclubs_away_realmadrid_football_fw25_launch_teaser_d_cd74d54f99.jpg",
       cta: "SHOP NOW",
     },
     {
       title: "DROPSET 3",
       subtitle: "",
       description: "Rooted in Strength.",
-      image: "/placeholder.png?height=400&width=300",
+      image: "/assets/resource/global_dropset_training_fw25_launch_hp_catlp_navigation_card_teaser_2_d_7051bb5ba3.jpg",
       cta: "SHOP NOW",
     },
   ]
@@ -244,42 +244,8 @@ export default function HomePage() {
         </div>
       </section> */}
 
-      {/* Prime Section */}
-      {/* <section className="bg-black text-white xl:pt-1 py-1 sm:py-1 md:py-1 lg:py-1 xl:py-1 2xl:py-1 2xl:py-1">
-        <div className="container mx-auto px-4 text-center">
-          <div className="mb-8">
-            <div className="text-6xl font-bold mb-4">prime</div>
-            <div className="w-16 h-1 bg-white mx-auto mb-8"></div>
-          </div>
-          <h2 className="text-3xl font-bold mb-2">FAST, FREE DELIVERY</h2>
-          <h3 className="text-3xl font-bold mb-8">WITH PRIME AT ADIDAS</h3>
-          <Link href="/prime">
-            <Button className="bg-white text-black hover:bg-gray-100 font-bold px-8 text-lg">SHOP NOW →</Button>
-          </Link>
-        </div>
-      </section> */}
-      <section className="bg-black text-white py-20 sm:py-18 md:py-0 lg:py-8 xl:py-8 2xl:py-10 mb-0">
-        <div className="container mx-auto px-4 flex flex-col items-center text-center gap-0">
-          <Image
-            src="/assets/resource/Prime_logo_d_c8da1e6868.png"
-            alt="Prime Logo"
-            width={160}
-            height={60}
-            className="w-32 sm:w-32 md:w-32 h-auto pb-6"
-          />
-
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide">
-            Fast, Free Delivery
-          </h2>
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide pb-6">
-            with Prime at adidas
-          </h3>
-          <AdidasButton href="/prime">SHOP NOW</AdidasButton>
-        </div>
-      </section>
-
       {/* Promo Tiles */}
-      {/* <section className="container mx-auto px-4 mb-">
+      <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 mb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {promoTiles.map((title, index) => (
             <Card key={`${title}-${index}`} className="relative overflow-hidden h-80 border-0 rounded-none">
@@ -302,23 +268,54 @@ export default function HomePage() {
             </Card>
           ))}
         </div>
-      </section> */}
+      </section>
+
+      {/* Prime Section */}
+      <section className="bg-black text-white py-20 sm:py-18 md:py-0 lg:py-8 xl:py-8 2xl:py-10 mb-0">
+        <div className="container mx-auto px-4 flex flex-col items-center text-center gap-0">
+          <Image
+            src="/assets/resource/Prime_logo_d_c8da1e6868.png"
+            alt="Prime Logo"
+            width={160}
+            height={60}
+            className="w-32 sm:w-32 md:w-32 h-auto pb-6"
+          />
+
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide">
+            Fast, Free Delivery
+          </h2>
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide pb-6">
+            with Prime at adidas
+          </h3>
+          <AdidasButton href="/prime">SHOP NOW</AdidasButton>
+        </div>
+      </section>
 
       {/* Popular Categories */}
-      <section className="container mx-auto px-4 py-0 mb-10">
-        <h2 className="text-xl font-bold mb-2">Popular right now</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {popularCategories.map((category, index) => (
-            <Button key={`${category}-${index}`} variant="outline" className="h-12 text-lg font-medium hover:bg-gray-50 rounded-none">
+      <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 py-0 mb-10">
+        <h2 className="text-[32px] font-bold mb-4">Popular right now</h2>
+        
+        <div className="grid grid-cols-3 gap-x-8 gap-y-6">
+          {popularCategories.slice(0, 6).map((category, index) => (
+            <Button
+              key={`${category}-${index}`}
+              variant="ghost"
+              className="w-full justify-start text-left text-[44px] font-extrabold pb-10
+                border-0 border-b border-black
+                hover:shadow-[inset_0_-5px_0_0_black]
+                hover:bg-transparent focus:bg-transparent active:bg-transparent
+                rounded-none shadow-none transition-all duration-200"
+            >
               {category}
             </Button>
           ))}
         </div>
       </section>
 
+
       {/* Related Resources */}
-      <section className="container mx-auto px-4 py-0 mb-10">
-        <h2 className="text-xl font-bold mb-2">RELATED RESOURCES</h2>
+      <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 py-0 mb-10">
+        <h4 className="text-[24px] font-bold mb-2">RELATED RESOURCES</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {relatedResources.map((resource, index) => (
             <Card key={`${resource}-${index}`} className="border-none shadow-none">
