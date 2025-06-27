@@ -10,8 +10,8 @@ export default function HeroBanner() {
   const [showVideo, setShowVideo] = useState(false)
 
   return (
-    <section className="relative h-[90vh] bg-hero bg-cover bg-top text-white mb-10">
-      <div className="relative z-10 container mx-auto px-4 h-full flex items-end pb-12">
+    <section className="relative h-[80vh] bg-hero bg-cover bg-top text-white mb-10">
+      <div className="relative z-10 container mx-auto px-20 h-full flex items-end pb-12">
         <div className="max-w-2xl">
           <h1 className="inline-block bg-white text-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold px-2 py-1 mb-3">
             PAST, PRESENT, FUTURE

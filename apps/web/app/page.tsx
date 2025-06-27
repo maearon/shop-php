@@ -184,7 +184,7 @@ export default function HomePage() {
       <HeroBanner />
 
       {/* History Products Section */}
-      <section className="container mx-auto px-4 mb-10">
+      <section className="container mx-auto px-1 md:px-20 mb-10">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-xl sm:text-2xl md:text-3xl xl:text-3xl font-extrabold tracking-tight leading-tight break-words">
             STILL <br className="xl:hidden" /> INTERESTED?
