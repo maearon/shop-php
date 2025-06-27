@@ -258,25 +258,25 @@ export default function HomePage() {
           </Link>
         </div>
       </section> */}
-      <section className="bg-black text-white py-8 sm:py-12 md:py-16">
-      <div className="container mx-auto px-4 flex flex-col items-center text-center gap-6">
-        <Image
-          src="/assets/resource/Prime_logo_d_c8da1e6868.png"
-          alt="Prime Logo"
-          width={160}
-          height={60}
-          className="w-32 sm:w-40 md:w-48 h-auto"
-        />
+      <section className="bg-black text-white py-20 sm:py-18 md:py-0 lg:py-8 xl:py-8 2xl:py-10 mb-0">
+        <div className="container mx-auto px-4 flex flex-col items-center text-center gap-0">
+          <Image
+            src="/assets/resource/Prime_logo_d_c8da1e6868.png"
+            alt="Prime Logo"
+            width={160}
+            height={60}
+            className="w-32 sm:w-32 md:w-32 h-auto pb-6"
+          />
 
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide">
-          Fast, Free Delivery
-        </h2>
-        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide">
-          with Prime at adidas
-        </h3>
-        <AdidasButton href="/prime">SHOP NOW</AdidasButton>
-      </div>
-    </section>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide">
+            Fast, Free Delivery
+          </h2>
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide pb-6">
+            with Prime at adidas
+          </h3>
+          <AdidasButton href="/prime">SHOP NOW</AdidasButton>
+        </div>
+      </section>
 
       {/* Promo Tiles */}
       {/* <section className="container mx-auto px-4 mb-">

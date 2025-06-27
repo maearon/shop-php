@@ -16,7 +16,7 @@ export function AdidasButton({ href, children }: { href: string; children: React
       <Button
         onClick={() => router.push(href)}
         variant="ghost"
-        className="relative z-10 inline-flex items-center justify-center px-10 h-14 bg-white text-black font-bold text-base uppercase tracking-wide
+        className="relative z-10 inline-flex items-center justify-center px-3 h-12 bg-white text-black font-bold text-base uppercase tracking-wide
           border border-white rounded-none"
       >
         <span className="mr-2">{children}</span>
