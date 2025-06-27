@@ -214,55 +214,45 @@ export default function Footer() {
           </div>
 
           {/* Mobile Footer */}
-          <div className="md:hidden">
+          <div className="md:hidden py-6 space-y-6">
 
-            {/* Hàng 1: 2 cột tiêu đề */}
-            <div className="grid grid-cols-2 gap-20 px-16 pb-6">
-              <div>
-                <h3 className="font-bold mb-2 text-sm">My account</h3>
-              </div>
-              <div>
-                <h3 className="font-bold mb-2 text-sm">Your bag (2)</h3>
-              </div>
+            {/* Hàng 1: 2 tiêu đề có padding ngang */}
+            <div className="grid grid-cols-2 gap-4 px-4">
+              <h3 className="font-bold text-sm">My account</h3>
+              <h3 className="font-bold text-sm">Your bag (2)</h3>
             </div>
 
-            {/* Hàng 2: CTA không có px-4 */}
-            <div className="col-span-2">
-              <div className="bg-blue-600 text-white py-6 rounded-none text-center">
-                <h3 className="text-xl font-bold mb-2">JOIN OUR ADICLUB & GET 15% OFF</h3>
-                <Link
-                  href="/signup"
-                  className="bg-white text-blue-600 px-5 py-2 rounded font-semibold text-sm hover:bg-gray-100 transition-colors inline-block"
-                >
-                  SIGN UP FOR FREE →
-                </Link>
-              </div>
+            {/* Hàng 2: CTA không có padding ngang */}
+            <div className="bg-blue-600 text-white py-5 text-center">
+              <h3 className="text-base font-bold mb-2">JOIN OUR ADICLUB & GET 15% OFF</h3>
+              <Link
+                href="/signup"
+                className="bg-white text-blue-600 px-4 py-1.5 rounded font-semibold text-sm hover:bg-gray-100 transition-colors inline-block"
+              >
+                SIGN UP FOR FREE →
+              </Link>
             </div>
 
-            {/* Hàng 3: 2 cột nội dung */}
-            <div className="grid grid-cols-2 gap-6 px-16 mt-6">
-              <div>
-                <ul className="space-y-6">
-                  {mobileFooterSections["My account"].map((item, index) => (
-                    <li key={index}>
-                      <a href="#" className="text-sm text-gray-300 hover:text-white">
-                        {item}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <ul className="space-y-6">
-                  {mobileFooterSections["Your bag (2)"].map((item, index) => (
-                    <li key={index}>
-                      <a href="#" className="text-sm text-gray-300 hover:text-white">
-                        {item}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            {/* Hàng 3: 2 cột nội dung có padding ngang */}
+            <div className="grid grid-cols-2 gap-4 px-4">
+              <ul className="space-y-2">
+                {mobileFooterSections["My account"].map((item, index) => (
+                  <li key={index}>
+                    <a href="#" className="text-sm text-gray-300 hover:text-white">
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <ul className="space-y-2">
+                {mobileFooterSections["Your bag (2)"].map((item, index) => (
+                  <li key={index}>
+                    <a href="#" className="text-sm text-gray-300 hover:text-white">
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 
