@@ -17,8 +17,13 @@ import { newArrivalProducts } from "@/data/fake-new-arrival-products"
 import ProductCarousel from "@/components/product-carousel"
 import PromoBanner from "@/components/home/PromoBanner"
 import { ChevronDown, ChevronUp } from "lucide-react"
+import Image from "next/image"
+import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
+import { AdidasButton } from "@/components/ui/adidas-button"
 
 export default function HomePage() {
+  const router = useRouter()
   const [stillInterestedProducts, setStillInterestedProducts] = useState<any[]>([])
   const [newArrivalProductsTab, setNewArrivalProductsTab] = useState<Product[]>([])
   const [openCategory, setOpenCategory] = useState<string | null>(null)
@@ -240,7 +245,7 @@ export default function HomePage() {
       </section> */}
 
       {/* Prime Section */}
-      <section className="bg-black text-white xl:pt-1 py-1 sm:py-1 md:py-1 lg:py-1 xl:py-1 2xl:py-1 2xl:py-1">
+      {/* <section className="bg-black text-white xl:pt-1 py-1 sm:py-1 md:py-1 lg:py-1 xl:py-1 2xl:py-1 2xl:py-1">
         <div className="container mx-auto px-4 text-center">
           <div className="mb-8">
             <div className="text-6xl font-bold mb-4">prime</div>
@@ -252,7 +257,26 @@ export default function HomePage() {
             <Button className="bg-white text-black hover:bg-gray-100 font-bold px-8 text-lg">SHOP NOW →</Button>
           </Link>
         </div>
-      </section>
+      </section> */}
+      <section className="bg-black text-white py-8 sm:py-12 md:py-16">
+      <div className="container mx-auto px-4 flex flex-col items-center text-center gap-6">
+        <Image
+          src="/assets/resource/Prime_logo_d_c8da1e6868.png"
+          alt="Prime Logo"
+          width={160}
+          height={60}
+          className="w-32 sm:w-40 md:w-48 h-auto"
+        />
+
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide">
+          Fast, Free Delivery
+        </h2>
+        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide">
+          with Prime at adidas
+        </h3>
+        <AdidasButton href="/prime">SHOP NOW</AdidasButton>
+      </div>
+    </section>
 
       {/* Promo Tiles */}
       {/* <section className="container mx-auto px-4 mb-">
