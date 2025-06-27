@@ -234,7 +234,7 @@ export default function HomePage() {
       </section> */}
 
       {/* Prime Section */}
-      <section className="bg-black text-white py-1 md:py-12 lg:py-2 xl:py-2 2xl:py-12">
+      <section className="bg-black text-white pb-1 md:py-12 lg:py-2 xl:py-2 2xl:py-12">
         <div className="container mx-auto px-4 text-center">
           <div className="mb-8">
             <div className="text-6xl font-bold mb-4">prime</div>
