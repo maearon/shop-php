@@ -124,19 +124,6 @@ export default function Footer() {
         </div>
       </section>
 
-      {/* Bottom CTA */}
-      <div className="bg-blue-600 text-white py-8">
-        <div className="container mx-auto px-4 text-center">
-          <h3 className="text-2xl font-bold mb-2">JOIN OUR ADICLUB & GET 15% OFF</h3>
-          <Link
-            href="/signup"
-            className="bg-white text-blue-600 px-6 py-2 rounded font-semibold hover:bg-gray-100 transition-colors"
-          >
-            SIGN UP FOR FREE →
-          </Link>
-        </div>
-      </div>
-
       {/* Desktop Black section with white text */}
       <section className="hidden md:block bg-black text-white py-16">
         <div className="container mx-auto px-4 text-center">
@@ -165,6 +152,19 @@ export default function Footer() {
           </div>
         </div>
       </section>
+
+      {/* Bottom CTA */}
+      <div className="bg-blue-600 text-white py-8">
+        <div className="container mx-auto px-4 text-center">
+          <h3 className="text-2xl font-bold mb-2">JOIN OUR ADICLUB & GET 15% OFF</h3>
+          <Link
+            href="/signup"
+            className="bg-white text-blue-600 px-6 py-2 rounded font-semibold hover:bg-gray-100 transition-colors"
+          >
+            SIGN UP FOR FREE →
+          </Link>
+        </div>
+      </div>
 
       {/* Main Footer */}
       <footer className="bg-black text-white py-8 md:py-12">
