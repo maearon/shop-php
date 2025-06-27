@@ -424,7 +424,7 @@ export default function MegaMenu({ activeMenu, onClose }: MegaMenuProps) {
               </ul>
               {activeMenu === "SALE" && category.title === "FEATURED SALE" && (
                 <div className="mt-4">
-                  <img src="/placeholder.png?height=100&width=150" alt="Sale promotion" className="w-full h-auto" />
+                  <img src="/assets/nav/originals_fw25_superstar_topnav_launch_d_331db9ccb5.jpg?height=100&width=150" alt="Sale promotion" className="w-full h-auto" />
                 </div>
               )}
             </div>
