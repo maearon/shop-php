@@ -168,10 +168,10 @@ export default function Footer() {
 
       {/* Main Footer */}
       <footer className="bg-black text-white py-8 md:py-12">
-        <div className="container mx-auto px-0">
+        <div className="container mx-auto">
           
           {/* Desktop Footer */}
-          <div className="hidden md:grid grid-cols-6 gap-8">
+          <div className="hidden md:grid grid-cols-6 gap-8 pl-14 sm:pl-14 md:pl-14 lg:pl-14 xl:pl-20 2xl:pl-20 2xl:px-20">
             {Object.entries(footerSections).map(([section, items]) => (
               <div key={section}>
                 <h3 className="font-bold mb-4 text-sm">{section}</h3>
