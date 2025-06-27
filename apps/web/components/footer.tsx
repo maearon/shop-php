@@ -167,7 +167,7 @@ export default function Footer() {
       </div>
 
       {/* Main Footer */}
-      <footer className="bg-black text-white px-4 sm:px-4 md:px-4 lg:px-10 xl:px-20 2xl:px-20 py-8 md:py-12">
+      <footer className="bg-black text-white pr-10 sm:pr-10 md:pr-10 lg:pr-10 xl:pr-20 2xl:pr-20 py-8 md:py-12">
         <div className="container mx-auto px-0">
           
           {/* Desktop Footer */}
@@ -261,7 +261,7 @@ export default function Footer() {
 
       {/* Bottom Footer */}
       <div className="bg-black text-white py-6 border-t border-gray-700">
-        <div className="container mx-auto px-4 sm:px-4 md:px-4 lg:px-10 xl:px-20 2xl:px-20">
+        <div className="container mx-auto pr-10 sm:pr-10 md:pr-10 lg:pr-10 xl:pr-20 2xl:pr-20 2xl:px-20">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-sm">
             <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
               <div className="flex items-center gap-2">
