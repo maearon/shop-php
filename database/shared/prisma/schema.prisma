@@ -10,49 +10,51 @@ datasource db {
 }
 
 model User {
-  id                          String         @id @default(cuid())
-  name                        String?        @db.VarChar
-  username                    String         @unique
+  id                          String           @id @default(cuid())
+  name                        String?          @db.VarChar
+  username                    String           @unique
   displayName                 String
-  email                       String?        @unique(map: "index_admin_users_email_uniqueness") @db.VarChar
-  refresh_token               String?        @unique(map: "index_admin_users_refresh_token_uniqueness") @db.VarChar
-  refresh_token_expiration_at DateTime?      @db.Timestamp(6)
-  created_at                  DateTime       @db.Timestamp(6)
-  createdAt                   DateTime       @default(now())
-  updated_at                  DateTime       @updatedAt @db.Timestamp(6)
-  password_digest             String?        @db.VarChar
+  email                       String?          @unique(map: "index_admin_users_email_uniqueness") @db.VarChar
+  refresh_token               String?          @unique(map: "index_admin_users_refresh_token_uniqueness") @db.VarChar
+  refresh_token_expiration_at DateTime?        @db.Timestamp(6)
+  created_at                  DateTime         @db.Timestamp(6)
+  createdAt                   DateTime         @default(now())
+  updated_at                  DateTime         @updatedAt @db.Timestamp(6)
+  password_digest             String?          @db.VarChar
   passwordHash                String?
-  googleId                    String?        @unique
+  googleId                    String?          @unique
   avatarUrl                   String?
   bio                         String?
-  remember_digest             String?        @db.VarChar
-  admin                       Boolean?       @default(false)
-  activation_digest           String?        @db.VarChar
-  activated                   Boolean?       @default(false)
-  activated_at                DateTime?      @db.Timestamp(6)
-  reset_digest                String?        @db.VarChar
-  reset_sent_at               DateTime?      @db.Timestamp(6)
-  is_staff                    Boolean        @default(false)
-  is_active                   Boolean        @default(true)
-  date_joined                 DateTime       @default(now()) @db.Timestamptz(6)
-  last_login                  DateTime?      @db.Timestamptz(6)
-  is_superuser                Boolean        @default(false)
-  password                    String         @default("pbkdf2_sha256$720000$mf7gOJi6b6lcClmMxd0UaY$JEXwqKpSjnuNmBE42U9DFtjLO6x2fIPCnOQ9oA59iHo=") @db.VarChar
-  first_name                  String         @default("") @db.VarChar
-  last_name                   String         @default("") @db.VarChar
+  remember_digest             String?          @db.VarChar
+  admin                       Boolean?         @default(false)
+  activation_digest           String?          @db.VarChar
+  activated                   Boolean?         @default(false)
+  activated_at                DateTime?        @db.Timestamp(6)
+  reset_digest                String?          @db.VarChar
+  reset_sent_at               DateTime?        @db.Timestamp(6)
+  is_staff                    Boolean          @default(false)
+  is_active                   Boolean          @default(true)
+  date_joined                 DateTime         @default(now()) @db.Timestamptz(6)
+  last_login                  DateTime?        @db.Timestamptz(6)
+  is_superuser                Boolean          @default(false)
+  password                    String           @default("pbkdf2_sha256$720000$mf7gOJi6b6lcClmMxd0UaY$JEXwqKpSjnuNmBE42U9DFtjLO6x2fIPCnOQ9oA59iHo=") @db.VarChar
+  first_name                  String           @default("") @db.VarChar
+  last_name                   String           @default("") @db.VarChar
+  provider                    String?          @db.VarChar(50)
   Account                     Account[]
   Game                        Game[]
   bookmarks                   Bookmark[]
   carts                       Cart[]
   comments                    Comment[]
-  following                   Follow[]       @relation("Following")
-  followers                   Follow[]       @relation("Followers")
+  following                   Follow[]         @relation("Following")
+  followers                   Follow[]         @relation("Followers")
   likes                       Like[]
   microposts                  Micropost[]
-  issuedNotifications         Notification[] @relation("Issuer")
-  receivedNotifications       Notification[] @relation("Recipient")
+  issuedNotifications         Notification[]   @relation("Issuer")
+  receivedNotifications       Notification[]   @relation("Recipient")
   posts                       Post[]
   sessions                    Session[]
+  user_providers              user_providers[]
 
   @@map("users")
 }
@@ -983,6 +985,24 @@ model variant_sizes {
   @@unique([variant_id, size_id])
   @@index([size_id], map: "idx_variant_sizes_size_id")
   @@index([variant_id], map: "idx_variant_sizes_variant_id")
+}
+
+model user_providers {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id          String
+  provider         String    @db.VarChar(50)
+  provider_user_id String
+  email            String?
+  name             String?
+  avatar_url       String?
+  access_token     String?
+  refresh_token    String?
+  raw_data         Json?
+  created_at       DateTime? @default(now()) @db.Timestamp(6)
+  updated_at       DateTime? @default(now()) @db.Timestamp(6)
+  users            User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([provider, provider_user_id])
 }
 
 enum GameType {
