@@ -111,7 +111,7 @@ export default function Homepage({ onNavigate }: Props) {
               <User className="h-5 w-5 cursor-pointer" />
               <Heart className="h-5 w-5 cursor-pointer" />
               <ShoppingBag className="h-5 w-5 cursor-pointer" />
-              <Menu className="h-5 w-5 cursor-pointer md:hidden" />
+              <Menu className="h-5 w-5 cursor-pointer sm:hidden" />
             </div>
           </div>
         </div>

@@ -12,7 +12,7 @@ export default function MobileAppBanner({ isOpen, onClose }: MobileAppBannerProp
   if (!isOpen) return null
 
   return (
-    <div className="md:hidden bg-white border-b border-gray-200 px-4 py-3">
+    <div className="sm:hidden bg-white border-b border-gray-200 px-4 py-3">
       <div className="flex items-center justify-between">
         <button onClick={onClose} className="p-1">
           <X className="h-5 w-5 text-gray-500" />

@@ -124,7 +124,7 @@ export default function Header() {
         </div>
 
         {/* Desktop layout */}
-        <div className="hidden md:block border-b border-gray-200 relative">
+        <div className="hidden sm:block border-b border-gray-200 relative">
           <div className="absolute left-8 top-1/2 -translate-y-1/2 z-20">
             <Link href="/" className="flex items-center">
               <AdidasLogo />
@@ -234,7 +234,7 @@ export default function Header() {
         </div>
 
         {/* Mobile layout */}
-        <div className="md:hidden flex items-center justify-between px-4 py-2">
+        <div className="sm:hidden flex items-center justify-between px-4 py-2">
           <div className="flex items-center space-x-4">
             <button onClick={() => setShowMobileMenu(true)}>
               <MenuIcon className="h-6 w-6" />

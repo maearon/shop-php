@@ -52,7 +52,7 @@ export default function MenFooter() {
       </section>
 
       {/* Mobile layout with synced 2-column rows */}
-      <section className="md:hidden bg-white px-4 py-8 space-y-6">
+      <section className="sm:hidden bg-white px-4 py-8 space-y-6">
         {rows.map((pair, rowIndex) => (
           <div key={rowIndex} className="flex gap-4">
             {pair.map(([section, items]) => (

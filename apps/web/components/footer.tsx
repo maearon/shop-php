@@ -96,7 +96,7 @@ export default function Footer() {
   return (
     <>
       {/* Mobile Opinion Section */}
-      {/* <section className="md:hidden bg-white py-8 border-t">
+      {/* <section className="sm:hidden bg-white py-8 border-t">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-lg font-bold mb-2">YOUR OPINION COUNTS</h2>
           <p className="text-sm text-gray-600 mb-6">We strive to serve you better and appreciate your feedback</p>
@@ -104,7 +104,7 @@ export default function Footer() {
       </section> */}
 
       {/* Opinion Section with Back to Top */}
-      <section className="md:hidden bg-gray-100 py-4">
+      <section className="sm:hidden bg-gray-100 py-4">
         <div className="container mx-auto px-4">
           <h3 className="text-base font-bold mb-1">YOUR OPINION COUNTS</h3>
           <p className="text-sm text-gray-600">We strive to serve you better and appreciate your feedback</p>
@@ -112,7 +112,7 @@ export default function Footer() {
       </section>
 
       {/* Back to Top button (mobile) */}
-      <section className="md:hidden bg-white border-t py-4">
+      <section className="sm:hidden bg-white border-t py-4">
         <div className="px-4 flex justify-center">
           <button
             onClick={scrollToTop}
@@ -125,7 +125,7 @@ export default function Footer() {
       </section>
 
       {/* Desktop Black section with white text */}
-      <section className="hidden md:block bg-black text-white py-16">
+      <section className="hidden sm:block bg-black text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold mb-8">SNEAKERS, ACTIVEWEAR AND SPORTING GOODS</h2>
           <div className="max-w-6xl mx-auto text-sm leading-relaxed space-y-4">
