@@ -84,7 +84,7 @@ export default function ProductCarousel({
     >
       {title && <h2 className="text-xl font-bold mb-8">{title}</h2>}
 
-      <div className="relative min-h-[28rem]">
+      <div className="relative">
         <motion.div
           ref={containerRef}
           className="flex gap-6 transition-transform duration-700 ease-in-out will-change-transform"

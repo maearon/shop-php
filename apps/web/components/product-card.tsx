@@ -2,6 +2,7 @@
 
 import type React from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAppDispatch } from "@/store/hooks"
@@ -18,36 +19,36 @@ interface ProductCardProps {
     price: string
     image: string
     category?: string
-    model_number?: string;
-    base_model_number?: string;
-    product_type?: string;
-    price_information?: PriceInfo[];
+    model_number?: string
+    base_model_number?: string
+    product_type?: string
+    price_information?: PriceInfo[]
     pricing_information?: {
-      currentPrice: number;
-      standard_price: number;
-      standard_price_no_vat: number;
-    };
-    image_url?: string;
-    description?: string;
+      currentPrice: number
+      standard_price: number
+      standard_price_no_vat: number
+    }
+    image_url?: string
+    description?: string
     attribute_list?: {
-      brand?: string;
-      color?: string;
-      gender?: string;
-      sale?: boolean;
-    };
-    breadcrumb_list?: Breadcrumb[];
+      brand?: string
+      color?: string
+      gender?: string
+      sale?: boolean
+    }
+    breadcrumb_list?: Breadcrumb[]
     product_description?: {
-      title?: string;
-      text?: string;
-      subtitle?: string;
-    };
+      title?: string
+      text?: string
+      subtitle?: string
+    }
     links?: {
       self: {
-        href: string;
-      };
-    };
-    variation_list?: ProductVariation[];
-    view_list?: ProductAsset[];
+        href: string
+      }
+    }
+    variation_list?: ProductVariation[]
+    view_list?: ProductAsset[]
   }
   showAddToBag?: boolean
 }
@@ -66,19 +67,21 @@ export default function ProductCard({ product, showAddToBag = false }: ProductCa
         image: product.image,
         color: "Default",
         size: "M",
-      }),
+      })
     )
   }
 
   return (
     <Link href={`/product/${product.id}`}>
-      <Card className="min-h-[28rem] flex flex-col justify-between border border-transparent hover:border-black transition-all shadow-none cursor-pointer rounded-none">
+      <Card className="flex flex-col justify-between border border-transparent hover:border-black transition-all shadow-none cursor-pointer rounded-none">
         <CardContent className="p-0 flex flex-col h-full">
           <div className="relative aspect-square overflow-hidden mb-4">
-            <img
+            <Image
               src={product.image || "/placeholder.png"}
               alt={product.name}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
             />
             <div className="absolute top-4 right-4" onClick={(e) => e.preventDefault()}>
               <WishButton item={product} />
