@@ -141,22 +141,22 @@ export default function HomePage() {
     {
       title: "How To Clean Shoes",
       description: "Get expert shoe-buying advice and learn how to choose your sneakers the right way.",
-      image: "/placeholder.png?height=200&width=300",
+      image: "/assets/resource/ED_087_How_to_Clean_Shoes_mh_d_f0806a86f8.jpg?height=200&width=300",
     },
     {
       title: "The adidas Samba Shoe Guide",
       description: "Discover classic adidas footwear through the fit and feel of the new and old Samba.",
-      image: "/placeholder.png?height=200&width=300",
+      image: "/assets/resource/samba_size_guide_masthead_d_215_982556_a90150c541.jpg?height=200&width=300",
     },
     {
       title: "Are the Looks: How to Style a Tennis Skirt",
       description: "Get inspired by iconic fashion looks to target tennis skirt outfits with adidas.",
-      image: "/placeholder.png?height=200&width=300",
+      image: "/assets/resource/Edi_SS_24_How_to_Style_a_Tennis_Skirt_mh_d_c09648994f.jpg?height=200&width=300",
     },
     {
       title: "How to Style a Soccer Jersey",
       description: "Get tips on how to style a soccer jersey to create a surprisingly versatile wardrobe staple.",
-      image: "/placeholder.png?height=200&width=300",
+      image: "/assets/resource/how_to_style_a_soccer_jersey_mh_d_215_1035532_5578c26900.jpg?height=200&width=300",
     },
   ]
 
