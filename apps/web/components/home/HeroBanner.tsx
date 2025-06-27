@@ -74,7 +74,7 @@ export default function HeroBanner() {
             <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
               <iframe
                 className="w-full h-full"
-                src="https://www.youtube.com/embed/DM73WSHqY2Q?si=wtWftWG7GOlBGHbF&autoplay=1"
+                src="https://www.youtube.com/embed/q_7I5ilVax4?si=iqVV3NY5j_cPBe77&autoplay=1"
                 allow="autoplay; encrypted-media"
                 allowFullScreen
               ></iframe>
