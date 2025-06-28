@@ -25,6 +25,7 @@ export interface Product {
   model_number?: string;
   base_model_number?: string
   product_type?: string;
+  url?: string;
 
   display_name?: string;
   price_information?: any[];
