@@ -36,7 +36,7 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
   const viewMoreHref = activeTabInfo ? `/${activeTabInfo.endpoint}` : undefined
 
   return (
-    <section className="container mx-auto px-1 sm:px-1 md:px-1 lg:px-1 xl:px-1 2xl:px-1 mb-10">
+    <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-4 xl:px-4 2xl:px-4 mb-10">
       {/* Tabs Navigation */}
       <div className="flex flex-wrap justify-between items-start gap-4 mb-8 sm:flex-nowrap sm:items-center">
         {/* Tabs */}

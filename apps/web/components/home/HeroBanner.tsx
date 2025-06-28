@@ -11,7 +11,7 @@ export default function HeroBanner() {
 
   return (
     <section className="relative h-[80vh] bg-hero bg-cover bg-top text-white mb-10">
-      <div className="relative z-10 container mx-auto px-1 sm:px-1 md:px-1 lg:px-1 xl:px-1 2xl:px-1 h-full flex items-end pb-12">
+      <div className="relative z-10 container mx-auto px-1 sm:px-2 md:px-3 lg:px-4 xl:px-4 2xl:px-4 h-full flex items-end pb-12">
         <div className="max-w-2xl">
           <h1 className="inline-block bg-white text-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold px-2 py-1 mb-3">
             PAST, PRESENT, FUTURE
