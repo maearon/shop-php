@@ -12,6 +12,7 @@ interface AdidasButtonProps {
   children: React.ReactNode
   loading?: boolean
   shadow?: boolean
+  fullWidth?: boolean // 👈 Thêm dòng này
   className?: string
 }
 
@@ -20,12 +21,13 @@ export function AdidasButton({
   children,
   loading = false,
   shadow = false,
+  fullWidth = false, 
   className,
 }: AdidasButtonProps) {
   const router = useRouter()
 
   return (
-    <div className="relative inline-block group">
+    <div className={cn("relative group", fullWidth ? "w-full" : "w-fit")}>
       {/* Shadow border layer */}
       {shadow && (
         <span
@@ -40,7 +42,7 @@ export function AdidasButton({
         disabled={loading}
         variant="ghost"
         className={cn(
-          "relative z-10 inline-flex items-center justify-center px-4 h-12 bg-white text-black font-bold text-base uppercase tracking-wide border border-white rounded-none transition-all",
+          "relative z-10 w-full inline-flex items-center justify-center px-4 h-12 bg-white text-black font-bold text-base uppercase tracking-wide border border-white rounded-none transition-all",
           className
         )}
       >
