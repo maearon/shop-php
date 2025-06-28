@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
+import { AdidasButton } from "../ui/adidas-button"
 
 export default function HeroBanner() {
   const router = useRouter()
@@ -25,15 +26,16 @@ export default function HeroBanner() {
             {[
               { label: "SHOP NOW", href: "/inter-miami-cf" },
             ].map(({ label, href }) => (
-              <Button
-                key={label}
-                size="sm"
-                variant="outline"
-                onClick={() => router.push(href)}
-                className="border border-black text-black font-bold px-2 py-1 text-[11px] sm:text-xs rounded-none hover:bg-gray-100 transition w-full"
-              >
-                {label} <span aria-hidden className="px-2 md:px-2">→</span>
-              </Button>
+              // <Button
+              //   key={label}
+              //   size="sm"
+              //   variant="outline"
+              //   onClick={() => router.push(href)}
+              //   className="border border-black text-black font-bold px-2 py-1 text-[11px] sm:text-xs rounded-none hover:bg-gray-100 transition w-full"
+              // >
+              //   {label} <span aria-hidden className="px-2 md:px-2">→</span>
+              // </Button>
+              <AdidasButton href={href}>SHOP NOW</AdidasButton>
             ))}
           </div>
         </div>
