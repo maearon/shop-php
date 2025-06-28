@@ -2,6 +2,21 @@
 // ✅ Fake last visited data
 import { LastVisitedProduct } from "@/types/product"
 
+function slugify(str: string): string {
+  return str
+    .toLowerCase()
+    .normalize("NFD") // loại bỏ dấu tiếng Việt
+    .replace(/[\u0300-\u036f]/g, "") // xoá dấu (unicode accents)
+    .replace(/[^a-z0-9\s-]/g, "") // loại bỏ ký tự đặc biệt
+    .trim()
+    .replace(/\s+/g, "-") // thay khoảng trắng bằng dấu gạch ngang
+    .replace(/-+/g, "-") // loại bỏ nhiều dấu gạch liền nhau
+}
+
+function generateUrl(name: string, modelNumber: string) {
+  return `/${slugify(name)}/${modelNumber}.html`
+}
+
 export const fakeLastVisitedProducts: LastVisitedProduct[] = [
   {
     product: {
@@ -30,7 +45,7 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       model_number: "JV9858",
       base_model_number: "JV9858",
       product_type: "inline",
-      url: "/soft-lux-mesh-full-zip-hoodie/JV9858.html",
+      url: generateUrl("Soft Lux Mesh Full-Zip Hoodie", "JV9858"),
     },
     timestamp: Date.now(),
     url: "/soft-lux-mesh-full-zip-hoodie/JV9858.html",
@@ -62,16 +77,16 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       model_number: "JV7492",
       base_model_number: "JV7492",
       product_type: "inline",
-      url: "/adidas-originals-x-minecraft-jersey-kids/JV7492.html",
+      url: generateUrl("adicolor Firebird Oversized Track Pants", "JV7492"),
     },
     timestamp: Date.now() - 10000,
-    url: "/adidas-originals-x-minecraft-jersey-kids/JV7492.html",
+    url: generateUrl("adicolor Firebird Oversized Track Pants", "JV7492"),
   },
   {
     product: {
       id: "3",
-      display_name: "Adicolor Firebird Oversized Track Pants",
-      name: "Adicolor Firebird Oversized Track Pants",
+      display_name: "adicolor Teamgeist Cropped Track Top Blue",
+      name: "adicolor Teamgeist Cropped Track Top Blue",
       price: "$70",
       attribute_list: {
         brand: "Originals"
@@ -94,10 +109,10 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       model_number: "JZ8277",
       base_model_number: "JZ8277",
       product_type: "inline",
-      url: "/adicolor-firebird-oversized-track-pants/JZ8277.html",
+      url: generateUrl("adicolor Teamgeist Cropped Track Top Blue", "JZ8277"),
     },
     timestamp: Date.now() - 20000,
-    url: "/adicolor-firebird-oversized-track-pants/JZ8277.html",
+    url: generateUrl("adicolor Teamgeist Cropped Track Top Blue", "JZ8277"),
   },
   {
     product: {
@@ -126,10 +141,10 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       model_number: "JR8820",
       base_model_number: "JR8820",
       product_type: "inline",
-      url: "/teamgeist-adicolor-cropped-track-top/JR8820.html",
+      url: generateUrl("Adifom Stan Smith Mule Shoes", "JR8820"),
     },
     timestamp: Date.now() - 30000,
-    url: "/teamgeist-adicolor-cropped-track-top/JR8820.html",
+    url: generateUrl("Adifom Stan Smith Mule Shoes", "JR8820"),
   },
   {
     product: {
@@ -158,10 +173,10 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       model_number: "JV9873",
       base_model_number: "JV9873",
       product_type: "inline",
-      url: "/adifom-stan-smith-mule-shoes/JV9873.html",
+      url: generateUrl("Soft Lux Mesh Tee", "JV9873"),
     },
     timestamp: Date.now() - 40000,
-    url: "/adifom-stan-smith-mule-shoes/JV9873.html",
+    url: generateUrl("Soft Lux Mesh Tee", "JV9873"),
   },
   {
     product: {
@@ -190,10 +205,10 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       model_number: "JI3535",
       base_model_number: "JI3535",
       product_type: "inline",
-      url: "/adifom-stan-smith-mule-shoes/JI3535.html",
+      url: generateUrl("Superstar 82 Roller Skates", "JI3535"),
     },
     timestamp: Date.now() - 40000,
-    url: "/adifom-stan-smith-mule-shoes/JI3535.html",
+    url: generateUrl("Superstar 82 Roller Skates", "JI3535"),
   },
   {
     product: {
@@ -222,10 +237,10 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       model_number: "JX5160",
       base_model_number: "JX5160",
       product_type: "inline",
-      url: "/adifom-stan-smith-mule-shoes/JX5160.html",
+      url: generateUrl("Tiro Cut 3-Stripes Soft Mesh Long Dress", "JX5160"),
     },
     timestamp: Date.now() - 40000,
-    url: "/adifom-stan-smith-mule-shoes/JX5160.html",
+    url: generateUrl("Tiro Cut 3-Stripes Soft Mesh Long Dress", "JX5160"),
   },
   {
     product: {
@@ -251,13 +266,13 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       thumbnail: "/images/adidas_Originals_X_Minecraft_Jersey_Kids_Multicolor_KD9839_000_plp_model.jpg",
       image_url: "/images/adidas_Originals_X_Minecraft_Jersey_Kids_Multicolor_KD9839_000_plp_model.jpg",
       image: "/images/adidas_Originals_X_Minecraft_Jersey_Kids_Multicolor_KD9839_000_plp_model.jpg",
-      model_number: "JX5160",
-      base_model_number: "JX5160",
+      model_number: "KD9839",
+      base_model_number: "KD9839",
       product_type: "inline",
-      url: "/adifom-stan-smith-mule-shoes/JX5160.html",
+      url: generateUrl("adidas Originals X Minecraft Jersey Kids", "KD9839"),
     },
     timestamp: Date.now() - 40000,
-    url: "/adifom-stan-smith-mule-shoes/JX5160.html",
+    url: generateUrl("adidas Originals X Minecraft Jersey Kids", "KD9839"),
   },
   {
     product: {
@@ -283,13 +298,13 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       thumbnail: "/images/Samba_OG_X_Liberty_London_Shoes_White_JR8841_00_plp_standard.jpg",
       image_url: "/images/Samba_OG_X_Liberty_London_Shoes_White_JR8841_00_plp_standard.jpg",
       image: "/images/Samba_OG_X_Liberty_London_Shoes_White_JR8841_00_plp_standard.jpg",
-      model_number: "JX5160",
-      base_model_number: "JX5160",
+      model_number: "JR8841",
+      base_model_number: "JR8841",
       product_type: "inline",
-      url: "/adifom-stan-smith-mule-shoes/JX5160.html",
+      url: generateUrl("Samba OG X Liberty London Shoes", "JR8841"),
     },
     timestamp: Date.now() - 40000,
-    url: "/adifom-stan-smith-mule-shoes/JX5160.html",
+    url: generateUrl("Samba OG X Liberty London Shoes", "JR8841"),
   },
   {
     product: {
@@ -315,12 +330,12 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       thumbnail: "/images/Samba_OG_Shoes_White_JS1391_00_plp_standard.jpg",
       image_url: "/images/Samba_OG_Shoes_White_JS1391_00_plp_standard.jpg",
       image: "/images/Samba_OG_Shoes_White_JS1391_00_plp_standard.jpg",
-      model_number: "JX5160",
-      base_model_number: "JX5160",
+      model_number: "JS1391",
+      base_model_number: "JS1391",
       product_type: "inline",
-      url: "/adifom-stan-smith-mule-shoes/JX5160.html",
+      url: generateUrl("Samba OG Shoes", "JS1391"),
     },
     timestamp: Date.now() - 40000,
-    url: "/adifom-stan-smith-mule-shoes/JX5160.html",
+    url: generateUrl("Samba OG Shoes", "JS1391"),
   },
 ];
