@@ -22,6 +22,7 @@ interface ProductCardProps {
     model_number?: string
     base_model_number?: string
     product_type?: string
+    url?: string
     price_information?: PriceInfo[]
     pricing_information?: {
       currentPrice: number
@@ -73,7 +74,7 @@ export default function ProductCard({ product, showAddToBag = false, minimalMobi
   }
 
   return (
-    <Link href={`/product/${product.id}`}>
+    <Link href={`${product.url}`}>
       <Card className="flex flex-col justify-between border border-transparent hover:border-black transition-all shadow-none cursor-pointer rounded-none">
         <CardContent className="p-0 flex flex-col h-full">
           {/* ảnh */}
