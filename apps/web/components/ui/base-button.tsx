@@ -38,17 +38,23 @@ export interface BaseButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
 }
+
 const BaseButton = React.forwardRef<HTMLButtonElement, BaseButtonProps>(
-  ({ className, variant, size, asChild = false, onClick, ...props }, forwardedRef) => {
-    const internalRef = React.useRef<HTMLButtonElement>(null)
+  ({ className, variant, size, asChild = false, onClick, ...props }, ref) => {
+    const internalRef = React.useRef<HTMLElement>(null)
     const Comp = asChild ? Slot : "button"
 
-    React.useImperativeHandle(forwardedRef, () => internalRef.current as HTMLButtonElement)
+    // Gộp ref ngoài vào ref trong
+    React.useImperativeHandle(ref, () => internalRef.current as HTMLButtonElement)
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (props.disabled) return
       onClick?.(e)
-      internalRef.current?.blur() // ✅ luôn blur được phần tử thật
+
+      // Dù là button hay Link (Slot), đều blur
+      setTimeout(() => {
+        (internalRef.current as HTMLElement)?.blur()
+      }, 0)
     }
 
     return (
