@@ -5,16 +5,16 @@ import Image from "next/image"
 
 export default function PromoBanner() {
   return (
-  <Link
-    href="/new_to_sale"
-    className="block w-full bg-[#e9edf0] hover:opacity-90 transition"
-  >
-    <div className="relative flex items-center px-4 pt-2 pb-3 md:px-6 md:pt-2 md:pb-3">
-      <p className="text-xs md:text-sm text-gray-800 mx-auto">
-        Now’s your chance to score on trending and timeless styles, just added to our sale.
-      </p>
-      <span className="text-2xl absolute right-4 md:right-6">→</span>
-    </div>
-  </Link>
+    <Link
+      href="/new_to_sale"
+      className="block w-full bg-[#e9edf0] hover:opacity-90 transition"
+    >
+      <div className="relative flex items-center px-4 pt-2 pb-3 md:px-6 md:pt-2 md:pb-3">
+        <p className="text-xs md:text-sm text-gray-800 mx-auto pr-8 md:pr-10">
+          Now’s your chance to score on trending and timeless styles, just added to our sale.
+        </p>
+        <span className="text-2xl absolute right-4 md:right-6">→</span>
+      </div>
+    </Link>
   )
 }
