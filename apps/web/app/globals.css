@@ -48,19 +48,36 @@
 
 /* globals.css hoặc một file style được import vào app */
 .bg-hero {
-  background-image: url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_m_1e9e83f7e9.jpg?width=768');
+  background-image: url('/assets/lib/socc_fw25_intermiamijersey_bnr_m_f968cf03e1.jpg?width=768');
   background-size: cover;
   background-position: top;
 }
 
 @media (min-width: 768px) {
   .bg-hero {
-    background-image: url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_t_c8212de2ad.jpg?width=1024');
+    background-image: url('/assets/lib/socc_fw25_intermiamijersey_bnr_t_e4d13723de.jpg?width=1024');
   }
 }
 
 @media (min-width: 1024px) {
   .bg-hero {
+    background-image: url('/assets/lib/socc_fw25_intermiamijersey_bnr_d_1ae2424c13.jpg?width=1280');
+  }
+}
+.bg-hero-second {
+  background-image: url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_m_1e9e83f7e9.jpg?width=768');
+  background-size: cover;
+  background-position: top;
+}
+
+@media (min-width: 768px) {
+  .bg-hero-second {
+    background-image: url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_t_c8212de2ad.jpg?width=1024');
+  }
+}
+
+@media (min-width: 1024px) {
+  .bg-hero-second {
     background-image: url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?width=1280');
   }
 }

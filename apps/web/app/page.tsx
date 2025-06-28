@@ -10,6 +10,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
 import HeroBanner from "@/components/home/HeroBanner"
+import HeroBannerSecond from "@/components/home/HeroBannerSecond"
 import { useState, useEffect } from "react"
 import { LastVisitedProduct, Product } from "@/types/product"
 import { fakeLastVisitedProducts } from "@/data/fake-last-visited-products"
@@ -188,12 +189,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Promo Banner */}
       <PromoBanner />
-
-      {/* Hero Banner */}
       <HeroBanner />
-
+      <HeroBannerSecond />
+      
       {/* History Products Section */}
       <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 mb-10">
         <div className="flex justify-between items-center mb-8">

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import HeroBanner from '@/components/ui/HeroBanner'
+import HeroBanner from '@/components/home/HeroBanner'
 
 const meta: Meta<typeof HeroBanner> = {
   title: 'Example/HeroBanner',
