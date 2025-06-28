@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { BaseButton } from "@/components/ui/base-button"
 import { Play } from "lucide-react"
 import { useRouter } from "next/navigation"
 
@@ -30,7 +30,7 @@ export default function HeroBannerSecond() {
               { label: "SHOP MEN", href: "/men-superstar" },
               { label: "SHOP KIDS", href: "/kids-superstar" },
             ].map(({ label, href }) => (
-              <Button
+              <BaseButton
                 key={label}
                 size="sm"
                 variant="outline"
@@ -38,9 +38,9 @@ export default function HeroBannerSecond() {
                 className="border border-black text-black font-bold px-2 py-1 text-[11px] sm:text-xs rounded-none hover:bg-gray-100 transition w-full"
               >
                 {label} <span aria-hidden className="px-2 md:px-2">→</span>
-              </Button>
+              </BaseButton>
             ))}
-          <Button
+          <BaseButton
               size="sm"
               variant="outline"
               className="border border-black text-black font-bold px-2 py-1 text-[11px] sm:text-xs rounded-none hover:bg-gray-100 transition w-full"
@@ -48,7 +48,7 @@ export default function HeroBannerSecond() {
             >
               <Play className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
               WATCH VIDEO <span aria-hidden className="px-2 md:px-2">→</span>
-            </Button>
+            </BaseButton>
           </div>
         </div>
       </div>

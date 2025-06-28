@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { BaseButton } from "@/components/ui/base-button"
 import ProductCarousel from "@/components/product-carousel"
 import { useProducts } from "@/hooks/useProducts"
 import { Product } from "@/types/product"
@@ -42,7 +42,7 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
         {/* Tabs */}
         <div className="flex flex-wrap gap-1">
           {tabs.map((tab) => (
-            <Button
+            <BaseButton
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 text-sm font-medium rounded-none ${
@@ -52,12 +52,12 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
               }`}
             >
               {tab.label}
-            </Button>
+            </BaseButton>
           ))}
         </div>
 
         {/* VIEW ALL */}
-        <Button
+        <BaseButton
           variant="link"
           className="hidden sm:block text-sm font-bold underline whitespace-nowrap px-0"
           onClick={() => {
@@ -66,7 +66,7 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
           }}
         >
           VIEW ALL
-        </Button>
+        </BaseButton>
       </div>
 
       {/* Products Carousel */}

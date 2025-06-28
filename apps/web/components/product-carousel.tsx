@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { BaseButton } from "@/components/ui/base-button"
 import ProductCard from "@/components/product-card"
 import { motion } from "framer-motion"
 import { Product } from "@/types/product"
@@ -63,13 +63,13 @@ export default function ProductCarousel({
           <ProductCard key={product.id} product={product} minimalMobile={minimalMobileForProductCard} />
         ))}
         <div className="col-span-full mt-4 flex justify-center">
-          <Button
+          <BaseButton
             variant="outline"
             className="rounded-none border-black text-black font-bold hover:bg-gray-100"
             onClick={() => (window.location.href = viewMoreHref || "/new-arrivals")}
           >
             VIEW ALL
-          </Button>
+          </BaseButton>
         </div>
       </div>
     )
@@ -108,24 +108,24 @@ export default function ProductCarousel({
       {hovering && totalSlides > 1 && (
         <>
           {currentSlide > 0 && (
-            <Button
+            <BaseButton
               variant="outline"
               size="icon"
               className="absolute left-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
               onClick={prevSlide}
             >
               <ChevronLeft className="h-5 w-5" />
-            </Button>
+            </BaseButton>
           )}
           {currentSlide < totalSlides - 1 && (
-            <Button
+            <BaseButton
               variant="outline"
               size="icon"
               className="absolute right-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
               onClick={nextSlide}
             >
               <ChevronRight className="h-5 w-5" />
-            </Button>
+            </BaseButton>
           )}
         </>
       )}

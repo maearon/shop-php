@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import axios from "axios"
-import { useAuth } from "@/hooks/useAuth"
+// import { useAuth } from "@/hooks/useAuth"
 import { AppDispatch } from "@/store/store"
 import { useDispatch } from "react-redux"
 import { fetchUser } from "@/store/sessionSlice"
@@ -11,7 +11,7 @@ import { fetchUser } from "@/store/sessionSlice"
 export default function OAuthCallbackPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const { setUser } = useAuth()
+  // const { setUser } = useAuth()
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {

@@ -303,6 +303,7 @@ export default function HomePage() {
                 hover:shadow-[inset_0_-5px_0_0_black]
                 hover:bg-transparent focus:bg-transparent active:bg-transparent
                 rounded-none shadow-none transition-all duration-200"
+              showArrow={false}
             >
               {category}
             </Button>
