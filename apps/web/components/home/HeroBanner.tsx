@@ -11,51 +11,43 @@ export default function HeroBanner() {
 
   return (
     <section className="relative h-[80vh] bg-hero bg-cover bg-top text-white mb-10">
-      <div className="relative z-10 container mx-auto px-1 sm:px-2 md:px-3 lg:px-4 xl:px-4 2xl:px-4 h-full flex items-end pb-12">
-        <div className="max-w-2xl">
-          <h1 className="inline-block bg-white text-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold px-2 py-1 mb-3">
+      <div className="relative z-10 container mx-auto px-4 h-full flex items-end pb-8">
+        <div className="max-w-md">
+          {/* Title */}
+          <h1 className="inline-block bg-white text-black text-base sm:text-lg md:text-xl font-bold px-1.5 py-0.5 mb-2 tracking-tight">
             PAST, PRESENT, FUTURE
           </h1>
-          <p className="inline-block bg-white text-black text-sm sm:text-base md:text-lg lg:text-xl px-2 py-1 mb-6">
+
+          {/* Description */}
+          <p className="inline-block bg-white text-black text-xs sm:text-sm px-1.5 py-0.5 mb-4 leading-snug">
             Explore the Superstar, now updated for the next generation.
           </p>
 
-          <div className="grid grid-cols-2 gap-2 sm:gap-3 md:flex md:flex-wrap md:gap-4">
-            <Button
+          {/* Buttons */}
+          <div className="grid grid-cols-3 gap-1">
+            {[
+              { label: "SHOP WOMEN", href: "/women-superstar" },
+              { label: "SHOP MEN", href: "/men-superstar" },
+              { label: "SHOP KIDS", href: "/kids-superstar" },
+            ].map(({ label, href }) => (
+              <Button
+                key={label}
+                size="sm"
+                variant="outline"
+                onClick={() => router.push(href)}
+                className="border border-black text-black font-bold px-2 py-1 text-[11px] sm:text-xs rounded-none hover:bg-gray-100 transition w-full"
+              >
+                {label} <span aria-hidden className="px-2 md:px-2">→</span>
+              </Button>
+            ))}
+          <Button
               size="sm"
               variant="outline"
-              className="border border-black text-black font-bold px-3 py-2 text-xs sm:text-sm md:px-4 md:py-2 md:text-base flex items-center gap-1 sm:gap-2 hover:bg-gray-100 hover:text-black transition"
-              onClick={() => router.push("/women-superstar")}
-            >
-              SHOP WOMEN <span aria-hidden>→</span>
-            </Button>
-
-            <Button
-              size="sm"
-              variant="outline"
-              className="border border-black text-black font-bold px-3 py-2 text-xs sm:text-sm md:px-4 md:py-2 md:text-base flex items-center gap-1 sm:gap-2 hover:bg-gray-100 hover:text-black transition"
-              onClick={() => router.push("/men-superstar")}
-            >
-              SHOP MEN <span aria-hidden>→</span>
-            </Button>
-
-            <Button
-              size="sm"
-              variant="outline"
-              className="border border-black text-black font-bold px-3 py-2 text-xs sm:text-sm md:px-4 md:py-2 md:text-base flex items-center gap-1 sm:gap-2 hover:bg-gray-100 hover:text-black transition"
-              onClick={() => router.push("/kids-superstar")}
-            >
-              SHOP KIDS <span aria-hidden>→</span>
-            </Button>
-
-            <Button
-              size="sm"
-              variant="outline"
-              className="border border-black text-black font-bold px-3 py-2 text-xs sm:text-sm md:px-4 md:py-2 md:text-base flex items-center gap-1 sm:gap-2 hover:bg-gray-100 hover:text-black transition"
+              className="border border-black text-black font-bold px-2 py-1 text-[11px] sm:text-xs rounded-none hover:bg-gray-100 transition w-full"
               onClick={() => setShowVideo(true)}
             >
               <Play className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-              Watch video <span aria-hidden>→</span>
+              Watch video <span aria-hidden className="px-2 md:px-2">→</span>
             </Button>
           </div>
         </div>
