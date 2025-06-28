@@ -1,4 +1,33 @@
 export const categoryConfig = {
+  "women-superstar": {
+    title: "Women's Superstar Shoes",
+    breadcrumb: "Home / Women / Superstar",
+    description:
+      "Make the world your stage in women’s Superstar shoes. Go for a bold design to bring modern energy to an iconic look or keep it lowkey with your favorite colorway for a classic vibe.",
+    category: "women",
+    subcategory: "running",
+    productType: "shoes",
+    totalProducts: 26,
+  },
+  "men-superstar": {
+    title: "Men's adidas Superstar Shoes",
+    breadcrumb: "Home / Men / Superstar",
+    description:
+      "From their 1969 NBA debut to hip-hop cult classic, the adidas men's superstar shoes have become true shoe icons. Featuring famous shell-toe design.",
+    category: "men",
+    subcategory: "running",
+    productType: "shoes",
+    totalProducts: 35,
+  },
+  "kids-superstar": {
+    title: "Kids' Superstar Shoes",
+    breadcrumb: "Home / Kids / Superstar",
+    description: "adidas superstar shoes first debuted on the basketball court and have been an icon ever since. Our kids' superstar shoes feature the classic silhouette in a variety of colors, from black and white to metallic.",
+    category: "kids",
+    subcategory: "soccer",
+    productType: "shoes",
+    totalProducts: 58,
+  },
   "men-soccer-shoes": {
     title: "MEN'S SOCCER SHOES",
     breadcrumb: "Men / Soccer / Shoes",
