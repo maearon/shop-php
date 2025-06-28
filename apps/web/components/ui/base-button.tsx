@@ -39,31 +39,24 @@ export interface BaseButtonProps
   asChild?: boolean
 }
 
-const BaseButton = React.forwardRef<HTMLButtonElement, BaseButtonProps>(
+const BaseButton = React.forwardRef<HTMLElement, BaseButtonProps>(
   ({ className, variant, size, asChild = false, onClick, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+    const innerRef = React.useRef<HTMLElement>(null)
 
-    // ✅ ref nội bộ để blur chính xác
-    const innerRef = React.useRef<HTMLElement | null>(null)
+    // Gộp ref bên ngoài với innerRef
+    React.useImperativeHandle(ref, () => innerRef.current!)
 
-    const handleClick = (e: React.MouseEvent<any>) => {
+    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
       if (props.disabled) return
       onClick?.(e)
-      // ✅ blur chính xác element thực sự
       innerRef.current?.blur()
     }
 
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
-        ref={(node) => {
-          innerRef.current = node
-          if (typeof ref === "function") {
-            ref(node)
-          } else if (ref) {
-            ;(ref as React.MutableRefObject<any>).current = node
-          }
-        }}
+        ref={innerRef}
         onClick={handleClick}
         {...props}
       />
