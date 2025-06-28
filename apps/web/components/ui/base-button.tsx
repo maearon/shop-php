@@ -40,12 +40,20 @@ export interface BaseButtonProps
 }
 
 const BaseButton = React.forwardRef<HTMLButtonElement, BaseButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, onClick, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (props.disabled) return
+      onClick?.(e)
+      e.currentTarget.blur()
+    }
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        onClick={handleClick}
         {...props}
       />
     )
