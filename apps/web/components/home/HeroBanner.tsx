@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
-import { AdidasButton } from "../ui/adidas-button"
 
 export default function HeroBanner() {
   const router = useRouter()
@@ -35,7 +34,7 @@ export default function HeroBanner() {
               // >
               //   {label} <span aria-hidden className="px-2 md:px-2">→</span>
               // </Button>
-              <AdidasButton href={href} shadow>SHOP NOW</AdidasButton>
+              <Button href={href} shadow>SHOP NOW</Button>
             ))}
           </div>
         </div>

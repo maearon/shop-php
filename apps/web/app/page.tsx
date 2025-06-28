@@ -21,7 +21,6 @@ import { ChevronDown, ChevronUp } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
-import { AdidasButton } from "@/components/ui/adidas-button"
 
 export default function HomePage() {
   const router = useRouter()
@@ -286,7 +285,7 @@ export default function HomePage() {
           <h3 className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide pb-6">
             with Prime at adidas
           </h3>
-          <AdidasButton href="/prime" loading={false} shadow>SHOP NOW</AdidasButton>
+          <Button href="/prime" loading={false} shadow>SHOP NOW</Button>
         </div>
       </section>
 
