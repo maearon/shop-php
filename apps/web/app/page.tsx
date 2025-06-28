@@ -195,7 +195,7 @@ export default function HomePage() {
       <HeroBanner />
 
       {/* History Products Section */}
-      <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 mb-10">
+      <section className="container mx-auto px-1 sm:px-1 md:px-1 lg:px-1 xl:px-1 2xl:px-1 mb-10">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-xl sm:text-2xl md:text-3xl xl:text-3xl font-extrabold tracking-tight leading-tight break-words">
             STILL <br className="xl:hidden" /> INTERESTED?
@@ -245,7 +245,7 @@ export default function HomePage() {
       </section> */}
 
       {/* Promo Tiles */}
-      <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 mb-10">
+      <section className="container mx-auto px-1 sm:px-1 md:px-1 lg:px-1 xl:px-1 2xl:px-1 mb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {promoTiles.map((title, index) => (
             <Card key={`${title}-${index}`} className="relative overflow-hidden h-80 border-0 rounded-none">
@@ -292,7 +292,7 @@ export default function HomePage() {
       </section>
 
       {/* Popular Categories */}
-      <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 py-0 mb-10">
+      <section className="container mx-auto px-1 sm:px-1 md:px-1 lg:px-1 xl:px-1 2xl:px-1 py-0 mb-10">
         <h2 className="text-[32px] font-bold mb-4">Popular right now</h2>
         
         <div className="grid grid-cols-3 gap-x-8 gap-y-6">
@@ -314,7 +314,7 @@ export default function HomePage() {
 
 
       {/* Related Resources */}
-      <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 py-0 mb-10">
+      <section className="container mx-auto px-1 sm:px-1 md:px-1 lg:px-1 xl:px-1 2xl:px-1 py-0 mb-10">
         <h4 className="text-[24px] font-bold mb-2">RELATED RESOURCES</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {relatedResources.map((resource, index) => (
