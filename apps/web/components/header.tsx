@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { useRef } from "react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -30,6 +31,20 @@ export default function Header() {
   const { value: user, status } = useSelector(selectUser)
   const userLoading = status === "loading"
   const [hasMounted, setHasMounted] = useState(false)
+
+  const [showCountrySelect, setShowCountrySelect] = useState(false)
+  const [country, setCountry] = useState<"US" | "VN">("US") // mặc định là US
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowCountrySelect(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   useEffect(() => {
     setHasMounted(true)
@@ -136,7 +151,7 @@ export default function Header() {
             <Link href="/orders" className="hover:underline mr-3">orders and returns</Link>
             <Link href="/gift-cards" className="hover:underline mr-3">gift cards</Link>
             <Link href="/join" className="hover:underline mr-3">join adiClub</Link>
-            <div className="flex items-center space-x-1">
+            {/* <div className="flex items-center space-x-1">
               <Image
                 src="/flag/us.svg"
                 alt="US Flag"
@@ -149,6 +164,56 @@ export default function Header() {
                 <option value="VN">Vietnam</option>
                 <option value="UK">United Kingdom</option>
               </select>
+            </div> */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setShowCountrySelect((prev) => !prev)}
+                className="flex items-center"
+              >
+                <Image
+                  src={country === "US" ? "/flag/us-show.svg" : "/flag/vn-show.svg"}
+                  alt="Country Flag"
+                  width={20}
+                  height={14}
+                />
+              </button>
+
+              {showCountrySelect && (
+                <div className="absolute right-0 mt-2 w-60 bg-white shadow-xl border border-gray-300 p-4 z-50">
+                  <p className="font-semibold mb-4">Choose your country</p>
+
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="country"
+                        checked={country === "US"}
+                        onChange={() => setCountry("US")}
+                      />
+                      <Image src="/flag/us.svg" alt="US" width={24} height={16} />
+                      <span className="font-semibold">United States</span>
+                    </label>
+
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="country"
+                        checked={country === "VN"}
+                        onChange={() => setCountry("VN")}
+                      />
+                      <Image src="/flag/vn.svg" alt="Vietnam" width={24} height={16} />
+                      <span>Viet Nam</span>
+                    </label>
+                  </div>
+
+                  <button
+                    onClick={() => setShowCountrySelect(false)}
+                    className="mt-4 w-full bg-black text-white text-sm font-bold py-2 flex items-center justify-center gap-1 hover:opacity-90"
+                  >
+                    Save <span aria-hidden>→</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
