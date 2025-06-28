@@ -40,28 +40,12 @@ export interface BaseButtonProps
 }
 
 const BaseButton = React.forwardRef<HTMLButtonElement, BaseButtonProps>(
-  ({ className, variant, size, asChild = false, onClick, ...props }, ref) => {
-    const internalRef = React.useRef<HTMLElement>(null)
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
-
-    // Gộp ref ngoài vào ref trong
-    React.useImperativeHandle(ref, () => internalRef.current as HTMLButtonElement)
-
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (props.disabled) return
-      onClick?.(e)
-
-      // Dù là button hay Link (Slot), đều blur
-      setTimeout(() => {
-        (internalRef.current as HTMLElement)?.blur()
-      }, 0)
-    }
-
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
-        ref={internalRef}
-        onClick={handleClick}
+        ref={ref}
         {...props}
       />
     )

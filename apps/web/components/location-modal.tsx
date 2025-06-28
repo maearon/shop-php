@@ -82,9 +82,9 @@ export default function LocationModal({ isOpen, onClose, onLocationSelect }: Loc
           {/* GO button */}
           <Button
             onClick={handleConfirm}
-            className="w-full bg-black text-white hover:bg-gray-800 font-bold py-4 text-lg"
+            className="w-full bg-black text-white hover:bg-gray-800 font-bold py-4 text-lg" theme="black" shadow={true}
           >
-            GO →
+            GO
           </Button>
         </div>
       </DialogContent>
