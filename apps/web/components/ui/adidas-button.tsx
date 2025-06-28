@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import Link from "next/link" // ✅ Thêm dòng này
 
 interface AdidasButtonProps {
   href: string
@@ -38,7 +39,7 @@ export function AdidasButton({
 
       {/* Main button */}
       <Button
-        onClick={() => router.push(href)}
+        asChild // ✅ Thêm dòng này để truyền <a> vào bên trong Button
         disabled={loading}
         variant="ghost"
         className={cn(
@@ -46,12 +47,14 @@ export function AdidasButton({
           className
         )}
       >
-        {loading ? (
-          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-        ) : (
-          <span className="mr-2 -translate-y-[1px]">{children}</span>
-        )}
-        <span className="text-[22px] font-thin leading-none">⟶</span>
+        <Link href={href} onClick={e => loading && e.preventDefault()} className="w-full h-full flex items-center justify-center">
+          {loading ? (
+            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+          ) : (
+            <span className="mr-2 -translate-y-[1px]">{children}</span>
+          )}
+          <span className="text-[22px] font-thin leading-none">⟶</span>
+        </Link>
       </Button>
     </div>
   )
