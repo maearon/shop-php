@@ -261,8 +261,8 @@ export default function HomePage() {
                 <h3 className="font-bold text-lg mb-1">{title.title}</h3>
                 {title.subtitle && <p className="text-sm mb-2">{title.subtitle}</p>}
                 <p className="text-sm mb-4">{title.description}</p>
-                <Button variant="outline" size="sm" className="w-fit bg-white text-black hover:bg-gray-100 font-bold">
-                  {title.cta} →
+                <Button variant="outline" size="sm" className="border border-black text-black font-bold px-2 py-1 text-[11px] sm:text-xs rounded-none hover:bg-gray-100 transition w-fit">
+                  {title.cta} <span aria-hidden className="px-2 md:px-2">→</span>
                 </Button>
               </CardContent>
             </Card>
