@@ -9,7 +9,7 @@ export default function PromoBanner() {
       href="/new_to_sale"
       className="block w-full bg-[#e9edf0] hover:opacity-90 transition"
     >
-      <div className="relative flex items-center px-4 pt-2 pb-3 md:px-6 md:pt-2 md:pb-3">
+      <div className="relative flex items-center px-4 pt-3 pb-4 md:px-6 md:pt-3 md:pb-4">
         <p className="text-xs md:text-sm text-gray-800 mx-auto pr-8 md:pr-10">
           Now’s your chance to score on trending and timeless styles, just added to our sale.
         </p>
