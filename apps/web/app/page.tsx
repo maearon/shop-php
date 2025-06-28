@@ -286,7 +286,7 @@ export default function HomePage() {
           <h3 className="text-xl sm:text-2xl md:text-3xl font-bold uppercase tracking-wide pb-6">
             with Prime at adidas
           </h3>
-          <AdidasButton href="/prime">SHOP NOW</AdidasButton>
+          <AdidasButton href="/prime" loading={false} shadow>SHOP NOW</AdidasButton>
         </div>
       </section>
 

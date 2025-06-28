@@ -35,7 +35,7 @@ export default function HeroBanner() {
               // >
               //   {label} <span aria-hidden className="px-2 md:px-2">→</span>
               // </Button>
-              <AdidasButton href={href}>SHOP NOW</AdidasButton>
+              <AdidasButton href={href} shadow>SHOP NOW</AdidasButton>
             ))}
           </div>
         </div>
