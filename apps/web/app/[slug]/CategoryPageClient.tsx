@@ -35,7 +35,7 @@ export default function CategoryPageClient({ params }: CategoryPageProps) {
   const [loadingMore, setLoadingMore] = useState(false)
 
   // Check if slug exists in config
-  const config = categoryConfig[slug as keyof typeof categoryConfig]
+  const config = categoryConfig[slug as keyof typeof categoryConfig] // bracket notation property access
 
   if (!config && !loading) {
     notFound()

@@ -47,6 +47,7 @@ export interface ProductData {
   };
   variation_list?: ProductVariation[];
   view_list?: ProductAsset[];
+  url?: string;
 }
 
 export interface PriceInfo {

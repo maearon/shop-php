@@ -53,6 +53,15 @@ const nextConfig = {
     });
     return config;
   },
+  async rewrites() {
+    return [
+      // Rewrite URL type /some-slug/ABC123.html → /some-slug/ABC123
+      {
+        source: '/:slug/:model.html',
+        destination: '/:slug/:model', // dùng route động thật sự ở đây
+      },
+    ];
+  },
 };
 
 export default nextConfig;
