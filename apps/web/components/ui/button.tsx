@@ -3,12 +3,12 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { Button, ButtonProps } from "@/components/ui/base-button" // ⬅️ đã có Button, thêm ButtonProps
+import { BaseButton, BaseButtonProps } from "@/components/ui/base-button" // ⬅️ đã có Button, thêm ButtonProps
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link" // ✅ Thêm dòng này
 
-interface AdidasButtonProps extends ButtonProps { // ⬅️ Thêm kế thừa
+interface ButtonProps extends BaseButtonProps { // ⬅️ Thêm kế thừa
   href: string
   children: React.ReactNode
   loading?: boolean
@@ -17,7 +17,7 @@ interface AdidasButtonProps extends ButtonProps { // ⬅️ Thêm kế thừa
   className?: string
 }
 
-export function AdidasButton({
+export function Button({
   href,
   children,
   loading = false,
@@ -25,7 +25,7 @@ export function AdidasButton({
   fullWidth = false, 
   className,
   ...props // ⬅️ lấy phần còn lại, gồm variant, size, etc.
-}: AdidasButtonProps) {
+}: ButtonProps) {
   const router = useRouter()
 
   return (
@@ -39,7 +39,7 @@ export function AdidasButton({
       )}
 
       {/* Main button */}
-      <Button
+      <BaseButton
         asChild // ✅ Thêm dòng này để truyền <a> vào bên trong Button
         disabled={loading}
         variant="ghost"
@@ -57,7 +57,7 @@ export function AdidasButton({
           )}
           <span className="text-[22px] font-thin leading-none">⟶</span>
         </Link>
-      </Button>
+      </BaseButton>
     </div>
   )
 }
