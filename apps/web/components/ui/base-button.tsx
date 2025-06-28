@@ -43,16 +43,27 @@ const BaseButton = React.forwardRef<HTMLButtonElement, BaseButtonProps>(
   ({ className, variant, size, asChild = false, onClick, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
 
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // ✅ ref nội bộ để blur chính xác
+    const innerRef = React.useRef<HTMLElement | null>(null)
+
+    const handleClick = (e: React.MouseEvent<any>) => {
       if (props.disabled) return
       onClick?.(e)
-      e.currentTarget.blur()
+      // ✅ blur chính xác element thực sự
+      innerRef.current?.blur()
     }
 
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
+        ref={(node) => {
+          innerRef.current = node
+          if (typeof ref === "function") {
+            ref(node)
+          } else if (ref) {
+            ;(ref as React.MutableRefObject<any>).current = node
+          }
+        }}
         onClick={handleClick}
         {...props}
       />
