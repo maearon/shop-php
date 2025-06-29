@@ -190,7 +190,7 @@ export default function HomePage() {
       </section> */}
 
       {/* Promo Tiles */}
-      <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 mb-10">
+      {/* <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 mb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {mockSlides.map((title, index) => (
             <Card key={`${title}-${index}`} className="relative overflow-hidden h-80 border-0 rounded-none">
@@ -213,7 +213,8 @@ export default function HomePage() {
             </Card>
           ))}
         </div>
-      </section>
+      </section> */}
+      <PromoCarousel slides={mockSlides}/>
 
       {/* Prime Section */}
       <section className="bg-black text-white py-20 sm:py-18 md:py-0 lg:py-8 xl:py-8 2xl:py-10 mb-0">
@@ -260,7 +261,7 @@ export default function HomePage() {
 
 
       {/* Related Resources */}
-      <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 py-0 mb-10">
+      {/* <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 py-0 mb-10">
         <h4 className="text-[24px] font-bold mb-2">RELATED RESOURCES</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {relatedResources.map((resource, index) => (
@@ -277,7 +278,7 @@ export default function HomePage() {
             </Card>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Related Resources Carousel */}
       <PromoCarousel slides={relatedResources}/>

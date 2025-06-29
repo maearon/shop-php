@@ -71,28 +71,4 @@ export const relatedResources: Slide[] = [
     href: "/superstar",
 },
 //3
-{
-    title: "ADIZERO EVO SL",
-    subtitle: "",
-    description: "Feel fast. In all aspects of life.",
-    image: "/assets/resource/running_fw25_adizero_evo_sl_card_launch_d_a5b8e55d93.jpg?height=400&width=300",
-    cta: "SHOP NOW",
-    href: "/superstar",
-},
-{
-    title: "TAEKWONDO: NEW AGE CLASSIC",
-    subtitle: "",
-    description: "The low profile style everyone is talking about.",
-    image: "/assets/resource/originals_fw25_taekwondo_card_sustain_d_12978e639b.jpg",
-    cta: "SHOP NOW",
-    href: "/superstar",
-},
-{
-    title: "REAL MADRID 25/26 AWAY JERSEY",
-    subtitle: "",
-    description: "Bring the Bernabéu Stadium to them.",
-    image: "/assets/resource/global_aclubs_away_realmadrid_football_fw25_launch_teaser_d_cd74d54f99.jpg",
-    cta: "SHOP NOW",
-    href: "/superstar",
-},
 ]
