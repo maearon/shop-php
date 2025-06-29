@@ -105,15 +105,25 @@ jobs:
 
             api-ruby)
               cd apps/ruby-rails-boilerplate
+
+              echo "📦 Installing dependencies..."
               sudo apt-get update && sudo apt-get install -y \
                 libvips libvips-dev \
                 build-essential libpq-dev libsqlite3-dev zlib1g-dev nodejs yarn
 
               bundle install --jobs 4 --retry 3 --verbose
 
-              RAILS_ENV=test bundle exec rails db:prepare || true
+              echo "🗃️ Preparing test database..."
+              RAILS_ENV=test DISABLE_BOOTSNAP=1 bundle exec rails db:prepare || true
 
-              bundle exec rails test --trace
+              echo "🧪 Running Rails tests..."
+              RAILS_ENV=test DISABLE_BOOTSNAP=1 bundle exec rails test --trace || (echo '❌ Rails test failed' && exit 1)
+
+              echo "📄 Dumping test log (if exists)..."
+              if [ -f log/test.log ]; then cat log/test.log; else echo 'log/test.log not found'; fi
+
+              echo "📁 Log directory listing:"
+              ls -la log || echo "log/ directory not found"
               ;;
 
             legacy)
