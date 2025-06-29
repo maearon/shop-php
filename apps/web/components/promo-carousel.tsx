@@ -2,10 +2,8 @@
 
 import { useState, useEffect, useRef, useMemo } from "react"
 import { BaseButton } from "@/components/ui/base-button"
-import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { motion, AnimatePresence } from "framer-motion"
 
 export type Slide = {
   id: number
@@ -21,23 +19,38 @@ interface PromoCarouselProps {
 }
 
 export default function PromoCarousel({ slides }: PromoCarouselProps) {
-  const [currentSlide, setCurrentSlide] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(false)
-  const imageRefs = useRef<(HTMLDivElement | null)[]>([])
-
-
-  function chunkSlides<T>(arr: T[], size: number): T[][] {
-  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
-    arr.slice(i * size, i * size + size)
-  )
-}
-
-
-  const chunkedSlides = useMemo(() => chunkSlides(slides, 4), [slides])
   const [itemsPerView, setItemsPerView] = useState(4)
-  const totalSlides = Math.ceil(slides.length / itemsPerView)
+  const imageRefs = useRef<(HTMLDivElement | null)[]>([])
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  // Lazy-loading image background via IntersectionObserver
+  // Tính số trang (slide page-based, không phải từng item)
+  const totalSlides = useMemo(() => {
+    return Math.ceil(slides.length / itemsPerView)
+  }, [slides.length, itemsPerView])
+
+  // Tự set số lượng item theo width
+  useEffect(() => {
+    const updateItems = () => {
+      const width = window.innerWidth
+      if (width < 640) setItemsPerView(1.2) // show 1.2 items like Adidas mobile
+      else if (width < 1024) setItemsPerView(2)
+      else if (width < 1280) setItemsPerView(3)
+      else setItemsPerView(4)
+    }
+
+    updateItems()
+    window.addEventListener("resize", updateItems)
+    return () => window.removeEventListener("resize", updateItems)
+  }, [])
+
+  // Reset lại index khi itemsPerView thay đổi
+  useEffect(() => {
+    setCurrentIndex(0)
+  }, [itemsPerView])
+
+  // Lazy-load bg
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -53,7 +66,7 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
           }
         }
       },
-      { rootMargin: "100px" },
+      { rootMargin: "100px" }
     )
 
     imageRefs.current.forEach((el) => {
@@ -63,18 +76,22 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
     return () => observer.disconnect()
   }, [slides])
 
-  // Auto-play
+  // Auto-play (mặc định là false)
   useEffect(() => {
     if (!isAutoPlaying) return
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length)
+      nextSlide()
     }, 5000)
     return () => clearInterval(interval)
-  }, [isAutoPlaying, slides.length])
+  }, [isAutoPlaying])
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length)
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
-  const goToSlide = (i: number) => setCurrentSlide(i)
+  const nextSlide = () => {
+    setCurrentIndex((prev) => Math.min(prev + 1, totalSlides - 1))
+  }
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => Math.max(prev - 1, 0))
+  }
 
   return (
     <section className="container mx-auto px-4 py-0">
@@ -83,95 +100,74 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
         onMouseEnter={() => setIsAutoPlaying(false)}
         // onMouseLeave={() => setIsAutoPlaying(true)}
       >
-        <div className="relative h-[26rem]">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentSlide}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.5 }}
-              className="absolute inset-0 w-full"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* {[...Array(4)].map((_, i) => {
-                  const slide = slides[currentSlide]
-                  return ( */}
-                {chunkedSlides[currentSlide]?.map((slide, i) => (
-                    <div
-                      key={i}
-                      ref={(el) => (imageRefs.current[i] = el)}
-                      className="relative overflow-hidden h-96 bg-gray-100 group lazy-bg"
-                      data-bg={slide.image}
-                      style={{
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        backgroundImage: "none",
-                      }}
-                    >
-                      <div className="absolute inset-0 bg-black bg-opacity-30" />
-                      <div className="relative h-full flex flex-col justify-end p-6 text-white">
-                        <h3 className="font-bold text-lg mb-2">{slide.title}</h3>
-                        <p className="text-sm mb-4 leading-relaxed">{slide.description}</p>
-                        <Link href={slide.href}>
-                          {/* <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-fit bg-white text-black hover:bg-gray-100 font-bold border-0"
-                          >
-                            {slide.cta}
-                          </Button> */}
-                        </Link>
-                      </div>
-                    </div>
-                  )
-                )}
+        <div className="relative">
+          <div
+            ref={containerRef}
+            className="flex transition-transform duration-500 ease-in-out gap-6"
+            style={{
+              transform: `translateX(-${(100 / slides.length) * itemsPerView * currentIndex}%)`,
+              width: `${(100 / itemsPerView) * slides.length}%`,
+            }}
+          >
+            {slides.map((slide, i) => (
+              <div
+                key={i}
+                ref={(el) => (imageRefs.current[i] = el)}
+                className="shrink-0 lazy-bg bg-gray-100 relative overflow-hidden"
+                data-bg={slide.image}
+                style={{
+                  width: `${100 / slides.length}%`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundImage: "none",
+                  height: "24rem",
+                }}
+              >
+                <div className="absolute inset-0 bg-black bg-opacity-30" />
+                <div className="relative h-full flex flex-col justify-end p-6 text-white">
+                  <h3 className="font-bold text-lg mb-2">{slide.title}</h3>
+                  <p className="text-sm mb-4 leading-relaxed">{slide.description}</p>
+                  <Link href={slide.href}>
+                    {/* <Button ...>{slide.cta}</Button> */}
+                  </Link>
+                </div>
               </div>
-            </motion.div>
-          </AnimatePresence>
+            ))}
+          </div>
         </div>
 
         {/* Navigation */}
-        {currentSlide > 0 && (
-            <BaseButton
-              variant="outline"
-              size="icon"
-              className="absolute left-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
-              onClick={prevSlide}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </BaseButton>
-          )}
-          {currentSlide < totalSlides - 1 && (
-            <BaseButton
-              variant="outline"
-              size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
-              onClick={nextSlide}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </BaseButton>
-          )}
+        {currentIndex > 0 && (
+          <BaseButton
+            variant="outline"
+            size="icon"
+            className="absolute left-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
+            onClick={prevSlide}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </BaseButton>
+        )}
+        {currentIndex < totalSlides - 1 && (
+          <BaseButton
+            variant="outline"
+            size="icon"
+            className="absolute right-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
+            onClick={nextSlide}
+          >
+            <ChevronRight className="h-5 w-5" />
+          </BaseButton>
+        )}
 
         {/* Dots */}
         <div className="flex justify-center mt-6 space-x-2">
-          {/* {slides.map((_, index) => (
+          {Array.from({ length: totalSlides }).map((_, index) => (
             <button
               key={index}
-              onClick={() => goToSlide(index)}
+              onClick={() => setCurrentIndex(index)}
               className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                index === currentSlide ? "bg-black" : "bg-gray-300"
+                index === currentIndex ? "bg-black" : "bg-gray-300"
               }`}
               aria-label={`Go to slide ${index + 1}`}
-            />
-          ))} */}
-          {chunkedSlides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                index === currentSlide ? "bg-black" : "bg-gray-300"
-              }`}
             />
           ))}
         </div>
