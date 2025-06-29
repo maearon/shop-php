@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import { MainButton } from "@/components/ui/main-button"
 
 interface LocationModalProps {
   isOpen: boolean
@@ -80,12 +80,12 @@ export default function LocationModal({ isOpen, onClose, onLocationSelect }: Loc
           </button>
 
           {/* GO button */}
-          <Button
+          <MainButton
             onClick={handleConfirm}
             className="w-full bg-black text-white hover:bg-gray-800 font-bold py-4 text-lg" theme="black" shadow={true}
           >
             GO
-          </Button>
+          </MainButton>
         </div>
       </DialogContent>
     </Dialog>
