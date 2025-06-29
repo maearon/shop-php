@@ -105,6 +105,7 @@ jobs:
 
             api-ruby)
               cd apps/ruby-rails-boilerplate
+              sudo apt-get update && sudo apt-get install -y libvips libvips-dev
               bundle install
               bundle exec rails test
               ;;

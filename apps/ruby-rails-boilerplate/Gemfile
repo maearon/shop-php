@@ -79,7 +79,7 @@ group :development, :test do
   gem 'dotenv', '~> 2.8.0'
 
   # Use console on exceptions pages [https://github.com/rails/web-console]
-  gem "web-console"
+  # gem "web-console"
 end
 
 group :test do
