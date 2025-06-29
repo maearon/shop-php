@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { BaseButton } from "@/components/ui/base-button"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
@@ -24,6 +24,18 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
+
+
+  function chunkSlides<T>(arr: T[], size: number): T[][] {
+  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+    arr.slice(i * size, i * size + size)
+  )
+}
+
+
+  const chunkedSlides = useMemo(() => chunkSlides(slides, 4), [slides])
+  const [itemsPerView, setItemsPerView] = useState(4)
+  const totalSlides = Math.ceil(slides.length / itemsPerView)
 
   // Lazy-loading image background via IntersectionObserver
   useEffect(() => {
@@ -82,9 +94,10 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
               className="absolute inset-0 w-full"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[...Array(4)].map((_, i) => {
+                {/* {[...Array(4)].map((_, i) => {
                   const slide = slides[currentSlide]
-                  return (
+                  return ( */}
+                {chunkedSlides[currentSlide]?.map((slide, i) => (
                     <div
                       key={i}
                       ref={(el) => (imageRefs.current[i] = el)}
@@ -112,33 +125,37 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
                       </div>
                     </div>
                   )
-                })}
+                )}
               </div>
             </motion.div>
           </AnimatePresence>
         </div>
 
         {/* Navigation */}
-        <BaseButton
-          variant="outline"
-          size="icon"
-          className="absolute left-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
-          onClick={prevSlide}
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </BaseButton>
-        <BaseButton
-          variant="outline"
-          size="icon"
-          className="absolute right-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
-          onClick={nextSlide}
-        >
-          <ChevronRight className="h-5 w-5" />
-        </BaseButton>
+        {currentSlide > 0 && (
+            <BaseButton
+              variant="outline"
+              size="icon"
+              className="absolute left-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
+              onClick={prevSlide}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </BaseButton>
+          )}
+          {currentSlide < totalSlides - 1 && (
+            <BaseButton
+              variant="outline"
+              size="icon"
+              className="absolute right-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
+              onClick={nextSlide}
+            >
+              <ChevronRight className="h-5 w-5" />
+            </BaseButton>
+          )}
 
         {/* Dots */}
         <div className="flex justify-center mt-6 space-x-2">
-          {slides.map((_, index) => (
+          {/* {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
@@ -146,6 +163,15 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
                 index === currentSlide ? "bg-black" : "bg-gray-300"
               }`}
               aria-label={`Go to slide ${index + 1}`}
+            />
+          ))} */}
+          {chunkedSlides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-3 h-3 rounded-full transition-colors duration-200 ${
+                index === currentSlide ? "bg-black" : "bg-gray-300"
+              }`}
             />
           ))}
         </div>
