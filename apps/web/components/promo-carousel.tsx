@@ -22,7 +22,7 @@ interface PromoCarouselProps {
 
 export default function PromoCarousel({ slides }: PromoCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false)
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
 
 
@@ -81,7 +81,7 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
       <div
         className="relative overflow-hidden"
         onMouseEnter={() => setIsAutoPlaying(false)}
-        onMouseLeave={() => setIsAutoPlaying(true)}
+        // onMouseLeave={() => setIsAutoPlaying(true)}
       >
         <div className="relative h-[26rem]">
           <AnimatePresence mode="wait">
