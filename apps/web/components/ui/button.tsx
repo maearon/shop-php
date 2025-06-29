@@ -16,6 +16,7 @@ interface ButtonProps extends BaseButtonProps {
   shadow?: boolean
   fullWidth?: boolean // 👈 Thêm dòng này
   className?: string
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | null | undefined
 }
 
 export function Button({
@@ -26,6 +27,7 @@ export function Button({
   shadow = false,
   fullWidth = false,
   className,
+  variant = "ghost", // ✅ default variant
   ...props // ⬅️ lấy phần còn lại, gồm variant, size, etc.
 }: ButtonProps) {
   const router = useRouter()
@@ -44,7 +46,7 @@ export function Button({
       <BaseButton
         asChild={!!href} // ✅ ✅ Thêm dòng này để truyền <a> vào bên trong Button, Chỉ asChild khi có href
         disabled={loading}
-        variant="ghost"
+        variant={variant}
         className={cn(
           "relative z-10 w-full inline-flex items-center justify-center px-4 h-12 bg-white text-black font-bold text-base uppercase tracking-wide border border-white rounded-none transition-all",
           !href && "flex items-center justify-center", // ✅ fix nằm một dòng nếu không dùng <Link>
