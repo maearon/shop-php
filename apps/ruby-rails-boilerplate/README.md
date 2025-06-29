@@ -5,6 +5,10 @@ https://guides.rubyonrails.org/association_basics.html
 https://stackoverflow.com/questions/11600928/when-to-use-a-has-many-through-relation-in-rails
 https://edgeapi.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html
 ```
+RAILS_ENV=test rails test test/models
+RAILS_ENV=test rails test test/controllers
+RAILS_ENV=test rails test test/integration
+RAILS_ENV=test rails test test/system
 
 rails credentials:show
 
