@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link" // ✅ Thêm dòng này
 
-interface MainButtonProps extends BaseButtonProps {
+interface ButtonProps extends BaseButtonProps {
   href?: string // ✅ Cho phép có hoặc không
   children: React.ReactNode
   loading?: boolean
@@ -18,7 +18,7 @@ interface MainButtonProps extends BaseButtonProps {
   className?: string
 }
 
-export function MainButton({
+export function Button({
   href,
   children,
   loading = false,
@@ -27,7 +27,7 @@ export function MainButton({
   fullWidth = false,
   className,
   ...props // ⬅️ lấy phần còn lại, gồm variant, size, etc.
-}: MainButtonProps) {
+}: ButtonProps) {
   const router = useRouter()
 
   return (
