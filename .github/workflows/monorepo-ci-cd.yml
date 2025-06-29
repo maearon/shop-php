@@ -8,8 +8,8 @@ on:
 
 env:
   DOCKER_REGISTRY: docker.io
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
 jobs:
   test:
@@ -117,7 +117,7 @@ jobs:
               RAILS_ENV=test DISABLE_BOOTSNAP=1 bundle exec rails db:prepare || true
 
               echo "🧪 Running Rails tests..."
-              RAILS_ENV=test DISABLE_BOOTSNAP=1 bundle exec rails test --trace || (echo '❌ Rails test failed' && exit 1)
+              RAILS_ENV=test DISABLE_BOOTSNAP=1 bundle exec rails test || (echo '❌ Rails test failed' && exit 1)
 
               echo "📄 Dumping test log (if exists)..."
               if [ -f log/test.log ]; then cat log/test.log; else echo 'log/test.log not found'; fi
@@ -138,7 +138,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     strategy:
       matrix:
-        service: [api-gateway, web, api, users, orders, payments, legacy, api-java, api-ruby, api-python]
+        service: [api-gateway, web, api, payments, legacy, api-java, api-ruby, api-python]
 
     steps:
       - name: Checkout code
