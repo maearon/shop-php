@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from "react"
 import { BaseButton } from "@/components/ui/base-button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { Button } from "./ui/button"
+import { Button } from "@/components/ui/button"
 
 export type Slide = {
   id: number
