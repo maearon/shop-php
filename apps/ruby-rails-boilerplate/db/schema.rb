@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 0) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -298,8 +298,8 @@ ActiveRecord::Schema[8.0].define(version: 0) do
 
   create_table "carts", id: :text, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.text "user_id", null: false
-    t.timestamptz "created_at", precision: 6, default: -> { "now()" }, null: false
-    t.timestamptz "updated_at", precision: 6, default: -> { "now()" }, null: false
+    t.timestamptz "created_at", default: -> { "now()" }, null: false
+    t.timestamptz "updated_at", default: -> { "now()" }, null: false
     t.index ["user_id"], name: "idx_carts_user_id"
   end
 
@@ -471,6 +471,7 @@ ActiveRecord::Schema[8.0].define(version: 0) do
     t.text "content", null: false
     t.text "userId", null: false
     t.datetime "createdAt", precision: 3, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "expiresAt", precision: nil, default: -> { "CURRENT_TIMESTAMP" }
   end
 
   create_table "products", force: :cascade do |t|
@@ -543,8 +544,9 @@ ActiveRecord::Schema[8.0].define(version: 0) do
     t.string "system", limit: 20, null: false
     t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }
     t.datetime "updated_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }
+    t.string "location", limit: 10
     t.index ["label", "system"], name: "idx_sizes_label_system"
-    t.unique_constraint ["label", "system"], name: "sizes_label_system_key"
+    t.unique_constraint ["label", "system", "location"], name: "sizes_label_system_location_key"
   end
 
   create_table "socialaccount_socialaccount", id: :integer, default: nil, force: :cascade do |t|
@@ -620,6 +622,22 @@ ActiveRecord::Schema[8.0].define(version: 0) do
     t.index ["topic"], name: "topic_count_topic_key", unique: true
   end
 
+  create_table "user_providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.text "user_id", null: false
+    t.string "provider", limit: 50, null: false
+    t.text "provider_user_id", null: false
+    t.text "email"
+    t.text "name"
+    t.text "avatar_url"
+    t.text "access_token"
+    t.text "refresh_token"
+    t.jsonb "raw_data"
+    t.datetime "created_at", precision: nil, default: -> { "now()" }
+    t.datetime "updated_at", precision: nil, default: -> { "now()" }
+
+    t.unique_constraint ["provider", "provider_user_id"], name: "user_providers_provider_provider_user_id_key"
+  end
+
   create_table "users", id: :text, force: :cascade do |t|
     t.string "name"
     t.text "username", null: false
@@ -650,14 +668,52 @@ ActiveRecord::Schema[8.0].define(version: 0) do
     t.string "password", default: "pbkdf2_sha256$720000$mf7gOJi6b6lcClmMxd0UaY$JEXwqKpSjnuNmBE42U9DFtjLO6x2fIPCnOQ9oA59iHo=", null: false
     t.string "first_name", default: "", null: false
     t.string "last_name", default: "", null: false
+    t.string "provider", limit: 50
     t.index ["email"], name: "index_admin_users_email_uniqueness", unique: true
     t.index ["googleId"], name: "users_googleId_key", unique: true
     t.index ["refresh_token"], name: "index_admin_users_refresh_token_uniqueness", unique: true
     t.index ["username"], name: "users_username_key", unique: true
   end
 
+  create_table "users_for_mailer_tests", id: :text, force: :cascade do |t|
+    t.string "name"
+    t.text "username", null: false
+    t.text "displayName", null: false
+    t.string "email"
+    t.string "refresh_token"
+    t.datetime "refresh_token_expiration_at"
+    t.datetime "created_at", null: false
+    t.datetime "createdAt", precision: 3, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", null: false
+    t.string "password_digest"
+    t.text "passwordHash"
+    t.text "googleId"
+    t.text "avatarUrl"
+    t.text "bio"
+    t.string "remember_digest"
+    t.boolean "admin", default: false
+    t.string "activation_digest"
+    t.boolean "activated", default: false
+    t.datetime "activated_at"
+    t.string "reset_digest"
+    t.datetime "reset_sent_at"
+    t.boolean "is_staff", default: false, null: false
+    t.boolean "is_active", default: true, null: false
+    t.datetime "date_joined", default: -> { "now()" }, null: false
+    t.datetime "last_login"
+    t.boolean "is_superuser", default: false, null: false
+    t.string "password", default: "pbkdf2_sha256$720000$mf7gOJi6b6lcClmMxd0UaY$JEXwqKpSjnuNmBE42U9DFtjLO6x2fIPCnOQ9oA59iHo=", null: false
+    t.string "first_name", default: "", null: false
+    t.string "last_name", default: "", null: false
+    t.string "provider", limit: 50
+    t.index ["email"], name: "index_mailer_users_email_uniqueness", unique: true
+    t.index ["googleId"], name: "mailer_users_googleId_key", unique: true
+    t.index ["refresh_token"], name: "index_mailer_users_refresh_token_uniqueness", unique: true
+    t.index ["username"], name: "mailer_users_username_key", unique: true
+  end
+
   create_table "variant_sizes", id: :serial, force: :cascade do |t|
-    t.integer "variant_id", null: false
+    t.bigint "variant_id", null: false
     t.integer "size_id", null: false
     t.integer "stock", default: 0
     t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }
@@ -762,6 +818,7 @@ ActiveRecord::Schema[8.0].define(version: 0) do
   add_foreign_key "tasks", "projects"
   add_foreign_key "token_blacklist_blacklistedtoken", "token_blacklist_outstandingtoken", column: "token_id", name: "token_blacklist_blacklistedtoken_token_id_3cc7fe56_fk", deferrable: :deferred
   add_foreign_key "token_blacklist_outstandingtoken", "accounts_user", column: "user_id", name: "token_blacklist_outs_user_id_83bc629a_fk_accounts_", deferrable: :deferred
+  add_foreign_key "user_providers", "users", name: "user_providers_user_id_fkey", on_delete: :cascade
   add_foreign_key "variant_sizes", "sizes", name: "fk_size", on_delete: :cascade
   add_foreign_key "variant_sizes", "variants", name: "fk_variant", on_delete: :cascade
   add_foreign_key "variants", "products"

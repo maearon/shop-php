@@ -69,7 +69,10 @@ maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:seed
 maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:migrate:status | grep carts
 maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:schema:dump
 
+RAILS_ENV=test rails db:drop db:create db:schema:load
 
+RAILS_ENV=test rails db:schema:load
+RAILS_ENV=test rails test
 
 
 maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ 
