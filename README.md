@@ -2,44 +2,7 @@
 
 A production-ready microservices e-commerce platform built with modern technologies, cloning the complete Adidas.com experience with advanced features like real-time chat, location-based delivery, and comprehensive product management.
 
-## 🏗️ Architecture Overview
-```
-apps/web/api/
-├── services/
-│   ├── javaService.ts       ← chứa auth/session/login/register
-│   ├── paymentService.ts    ← chứa cart/wishlist/payment/orders từ paymentApi
-│   ├── pythonService.ts     ← chứa searchApi
-│   └── rubyService.ts       ← chứa micropost, product, cart, order, wish, relationship
-└── @types/
-    ├── auth.ts
-    ├── cart.ts
-    ├── micropost.ts
-    ├── order.ts
-    ├── product.ts
-    ├── relationship.ts
-    ├── search.ts
-    └── user.ts              ← bạn vừa gửi xong
-
-```
-```
-api/
-  services/
-    javaService.ts         // Auth, session, user, password reset
-    rubyService.ts         // Product, cart, order, wish, micropost, relationship
-    pythonService.ts       // Search
-    paymentService.ts      // Payments (Go Gin)
-
-@types/
-  product.ts
-  cart.ts
-  order.ts
-  user.ts
-  auth.ts
-  search.ts
-  micropost.ts
-  relationship.ts
-
-```
+## Architecture Overview
 
 This monorepo implements a sophisticated microservices architecture designed to handle enterprise-level e-commerce operations:
 
