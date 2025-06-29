@@ -101,13 +101,13 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
                         <h3 className="font-bold text-lg mb-2">{slide.title}</h3>
                         <p className="text-sm mb-4 leading-relaxed">{slide.description}</p>
                         <Link href={slide.href}>
-                          <Button
+                          {/* <Button
                             variant="outline"
                             size="sm"
                             className="w-fit bg-white text-black hover:bg-gray-100 font-bold border-0"
                           >
                             {slide.cta}
-                          </Button>
+                          </Button> */}
                         </Link>
                       </div>
                     </div>
@@ -122,18 +122,18 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
         <BaseButton
           variant="outline"
           size="icon"
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white border-0 shadow-lg"
+          className="absolute left-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
           onClick={prevSlide}
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-5 w-5" />
         </BaseButton>
         <BaseButton
           variant="outline"
           size="icon"
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white border-0 shadow-lg"
+          className="absolute right-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
           onClick={nextSlide}
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-5 w-5" />
         </BaseButton>
 
         {/* Dots */}
