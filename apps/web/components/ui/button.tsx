@@ -1,23 +1,24 @@
+// components/ui/adidas-button.tsx
+
 "use client"
 
 import { useRouter } from "next/navigation"
 import { BaseButton, BaseButtonProps } from "@/components/ui/base-button"
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import Link from "next/link"
+import Link from "next/link" // ✅ Thêm dòng này
 
-interface ButtonProps extends BaseButtonProps {
-  href?: string
+interface MainButtonProps extends BaseButtonProps {
+  href?: string // ✅ Cho phép có hoặc không
   children: React.ReactNode
   loading?: boolean
-  showArrow?: boolean
+  showArrow?: boolean // 👈 new
   shadow?: boolean
-  fullWidth?: boolean
+  fullWidth?: boolean // 👈 Thêm dòng này
   className?: string
-  theme?: "white" | "black" // 👈 NEW
 }
 
-export function Button({
+export function MainButton({
   href,
   children,
   loading = false,
@@ -25,45 +26,31 @@ export function Button({
   shadow = false,
   fullWidth = false,
   className,
-  theme = "white", // 👈 default
-  ...props
-}: ButtonProps) {
+  ...props // ⬅️ lấy phần còn lại, gồm variant, size, etc.
+}: MainButtonProps) {
   const router = useRouter()
-
-  const isBlack = theme === "black"
-  const bgColor = isBlack ? "bg-black" : "bg-white"
-  const textColor = isBlack ? "text-white" : "text-black"
-  const borderColor = "border-white"
-  const hoverBorder = "group-hover:border-gray-400"
 
   return (
     <div className={cn("relative group", fullWidth ? "w-full" : "w-fit")}>
+      {/* Shadow border layer */}
       {shadow && (
         <span
-          className={cn(
-            "absolute inset-0 translate-x-[6px] translate-y-[6px] border pointer-events-none z-0 transition-all",
-            borderColor,
-            hoverBorder,
-            "group-active:translate-x-[4px] group-active:translate-y-[4px]"
-          )}
+          className="absolute inset-0 translate-x-[6px] translate-y-[6px] border border-white group-hover:border-gray-400 pointer-events-none z-0 transition-colors"
           aria-hidden="true"
         />
       )}
 
+      {/* Main button */}
       <BaseButton
-        asChild={!!href}
+        asChild={!!href} // ✅ ✅ Thêm dòng này để truyền <a> vào bên trong Button, Chỉ asChild khi có href
         disabled={loading}
         variant="ghost"
         className={cn(
-          "relative z-10 w-full inline-flex items-center justify-center px-4 h-12 font-bold text-base uppercase tracking-wide border rounded-none transition-all",
-          bgColor,
-          textColor,
-          borderColor,
-          "active:translate-x-[2px] active:translate-y-[2px]",
-          !href && "flex items-center justify-center",
+          "relative z-10 w-full inline-flex items-center justify-center px-4 h-12 bg-white text-black font-bold text-base uppercase tracking-wide border border-white rounded-none transition-all",
+          !href && "flex items-center justify-center", // ✅ fix nằm một dòng nếu không dùng <Link>
           className
         )}
-        {...props}
+        {...props} // ⬅️ truyền các prop còn lại
       >
         {href ? (
           <Link
