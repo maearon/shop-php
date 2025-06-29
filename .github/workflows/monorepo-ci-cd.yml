@@ -81,7 +81,7 @@ jobs:
               go test ./...
               ;;
             api-python)
-              cd apps/${{ matrix.service }}
+              cd apps/django-boilerplate
               pip install -r requirements.txt
               python -m pytest
               ;;
