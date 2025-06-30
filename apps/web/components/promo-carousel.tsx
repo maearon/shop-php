@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { BaseButton } from "@/components/ui/base-button"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
@@ -118,22 +119,22 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
         </div>
 
         {/* Navigation */}
-        <Button
+        <BaseButton
           variant="outline"
           size="icon"
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white border-0 shadow-lg"
           onClick={prevSlide}
         >
           <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <Button
+        </BaseButton>
+        <BaseButton
           variant="outline"
           size="icon"
           className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white border-0 shadow-lg"
           onClick={nextSlide}
         >
           <ChevronRight className="h-4 w-4" />
-        </Button>
+        </BaseButton>
 
         {/* Dots */}
         <div className="flex justify-center mt-6 space-x-2">

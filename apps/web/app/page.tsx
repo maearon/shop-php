@@ -47,40 +47,40 @@ export default function HomePage() {
     }
   }, [])
 
-  const mockSlides: Slide[] = [
-    {
-      id: 1,
-      title: "PAST, PRESENT, FUTURE",
-      description: "Explore the Superstar in all its iconic glory, now with more comfort.",
-      image: "https://via.placeholder.com/600x400?text=Superstar",
-      cta: "SHOP NOW",
-      href: "/superstar",
-    },
-    {
-      id: 2,
-      title: "DROPSET 3",
-      description: "Rooted in Strength.",
-      image: "https://via.placeholder.com/600x400?text=Dropset",
-      cta: "SHOP NOW",
-      href: "/dropset",
-    },
-    {
-      id: 3,
-      title: "A TRUE MIAMI ORIGINAL",
-      description: "Rep the Magic City during every match in this signature blue jersey.",
-      image: "https://via.placeholder.com/600x400?text=Miami",
-      cta: "SHOP NOW",
-      href: "/miami",
-    },
-    {
-      id: 4,
-      title: "SAMBA",
-      description: "Always iconic, always in style.",
-      image: "https://via.placeholder.com/600x400?text=Samba",
-      cta: "SHOP NOW",
-      href: "/samba",
-    },
-  ]
+  // const mockSlides: Slide[] = [
+  //   {
+  //     id: 1,
+  //     title: "PAST, PRESENT, FUTURE",
+  //     description: "Explore the Superstar in all its iconic glory, now with more comfort.",
+  //     image: "https://via.placeholder.com/600x400?text=Superstar",
+  //     cta: "SHOP NOW",
+  //     href: "/superstar",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "DROPSET 3",
+  //     description: "Rooted in Strength.",
+  //     image: "https://via.placeholder.com/600x400?text=Dropset",
+  //     cta: "SHOP NOW",
+  //     href: "/dropset",
+  //   },
+  //   {
+  //     id: 3,
+  //     title: "A TRUE MIAMI ORIGINAL",
+  //     description: "Rep the Magic City during every match in this signature blue jersey.",
+  //     image: "https://via.placeholder.com/600x400?text=Miami",
+  //     cta: "SHOP NOW",
+  //     href: "/miami",
+  //   },
+  //   {
+  //     id: 4,
+  //     title: "SAMBA",
+  //     description: "Always iconic, always in style.",
+  //     image: "https://via.placeholder.com/600x400?text=Samba",
+  //     cta: "SHOP NOW",
+  //     href: "/samba",
+  //   },
+  // ]
 
   const newProducts = [
     {
@@ -109,13 +109,14 @@ export default function HomePage() {
     },
   ]
 
-  const promoTiles = [
+  const mockSlides: Slide[] = [
     {
       title: "ADIZERO EVO SL",
       subtitle: "",
       description: "Feel fast. In all aspects of life.",
       image: "/assets/resource/running_fw25_adizero_evo_sl_card_launch_d_a5b8e55d93.jpg?height=400&width=300",
       cta: "SHOP NOW",
+      href: "/superstar",
     },
     {
       title: "TAEKWONDO: NEW AGE CLASSIC",
@@ -123,6 +124,7 @@ export default function HomePage() {
       description: "The low profile style everyone is talking about.",
       image: "/assets/resource/originals_fw25_taekwondo_card_sustain_d_12978e639b.jpg",
       cta: "SHOP NOW",
+      href: "/superstar",
     },
     {
       title: "REAL MADRID 25/26 AWAY JERSEY",
@@ -130,6 +132,7 @@ export default function HomePage() {
       description: "Bring the Bernabéu Stadium to them.",
       image: "/assets/resource/global_aclubs_away_realmadrid_football_fw25_launch_teaser_d_cd74d54f99.jpg",
       cta: "SHOP NOW",
+      href: "/superstar",
     },
     {
       title: "DROPSET 3",
@@ -137,6 +140,7 @@ export default function HomePage() {
       description: "Rooted in Strength.",
       image: "/assets/resource/global_dropset_training_fw25_launch_hp_catlp_navigation_card_teaser_2_d_7051bb5ba3.jpg",
       cta: "SHOP NOW",
+      href: "/superstar",
     },
   ]
 
@@ -213,9 +217,6 @@ export default function HomePage() {
         "new-to-sale": newArrivalProductsTab,
       }} />
 
-      {/* Promo Carousel */}
-      {/* <PromoCarousel slides={mockSlides} /> */}
-
       {/* New Products Section */}
       {/* <section className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
@@ -245,7 +246,7 @@ export default function HomePage() {
       {/* Promo Tiles */}
       <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 mb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {promoTiles.map((title, index) => (
+          {mockSlides.map((title, index) => (
             <Card key={`${title}-${index}`} className="relative overflow-hidden h-80 border-0 rounded-none">
               <div
                 className="absolute inset-0 bg-cover bg-center"
@@ -267,6 +268,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Promo Carousel */}
+      <PromoCarousel slides={mockSlides}/>
 
       {/* Prime Section */}
       <section className="bg-black text-white py-20 sm:py-18 md:py-0 lg:py-8 xl:py-8 2xl:py-10 mb-0">
