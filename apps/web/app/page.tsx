@@ -238,7 +238,7 @@ export default function HomePage() {
       </section>
 
       {/* Popular Categories */}
-      <section className="container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 py-0 mb-10">
+      <section className="container mx-auto px-4 py-0 mb-10">
         <h2 className="text-[32px] font-bold mb-4">Popular right now</h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-6">
