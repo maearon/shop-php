@@ -11,8 +11,9 @@ import ProductCarousel from "@/components/product-carousel"
 import { useEffect, useState } from "react"
 import { newArrivalProducts } from "@/data/fake-new-arrival-products"
 import { Product } from "@/types/product"
+import HistoryView from "@/components/HistoryView"
 
-export default function MenPage() {
+export default function WomenPage() {
   const [newArrivalProductsTab, setNewArrivalProductsTab] = useState<Product[]>([])
 
   useEffect(() => {
@@ -24,35 +25,35 @@ export default function MenPage() {
     }, [])
 
   const categoryTiles = [
-    { title: "SNEAKERS", image: "/assets/men/handball-spezial.jpg?height=200&width=300", href: "/men-shoes" },
-    { title: "TOPS", image: "/assets/men/real-madrid-25-26-home-authentic-jersey.jpg?height=200&width=300", href: "/men-tops" },
-    { title: "HOODIES & SWEATSHIRTS", image: "/assets/men/adicolor-classics-trefoil-hoodie.jpg?height=200&width=300", href: "/men-hoodies" },
-    { title: "PANTS", image: "/assets/men/zip-off-cargo-pants.jpg?height=200&width=300", href: "/men-pants" },
+    { title: "SNEAKERS", image: "/assets/women/samba-og-shoes.jpg?height=200&width=300", href: "/men-shoes" },
+    { title: "TOPS", image: "/assets/women/adicolor-classic-firebird-loose-track-top.jpg?height=200&width=300", href: "/men-tops" },
+    { title: "PANTS & TIGHTS", image: "/assets/women/tricot-3-stripes-track-pants.jpg?height=200&width=300", href: "/men-hoodies" },
+    { title: "MATCHING SETS", image: "/assets/women/adidas-by-stella-mccartney-truecasuals-terry-short.jpg?height=200&width=300", href: "/men-pants" },
   ]
 
   const promoTiles = [
     {
       title: "ADIZERO EVO SL",
       description: "Feel fast. In all aspects of life.",
-      image: "/assets/men/running_fw25_adizero_m_crd_launch_d_66c8b9a7e7.jpeg",
+      image: "/assets/women/running_fw25_adizero_w_card_launch_d_daa2410a01.jpeg",
       href: "/products/adizero-evo-sl",
     },
     {
       title: "CAMPUS",
       description: "Street classic to keep you moving in style.",
-      image: "/assets/men/global_franchise_toolkit_campus_q3_originals_fw25_launch_navigation_card_teaser_1_hp_glp_d_878717000e.jpg",
+      image: "/assets/women/originals_fw25_taekwondo_card_sustain_d_12978e639b.jpg",
       href: "/products/campus",
     },
     {
       title: "REAL MADRID 25/26 HOME JERSEY",
       description: "Bring the Bernabéu Stadium to them.",
-      image: "/assets/men/global_aclubs_away_realmadrid_football_fw25_launch_teaser_d_94d0063c86.jpg",
+      image: "/assets/women/global_sparkfusion_football_fw25_launch_glp_catlp_navigation_card_teaser_1_d_5e18383848.jpg",
       href: "/products/real-madrid-25-26",
     },
     {
       title: "DROPSET 3",
       description: "Rooted in Strength.",
-      image: "/assets/men/global_dropset_training_fw25_launch_mglp_navigation_card_teaser_2_d_13e1e2292e.jpg",
+      image: "/assets/women/global_dropset_training_fw25_launch_fglp_navigation_card_teaser_2_d_587e6e1970.jpg",
       href: "/products/dropset-3",
     },
   ];
@@ -94,12 +95,12 @@ export default function MenPage() {
       {/* <Header /> */}
 
       <HeroBanner
-        backgroundClassName="bg-hero-men"
+        backgroundClassName="bg-hero-women"
         content={{
           title: "PAST, PRESENT, FUTURE",
           description: "Explore the Superstar, now updated for the next generation.",
           buttons: [
-            { href: "/men-superstar", buttonLabel: "SHOP NOW" }
+            { href: "/women-superstar", buttonLabel: "SHOP NOW" }
           ],
         }}
       />
@@ -183,18 +184,10 @@ export default function MenPage() {
 
       {/* Men's Description */}
       <section className="container mx-auto px-2 py-12 text-center">
-        <h2 className="text-2xl font-bold mb-6">MEN'S SNEAKERS AND WORKOUT CLOTHES</h2>
+        <h2 className="text-2xl font-bold mb-6">Women's Sneakers and Workout Clothes</h2>
         <div className="max-w-4xl mx-auto text-gray-700 text-sm leading-relaxed space-y-4">
           <p>
-            Ambitious, effortless and creative. Casual fits, street-proud and perform your best in men's shoes and
-            apparel that support your passion and define your style. Whether you're training for a marathon, playing
-            pickup basketball or just hanging out with friends, adidas men's clothing and shoes are designed to keep you
-            comfortable, so you feel confident and ready to take on whatever comes your way.
-          </p>
-          <p>
-            adidas is here, whether you need team, with men's workout clothes and sneakers that are built to last and
-            designed to perform. From our adidas Boost technology that returns energy with every step, to our activewear
-            that fits and feels as great as it looks. Experience the adidas difference.
+            Look great. Feel great. Perform great. Keep your workout on track with women's sneakers that support focused training with a supportive fit and a cushioned midsole. Designed for performance and comfort, our women's workout clothes and shoes support athletes and training at every level. Experience adidas technologies that support cool, dry comfort through intense workouts. Put your fitness first with adidas women's workout shoes and running clothes that breathe, manage sweat and help you realize your fitness goals.
           </p>
         </div>
       </section>
@@ -208,6 +201,14 @@ export default function MenPage() {
           ))}
         </div>
       </section> */}
+      <HistoryView
+        title={
+          <>
+            RECENTLY VIEWED ITEMS
+          </>
+        }
+        showIndicatorsInProductCarousel={true}
+      />
 
       {/* Men's Categories Footer */}
       {/* <section className="bg-gray-50 py-12">

@@ -1,35 +1,23 @@
 "use client"
 
 import ProductTabs from "@/components/product-tabs"
-import PromoCarousel, { Slide } from "@/components/promo-carousel"
-import Link from "next/link"
+import PromoCarousel from "@/components/promo-carousel"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
-import ProductCard from "@/components/product-card"
 import HeroBanner from "@/components/HeroBanner"
 import HeroBannerSecond from "@/components/home/HeroBannerSecond"
 import { useState, useEffect } from "react"
-
-
-import ProductCarousel from "@/components/product-carousel"
 import PromoBanner from "@/components/home/PromoBanner"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import Image from "next/image"
-import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
-
-import { LastVisitedProduct, Product } from "@/types/product"
-import { fakeLastVisitedProducts } from "@/data/fake-last-visited-products"
+import { Product } from "@/types/product"
 import { newArrivalProducts } from "@/data/fake-new-arrival-products"
 import { mockSlides } from "@/data/mock-slides-data"
 import { relatedResources } from "@/data/related-resources-data"
+import HistoryView from "@/components/HistoryView"
 
 export default function HomePage() {
   const router = useRouter()
-  const [stillInterestedProducts, setStillInterestedProducts] = useState<any[]>([])
   const [newArrivalProductsTab, setNewArrivalProductsTab] = useState<Product[]>([])
   const [openCategory, setOpenCategory] = useState<string | null>(null)
 
@@ -38,54 +26,12 @@ export default function HomePage() {
   }
 
   useEffect(() => {
-    const visitedProducts: LastVisitedProduct[] = fakeLastVisitedProducts;
-    localStorage.setItem("lastVisitedProducts", JSON.stringify(visitedProducts))
     try {
-      const lastVisitedProductsStr = localStorage.getItem("lastVisitedProducts") ?? "[]"
-      const parsed: LastVisitedProduct[] = JSON.parse(lastVisitedProductsStr)
-      const sliced = parsed.slice().reverse()
-
-      setStillInterestedProducts(sliced)
       setNewArrivalProductsTab(newArrivalProducts)
     } catch (err) {
-      console.error("Failed to parse lastVisitedProducts", err)
+      console.error("Failed to setNewArrivalProductsTab", err)
     }
   }, [])
-
-  // const mockSlides: Slide[] = [
-  //   {
-  //     id: 1,
-  //     title: "PAST, PRESENT, FUTURE",
-  //     description: "Explore the Superstar in all its iconic glory, now with more comfort.",
-  //     image: "https://via.placeholder.com/600x400?text=Superstar",
-  //     cta: "SHOP NOW",
-  //     href: "/superstar",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "DROPSET 3",
-  //     description: "Rooted in Strength.",
-  //     image: "https://via.placeholder.com/600x400?text=Dropset",
-  //     cta: "SHOP NOW",
-  //     href: "/dropset",
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "A TRUE MIAMI ORIGINAL",
-  //     description: "Rep the Magic City during every match in this signature blue jersey.",
-  //     image: "https://via.placeholder.com/600x400?text=Miami",
-  //     cta: "SHOP NOW",
-  //     href: "/miami",
-  //   },
-  //   {
-  //     id: 4,
-  //     title: "SAMBA",
-  //     description: "Always iconic, always in style.",
-  //     image: "https://via.placeholder.com/600x400?text=Samba",
-  //     cta: "SHOP NOW",
-  //     href: "/samba",
-  //   },
-  // ]
 
   const newProducts = [
     {
@@ -153,18 +99,13 @@ export default function HomePage() {
       <HeroBannerSecond />
       
       {/* History Products Section */}
-      <section className="container mx-auto px-2 py-0 mb-10">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-xl sm:text-2xl md:text-3xl xl:text-3xl font-extrabold tracking-tight leading-tight break-words">
+      <HistoryView
+        title={
+          <>
             STILL <br className="xl:hidden" /> INTERESTED?
-          </h2>
-          {/* <Button variant="link" className="text-sm font-bold">
-            VIEW ALL
-          </Button> */}
-        </div>
-
-        <ProductCarousel products={stillInterestedProducts.map((p) => p.product)} showIndicators={false} />
-      </section>
+          </>
+        }
+      />
 
       {/* Product Tabs Section */}
       <ProductTabs initialProductsByTab={{

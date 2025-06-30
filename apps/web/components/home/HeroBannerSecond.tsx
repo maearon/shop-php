@@ -10,7 +10,7 @@ export default function HeroBannerSecond() {
   const [showVideo, setShowVideo] = useState(false)
 
   return (
-    <section className="relative h-[80vh] bg-hero-second bg-cover bg-top text-white mb-10">
+    <section className="relative h-[80vh] bg-hero-women bg-cover bg-top text-white mb-10">
       <div className="relative z-10 container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 h-full flex items-end pb-11">
         <div className="max-w-md">
           {/* Title */}
