@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Header from "@/components/header"
@@ -5,48 +7,62 @@ import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
 import MenFooter from "@/components/men-footer"
 import HeroBanner from "@/components/HeroBanner"
+import ProductCarousel from "@/components/product-carousel"
+import { useEffect, useState } from "react"
+import { newArrivalProducts } from "@/data/fake-new-arrival-products"
+import { Product } from "@/types/product"
 
 export default function MenPage() {
+  const [newArrivalProductsTab, setNewArrivalProductsTab] = useState<Product[]>([])
+
+  useEffect(() => {
+      try {
+        setNewArrivalProductsTab(newArrivalProducts)
+      } catch (err) {
+        console.error("Failed to setNewArrivalProductsTab", err)
+      }
+    }, [])
+
   const categoryTiles = [
-    { title: "SNEAKERS", image: "/placeholder.png?height=200&width=300", href: "/men-shoes" },
-    { title: "TOPS", image: "/placeholder.png?height=200&width=300", href: "/men-tops" },
-    { title: "HOODIES & SWEATSHIRTS", image: "/placeholder.png?height=200&width=300", href: "/men-hoodies" },
-    { title: "PANTS", image: "/placeholder.png?height=200&width=300", href: "/men-pants" },
+    { title: "SNEAKERS", image: "/assets/men/handball-spezial.jpg?height=200&width=300", href: "/men-shoes" },
+    { title: "TOPS", image: "/assets/men/real-madrid-25-26-home-authentic-jersey.jpg?height=200&width=300", href: "/men-tops" },
+    { title: "HOODIES & SWEATSHIRTS", image: "/assets/men/adicolor-classics-trefoil-hoodie.jpg?height=200&width=300", href: "/men-hoodies" },
+    { title: "PANTS", image: "/assets/men/zip-off-cargo-pants.jpg?height=200&width=300", href: "/men-pants" },
   ]
 
   const promoTiles = [
     {
-      title: "SAMBA",
-      description: "Retro court. Timeless as ever.",
-      image: "/placeholder.png?height=300&width=280",
-      cta: "SHOP NOW",
+      title: "ADIZERO EVO SL",
+      description: "Feel fast. In all aspects of life.",
+      image: "/assets/men/running_fw25_adizero_m_crd_launch_d_66c8b9a7e7.jpeg",
+      href: "/products/adizero-evo-sl",
+    },
+    {
+      title: "CAMPUS",
+      description: "Street classic to keep you moving in style.",
+      image: "/assets/men/global_franchise_toolkit_campus_q3_originals_fw25_launch_navigation_card_teaser_1_hp_glp_d_878717000e.jpg",
+      href: "/products/campus",
+    },
+    {
+      title: "REAL MADRID 25/26 HOME JERSEY",
+      description: "Bring the Bernabéu Stadium to them.",
+      image: "/assets/men/global_aclubs_away_realmadrid_football_fw25_launch_teaser_d_94d0063c86.jpg",
+      href: "/products/real-madrid-25-26",
     },
     {
       title: "DROPSET 3",
       description: "Rooted in Strength.",
-      image: "/placeholder.png?height=300&width=280",
-      cta: "SHOP NOW",
+      image: "/assets/men/global_dropset_training_fw25_launch_mglp_navigation_card_teaser_2_d_13e1e2292e.jpg",
+      href: "/products/dropset-3",
     },
-    {
-      title: "CRAFT LITE SHORTS",
-      description: "Engineered to elevate your game.",
-      image: "/placeholder.png?height=300&width=280",
-      cta: "SHOP NOW",
-    },
-    {
-      title: "UNDENIABLE DUO",
-      description: "Bring 3-Stripes style that shows your #1 supportive team-mates for seasons to you.",
-      image: "/placeholder.png?height=300&width=280",
-      cta: "SHOP NOW",
-    },
-  ]
+  ];
 
-  const topPicks = [
-    { id: 1, name: "Samba OG Shoes", price: "$100", image: "/placeholder.png?height=300&width=250" },
-    { id: 2, name: "Ultraboost 1.0 Shoes", price: "$190", image: "/placeholder.png?height=300&width=250" },
-    { id: 3, name: "Ultraboost 22 Shoes", price: "$190", image: "/placeholder.png?height=300&width=250" },
-    { id: 4, name: "Gazelle Indoor Shoes", price: "$100", image: "/placeholder.png?height=300&width=250" },
-  ]
+  // const topPicks = [
+  //   { id: 1, name: "Samba OG Shoes", price: "$100", image: "/placeholder.png?height=300&width=250" },
+  //   { id: 2, name: "Ultraboost 1.0 Shoes", price: "$190", image: "/placeholder.png?height=300&width=250" },
+  //   { id: 3, name: "Ultraboost 22 Shoes", price: "$190", image: "/placeholder.png?height=300&width=250" },
+  //   { id: 4, name: "Gazelle Indoor Shoes", price: "$100", image: "/placeholder.png?height=300&width=250" },
+  // ]
 
   const recentlyViewed = [
     {
@@ -90,57 +106,80 @@ export default function MenPage() {
 
       {/* Category Tiles */}
       <section className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {categoryTiles.map((category, index) => (
-            <Card
+            <a
               key={index}
-              className="relative overflow-hidden h-32 cursor-pointer hover:shadow-lg transition-shadow border-0 rounded-none"
+              href={category.href}
+              className="flex flex-col items-center bg-[#EAEEEF] p-4 pt-0 hover:shadow-lg transition"
             >
-              <a href={category.href}>
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url('${category.image}')` }}
-                >
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                </div>
-                <CardContent className="relative h-full flex items-end p-4">
-                  <h3 className="text-white font-bold text-sm">{category.title}</h3>
-                </CardContent>
-              </a>
-            </Card>
+              {/* Image block */}
+              <div className="w-[160px] h-[160px] bg-white mb-4 flex items-center justify-center">
+                <img
+                  src={category.image}
+                  alt={category.title}
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+
+              {/* Title */}
+              <h3 className="text-black text-sm font-bold underline uppercase text-center">
+                {category.title}
+              </h3>
+            </a>
           ))}
         </div>
       </section>
 
       {/* Promo Tiles */}
+      {/* Promo Tiles */}
       <section className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {promoTiles.map((tile, index) => (
-            <Card key={index} className="relative overflow-hidden h-80 border-0 rounded-none">
-              <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${tile.image}')` }}>
-                <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+            <a
+              key={index}
+              href={tile.href}
+              className="group border border-transparent hover:border-black transition duration-300"
+            >
+              {/* Image section */}
+              <div className="aspect-[3/4] w-full overflow-hidden">
+                <img
+                  src={tile.image}
+                  alt={tile.title}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
               </div>
-              <CardContent className="relative h-full flex flex-col justify-end p-6 text-white">
-                <h3 className="font-bold text-lg mb-2">{tile.title}</h3>
-                <p className="text-sm mb-4 leading-tight">{tile.description}</p>
-                <Button variant="outline" size="sm" className="w-fit bg-white text-black hover:bg-gray-100 font-bold">
-                  {tile.cta} →
-                </Button>
-              </CardContent>
-            </Card>
+
+              {/* Text section */}
+              <div className="p-4">
+                <h3 className="font-bold text-sm md:text-base uppercase mb-1">{tile.title}</h3>
+                <p className="text-sm text-gray-700 mb-3">{tile.description}</p>
+                <span className="text-sm font-bold underline">SHOP NOW</span>
+              </div>
+            </a>
           ))}
         </div>
       </section>
 
       {/* Top Picks */}
-      <section className="container mx-auto px-2 py-12">
+      {/* <section className="container mx-auto px-2 py-12">
         <h2 className="text-xl font-bold mb-8">TOP PICKS FOR YOU</h2>
         <div className="grid grid-cols-4 gap-6">
           {topPicks.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+      </section> */}
+      {/* Top Picks */}
+      {/* Top Picks */}
+      <section className="container mx-auto px-2 mb-10">
+        <h2 className="text-xl font-bold mb-8">TOP PICKS FOR YOU</h2>
+
+        <ProductCarousel
+          products={newArrivalProductsTab}
+        />
       </section>
+
 
       {/* Men's Description */}
       <section className="container mx-auto px-2 py-12 text-center">
