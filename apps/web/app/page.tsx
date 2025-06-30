@@ -146,26 +146,38 @@ export default function HomePage() {
 
   const popularCategories = ["ultraboost", "samba", "campus", "soccer", "gazelle", "spezial"]
 
-  const relatedResources = [
+  const relatedResources: Slide[] = [
     {
       title: "How To Clean Shoes",
+      subtitle: "",
       description: "Get expert shoe-buying advice and learn how to choose your sneakers the right way.",
       image: "/assets/resource/ED_087_How_to_Clean_Shoes_mh_d_f0806a86f8.jpg?height=200&width=300",
+      cta: "SHOP NOW",
+      href: "/superstar",
     },
     {
       title: "The adidas Samba Shoe Guide",
+      subtitle: "",
       description: "Discover classic adidas footwear through the fit and feel of the new and old Samba.",
       image: "/assets/resource/samba_size_guide_masthead_d_215_982556_a90150c541.jpg?height=200&width=300",
+      cta: "SHOP NOW",
+      href: "/superstar",
     },
     {
       title: "Are the Looks: How to Style a Tennis Skirt",
+      subtitle: "",
       description: "Get inspired by iconic fashion looks to target tennis skirt outfits with adidas.",
       image: "/assets/resource/Edi_SS_24_How_to_Style_a_Tennis_Skirt_mh_d_c09648994f.jpg?height=200&width=300",
+      cta: "SHOP NOW",
+      href: "/superstar",
     },
     {
       title: "How to Style a Soccer Jersey",
+      subtitle: "",
       description: "Get tips on how to style a soccer jersey to create a surprisingly versatile wardrobe staple.",
       image: "/assets/resource/how_to_style_a_soccer_jersey_mh_d_215_1035532_5578c26900.jpg?height=200&width=300",
+      cta: "SHOP NOW",
+      href: "/superstar",
     },
   ]
 
@@ -269,9 +281,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Promo Carousel */}
-      <PromoCarousel slides={mockSlides}/>
-
       {/* Prime Section */}
       <section className="bg-black text-white py-20 sm:py-18 md:py-0 lg:py-8 xl:py-8 2xl:py-10 mb-0">
         <div className="container mx-auto px-4 flex flex-col items-center text-center gap-0">
@@ -335,6 +344,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Related Resources Carousel */}
+      <PromoCarousel slides={relatedResources}/>
 
       {/* Footer Categories */}
       <section className="bg-white py-12">
