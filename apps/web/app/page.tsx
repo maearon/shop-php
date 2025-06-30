@@ -284,49 +284,47 @@ export default function HomePage() {
       <PromoCarousel slides={relatedResources}/>
 
       {/* Footer Categories */}
-      <section className="bg-white py-12">
-        <div className="container mx-auto px-10 sm:px-10 md:px-10 lg:px-10 xl:px-20 2xl:px-20">
-          {/* Mobile - Accordion */}
-          <div className="block sm:hidden divide-y divide-gray-200">
-            {Object.entries(footerCategories).map(([category, items]) => (
-              <div key={category}>
-                <button
-                  onClick={() => toggleCategory(category)}
-                  className="w-full flex justify-between items-center py-4 font-bold text-sm"
-                >
-                  {category}
-                  {openCategory === category ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                </button>
-                <ul className={`pl-4 pb-4 space-y-2 ${openCategory === category ? "block" : "hidden"}`}>
-                  {items.map((item, index) => (
-                    <li key={`${item}-${index}`}>
-                      <a href="#" className="text-sm text-gray-600 hover:underline">
-                        {item}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+      <section className="bg-white container mx-auto px-4 py-12">
+        {/* Mobile - Accordion */}
+        <div className="block sm:hidden divide-y divide-gray-200">
+          {Object.entries(footerCategories).map(([category, items]) => (
+            <div key={category}>
+              <button
+                onClick={() => toggleCategory(category)}
+                className="w-full flex justify-between items-center py-4 font-bold text-md"
+              >
+                {category}
+                {openCategory === category ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </button>
+              <ul className={`pl-4 pb-4 space-y-2 ${openCategory === category ? "block" : "hidden"}`}>
+                {items.map((item, index) => (
+                  <li key={`${item}-${index}`}>
+                    <a href="#" className="text-sm text-gray-600 hover:underline">
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
 
-          {/* Desktop - Grid */}
-          <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-8">
-            {Object.entries(footerCategories).map(([category, items]) => (
-              <div key={category}>
-                <h3 className="font-bold mb-4 text-sm">{category}</h3>
-                <ul className="space-y-2">
-                  {items.map((item, index) => (
-                    <li key={`${item}-${index}`}>
-                      <a href="#" className="text-sm text-gray-600 hover:underline">
-                        {item}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+        {/* Desktop - Grid */}
+        <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-8">
+          {Object.entries(footerCategories).map(([category, items]) => (
+            <div key={category}>
+              <h4 className="font-bold mb-4 text-md">{category}</h4>
+              <ul className="space-y-2">
+                {items.map((item, index) => (
+                  <li key={`${item}-${index}`}>
+                    <a href="#" className="text-sm text-gray-600 hover:underline">
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </section>
     </div>
