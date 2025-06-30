@@ -128,15 +128,14 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
                 <div className="relative h-full flex flex-col justify-end p-6 text-white">
                   <h3 className="font-bold text-lg mb-2">{slide.title}</h3>
                   <p className="text-sm mb-4 leading-relaxed">{slide.description}</p>
-                  <Link href={slide.href}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-fit bg-white text-black hover:bg-gray-100 font-bold border-0"
-                    >
-                      {slide.cta}
-                    </Button>
-                  </Link>
+                  <Button
+                    href={slide.href}
+                    variant="outline"
+                    size="sm"
+                    className="bg-white text-black hover:bg-gray-100 font-bold border-0"
+                  >
+                    {slide.cta}
+                  </Button>
                 </div>
               </div>
             ))}

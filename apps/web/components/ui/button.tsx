@@ -27,8 +27,8 @@ export function Button({
   shadow = false,
   fullWidth = false,
   className,
-  variant = "ghost", // ✅ default variant
-  ...props // ⬅️ lấy phần còn lại, gồm variant, size, etc.
+  variant = "ghost",
+  ...props
 }: ButtonProps) {
   const router = useRouter()
 
@@ -44,44 +44,42 @@ export function Button({
 
       {/* Main button */}
       <BaseButton
-        asChild={!!href} // ✅ ✅ Thêm dòng này để truyền <a> vào bên trong Button, Chỉ asChild khi có href
+        asChild={!!href}
         disabled={loading}
         variant={variant}
         className={cn(
-          "relative z-10 w-full inline-flex items-center justify-center px-4 h-12 bg-white text-black font-bold text-base uppercase tracking-wide border border-white rounded-none transition-all",
-          !href && "flex items-center justify-center", // ✅ fix nằm một dòng nếu không dùng <Link>
+          "relative z-10 inline-flex items-center justify-center px-4 h-12 bg-white text-black font-bold text-base uppercase tracking-wide border border-white rounded-none transition-all",
+          fullWidth ? "w-full" : "w-fit", // ✅ Thêm điều kiện rõ ràng ở đây
+          !href && "flex items-center justify-center",
           className
         )}
-        {...props} // ⬅️ truyền các prop còn lại
+        {...props}
       >
         {href ? (
           <Link
             href={href}
             onClick={(e) => loading && e.preventDefault()}
-            className="w-full h-full flex items-center justify-center"
+            className="flex items-center justify-center gap-1 px-2 py-1"
           >
             {loading ? (
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             ) : (
-              <span className="mr-2 -translate-y-[1px]">{children}</span>
+              <span className="-translate-y-[1px]">{children}</span>
             )}
-            {showArrow !== false && (
-              <span className="text-[22px] font-thin leading-none">⟶</span>
-            )}
+            {showArrow !== false && <span className="text-[22px] font-thin leading-none">⟶</span>}
           </Link>
         ) : (
           <>
             {loading ? (
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             ) : (
-              <span className="mr-2 -translate-y-[1px]">{children}</span>
+              <span className="-translate-y-[1px]">{children}</span>
             )}
-            {showArrow !== false && (
-              <span className="text-[22px] font-thin leading-none">⟶</span>
-            )}
+            {showArrow !== false && <span className="text-[22px] font-thin leading-none">⟶</span>}
           </>
         )}
       </BaseButton>
     </div>
   )
 }
+
