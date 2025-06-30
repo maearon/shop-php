@@ -81,3 +81,21 @@
     background-image: url('/assets/lib/originals_fw25_tatemcraesuperstar_bnr_sustain_d_9bf87fca6e.jpg?width=1280');
   }
 }
+/* men */
+.bg-hero-men {
+  background-image: url('/assets/lib/originals_fw25_theoriginal_bnr_sustain_m_5b97281d88.jpg?width=768');
+  background-size: cover;
+  background-position: top;
+}
+
+@media (min-width: 768px) {
+  .bg-hero-men {
+    background-image: url('/assets/lib/originals_fw25_theoriginal_bnr_sustain_t_d58d9b4bfd.jpg?width=1024');
+  }
+}
+
+@media (min-width: 1024px) {
+  .bg-hero-men {
+    background-image: url('/assets/lib/originals_fw25_theoriginal_bnr_sustain_d_7b559513d6.jpg?width=1280');
+  }
+}

@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
-import HeroBanner from "@/components/home/HeroBanner"
+import HeroBanner from "@/components/HeroBanner"
 import HeroBannerSecond from "@/components/home/HeroBannerSecond"
 import { useState, useEffect } from "react"
 
@@ -139,8 +139,17 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       <PromoBanner />
-      <HeroBanner />
-      <HeroBannerSecond />
+      <HeroBanner
+        backgroundClassName="bg-hero"
+        content={{
+          title: "A TRUE MIAMI ORIGINAL",
+          description: "Dream big and live blue in the iconic Inter Miami CF 2025 Third Jersey.",
+          buttons: [
+            { href: "/superstar", buttonLabel: "SHOP NOW" }
+          ],
+        }
+      }
+/>
       
       {/* History Products Section */}
       <section className="container mx-auto px-2 py-0 mb-10">
