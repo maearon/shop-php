@@ -7,7 +7,7 @@ http:
 apiEndpoints:
   up:
     path: /api/up*
-    target: http://api-csharp:80
+    target: http://api-csharp
   
   oauth:
     path: /api/oauth*
@@ -15,6 +15,10 @@ apiEndpoints:
 
   login:
     path: /api/login
+    target: http://api-java:8080
+
+  signup:
+    path: /api/signup
     target: http://api-java:8080
 
   logout:
@@ -98,6 +102,13 @@ pipelines:
   login-pipeline:
     apiEndpoints:
       - login
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: api-java
+  signup-pipeline:
+    apiEndpoints:
+      - signup
     policies:
       - proxy:
           - action:
