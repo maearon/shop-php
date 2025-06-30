@@ -5,13 +5,14 @@ import { Card, CardContent } from "@/components/ui/card"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
-import MenFooter from "@/components/men-footer"
+import MenFooter from "@/components/page-footer"
 import HeroBanner from "@/components/HeroBanner"
 import ProductCarousel from "@/components/product-carousel"
 import { useEffect, useState } from "react"
 import { newArrivalProducts } from "@/data/fake-new-arrival-products"
 import { Product } from "@/types/product"
 import HistoryView from "@/components/HistoryView"
+import PageFooter from "@/components/page-footer"
 
 export default function WomenPage() {
   const [newArrivalProductsTab, setNewArrivalProductsTab] = useState<Product[]>([])
@@ -233,7 +234,7 @@ export default function WomenPage() {
       </section> */}
 
       {/* <Footer /> */}
-      <MenFooter />
+      <PageFooter currentPage="women" />
     </div>
   )
 }

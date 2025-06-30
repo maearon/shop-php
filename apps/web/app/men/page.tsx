@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
-import MenFooter from "@/components/men-footer"
+import PageFooter from "@/components/page-footer"
 import HeroBanner from "@/components/HeroBanner"
 import ProductCarousel from "@/components/product-carousel"
 import { useEffect, useState } from "react"
@@ -232,7 +232,7 @@ export default function MenPage() {
       </section> */}
 
       {/* <Footer /> */}
-      <MenFooter />
+      <PageFooter currentPage="men" />
     </div>
   )
 }

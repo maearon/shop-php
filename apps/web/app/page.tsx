@@ -15,15 +15,11 @@ import { newArrivalProducts } from "@/data/fake-new-arrival-products"
 import { mockSlides } from "@/data/mock-slides-data"
 import { relatedResources } from "@/data/related-resources-data"
 import HistoryView from "@/components/HistoryView"
+import PageFooter from "@/components/page-footer"
 
 export default function HomePage() {
   const router = useRouter()
   const [newArrivalProductsTab, setNewArrivalProductsTab] = useState<Product[]>([])
-  const [openCategory, setOpenCategory] = useState<string | null>(null)
-
-  const toggleCategory = (category: string) => {
-    setOpenCategory(openCategory === category ? null : category)
-  }
 
   useEffect(() => {
     try {
@@ -61,26 +57,6 @@ export default function HomePage() {
   ]
 
   const popularCategories = ["ultraboost", "samba", "campus", "soccer", "gazelle", "spezial"]
-  const footerCategories = {
-    "SUMMER FAVORITES": ["Summer Shoes", "Tees", "Tank Tops", "Shorts", "Swimwear", "Outdoor Gear & Accessories"],
-    "SUMMER SPORT FITS": [
-      "Men's Summer Outfits",
-      "Men's Tank Tops",
-      "Men's Shorts",
-      "Women's Summer Outfits",
-      "Women's Shorts & Skirts",
-      "Women's Tank Tops",
-    ],
-    "OUR FAVORITE ACCESSORIES": ["Hats", "Bags", "Socks", "Sunglasses", "Water Bottles", "Gift Cards"],
-    "SCHOOL UNIFORMS": [
-      "Uniform Shoes",
-      "Uniform Polos",
-      "Uniform Pants",
-      "Uniform Shorts",
-      "Uniform Accessories",
-      "School Backpacks",
-    ],
-  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -235,49 +211,7 @@ export default function HomePage() {
       <PromoCarousel slides={relatedResources}/>
 
       {/* Footer Categories */}
-      <section className="bg-white container mx-auto px-2 py-12">
-        {/* Mobile - Accordion */}
-        <div className="block sm:hidden divide-y divide-gray-200">
-          {Object.entries(footerCategories).map(([category, items]) => (
-            <div key={category}>
-              <button
-                onClick={() => toggleCategory(category)}
-                className="w-full flex justify-between items-center py-4 font-bold text-md"
-              >
-                {category}
-                {openCategory === category ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-              </button>
-              <ul className={`pl-4 pb-4 space-y-2 ${openCategory === category ? "block" : "hidden"}`}>
-                {items.map((item, index) => (
-                  <li key={`${item}-${index}`}>
-                    <a href="#" className="text-sm text-gray-600 hover:underline">
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        {/* Desktop - Grid */}
-        <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-8">
-          {Object.entries(footerCategories).map(([category, items]) => (
-            <div key={category}>
-              <h4 className="font-bold mb-4 text-md">{category}</h4>
-              <ul className="space-y-2">
-                {items.map((item, index) => (
-                  <li key={`${item}-${index}`}>
-                    <a href="#" className="text-sm text-gray-600 hover:underline">
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
+      <PageFooter currentPage="home" />
 
       {/* Desktop Black section with white text */}
       <section className="bg-black text-white py-16">
