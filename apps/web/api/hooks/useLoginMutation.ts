@@ -8,20 +8,20 @@ import javaService from "@/api/services/javaService"
 interface LoginPayload {
   email: string
   password: string
-  rememberMe?: boolean
+  remember_me?: boolean
 }
 
 export const useLoginMutation = () => {
   const dispatch = useDispatch<AppDispatch>()
 
   return useMutation({
-    mutationFn: async ({ email, password, rememberMe = true }: LoginPayload) => {
+    mutationFn: async ({ email, password, remember_me = true }: LoginPayload) => {
       const response = await javaService.login({
         session: { email, password },
       })
 
       const { access, refresh } = response.tokens
-      setTokens(access.token, refresh.token, rememberMe) // ✅ Sử dụng hàm chuẩn
+      setTokens(access.token, refresh.token, remember_me) // ✅ Sử dụng hàm chuẩn
 
       return response
     },

@@ -71,14 +71,14 @@ const LoginPage: NextPage = () => {
       const response = await loginMutation.mutateAsync({
         email: values.email,
         password: values.password,
-        rememberMe: values.rememberMe === "1", // ✅ Truyền boolean
+        remember_me: values.rememberMe === "1", // ✅ Truyền boolean
       })
 
       inputEl.current?.blur()
       router.push("/")
       if (response.tokens) flashMessage("Logged in successfully", "success")
     } catch (error: any) {
-      flashMessage("error", "User or password incorrect")
+      console.log("error", error)
       setErrors({ email: ["or password incorrect"] })
     }
   }
