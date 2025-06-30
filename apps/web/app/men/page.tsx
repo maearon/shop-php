@@ -157,7 +157,7 @@ export default function MenPage() {
       </section>
 
       {/* Top Picks */}
-      <section className="container mx-auto px-4 py-12">
+      <section className="container mx-auto px-2 py-12">
         <h2 className="text-xl font-bold mb-8">TOP PICKS FOR YOU</h2>
         <div className="grid grid-cols-4 gap-6">
           {topPicks.map((product) => (
@@ -167,7 +167,7 @@ export default function MenPage() {
       </section>
 
       {/* Men's Description */}
-      <section className="container mx-auto px-4 py-12 text-center">
+      <section className="container mx-auto px-2 py-12 text-center">
         <h2 className="text-2xl font-bold mb-6">MEN'S SNEAKERS AND WORKOUT CLOTHES</h2>
         <div className="max-w-4xl mx-auto text-gray-700 text-sm leading-relaxed space-y-4">
           <p>
@@ -185,7 +185,7 @@ export default function MenPage() {
       </section>
 
       {/* Recently Viewed */}
-      {/* <section className="container mx-auto px-4 py-12">
+      {/* <section className="container mx-auto px-2 py-12">
         <h2 className="text-xl font-bold mb-8">RECENTLY VIEWED ITEMS</h2>
         <div className="grid grid-cols-4 gap-6">
           {recentlyViewed.map((product) => (

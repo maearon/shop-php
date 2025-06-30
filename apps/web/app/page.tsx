@@ -143,7 +143,7 @@ export default function HomePage() {
       <HeroBannerSecond />
       
       {/* History Products Section */}
-      <section className="container mx-auto px-4 py-0 mb-10">
+      <section className="container mx-auto px-2 py-0 mb-10">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-xl sm:text-2xl md:text-3xl xl:text-3xl font-extrabold tracking-tight leading-tight break-words">
             STILL <br className="xl:hidden" /> INTERESTED?
@@ -164,7 +164,7 @@ export default function HomePage() {
       }} />
 
       {/* New Products Section */}
-      {/* <section className="container mx-auto px-4 py-12">
+      {/* <section className="container mx-auto px-2 py-12">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center space-x-4">
             <Badge className="bg-black text-white">New Arrivals</Badge>
@@ -238,7 +238,7 @@ export default function HomePage() {
       </section>
 
       {/* Popular Categories */}
-      <section className="container mx-auto px-4 py-0 mb-10">
+      <section className="container mx-auto px-2 py-0 mb-10">
         <h2 className="text-[32px] font-bold mb-4">Popular right now</h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-6">
@@ -284,7 +284,7 @@ export default function HomePage() {
       <PromoCarousel slides={relatedResources}/>
 
       {/* Footer Categories */}
-      <section className="bg-white container mx-auto px-4 py-12">
+      <section className="bg-white container mx-auto px-2 py-12">
         {/* Mobile - Accordion */}
         <div className="block sm:hidden divide-y divide-gray-200">
           {Object.entries(footerCategories).map(([category, items]) => (

@@ -95,7 +95,7 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
   }
 
   return (
-    <section className="container mx-auto px-4 py-0">
+    <section className="container mx-auto px-2 py-0">
       <div
         className="relative overflow-hidden"
         onMouseEnter={() => setIsAutoPlaying(false)}
