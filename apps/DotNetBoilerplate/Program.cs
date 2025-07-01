@@ -122,7 +122,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("https://vue-dot-net-boilerplate.vercel.app")
+        policy.WithOrigins("https://vue-dot-net-boilerplate.vercel.app", "https://adidas-mocha.vercel.app")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

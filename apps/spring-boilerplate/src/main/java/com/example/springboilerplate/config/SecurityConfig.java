@@ -66,7 +66,7 @@ public class SecurityConfig {
             "https://sample-app-beta-lac.vercel.app",
             "https://vue-boilerplate-psi.vercel.app",
             "https://react-boilerplate-tau.vercel.app",
-            "https://react-ts-boilerplate-jade.vercel.app"
+            "https://adidas-mocha.vercel.app"
         ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"));

@@ -152,7 +152,7 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
   end
 
   allow do
-    origins 'https://react-ts-boilerplate-jade.vercel.app'
+    origins 'https://adidas-mocha.vercel.app'
 
     resource '*',
       headers: :any,

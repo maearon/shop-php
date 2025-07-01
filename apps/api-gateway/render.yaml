@@ -3,8 +3,11 @@ services:
     name: api-gateway
     env: node
     plan: free
-    buildCommand: npm install -g express-gateway && npm install
-    startCommand: eg gateway start
+
+    buildCommand: npm install
+
+    startCommand: node server.js
+
     envVars:
       - key: ASPNETCORE_URLS
         value: http://+:80
