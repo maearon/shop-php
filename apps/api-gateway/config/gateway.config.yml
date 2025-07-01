@@ -1,12 +1,15 @@
 environment:
   dotenv: true
-
+  
 http:
   port: 9000
+
+  # ✅ Global middleware
   middleware:
     cors:
-      - action:
-          origin: "https://adidas-mocha.vercel.app"  # hoặc "*" nếu bạn muốn mở cho tất cả
+      - name: cors
+        action:
+          origin: "https://adidas-mocha.vercel.app"
           methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
           headers: ["Content-Type", "Authorization"]
           credentials: true
@@ -138,14 +141,14 @@ pipelines:
   refresh-pipeline:
     apiEndpoints:
       - refresh
-    policies: 
+    policies:
       - proxy:
           - action:
               serviceEndpoint: api-java
   revoke-pipeline:
     apiEndpoints:
       - revoke
-    policies: 
+    policies:
       - proxy:
           - action:
               serviceEndpoint: api-java

@@ -5,6 +5,7 @@
 // Handles: Auth, Session, User, Password Reset APIs
 
 import api from "@/api/client"
+import { UserCreateParams, UserCreateResponse } from "@/types/user"
 import { SessionResponse, SessionIndexResponse, LoginParams } from "@/types/auth/auth"
 import { ApiResponse } from "@/types/common"
 // ------------------- Products -------------------
@@ -13,6 +14,9 @@ import { Product, ProductFilters, ProductsResponse } from "@/types/product"
 const javaService = {
   login: (params: LoginParams): Promise<SessionResponse> =>
     api.post("/login", params),
+
+  createUser: (params: UserCreateParams): Promise<UserCreateResponse> =>
+    api.post("/signup", params),
 
   logout: (): Promise<void> => api.delete("/logout"),
 

@@ -12,18 +12,32 @@ const SignupPage = () => {
   const router = useRouter();
   const signupMutation = useSignupMutation();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    password_confirmation: "",
-  });
+  const [formData, setFormData] = useState(
+    {
+      user: {
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: ""
+      }
+    }
+  );
 
   const [errors, setErrors] = useState<ErrorMessageType>({});
 
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      user: {
+        ...prev.user,
+        [name]: value,
+      }
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,7 +100,7 @@ const SignupPage = () => {
             name="name"
             id="name"
             autoComplete="off"
-            value={formData.name}
+            value={formData.user.name}
             onChange={handleChange}
           />
         </div>
@@ -98,7 +112,7 @@ const SignupPage = () => {
             type="email"
             name="email"
             id="email"
-            value={formData.email}
+            value={formData.user.email}
             onChange={handleChange}
           />
         </div>
@@ -110,7 +124,7 @@ const SignupPage = () => {
             type="password"
             name="password"
             id="password"
-            value={formData.password}
+            value={formData.user.password}
             onChange={handleChange}
           />
         </div>
@@ -122,7 +136,7 @@ const SignupPage = () => {
             type="password"
             name="password_confirmation"
             id="password_confirmation"
-            value={formData.password_confirmation}
+            value={formData.user.password_confirmation}
             onChange={handleChange}
           />
         </div>

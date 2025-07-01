@@ -4,7 +4,7 @@ import { Nullable } from "@/types/common"
 
 // Base URL config
 const BASE_URL = process.env.NODE_ENV === "development"
-  ? "https://adidas-microservices.onrender.com/api"
+  ? "http://localhost:9000/api"
   : "https://adidas-microservices.onrender.com/api"
 
 // CSRF & credentials setup
