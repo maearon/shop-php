@@ -4,8 +4,8 @@ import { ChevronDown, ChevronUp } from "lucide-react"
 import { useState } from "react"
 
 interface Props {
-  currentPage: "home" | "men" | "women";
-  onNavigate?: (page: "home" | "men" | "women") => void
+  currentPage: "home" | "men" | "women" | "kids";
+  onNavigate?: (page: "home" | "men" | "women" | "kids") => void
   typeMobileResponsive?: "accordion1x4" | "accordion2x2"
 }
 
@@ -91,12 +91,44 @@ export default function PageFooter({currentPage = "home", onNavigate, typeMobile
     ],
   }
 
-  type PageType = "home" | "men" | "women"
+  const kidsFooterSections = {
+    "KIDS COLLECTIONS": [
+      "Infant & Toddler",
+      "Boys",
+      "Girls",
+      "Disney",
+      "Sportswear",
+    ],
+    "KIDS' SHOES": [
+      "Casual Sneakers",
+      "High Top Sneakers",
+      "Slides & Sandals",
+      "Cleats",
+      "Boots",
+    ],
+    "KIDS' ACCESSORIES": [
+      "Socks",
+      "Hats",
+      "Gloves",
+      "Backpacks & Bags",
+      "Sunglasses",
+    ],
+    "KIDS' CLOTHING": [
+      "T-shirts",
+      "Hoodies & Sweatshirts",
+      "Jackets & Coats",
+      "Pants & Sweats",
+      "Track Suits",
+    ],
+  };
+
+  type PageType = "home" | "men" | "women" | "kids"
 
   const categoriesMap: Record<PageType, Record<string, string[]>> = {
     home: footerCategories,
     men: menFooterCategories,
     women: womenFooterSections,
+    kids: kidsFooterSections,
   }
 
   const selectedCategories = categoriesMap[currentPage]

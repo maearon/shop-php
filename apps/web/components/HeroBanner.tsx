@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 
 interface HeroBannerProps {
-  backgroundClassName?: "bg-hero" | "bg-hero-men" | "bg-hero-women" | null | undefined
+  backgroundClassName?: "bg-hero" | "bg-hero-men" | "bg-hero-women" | "bg-hero-kids" | null | undefined
   content?: {
     title: string
     description: string

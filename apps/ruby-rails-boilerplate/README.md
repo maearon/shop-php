@@ -61,7 +61,9 @@ maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails variants:assi
 
 ✅ Assigned 10 sizes to variant 372 (Shoes)
 
-
+✅ Created product 93: Puma Jersey 93
+  Product Count (243.4ms)  SELECT COUNT(*) FROM "products" /*application='RubyRailsBoilerplate'*/
+🎉 Seed completed with 93 products!
 
 
 maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:migrate:status | grep carts
