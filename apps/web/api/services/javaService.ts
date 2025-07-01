@@ -7,7 +7,8 @@
 import api from "@/api/client"
 import { SessionResponse, SessionIndexResponse, LoginParams } from "@/types/auth/auth"
 import { ApiResponse } from "@/types/common"
-import { Product } from "@/types/product"
+// ------------------- Products -------------------
+import { Product, ProductFilters, ProductsResponse } from "@/types/product"
 
 const javaService = {
   login: (params: LoginParams): Promise<SessionResponse> =>
@@ -25,7 +26,22 @@ const javaService = {
   // test products
   fetchProducts: async (): Promise<ApiResponse<Product[]>> => {
     return api.get("/products");
+  },
+
+  // ------------------- Products -------------------
+  getProductFilters: async () => api.get("/products/filters"),
+
+  getProducts: async (filters: ProductFilters = {}): Promise<ProductsResponse> => {
+    const params = new URLSearchParams()
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, value.toString())
+      }
+    })
+    return api.get(`/products${params.toString() ? `?${params.toString()}` : ""}`)
+  },
+
+  getProduct: async (id: number | string, params?: any) => api.get(`/products/${id}`, { params })
   }
-}
 
 export default javaService

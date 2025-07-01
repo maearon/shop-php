@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: api-gateway
+    env: node
+    plan: free
+    buildCommand: npm install -g express-gateway && npm install
+    startCommand: eg gateway start
+    envVars:
+      - key: API_JAVA_URL
+        value: https://spring-boilerplate.onrender.com
+      - key: API_RUBY_URL
+        value: https://ruby-rails-boilerplate-3s9t.onrender.com
+      - key: API_PYTHON_URL
+        value: https://api-python.onrender.com
+      - key: PAYMENTS_URL
+        value: https://payments.onrender.com

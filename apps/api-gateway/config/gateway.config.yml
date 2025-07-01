@@ -1,3 +1,6 @@
+environment:
+  dotenv: true
+
 http:
   port: 9000
 
@@ -56,16 +59,16 @@ apiEndpoints:
 
 serviceEndpoints:
   api-java:
-    url: http://api-java:8080
+    url: ${API_JAVA_URL:-http://api-java:8080}
 
   api-ruby:
-    url: http://api-ruby:3000
+    url: ${API_RUBY_URL:-http://api-ruby:3000}
 
   api-python:
-    url: http://api-python:8000
+    url: ${API_PYTHON_URL:-http://api-python:8000}
 
   payments:
-    url: http://payments:3003
+    url: ${PAYMENTS_URL:-http://payments:3003}
 
 policies:
   - proxy

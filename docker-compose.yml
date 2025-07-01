@@ -13,6 +13,14 @@ services:
       dockerfile: docker/api-gateway.Dockerfile
     ports:
       - "9000:9000"
+    env_file:
+      - ./apps/api-gateway/.env
+    environment:
+      - API_JAVA_URL=http://localhost:8080
+      - API_RUBY_URL=http://localhost:3000
+      - API_PYTHON_URL=http://localhost:8000
+      - PAYMENTS_URL=http://localhost:3003
+
     # volumes:
     #   - ./apps/api-gateway:/app
     # working_dir: /app
