@@ -1,5 +1,3 @@
-"use client"
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Header from "@/components/header"
@@ -8,23 +6,18 @@ import ProductCard from "@/components/product-card"
 import MenFooter from "@/components/page-footer"
 import HeroBanner from "@/components/HeroBanner"
 import ProductCarousel from "@/components/product-carousel"
-import { useEffect, useState } from "react"
 import { newArrivalProducts } from "@/data/fake-new-arrival-products"
 import { Product } from "@/types/product"
 import HistoryView from "@/components/HistoryView"
 import PageFooter from "@/components/page-footer"
 
-export default function WomenPage() {
-  const [newArrivalProductsTab, setNewArrivalProductsTab] = useState<Product[]>([])
+// app/kids/page.tsx
+export const metadata = {
+  title: "👕Kids' Sneakers and Activewear | adidas US👕",
+  description: "Shop the latest kids' shoes, clothing, and accessories at adidas US.",
+};
 
-  useEffect(() => {
-      try {
-        setNewArrivalProductsTab(newArrivalProducts)
-      } catch (err) {
-        console.error("Failed to setNewArrivalProductsTab", err)
-      }
-    }, [])
-
+export default function KidsPage() {
   const categoryTiles = [
     { title: "YOUTH AND TEENS", image: "/assets/kids/samba-og-shoes-kids.png?height=200&width=300", href: "/men-shoes" },
     { title: "CHILDREN", image: "/assets/kids/samba-og-shoes-kids.png?height=200&width=300", href: "/men-tops" },
@@ -178,7 +171,7 @@ export default function WomenPage() {
         <h2 className="text-xl font-bold mb-8">TOP PICKS FOR YOU</h2>
 
         <ProductCarousel
-          products={newArrivalProductsTab}
+          products={newArrivalProducts}
         />
       </section>
 
