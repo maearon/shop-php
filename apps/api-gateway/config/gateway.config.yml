@@ -24,8 +24,8 @@ http:
 
 apiEndpoints:
   up:
-    path: /api/up
-    target: http://api-csharp
+    path: /up
+    target: http://api-ruby:3000
   
   oauth:
     path: /api/oauth*
@@ -109,7 +109,7 @@ pipelines:
     policies:
       - proxy:
           - action:
-              serviceEndpoint: api-csharp
+              serviceEndpoint: api-ruby
   oauth-pipeline:
     apiEndpoints:
       - oauth
