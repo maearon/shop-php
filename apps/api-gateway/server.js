@@ -5,15 +5,13 @@ const gateway = require('express-gateway');
 
 const app = express();
 
-const corsOptions = {
-  origin: "https://adidas-mocha.vercel.app",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-};
-
-app.options("*", cors(corsOptions));
-app.use(cors(corsOptions));
+app.use(
+  '*',
+  cors({
+    origin: 'https://adidas-mocha.vercel.app',
+    credentials: true,
+  })
+);
 
 gateway()
   .load(path.join(__dirname, 'config'))

@@ -4,19 +4,9 @@ environment:
 http:
   port: 9000
 
-  middleware:
-    cors:
-      - name: cors
-        action:
-          origin: "https://adidas-mocha.vercel.app"
-          methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-          headers: ["Content-Type", "Authorization"]
-          credentials: true
-        enabled: true
-
 apiEndpoints:
   up:
-    path: /api/up*
+    path: /api/up
     target: http://api-csharp
   
   oauth:
