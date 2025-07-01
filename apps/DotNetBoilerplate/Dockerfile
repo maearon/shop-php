@@ -21,5 +21,7 @@ FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
+EXPOSE 80
+
 # Run app
 ENTRYPOINT ["dotnet", "DotNetBoilerplate.dll"]

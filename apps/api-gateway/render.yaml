@@ -6,6 +6,8 @@ services:
     buildCommand: npm install -g express-gateway && npm install
     startCommand: eg gateway start
     envVars:
+      - key: API_CSHARP_URL
+        value: https://dotnetboilerplate.onrender.com
       - key: API_JAVA_URL
         value: https://spring-boilerplate.onrender.com
       - key: API_RUBY_URL
