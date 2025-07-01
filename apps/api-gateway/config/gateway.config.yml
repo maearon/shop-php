@@ -4,7 +4,6 @@ environment:
 http:
   port: 9000
 
-  # ✅ Global middleware
   middleware:
     cors:
       - name: cors
