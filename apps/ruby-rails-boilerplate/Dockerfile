@@ -34,9 +34,6 @@ COPY . .
 # Change ownership to appuser after copying files
 RUN chown -R appuser:appuser /app
 
-# Switch to non-root user
-USER appuser
-
 # Copy entrypoint
 COPY ./entrypoint.sh /usr/bin/entrypoint.sh
 RUN chmod +x /usr/bin/entrypoint.sh
@@ -50,6 +47,9 @@ ENV RAILS_ENV=${RAILS_ENV}
 RUN if [ "$RAILS_ENV" = "production" ]; then \
       SECRET_KEY_BASE=f2dc6dd1e38c7a0368dcd4c6298cd86af6bd5735cb4e7cf2f0a8dfceeaf47a59eb36906aac1f7003dad1c019c731d0016b58ad5e7c6268b9b4b1fca43a07f7d7 bundle exec rake assets:precompile; \
     fi
+
+# Switch to non-root user
+USER appuser
 
 # Expose port
 EXPOSE 3000

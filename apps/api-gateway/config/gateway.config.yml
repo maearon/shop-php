@@ -7,7 +7,7 @@ http:
 apiEndpoints:
   up:
     path: /api/up*
-    target: http://api-csharp:8080
+    target: http://api-csharp:80
   
   oauth:
     path: /api/oauth*
@@ -63,7 +63,7 @@ apiEndpoints:
 
 serviceEndpoints:
   api-csharp:
-    url: ${API_CSHARP_URL:-http://api-csharp:5217}
+    url: ${API_CSHARP_URL:-http://api-csharp:80}
 
   api-java:
     url: ${API_JAVA_URL:-http://api-java:8080}
