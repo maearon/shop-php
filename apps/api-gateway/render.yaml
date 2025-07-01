@@ -6,6 +6,8 @@ services:
     buildCommand: npm install -g express-gateway && npm install
     startCommand: eg gateway start
     envVars:
+      - key: ASPNETCORE_URLS
+        value: http://+:80
       - key: API_CSHARP_URL
         value: https://dotnetboilerplate.onrender.com
       - key: API_JAVA_URL

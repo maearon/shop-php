@@ -77,7 +77,7 @@ apiEndpoints:
 
 serviceEndpoints:
   api-csharp:
-    url: ${API_CSHARP_URL:-http://api-csharp:80}
+    url: ${API_CSHARP_URL:-http://api-csharp}
 
   api-java:
     url: ${API_JAVA_URL:-http://api-java:8080}
