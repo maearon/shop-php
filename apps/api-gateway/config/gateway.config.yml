@@ -3,6 +3,14 @@ environment:
 
 http:
   port: 9000
+  middleware:
+    cors:
+      - action:
+          origin: "https://adidas-mocha.vercel.app"  # hoặc "*" nếu bạn muốn mở cho tất cả
+          methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+          headers: ["Content-Type", "Authorization"]
+          credentials: true
+        enabled: true
 
 apiEndpoints:
   up:
