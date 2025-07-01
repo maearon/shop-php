@@ -65,7 +65,7 @@ maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails variants:assi
 
 
 maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:migrate:status | grep carts
-maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:seed
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ bin/rails db:seed
 maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:migrate:status | grep carts
 maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:schema:dump
 
@@ -281,7 +281,7 @@ manhpc@manhpc-B660M-D3H-DDR4:~/code/ruby-rails-boilerplate/client$
  1955  git checkout 6757f51096580846978602258ea87eabee204ef2 -- docker-compose.yml
 
 
-rails db:seed (prisma introspect && npx prisma db pull && npx prisma db push)
+bin/rails db:seed (prisma introspect && npx prisma db pull && npx prisma db push)
 cd ..
 rails s -p 3001
 (git checkout 1242dc57c527178d6bffd6980c884ba4478bafd4 -- db/migrate)
@@ -327,7 +327,7 @@ rails db:drop
 Run seed
 
 ```bash
-rails db:seed
+bin/rails db:seed
 ```
 
 ## Tests

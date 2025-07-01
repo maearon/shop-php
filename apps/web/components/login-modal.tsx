@@ -50,9 +50,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         onClose()
       } else {
         flashMessage("error", response.message || "Login failed")
+        console.log("Error occurred response, please try again.", response)
       }
     } catch (error: any) {
       flashMessage("error", error.message || "Login failed")
+      console.log("Error occurred, please try again.", error)
     } finally {
       setIsLoading(false)
     }
