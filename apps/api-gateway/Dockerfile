@@ -4,7 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install -g express-gateway && \
-    npm install
+RUN npm install
 
-CMD ["eg", "gateway", "start"]
+CMD ["node", "server.js"]
