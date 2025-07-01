@@ -24,3 +24,9 @@ refreshTokens:
   timeToExpiry: 7200000
 authorizationCodes:
   timeToExpiry: 300000
+
+# ✅ HEAD /up route
+http:
+  port: 9000
+  middleware:
+    - up-check
