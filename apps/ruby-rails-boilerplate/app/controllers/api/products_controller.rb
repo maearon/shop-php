@@ -14,16 +14,16 @@ class Api::ProductsController < Api::ApiController
     per_page = params[:per_page]&.to_i || 24
     @products = @products.page(page).per(per_page)
 
-    render json: {
-      products: serialize_products(@products),
-      meta: {
-        current_page: @products.current_page,
-        total_pages: @products.total_pages,
-        total_count: @products.total_count,
-        per_page: per_page,
-        filters_applied: build_applied_filters
-      }
-    }
+    # render json: {
+    #   products: serialize_products(@products),
+    #   meta: {
+    #     current_page: @products.current_page,
+    #     total_pages: @products.total_pages,
+    #     total_count: @products.total_count,
+    #     per_page: per_page,
+    #     filters_applied: build_applied_filters
+    #   }
+    # }
   end
 
    # GET /api/products/:model_number?slug=men-soccer-shoes
@@ -36,12 +36,12 @@ class Api::ProductsController < Api::ApiController
       @product = Product.find(params[:id])
     end
 
-    render json: {
-      product: serialize_product_detail(@product),
-      related_products: get_related_products(@product),
-      category_info: get_category_info,
-      breadcrumb: generate_breadcrumb_from_slug
-    }
+    # render json: {
+    #   product: serialize_product_detail(@product),
+    #   related_products: get_related_products(@product),
+    #   category_info: get_category_info,
+    #   breadcrumb: generate_breadcrumb_from_slug
+    # }
   end
 
   # GET /api/products/filters?slug=men-soccer-shoes
@@ -258,41 +258,42 @@ class Api::ProductsController < Api::ApiController
     end
   end
   
-  def serialize_products(products)
-    products.map do |product|
-      {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        original_price: product.original_price,
-        brand: product.brand,
-        category: product.category,
-        gender: product.gender,
-        sport: product.sport,
-        jan_code: product.jan_code,
-        model_number: product.model_number,
-        description: product.description,
-        badge: determine_badge(product),
-        image_url: product.image_url || '/placeholder.svg?height=300&width=250',
-        variants: serialize_variants(product.variants),
-        slug: generate_slug(product),
-        reviews_count: product.reviews.count,
-        average_rating: product.average_rating || 0
-      }
-    end
-  end
+  # def serialize_products(products)
+  #   products.map do |product|
+  #     first_variant = product.variants.first
+  #     {
+  #       id: product.id,
+  #       name: product.name,
+  #       price: first_variant&.price,
+  #       original_price: first_variant&.original_price,
+  #       brand: product.brand,
+  #       category: product.category,
+  #       gender: product.gender,
+  #       sport: product.sport,
+  #       jan_code: product.jan_code,
+  #       model_number: product.model_number,
+  #       description: product.description,
+  #       badge: determine_badge(product),
+  #       image_url: product.image_url || '/placeholder.png?height=300&width=300',
+  #       variants: serialize_variants(product.variants),
+  #       slug: generate_slug(product),
+  #       reviews_count: product.reviews.count,
+  #       average_rating: product.average_rating || 0
+  #     }
+  #   end
+  # end
   
-  def serialize_variants(variants)
-    variants.map do |variant|
-      {
-        id: variant.id,
-        color: variant.color,
-        sizes: variant.sizes,
-        images: variant.images || [],
-        stock_quantity: variant.stock_quantity
-      }
-    end
-  end
+  # def serialize_variants(variants)
+  #   variants.map do |variant|
+  #     {
+  #       id: variant.id,
+  #       color: variant.color,
+  #       sizes: variant.sizes,
+  #       images: variant.images || [],
+  #       stock_quantity: variant.stock_quantity
+  #     }
+  #   end
+  # end
   
   def determine_badge(product)
     return 'Best Seller' if product.reviews.count > 50 && product.average_rating > 4.0
@@ -373,33 +374,33 @@ class Api::ProductsController < Api::ApiController
     collections.map { |k, v| { value: k, label: k, count: v } }
   end
 
-  def serialize_product_detail(product)
-    {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      original_price: product.original_price,
-      brand: product.brand,
-      category: product.category,
-      gender: product.gender,
-      sport: product.sport,
-      jan_code: product.jan_code,
-      model_number: product.model_number,
-      description: product.description,
-      badge: determine_badge(product),
-      image_url: product.image_url || '/placeholder.svg?height=300&width=250',
-      variants: serialize_variants(product.variants),
-      slug: generate_slug(product),
-      reviews_count: product.reviews.count,
-      average_rating: product.average_rating || 0,
-      specifications: product.specifications,
-      description_h5: product.description_h5,
-      care: product.care,
-      detailed_description: product.description,
-      features: extract_product_features(product),
-      size_guide: generate_size_guide(product)
-    }
-  end
+  # def serialize_product_detail(product)
+  #   {
+  #     id: product.id,
+  #     name: product.name,
+  #     price: product.price,
+  #     original_price: product.original_price,
+  #     brand: product.brand,
+  #     category: product.category,
+  #     gender: product.gender,
+  #     sport: product.sport,
+  #     jan_code: product.jan_code,
+  #     model_number: product.model_number,
+  #     description: product.description,
+  #     badge: determine_badge(product),
+  #     image_url: product.image_url || '/placeholder.svg?height=300&width=250',
+  #     variants: serialize_variants(product.variants),
+  #     slug: generate_slug(product),
+  #     reviews_count: product.reviews.count,
+  #     average_rating: product.average_rating || 0,
+  #     specifications: product.specifications,
+  #     description_h5: product.description_h5,
+  #     care: product.care,
+  #     detailed_description: product.description,
+  #     features: extract_product_features(product),
+  #     size_guide: generate_size_guide(product)
+  #   }
+  # end
 
   def get_related_products(product)
     Product.where.not(id: product.id)

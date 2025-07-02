@@ -1,19 +1,73 @@
-json.products do
-  json.array!(@products) do |product|
-    json.id product.id
-    json.sku 12064273040195392
-    json.title product.name
-    json.description product.description_p
+json.products @products do |product|
+  variant = product.variants.first
 
-    json.availableSizes ["M"]
+  json.id product.id
+  json.jan_code product.jan_code
+  json.title product.name
+  json.name product.name
+  json.description product.description_p || product.description
+  json.description_h5 product.description_h5
+  json.specifications product.specifications
+  json.care product.care
 
-    json.style product.category
-    json.price product.variants.first.price
-    json.installments product.variants.first.stock
-    json.currencyId currency_code(locale.to_s)
-    json.currencyFormat I18n.translate('number.currency.format.unit', locale: locale.to_s )
-    json.isFreeShipping true
-    json.image_url "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}"+url_for(product.variants.first.avatar)
+  json.gender product.gender
+  json.franchise product.franchise
+  json.producttype product.producttype
+  json.brand product.brand
+  json.category product.category
+  json.sport product.sport
 
+  json.currencyId currency_code(locale.to_s)
+  json.currencyFormat I18n.t("number.currency.format.unit", locale: locale.to_s)
+  json.isFreeShipping true
+
+  json.availableSizes variant&.sizes || []
+  json.price variant&.price
+  json.original_price variant&.originalprice
+  json.installments variant&.stock
+
+  json.created_at product.created_at
+  json.updated_at product.updated_at
+
+  # 👇 Render tất cả variants
+  json.variants product.variants do |variant|
+    json.id variant.id
+    json.color variant.color
+    json.price variant.price
+    json.original_price variant.originalprice
+    json.sku variant.sku
+    json.stock variant.stock
+    json.sizes variant.sizes
+    json.product_id variant.product_id
+    json.created_at variant.created_at
+    json.updated_at variant.updated_at
+
+    json.images variant.images.map { |image|
+      if image.attached?
+        url_for(image.variant(:display))
+      end
+    }.compact
+
+    json.avatar_url(
+      variant.avatar&.attached? ?
+        url_for(variant.avatar) :
+        "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}/placeholder.svg?height=300&width=250"
+    )
   end
+
+  # 👇 Ảnh đại diện là ảnh của variant đầu tiên
+  main_variant = product.variants.first
+  json.image_url(
+    main_variant&.avatar&.attached? ?
+      url_for(main_variant.avatar) :
+      "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}/placeholder.svg?height=300&width=250"
+  )
+end
+
+json.meta do
+  json.current_page @products.current_page
+  json.total_pages @products.total_pages
+  json.total_count @products.total_count
+  json.per_page @products.limit_value
+  json.filters_applied build_applied_filters
 end
