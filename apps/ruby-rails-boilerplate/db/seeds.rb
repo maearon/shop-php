@@ -11,7 +11,8 @@ puts "Ensuring sizes exist..."
 ALPHA_SIZES   = %w[XS S M L XL XXL]
 NUMERIC_SIZES = (36..45).to_a.map(&:to_s)
 LOCATIONS     = %w[US VN]
-IMAGE_DIR     = "#{Rails.root}/app/assets/images/img"
+IMAGE_DIR          = "#{Rails.root}/app/assets/images/img"
+PRODUCTS_IMAGE_DIR = Rails.root.join("app/assets/images/products")
 
 # Tạo size cho từng hệ và từng location
 LOCATIONS.each do |loc|
@@ -72,12 +73,20 @@ categories    = %w[Shoes Apparel Accessories]
     t = i % 12
     t = 12 if t.zero?
 
-    if idx == 0
-      variant.avatar.attach(io: File.open("#{IMAGE_DIR}/item#{t}.png"), filename: "item#{t}.png", content_type: 'image/png')
-      variant.hover.attach(io: File.open("#{IMAGE_DIR}/item#{t}.png"), filename: "item#{t}.png", content_type: 'image/png')
+    dir_path = PRODUCTS_IMAGE_DIR.join(i.to_s)
+
+    # Avatar
+    avatar_path = Dir.glob("#{dir_path}/#{i}.jpg").first
+    if idx == 0 && avatar_path
+      variant.avatar.attach(io: File.open(avatar_path), filename: "#{i}.jpg", content_type: "image/jpeg")
+      variant.hover.attach(io: File.open(avatar_path), filename: "#{i}.jpg", content_type: "image/jpeg")
     end
 
-    variant.images.attach(io: File.open("#{IMAGE_DIR}/detail#{idx + 1}.png"), filename: "detail#{idx + 1}.png", content_type: "image/png")
+    # Attach all detail images (1dt1.jpg, 1dt2.jpg, ...)
+    detail_images = Dir.glob("#{dir_path}/#{i}dt*.jpg").sort
+    detail_images.each do |img_path|
+      variant.images.attach(io: File.open(img_path), filename: File.basename(img_path), content_type: "image/jpeg")
+    end
 
     # Gán size
     sizes = case category
