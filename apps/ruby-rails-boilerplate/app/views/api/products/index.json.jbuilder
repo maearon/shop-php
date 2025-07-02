@@ -88,5 +88,5 @@ json.meta do
   json.total_pages @products.total_pages
   json.total_count @products.total_count
   json.per_page @products.limit_value
-  json.filters_applied build_applied_filters
+  json.filters_applied @filters_applied
 end

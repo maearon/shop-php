@@ -14,6 +14,8 @@ class Api::ProductsController < Api::ApiController
     per_page = params[:per_page]&.to_i || 24
     @products = @products.page(page).per(per_page)
 
+    @filters_applied = build_applied_filters
+
     # render json: {
     #   products: serialize_products(@products),
     #   meta: {
