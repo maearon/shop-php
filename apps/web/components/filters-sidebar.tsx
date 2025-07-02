@@ -2,54 +2,44 @@
 
 import { useState, useEffect } from "react"
 import { X, ChevronDown, ChevronUp } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { MainButton } from "@/components/ui/main-button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Slider } from "@/components/ui/slider"
-import javaService from "@/api/services/javaService"
+import { Input } from "@/components/ui/input"
 
 interface FiltersSidebarProps {
   isOpen: boolean
   onClose: () => void
-  category?: any
-  onFiltersChange?: (filters: any) => void
+  onApplyFilters: (filters: any) => void
+  slug: string
+  currentFilters: any
 }
 
-interface FilterOptions {
-  genders: string[]
-  categories: string[]
-  sports: string[]
-  brands: string[]
-  sizes: string[]
-  price_ranges: Array<{ label: string; min: number; max: number | null }>
-}
-
-export default function FiltersSidebar({ isOpen, onClose, category, onFiltersChange }: FiltersSidebarProps) {
-  const [filterOptions, setFilterOptions] = useState<FilterOptions | null>(null)
-  const [selectedFilters, setSelectedFilters] = useState<any>({})
-  const [priceRange, setPriceRange] = useState([0, 500])
+export default function FiltersSidebar({ isOpen, onClose, onApplyFilters, slug, currentFilters }: FiltersSidebarProps) {
+  const [filters, setFilters] = useState<any>({})
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    sort: true,
+    shipping: false,
+    gender: true,
     category: true,
+    activity: true,
+    product_type: true,
     size: true,
+    best_for: false,
+    sport: true,
     color: true,
-    price: true,
+    material: true,
     brand: true,
+    price: true,
+    model: false,
+    collection: false,
   })
+  const [priceRange, setPriceRange] = useState({ min: 65, max: 300 })
 
-  // Fetch filter options
   useEffect(() => {
-    const fetchFilterOptions = async () => {
-      try {
-        const response = await javaService.getProductFilters()
-        setFilterOptions(response.data)
-      } catch (error) {
-        console.error("Failed to fetch filter options:", error)
-      }
+    if (currentFilters) {
+      setFilters(currentFilters)
     }
-
-    if (isOpen) {
-      fetchFilterOptions()
-    }
-  }, [isOpen])
+  }, [currentFilters])
 
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
@@ -59,7 +49,7 @@ export default function FiltersSidebar({ isOpen, onClose, category, onFiltersCha
   }
 
   const handleFilterChange = (filterType: string, value: string, checked: boolean) => {
-    setSelectedFilters((prev: any) => {
+    setFilters((prev: any) => {
       const newFilters = { ...prev }
 
       if (!newFilters[filterType]) {
@@ -67,188 +57,345 @@ export default function FiltersSidebar({ isOpen, onClose, category, onFiltersCha
       }
 
       if (checked) {
-        newFilters[filterType] = [...newFilters[filterType], value]
+        if (!newFilters[filterType].includes(value)) {
+          newFilters[filterType] = [...newFilters[filterType], value]
+        }
       } else {
-        newFilters[filterType] = newFilters[filterType].filter((item: string) => item !== value)
-      }
-
-      // Remove empty arrays
-      if (newFilters[filterType].length === 0) {
-        delete newFilters[filterType]
+        newFilters[filterType] = newFilters[filterType].filter((v: string) => v !== value)
+        if (newFilters[filterType].length === 0) {
+          delete newFilters[filterType]
+        }
       }
 
       return newFilters
     })
   }
 
-  const handlePriceChange = (values: number[]) => {
-    setPriceRange(values)
-    setSelectedFilters((prev: any) => ({
+  const handleSortChange = (sortValue: string) => {
+    setFilters((prev: any) => ({
       ...prev,
-      min_price: values[0],
-      max_price: values[1],
+      sort: sortValue,
+    }))
+  }
+
+  const handlePriceChange = (type: "min" | "max", value: number) => {
+    setPriceRange((prev) => ({
+      ...prev,
+      [type]: value,
+    }))
+    setFilters((prev: any) => ({
+      ...prev,
+      min_price: type === "min" ? value : prev.min_price || priceRange.min,
+      max_price: type === "max" ? value : prev.max_price || priceRange.max,
     }))
   }
 
   const applyFilters = () => {
-    const filters = {
-      ...selectedFilters,
-      min_price: priceRange[0],
-      max_price: priceRange[1],
+    const finalFilters = {
+      ...filters,
+      min_price: priceRange.min,
+      max_price: priceRange.max,
     }
-
-    onFiltersChange?.(filters)
-    onClose()
+    onApplyFilters(finalFilters)
   }
 
-  const clearFilters = () => {
-    setSelectedFilters({})
-    setPriceRange([0, 500])
-    onFiltersChange?.({})
+  const clearAllFilters = () => {
+    setFilters({})
+    setPriceRange({ min: 65, max: 300 })
+    onApplyFilters({})
+  }
+
+  const getAppliedFiltersCount = () => {
+    let count = 0
+    Object.values(filters).forEach((value: any) => {
+      if (Array.isArray(value)) {
+        count += value.length
+      } else if (value) {
+        count += 1
+      }
+    })
+    return count
   }
 
   if (!isOpen) return null
 
+  const colorOptions = [
+    { value: "black", label: "Black", hex: "#000000" },
+    { value: "white", label: "White", hex: "#FFFFFF" },
+    { value: "gray", label: "Gray", hex: "#808080" },
+    { value: "blue", label: "Blue", hex: "#0000FF" },
+    { value: "red", label: "Red", hex: "#FF0000" },
+    { value: "purple", label: "Purple", hex: "#800080" },
+    { value: "pink", label: "Pink", hex: "#FFC0CB" },
+    { value: "silver", label: "Silver", hex: "#C0C0C0" },
+    { value: "green", label: "Green", hex: "#008000" },
+    { value: "cyan", label: "Cyan", hex: "#00FFFF" },
+    { value: "beige", label: "Beige", hex: "#F5F5DC" },
+  ]
+
+  const sizeOptions = [
+    "4",
+    "4.5",
+    "5",
+    "5.5",
+    "6",
+    "6.5",
+    "7",
+    "7.5",
+    "8",
+    "8.5",
+    "9",
+    "9.5",
+    "10",
+    "10.5",
+    "11",
+    "11.5",
+    "12",
+    "12.5",
+    "13",
+    "13.5",
+    "14",
+    "15",
+  ]
+
   return (
-    <>
+    <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={onClose} />
+      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} />
 
       {/* Sidebar */}
-      <div className="fixed right-0 top-0 h-full w-96 bg-white z-50 overflow-y-auto">
-        <div className="p-6">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold">Filter & Sort</h2>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X size={20} />
-            </Button>
-          </div>
-
-          {/* Category Section */}
-          <div className="mb-6">
-            <button
-              className="flex justify-between items-center w-full py-2 text-left font-medium"
-              onClick={() => toggleSection("category")}
-            >
-              <span>Category</span>
-              {expandedSections.category ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </button>
-
-            {expandedSections.category && filterOptions && (
-              <div className="mt-3 space-y-2">
-                {filterOptions.categories.map((cat) => (
-                  <div key={cat} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`category-${cat}`}
-                      checked={selectedFilters.category?.includes(cat) || false}
-                      onCheckedChange={(checked) => handleFilterChange("category", cat, checked as boolean)}
-                    />
-                    <label htmlFor={`category-${cat}`} className="text-sm">
-                      {cat}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Size Section */}
-          <div className="mb-6">
-            <button
-              className="flex justify-between items-center w-full py-2 text-left font-medium"
-              onClick={() => toggleSection("size")}
-            >
-              <span>Size</span>
-              {expandedSections.size ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </button>
-
-            {expandedSections.size && filterOptions && (
-              <div className="mt-3 grid grid-cols-4 gap-2">
-                {filterOptions.sizes.map((size) => (
-                  <Button
-                    key={size}
-                    variant={selectedFilters.size?.includes(size) ? "default" : "outline"}
-                    size="sm"
-                    className="h-8"
-                    onClick={() => handleFilterChange("size", size, !selectedFilters.size?.includes(size))}
-                  >
-                    {size}
-                  </Button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Brand Section */}
-          <div className="mb-6">
-            <button
-              className="flex justify-between items-center w-full py-2 text-left font-medium"
-              onClick={() => toggleSection("brand")}
-            >
-              <span>Brand</span>
-              {expandedSections.brand ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </button>
-
-            {expandedSections.brand && filterOptions && (
-              <div className="mt-3 space-y-2">
-                {filterOptions.brands.map((brand) => (
-                  <div key={brand} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`brand-${brand}`}
-                      checked={selectedFilters.brand?.includes(brand) || false}
-                      onCheckedChange={(checked) => handleFilterChange("brand", brand, checked as boolean)}
-                    />
-                    <label htmlFor={`brand-${brand}`} className="text-sm">
-                      {brand}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Price Section */}
-          <div className="mb-6">
-            <button
-              className="flex justify-between items-center w-full py-2 text-left font-medium"
-              onClick={() => toggleSection("price")}
-            >
-              <span>Price</span>
-              {expandedSections.price ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </button>
-
-            {expandedSections.price && (
-              <div className="mt-3">
-                <div className="mb-4">
-                  <Slider
-                    value={priceRange}
-                    onValueChange={handlePriceChange}
-                    max={500}
-                    min={0}
-                    step={10}
-                    className="w-full"
-                  />
-                </div>
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span>${priceRange[0]}</span>
-                  <span>${priceRange[1]}</span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="space-y-3 pt-6 border-t">
-            <Button onClick={applyFilters} className="w-full">
-              Apply Filters
-            </Button>
-            <Button variant="outline" onClick={clearFilters} className="w-full">
-              Clear All
-            </Button>
+      <div className="absolute right-0 top-0 h-full w-96 bg-white shadow-xl overflow-y-auto">
+        {/* Header */}
+        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 z-10">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Filter & Sort</h2>
+            <div className="flex items-center space-x-2">
+              <button onClick={clearAllFilters} className="text-sm text-gray-500 hover:text-gray-700 underline">
+                Clear All
+              </button>
+              <button onClick={onClose}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Applied Filters */}
+        {getAppliedFiltersCount() > 0 && (
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="text-sm font-medium mb-3">APPLIED FILTERS</h3>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(filters).map(([key, value]) => {
+                if (Array.isArray(value) && value.length > 0) {
+                  return value.map((item) => (
+                    <div key={`${key}-${item}`} className="flex items-center bg-gray-100 rounded px-2 py-1 text-sm">
+                      <span>{item}</span>
+                      <button
+                        onClick={() => handleFilterChange(key, item, false)}
+                        className="ml-1 text-gray-500 hover:text-gray-700"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))
+                } else if (typeof value === "string" && value) {
+                  return (
+                    <div key={key} className="flex items-center bg-gray-100 rounded px-2 py-1 text-sm">
+                      <span>{value}</span>
+                      <button
+                        onClick={() => setFilters((prev: any) => ({ ...prev, [key]: undefined }))}
+                        className="ml-1 text-gray-500 hover:text-gray-700"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  )
+                }
+                return null
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Filter Sections */}
+        <div className="p-4 space-y-6">
+          {/* Sort By */}
+          <div>
+            <button
+              onClick={() => toggleSection("sort")}
+              className="flex items-center justify-between w-full text-left font-medium mb-3"
+            >
+              <span>SORT BY</span>
+              {expandedSections.sort ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </button>
+            {expandedSections.sort && (
+              <div className="space-y-2">
+                {["PRICE (LOW - HIGH)", "NEWEST", "TOP SELLERS", "PRICE (HIGH - LOW)"].map((option) => (
+                  <label key={option} className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="sort"
+                      value={option}
+                      checked={filters.sort === option}
+                      onChange={(e) => handleSortChange(e.target.value)}
+                      className="w-4 h-4"
+                    />
+                    <span className="text-sm">{option}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Gender */}
+          <div>
+            <button
+              onClick={() => toggleSection("gender")}
+              className="flex items-center justify-between w-full text-left font-medium mb-3"
+            >
+              <span>GENDER</span>
+              {expandedSections.gender ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </button>
+            {expandedSections.gender && (
+              <div className="space-y-2">
+                {[
+                  { value: "women", label: "Women", count: 128 },
+                  { value: "men", label: "Men", count: 126 },
+                  { value: "unisex", label: "Unisex", count: 116 },
+                  { value: "kids", label: "Kids", count: 58 },
+                ].map((option) => (
+                  <label key={option.value} className="flex items-center justify-between cursor-pointer">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={(filters.gender || []).includes(option.value)}
+                        onCheckedChange={(checked) => handleFilterChange("gender", option.value, checked as boolean)}
+                      />
+                      <span className="text-sm">{option.label}</span>
+                    </div>
+                    <span className="text-xs text-gray-500">({option.count})</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Size */}
+          <div>
+            <button
+              onClick={() => toggleSection("size")}
+              className="flex items-center justify-between w-full text-left font-medium mb-3"
+            >
+              <span>SIZE</span>
+              {expandedSections.size ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </button>
+            {expandedSections.size && (
+              <div className="grid grid-cols-5 gap-2">
+                {sizeOptions.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => handleFilterChange("size", size, !(filters.size || []).includes(size))}
+                    className={`p-2 text-sm border rounded transition-colors ${
+                      (filters.size || []).includes(size)
+                        ? "border-black bg-black text-white"
+                        : "border-gray-300 hover:border-gray-500"
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Color */}
+          <div>
+            <button
+              onClick={() => toggleSection("color")}
+              className="flex items-center justify-between w-full text-left font-medium mb-3"
+            >
+              <span>COLOR</span>
+              {expandedSections.color ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </button>
+            {expandedSections.color && (
+              <div className="grid grid-cols-8 gap-2">
+                {colorOptions.map((color) => (
+                  <button
+                    key={color.value}
+                    onClick={() =>
+                      handleFilterChange("color", color.value, !(filters.color || []).includes(color.value))
+                    }
+                    className={`w-8 h-8 rounded border-2 transition-all ${
+                      (filters.color || []).includes(color.value)
+                        ? "border-black scale-110"
+                        : "border-gray-300 hover:border-gray-500"
+                    }`}
+                    style={{ backgroundColor: color.hex }}
+                    title={color.label}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Price */}
+          <div>
+            <button
+              onClick={() => toggleSection("price")}
+              className="flex items-center justify-between w-full text-left font-medium mb-3"
+            >
+              <span>PRICE</span>
+              {expandedSections.price ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </button>
+            {expandedSections.price && (
+              <div className="space-y-4">
+                <div className="text-center text-sm text-gray-600">
+                  ${priceRange.min} – ${priceRange.max}
+                </div>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <label className="block text-xs text-gray-500 mb-1">Minimum</label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                      <Input
+                        type="number"
+                        value={priceRange.min}
+                        onChange={(e) => handlePriceChange("min", Number.parseInt(e.target.value) || 65)}
+                        className="pl-6"
+                        min={65}
+                        max={300}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-xs text-gray-500 mb-1">Maximum</label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                      <Input
+                        type="number"
+                        value={priceRange.max}
+                        onChange={(e) => handlePriceChange("max", Number.parseInt(e.target.value) || 300)}
+                        className="pl-6"
+                        min={65}
+                        max={300}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Apply Button */}
+        <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4">
+          <MainButton
+            onClick={applyFilters}
+            className="w-full bg-black text-white hover:bg-gray-800 py-3 text-sm font-medium"
+          >
+            APPLY ({getAppliedFiltersCount()})
+          </MainButton>
+        </div>
       </div>
-    </>
+    </div>
   )
 }

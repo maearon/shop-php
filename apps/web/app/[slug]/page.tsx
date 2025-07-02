@@ -1,19 +1,33 @@
-import { categoryConfig } from "@/utils/category-config"
+import { Suspense } from "react"
 import CategoryPageClient from "./CategoryPageClient"
 
-type CategoryPageProps = {
+interface CategoryPageProps {
   params: {
     slug: string
   }
+  searchParams?: {
+    page?: string
+    sort?: string
+    gender?: string
+    category?: string
+    activity?: string
+    product_type?: string
+    size?: string
+    color?: string
+    material?: string
+    brand?: string
+    model?: string
+    collection?: string
+    min_price?: string
+    max_price?: string
+    shipping?: string
+  }
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
-  return <CategoryPageClient params={params} />
-}
-
-// Generate static params cho các trang có sẵn
-export function generateStaticParams() {
-  return Object.keys(categoryConfig).map((slug) => ({
-    slug: slug,
-  }))
+export default function CategoryPage({ params, searchParams }: CategoryPageProps) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CategoryPageClient params={params} searchParams={searchParams} />
+    </Suspense>
+  )
 }
