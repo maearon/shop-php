@@ -1,5 +1,6 @@
 json.products @products do |product|
   variant = product.variants.first
+  first_image = variant&.images&.first
 
   json.id product.id
   json.jan_code product.jan_code
@@ -43,19 +44,43 @@ json.products @products do |product|
     json.updated_at variant.updated_at
 
     json.images variant.images.map { |image|
-      "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{url_for(image.variant(resize_to_limit: [500, 500]))}"
-    }.compact
+      begin
+        url_for(image.variant(resize_to_limit: [500, 500]))
+      rescue => e
+        Rails.logger.warn("Image processing error: #{e.message}")
+        nil
+      end
+    }.compact.map { |path|
+      "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{path}"
+    }
 
-    json.avatar_url(
-      "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{url_for(image.variant(resize_to_limit: [500, 500]))}"
-    )
+    avatar_path =
+      if variant.images.attached?
+        begin
+          url_for(variant.images.first.variant(resize_to_limit: [500, 500]))
+        rescue
+          "/placeholder.svg?height=300&width=250"
+        end
+      else
+        "/placeholder.svg?height=300&width=250"
+      end
+
+    json.avatar_url("#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{avatar_path}")
   end
 
   # 👇 Ảnh đại diện là ảnh của variant đầu tiên
-  main_variant = product.variants.first
-  json.image_url(
-    "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{url_for(image.variant(resize_to_limit: [500, 500]))}"
-  )
+  main_image_path =
+    if first_image.present?
+      begin
+        url_for(first_image.variant(resize_to_limit: [500, 500]))
+      rescue
+        "/placeholder.svg?height=300&width=250"
+      end
+    else
+      "/placeholder.svg?height=300&width=250"
+    end
+
+  json.image_url("#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{main_image_path}")
 end
 
 json.meta do
