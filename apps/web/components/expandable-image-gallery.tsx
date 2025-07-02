@@ -80,6 +80,7 @@ export default function ExpandableImageGallery({ images, productName }: Expandab
       {images.length > 4 && (
         <div className="text-center">
           <Button
+            shadow={false}
             showArrow={false}
             variant="outline"
             className="border-black text-black hover:bg-white hover:text-gray-500 bg-transparent transition-colors duration-200 rounded-none px-8 py-3"
