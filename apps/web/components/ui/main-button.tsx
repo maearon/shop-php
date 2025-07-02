@@ -55,11 +55,12 @@ export function MainButton({
         disabled={loading}
         variant="ghost"
         className={cn(
-          "relative z-10 w-full inline-flex items-center justify-center px-4 h-12 font-bold text-base uppercase tracking-wide border rounded-none transition-all",
+          "relative z-10 inline-flex items-center justify-center px-4 h-12 font-bold text-base uppercase tracking-wide border rounded-none transition-all",
           bgColor,
           textColor,
           borderColor,
           "active:translate-x-[2px] active:translate-y-[2px]",
+          fullWidth ? "w-full" : "w-fit", // ✅ Thêm điều kiện rõ ràng ở đây
           !href && "flex items-center justify-center",
           className
         )}
