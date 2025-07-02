@@ -46,7 +46,7 @@ export function MainButton({
           className={cn(
             "absolute inset-0 translate-x-[3px] translate-y-[3px] pointer-events-none z-0 transition-all border",
             borderColor,
-            hoverBorder,
+            isBlack ? "border-black" : "group-hover:border-gray-400",
             "group-active:translate-x-[3px] group-active:translate-y-[3px]"
           )}
         />
