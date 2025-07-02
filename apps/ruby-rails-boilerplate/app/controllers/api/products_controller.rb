@@ -3,29 +3,17 @@ class Api::ProductsController < Api::ApiController
   before_action :set_product, only: %i[show update destroy]
   before_action :set_cors_headers
 
-  # GET /api/products?slug=men-soccer-shoes
-  # For product listing pages like /men-soccer-shoes
   def index
     @products = Product.includes(:variants, :reviews)
-    
-    # Apply slug-based filtering
-    if params[:slug].present?
-      apply_slug_filters
-    end
-    
-    # Apply additional filters
+
+    apply_slug_filters if params[:slug].present?
     apply_filters
-    
-    # Apply sorting
     apply_sorting
-    
-    # Pagination
+
     page = params[:page]&.to_i || 1
     per_page = params[:per_page]&.to_i || 24
-    
     @products = @products.page(page).per(per_page)
-    
-    # Build response
+
     render json: {
       products: serialize_products(@products),
       meta: {
@@ -38,7 +26,7 @@ class Api::ProductsController < Api::ApiController
     }
   end
 
-  # GET /api/products/:model_number?slug=men-soccer-shoes
+   # GET /api/products/:model_number?slug=men-soccer-shoes
   # For product detail pages like /men-soccer-shoes/JP5593
   def show
     # Find product by model number (JP5593) instead of ID
@@ -61,27 +49,27 @@ class Api::ProductsController < Api::ApiController
   def filters
     slug = params[:slug]
     base_products = Product.includes(:variants)
-    
+
     # Apply slug-based filtering to get relevant products
     if slug.present?
-      case slug
+      case slug.downcase
       when 'men-soccer-shoes'
-        base_products = base_products.where(gender: 'men', sport: 'soccer', category: 'shoes')
+        base_products = iwhere(base_products, gender: 'men', sport: 'soccer', category: 'shoes')
       when 'women-soccer-shoes'
-        base_products = base_products.where(gender: 'women', sport: 'soccer', category: 'shoes')
+        base_products = iwhere(base_products, gender: 'women', sport: 'soccer', category: 'shoes')
       when 'men-running-shoes'
-        base_products = base_products.where(gender: 'men', sport: 'running', category: 'shoes')
+        base_products = iwhere(base_products, gender: 'men', sport: 'running', category: 'shoes')
       when 'women-running-shoes'
-        base_products = base_products.where(gender: 'women', sport: 'running', category: 'shoes')
+        base_products = iwhere(base_products, gender: 'women', sport: 'running', category: 'shoes')
       when 'men-basketball-shoes'
-        base_products = base_products.where(gender: 'men', sport: 'basketball', category: 'shoes')
+        base_products = iwhere(base_products, gender: 'men', sport: 'basketball', category: 'shoes')
       when 'men-tops'
-        base_products = base_products.where(gender: 'men', category: 'tops')
+        base_products = iwhere(base_products, gender: 'men', category: 'tops')
       when 'women-tops'
-        base_products = base_products.where(gender: 'women', category: 'tops')
+        base_products = iwhere(base_products, gender: 'women', category: 'tops')
       end
     end
-    
+
     # Get available filter options with counts
     filters = {
       gender: get_filter_counts(base_products, :gender),
@@ -99,7 +87,7 @@ class Api::ProductsController < Api::ApiController
         max: base_products.maximum(:price)&.to_i || 500
       }
     }
-    
+
     render json: filters
   end
 
@@ -162,108 +150,97 @@ class Api::ProductsController < Api::ApiController
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
   end
-  
+
+  def iwhere(scope, conditions)
+    where_clause = conditions.map { |k, _| "LOWER(#{k}) = ?" }.join(" AND ")
+    values = conditions.values.map(&:downcase)
+    scope.where(where_clause, *values)
+  end
+
   def apply_slug_filters
-    case params[:slug]
+    case params[:slug].downcase
     when 'men-soccer-shoes'
-      @products = @products.where(gender: 'men', sport: 'soccer', category: 'shoes')
+      @products = iwhere(@products, gender: 'men', sport: 'soccer', category: 'shoes')
     when 'women-soccer-shoes'
-      @products = @products.where(gender: 'women', sport: 'soccer', category: 'shoes')
+      @products = iwhere(@products, gender: 'women', sport: 'soccer', category: 'shoes')
     when 'men-running-shoes'
-      @products = @products.where(gender: 'men', sport: 'running', category: 'shoes')
+      @products = iwhere(@products, gender: 'men', sport: 'running', category: 'shoes')
     when 'women-running-shoes'
-      @products = @products.where(gender: 'women', sport: 'running', category: 'shoes')
+      @products = iwhere(@products, gender: 'women', sport: 'running', category: 'shoes')
     when 'men-basketball-shoes'
-      @products = @products.where(gender: 'men', sport: 'basketball', category: 'shoes')
+      @products = iwhere(@products, gender: 'men', sport: 'basketball', category: 'shoes')
     when 'men-tops'
-      @products = @products.where(gender: 'men', category: 'tops')
+      @products = iwhere(@products, gender: 'men', category: 'tops')
     when 'women-tops'
-      @products = @products.where(gender: 'women', category: 'tops')
+      @products = iwhere(@products, gender: 'women', category: 'tops')
     end
   end
-  
+
   def apply_filters
     # Gender filter
-    if params[:gender].present?
-      genders = params[:gender].split(',')
-      @products = @products.where(gender: genders)
-    end
-    
     # Category filter
-    if params[:category].present?
-      categories = params[:category].split(',')
-      @products = @products.where(category: categories)
-    end
-    
     # Activity filter
-    if params[:activity].present?
-      activities = params[:activity].split(',')
-      @products = @products.where(activity: activities)
-    end
-    
     # Product type filter
-    if params[:product_type].present?
-      product_types = params[:product_type].split(',')
-      @products = @products.where(product_type: product_types)
-    end
-    
     # Brand filter
-    if params[:brand].present?
-      brands = params[:brand].split(',')
-      @products = @products.where(brand: brands)
-    end
-    
     # Sport filter
-    if params[:sport].present?
-      sports = params[:sport].split(',')
-      @products = @products.where(sport: sports)
+    {
+      gender: :gender,
+      category: :category,
+      activity: :activity,
+      product_type: :product_type,
+      brand: :brand,
+      sport: :sport
+    }.each do |param_key, field|
+      if params[param_key].present?
+        values = params[param_key].split(',').map(&:downcase)
+        @products = @products.where("LOWER(#{field}) IN (?)", values)
+      end
     end
-    
-    # Material filter
+
+     # Material filter
     if params[:material].present?
       materials = params[:material].split(',')
-      @products = @products.where("material ILIKE ANY (ARRAY[?])", materials.map { |m| "%#{m}%" })
+      @products = @products.where("LOWER(material) ILIKE ANY (ARRAY[?])", materials.map { |m| "%#{m.downcase}%" })
     end
-    
+
     # Color filter
     if params[:color].present?
       colors = params[:color].split(',')
-      @products = @products.joins(:variants).where("variants.color ILIKE ANY (ARRAY[?])", colors.map { |c| "%#{c}%" }).distinct
+      @products = @products.joins(:variants).where("LOWER(variants.color) ILIKE ANY (ARRAY[?])", colors.map { |c| "%#{c.downcase}%" }).distinct
     end
-    
+
     # Size filter
     if params[:size].present?
       sizes = params[:size].split(',')
       @products = @products.joins(:variants).where("variants.sizes && ARRAY[?]::varchar[]", sizes).distinct
     end
-    
+
     # Model filter
     if params[:model].present?
       models = params[:model].split(',')
-      @products = @products.where("model_number ILIKE ANY (ARRAY[?])", models.map { |m| "%#{m}%" })
+      @products = @products.where("LOWER(model_number) ILIKE ANY (ARRAY[?])", models.map { |m| "%#{m.downcase}%" })
     end
-    
+
     # Collection filter
     if params[:collection].present?
       collections = params[:collection].split(',')
-      @products = @products.where("collection ILIKE ANY (ARRAY[?])", collections.map { |c| "%#{c}%" })
+      @products = @products.where("LOWER(collection) ILIKE ANY (ARRAY[?])", collections.map { |c| "%#{c.downcase}%" })
     end
-    
     # Price range filter
     if params[:min_price].present?
       @products = @products.where('price >= ?', params[:min_price].to_f)
     end
-    
+
     if params[:max_price].present?
       @products = @products.where('price <= ?', params[:max_price].to_f)
     end
-    
+
     # Shipping filter
     if params[:shipping].present? && params[:shipping].include?('prime')
       @products = @products.where(prime_shipping: true)
     end
   end
-  
+
   def apply_sorting
     case params[:sort]
     when 'PRICE (LOW - HIGH)'
