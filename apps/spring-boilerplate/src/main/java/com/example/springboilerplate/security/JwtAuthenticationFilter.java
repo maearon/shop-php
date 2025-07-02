@@ -44,7 +44,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/password-reset/**",
             "/api/account-activation",
             "/uploads/**",
-            "/error"
+            "/error",
+            "/up"
     );
 
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
