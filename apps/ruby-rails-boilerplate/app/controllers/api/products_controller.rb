@@ -1,54 +1,106 @@
 class Api::ProductsController < Api::ApiController
   before_action :authenticate!, except: %i[index show]
   before_action :set_product, only: %i[show update destroy]
+  before_action :set_cors_headers
 
+  # GET /api/products?slug=men-soccer-shoes
+  # For product listing pages like /men-soccer-shoes
   def index
-    # Handle slug-based filtering
-    # query = params[:q].present? ? { name_cont: params[:q] } : {}
-    filters = build_filters_from_slug
+    @products = Product.includes(:variants, :reviews)
     
-    # Combine with search query if present
-    if params[:q].present?
-      filters[:name_cont] = params[:q]
+    # Apply slug-based filtering
+    if params[:slug].present?
+      apply_slug_filters
     end
-
-    # Apply additional filters from params
-    filters.merge!(extract_filter_params)
     
-    # @products = Product.ransack(query).result(distinct: true).page(params[:page])
-    @products = Product.ransack(filters).result(distinct: true)
-                      .includes(:variants)
-                      .page(params[:page])
-                      .per(params[:per_page] || 20)
-
-    # Return metadata for frontend
+    # Apply additional filters
+    apply_filters
+    
+    # Apply sorting
+    apply_sorting
+    
+    # Pagination
+    page = params[:page]&.to_i || 1
+    per_page = params[:per_page]&.to_i || 24
+    
+    @products = @products.page(page).per(per_page)
+    
+    # Build response
     render json: {
-      products: @products.map { |product| serialize_product(product) },
+      products: serialize_products(@products),
       meta: {
         current_page: @products.current_page,
         total_pages: @products.total_pages,
         total_count: @products.total_count,
-        per_page: @products.limit_value,
-        filters_applied: filters,
-        category_info: get_category_info
+        per_page: per_page,
+        filters_applied: build_applied_filters
       }
     }
   end
 
+  # GET /api/products/:model_number?slug=men-soccer-shoes
+  # For product detail pages like /men-soccer-shoes/JP5593
   def show
-    # @product.variants.each do |variant|
-    #   puts "Variant #{variant.color}:"
-    #   variant.sizes.each do |size|
-    #     puts "- #{size.label} (#{size.system})"
-    #   end
-    # end
+    # Find product by model number (JP5593) instead of ID
+    if params[:id].match?(/^[A-Z]{2}\d{4}$/) # Model number format like JP5593
+      @product = Product.find_by!(jan_code: params[:id])
+    else
+      @product = Product.find(params[:id])
+    end
 
-    # render json: @product
+    render json: {
+      product: serialize_product_detail(@product),
+      related_products: get_related_products(@product),
+      category_info: get_category_info,
+      breadcrumb: generate_breadcrumb_from_slug
+    }
+  end
 
-    # render json: {
-    #   product: serialize_product_detail(@product),
-    #   related_products: get_related_products(@product)
-    # }
+  # GET /api/products/filters?slug=men-soccer-shoes
+  # New endpoint for getting filter options
+  def filters
+    slug = params[:slug]
+    base_products = Product.includes(:variants)
+    
+    # Apply slug-based filtering to get relevant products
+    if slug.present?
+      case slug
+      when 'men-soccer-shoes'
+        base_products = base_products.where(gender: 'men', sport: 'soccer', category: 'shoes')
+      when 'women-soccer-shoes'
+        base_products = base_products.where(gender: 'women', sport: 'soccer', category: 'shoes')
+      when 'men-running-shoes'
+        base_products = base_products.where(gender: 'men', sport: 'running', category: 'shoes')
+      when 'women-running-shoes'
+        base_products = base_products.where(gender: 'women', sport: 'running', category: 'shoes')
+      when 'men-basketball-shoes'
+        base_products = base_products.where(gender: 'men', sport: 'basketball', category: 'shoes')
+      when 'men-tops'
+        base_products = base_products.where(gender: 'men', category: 'tops')
+      when 'women-tops'
+        base_products = base_products.where(gender: 'women', category: 'tops')
+      end
+    end
+    
+    # Get available filter options with counts
+    filters = {
+      gender: get_filter_counts(base_products, :gender),
+      category: get_filter_counts(base_products, :category),
+      activity: get_filter_counts(base_products, :activity),
+      brand: get_filter_counts(base_products, :brand),
+      sport: get_filter_counts(base_products, :sport),
+      material: get_material_counts(base_products),
+      colors: get_color_counts(base_products),
+      sizes: get_size_counts(base_products),
+      models: get_model_counts(base_products),
+      collections: get_collection_counts(base_products),
+      price_range: {
+        min: base_products.minimum(:price)&.to_i || 0,
+        max: base_products.maximum(:price)&.to_i || 500
+      }
+    }
+    
+    render json: filters
   end
 
   def create
@@ -77,21 +129,21 @@ class Api::ProductsController < Api::ApiController
   end
 
   # New endpoint for getting filter options
-  def filters
-    render json: {
-      genders: Product::GENDER,
-      categories: Product::CATEGORY,
-      sports: Product::SPORT,
-      brands: Product::BRAND,
-      sizes: Product::SIZES,
-      price_ranges: [
-        { label: "Under $50", min: 0, max: 50 },
-        { label: "$50 - $100", min: 50, max: 100 },
-        { label: "$100 - $150", min: 100, max: 150 },
-        { label: "$150+", min: 150, max: nil }
-      ]
-    }
-  end
+  # def filters
+  #   render json: {
+  #     genders: Product::GENDER,
+  #     categories: Product::CATEGORY,
+  #     sports: Product::SPORT,
+  #     brands: Product::BRAND,
+  #     sizes: Product::SIZES,
+  #     price_ranges: [
+  #       { label: "Under $50", min: 0, max: 50 },
+  #       { label: "$50 - $100", min: 50, max: 100 },
+  #       { label: "$100 - $150", min: 100, max: 150 },
+  #       { label: "$150+", min: 150, max: nil }
+  #     ]
+  #   }
+  # end
 
   private
 
@@ -103,181 +155,279 @@ class Api::ProductsController < Api::ApiController
     params.require(:product).permit(:name, :description, :price, :stock, :category_id, :brand, :gender, :sport, :category, :jan_code, :specifications, :description_h5, :description_p, :care)
   end
 
-  def build_filters_from_slug
-    slug = params[:slug]
-    return {} unless slug.present?
+  # private
 
-    filters = {}
-    
-    # Map slug to filters based on our category config
-    case slug
+  def set_cors_headers
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+  end
+  
+  def apply_slug_filters
+    case params[:slug]
     when 'men-soccer-shoes'
-      filters[:gender_eq] = 'Men'
-      filters[:sport_eq] = 'Soccer'
-      filters[:category_eq] = 'Shoes'
-    when 'men-tops'
-      filters[:gender_eq] = 'Men'
-      filters[:category_eq] = 'Apparel'
-      filters[:producttype_eq] = 'Wear'
+      @products = @products.where(gender: 'men', sport: 'soccer', category: 'shoes')
+    when 'women-soccer-shoes'
+      @products = @products.where(gender: 'women', sport: 'soccer', category: 'shoes')
+    when 'men-running-shoes'
+      @products = @products.where(gender: 'men', sport: 'running', category: 'shoes')
     when 'women-running-shoes'
-      filters[:gender_eq] = 'Women'
-      filters[:sport_eq] = 'Running'
-      filters[:category_eq] = 'Shoes'
-    when 'kids-soccer-shoes'
-      filters[:gender_eq] = 'Kids'
-      filters[:sport_eq] = 'Soccer'
-      filters[:category_eq] = 'Shoes'
-    when /^men/
-      filters[:gender_eq] = 'Men'
-    when /^women/
-      filters[:gender_eq] = 'Women'
-    when /^kids/
-      filters[:gender_eq] = 'Kids'
+      @products = @products.where(gender: 'women', sport: 'running', category: 'shoes')
+    when 'men-basketball-shoes'
+      @products = @products.where(gender: 'men', sport: 'basketball', category: 'shoes')
+    when 'men-tops'
+      @products = @products.where(gender: 'men', category: 'tops')
+    when 'women-tops'
+      @products = @products.where(gender: 'women', category: 'tops')
     end
-
-    # Extract additional filters from slug patterns
-    if slug.include?('shoes')
-      filters[:category_eq] = 'Shoes'
-    elsif slug.include?('clothing') || slug.include?('tops') || slug.include?('pants')
-      filters[:category_eq] = 'Apparel'
-    elsif slug.include?('accessories')
-      filters[:category_eq] = 'Accessories'
-    end
-
-    if slug.include?('soccer')
-      filters[:sport_eq] = 'Soccer'
-    elsif slug.include?('running')
-      filters[:sport_eq] = 'Running'
-    elsif slug.include?('football')
-      filters[:sport_eq] = 'Football'
-    end
-
-    filters
   end
-
-  def extract_filter_params
+  
+  def apply_filters
+    # Gender filter
+    if params[:gender].present?
+      genders = params[:gender].split(',')
+      @products = @products.where(gender: genders)
+    end
+    
+    # Category filter
+    if params[:category].present?
+      categories = params[:category].split(',')
+      @products = @products.where(category: categories)
+    end
+    
+    # Activity filter
+    if params[:activity].present?
+      activities = params[:activity].split(',')
+      @products = @products.where(activity: activities)
+    end
+    
+    # Product type filter
+    if params[:product_type].present?
+      product_types = params[:product_type].split(',')
+      @products = @products.where(product_type: product_types)
+    end
+    
+    # Brand filter
+    if params[:brand].present?
+      brands = params[:brand].split(',')
+      @products = @products.where(brand: brands)
+    end
+    
+    # Sport filter
+    if params[:sport].present?
+      sports = params[:sport].split(',')
+      @products = @products.where(sport: sports)
+    end
+    
+    # Material filter
+    if params[:material].present?
+      materials = params[:material].split(',')
+      @products = @products.where("material ILIKE ANY (ARRAY[?])", materials.map { |m| "%#{m}%" })
+    end
+    
+    # Color filter
+    if params[:color].present?
+      colors = params[:color].split(',')
+      @products = @products.joins(:variants).where("variants.color ILIKE ANY (ARRAY[?])", colors.map { |c| "%#{c}%" }).distinct
+    end
+    
+    # Size filter
+    if params[:size].present?
+      sizes = params[:size].split(',')
+      @products = @products.joins(:variants).where("variants.sizes && ARRAY[?]::varchar[]", sizes).distinct
+    end
+    
+    # Model filter
+    if params[:model].present?
+      models = params[:model].split(',')
+      @products = @products.where("model_number ILIKE ANY (ARRAY[?])", models.map { |m| "%#{m}%" })
+    end
+    
+    # Collection filter
+    if params[:collection].present?
+      collections = params[:collection].split(',')
+      @products = @products.where("collection ILIKE ANY (ARRAY[?])", collections.map { |c| "%#{c}%" })
+    end
+    
+    # Price range filter
+    if params[:min_price].present?
+      @products = @products.where('price >= ?', params[:min_price].to_f)
+    end
+    
+    if params[:max_price].present?
+      @products = @products.where('price <= ?', params[:max_price].to_f)
+    end
+    
+    # Shipping filter
+    if params[:shipping].present? && params[:shipping].include?('prime')
+      @products = @products.where(prime_shipping: true)
+    end
+  end
+  
+  def apply_sorting
+    case params[:sort]
+    when 'PRICE (LOW - HIGH)'
+      @products = @products.order(:price)
+    when 'PRICE (HIGH - LOW)'
+      @products = @products.order(price: :desc)
+    when 'NEWEST'
+      @products = @products.order(created_at: :desc)
+    when 'TOP SELLERS'
+      @products = @products.left_joins(:reviews)
+                           .group('products.id')
+                           .order('COUNT(reviews.id) DESC, products.average_rating DESC')
+    else
+      @products = @products.order(:name)
+    end
+  end
+  
+  def serialize_products(products)
+    products.map do |product|
+      {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        original_price: product.original_price,
+        brand: product.brand,
+        category: product.category,
+        gender: product.gender,
+        sport: product.sport,
+        jan_code: product.jan_code,
+        model_number: product.model_number,
+        description: product.description,
+        badge: determine_badge(product),
+        image_url: product.image_url || '/placeholder.svg?height=300&width=250',
+        variants: serialize_variants(product.variants),
+        slug: generate_slug(product),
+        reviews_count: product.reviews.count,
+        average_rating: product.average_rating || 0
+      }
+    end
+  end
+  
+  def serialize_variants(variants)
+    variants.map do |variant|
+      {
+        id: variant.id,
+        color: variant.color,
+        sizes: variant.sizes,
+        images: variant.images || [],
+        stock_quantity: variant.stock_quantity
+      }
+    end
+  end
+  
+  def determine_badge(product)
+    return 'Best Seller' if product.reviews.count > 50 && product.average_rating > 4.0
+    return 'New' if product.created_at > 30.days.ago
+    return 'Sale' if product.original_price && product.original_price > product.price
+    nil
+  end
+  
+  def generate_slug(product)
+    "#{product.gender}-#{product.category}-#{product.name}".parameterize
+  end
+  
+  def build_applied_filters
     filters = {}
     
-    # Handle standard filter parameters
-    filters[:gender_eq] = params[:gender] if params[:gender].present?
-    filters[:category_eq] = params[:category] if params[:category].present?
-    filters[:sport_eq] = params[:sport] if params[:sport].present?
-    filters[:brand_eq] = params[:brand] if params[:brand].present?
+    # Add applied filters to response
+    filters[:gender] = params[:gender].split(',') if params[:gender].present?
+    filters[:category] = params[:category].split(',') if params[:category].present?
+    filters[:activity] = params[:activity].split(',') if params[:activity].present?
+    filters[:brand] = params[:brand].split(',') if params[:brand].present?
+    filters[:sport] = params[:sport].split(',') if params[:sport].present?
+    filters[:material] = params[:material].split(',') if params[:material].present?
+    filters[:color] = params[:color].split(',') if params[:color].present?
+    filters[:size] = params[:size].split(',') if params[:size].present?
+    filters[:model] = params[:model].split(',') if params[:model].present?
+    filters[:collection] = params[:collection].split(',') if params[:collection].present?
+    filters[:sort] = params[:sort] if params[:sort].present?
+    filters[:min_price] = params[:min_price] if params[:min_price].present?
+    filters[:max_price] = params[:max_price] if params[:max_price].present?
+    filters[:shipping] = params[:shipping].split(',') if params[:shipping].present?
     
-    # Handle price range
-    if params[:min_price].present?
-      filters[:price_gteq] = params[:min_price]
-    end
-    if params[:max_price].present?
-      filters[:price_lteq] = params[:max_price]
-    end
-
-    # Handle size filtering (through variants)
-    if params[:size].present?
-      filters[:variants_sizes_label_eq] = params[:size]
-    end
-
-    # Handle color filtering (through variants)
-    if params[:color].present?
-      filters[:variants_color_eq] = params[:color]
-    end
-
     filters
   end
+  
+  def get_filter_counts(products, field)
+    products.group(field).count.map do |value, count|
+      { value: value, label: value.humanize, count: count }
+    end
+  end
+  
+  def get_material_counts(products)
+    materials = {}
+    products.pluck(:material).compact.each do |material|
+      materials[material] = materials[material].to_i + 1
+    end
+    materials.map { |k, v| { value: k, label: k, count: v } }
+  end
+  
+  def get_color_counts(products)
+    colors = {}
+    products.joins(:variants).pluck('variants.color').compact.each do |color|
+      colors[color] = colors[color].to_i + 1
+    end
+    colors.map { |k, v| { value: k, label: k, count: v } }
+  end
+  
+  def get_size_counts(products)
+    sizes = {}
+    products.joins(:variants).pluck('variants.sizes').flatten.compact.each do |size|
+      sizes[size] = sizes[size].to_i + 1
+    end
+    sizes.map { |k, v| { value: k, label: k, count: v } }
+  end
+  
+  def get_model_counts(products)
+    models = {}
+    products.pluck(:model_number).compact.each do |model|
+      models[model] = models[model].to_i + 1
+    end
+    models.map { |k, v| { value: k, label: k, count: v } }
+  end
+  
+  def get_collection_counts(products)
+    collections = {}
+    products.pluck(:collection).compact.each do |collection|
+      collections[collection] = collections[collection].to_i + 1
+    end
+    collections.map { |k, v| { value: k, label: k, count: v } }
+  end
 
-  def serialize_product(product)
+  def serialize_product_detail(product)
     {
       id: product.id,
       name: product.name,
-      price: product.variants.first.price || 0,
+      price: product.price,
+      original_price: product.original_price,
       brand: product.brand,
       category: product.category,
       gender: product.gender,
       sport: product.sport,
       jan_code: product.jan_code,
-      description: product.description_p,
-      image_url: "/placeholder.svg?height=400&width=400", # Replace with actual image logic
-      variants: product.variants.map { |variant| serialize_variant(variant) },
-      slug: generate_product_slug(product)
-    }
-  end
-
-  def serialize_product_detail(product)
-    serialize_product(product).merge({
+      model_number: product.model_number,
+      description: product.description,
+      badge: determine_badge(product),
+      image_url: product.image_url || '/placeholder.svg?height=300&width=250',
+      variants: serialize_variants(product.variants),
+      slug: generate_slug(product),
+      reviews_count: product.reviews.count,
+      average_rating: product.average_rating || 0,
       specifications: product.specifications,
       description_h5: product.description_h5,
       care: product.care,
-      reviews_count: product.reviews.count,
-      average_rating: calculate_average_rating(product)
-    })
-  end
-
-  def serialize_variant(variant)
-    {
-      id: variant.id,
-      color: variant.color,
-      sizes: variant.variant_sizes.map do |vs|
-        {
-          id: vs.size.id,
-          label: vs.size.label,
-          system: vs.size.system,
-          available: vs.stock.to_i > 0
-        }
-      end
+      detailed_description: product.description,
+      features: extract_product_features(product),
+      size_guide: generate_size_guide(product)
     }
-  end
-
-  def get_category_info
-    slug = params[:slug]
-    return {} unless slug.present?
-
-    # Return category information based on slug
-    case slug
-    when 'men-soccer-shoes'
-      {
-        title: "MEN'S SOCCER SHOES",
-        breadcrumb: "Men / Soccer / Shoes",
-        description: "Find your perfect pair of men's soccer shoes. From firm ground to artificial turf, we have the right cleats for every playing surface."
-      }
-    when 'men-tops'
-      {
-        title: "MEN'S TOPS",
-        breadcrumb: "Men / Clothing / Tops", 
-        description: "Discover our collection of men's tops. From t-shirts to tank tops, find the perfect fit for your active lifestyle."
-      }
-    when 'women-running-shoes'
-      {
-        title: "WOMEN'S RUNNING SHOES",
-        breadcrumb: "Women / Running / Shoes",
-        description: "Step up your running game with our women's running shoes. Designed for comfort, performance and style."
-      }
-    when 'kids-soccer-shoes'
-      {
-        title: "KIDS' SOCCER SHOES", 
-        breadcrumb: "Kids / Soccer / Shoes",
-        description: "Get your young athlete ready for the field with our kids' soccer shoes collection."
-      }
-    else
-      {
-        title: slug.upcase.gsub('-', ' '),
-        breadcrumb: generate_breadcrumb(slug),
-        description: "Discover our collection of #{slug.gsub('-', ' ')}."
-      }
-    end
-  end
-
-  def generate_product_slug(product)
-    "#{product.gender&.downcase}-#{product.category&.downcase}-#{product.id}"
-  end
-
-  def generate_breadcrumb(slug)
-    parts = slug.split('-')
-    parts.map(&:capitalize).join(' / ')
   end
 
   def get_related_products(product)
     Product.where.not(id: product.id)
            .where(category: product.category, gender: product.gender)
+           .includes(:variants, :reviews)
            .limit(4)
            .map { |p| serialize_product(p) }
   end
@@ -285,5 +435,64 @@ class Api::ProductsController < Api::ApiController
   def calculate_average_rating(product)
     return 0 if product.reviews.empty?
     product.reviews.average(:rating)&.round(1) || 0
+  end
+
+  def determine_badge(product)
+    # Logic to determine if product should have a badge
+    if product.reviews.count > 100 && calculate_average_rating(product) >= 4.5
+      "Best seller"
+    elsif product.created_at > 30.days.ago
+      "New"
+    elsif product.variants.any? { |v| v.original_price && v.price < v.original_price }
+      "Sale"
+    else
+      nil
+    end
+  end
+
+  def extract_product_features(product)
+    # Extract features from product specifications or return default features
+    if product.specifications.present?
+      # Parse specifications JSON or text to extract features
+      []
+    else
+      [
+        "Get delivery dates",
+        "Free standard shipping with adiClub", 
+        "Free 30 day returns"
+      ]
+    end
+  end
+
+  def generate_size_guide(product)
+    case product.category&.downcase
+    when 'shoes'
+      "True to size. We recommend ordering your usual size."
+    when 'apparel'
+      "Regular fit. Check our size chart for detailed measurements."
+    else
+      "Please refer to our size guide for the best fit."
+    end
+  end
+
+  def generate_breadcrumb_from_slug
+    slug = params[:slug]
+    return "Home" unless slug.present?
+
+    case slug
+    when 'men-soccer-shoes'
+      "Home / Soccer / Shoes"
+    when 'men-tops'
+      "Home / Men / Clothing / Tops"
+    when 'women-running-shoes'
+      "Home / Women / Running / Shoes"
+    else
+      "Home / #{generate_breadcrumb(slug)}"
+    end
+  end
+
+  def generate_breadcrumb(slug)
+    parts = slug.split('-')
+    parts.map(&:capitalize).join(' / ')
   end
 end

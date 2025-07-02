@@ -29,10 +29,10 @@ Size.find_or_create_by!(label: "One Size", system: "one_size", location: "GLOBAL
 
 puts "Generating 93 sample products..."
 
-brands        = %w[Adidas Nike Puma UnderArmour Reebok Asics]
+brands        = %w[Adidas Nike Puma UnderArmour Reebok Asics Originals Athletics Essentials]
 sports        = %w[Running Soccer Basketball Tennis Gym Training]
-producttypes  = %w[Wear Compression TankTop Jersey Hoodie]
-genders       = %w[Men Women Unisex]
+producttypes  = %w[Wear Compression TankTop Jersey Hoodie Cleats]
+genders       = %w[Men Women Unisex Kids]
 categories    = %w[Shoes Apparel Accessories]
 
 93.times do |i|

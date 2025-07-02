@@ -2,13 +2,17 @@
 #
 # Table name: products
 class Product < ApplicationRecord
-  GENDER = %w{ Men Women Kids }
+
   FRANCHISE = %w{ Alphabounce Tubular }
-  PRODUCTTYPE = %w{ Wear Underwear Pants }
-  BRAND = %w{ Originals Athletics Essentials }
-  CATEGORY = %w{ Shoes Compression Accessories Apparel }
-  SPORT = %w{ Running Soccer Football }
+  
+  BRAND = %w{ Adidas Nike Puma UnderArmour Reebok Asics Originals Athletics Essentials }
+
   SIZES = %w{XS S M L XL XXL}
+
+  SPORT = %w{ Running Soccer Basketball Tennis Gym Training }
+  PRODUCTTYPE = %w{ Wear Compression TankTop Jersey Hoodie Cleats }
+  GENDER = %w{ Men Women Unisex Kids }
+  CATEGORY = %w{ Shoes Apparel Accessories }
 
   has_many :variants, inverse_of: :product, dependent: :destroy
   accepts_nested_attributes_for :variants, reject_if: :all_blank, allow_destroy: true
