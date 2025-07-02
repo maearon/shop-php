@@ -43,24 +43,18 @@ json.products @products do |product|
     json.updated_at variant.updated_at
 
     json.images variant.images.map { |image|
-      if image.attached?
-        url_for(image.variant(:display))
-      end
+      "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{url_for(image.variant(:display))}"
     }.compact
 
     json.avatar_url(
-      variant.avatar&.attached? ?
-        url_for(variant.avatar) :
-        "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}/placeholder.svg?height=300&width=250"
+      "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}/placeholder.svg?height=300&width=250"
     )
   end
 
   # 👇 Ảnh đại diện là ảnh của variant đầu tiên
   main_variant = product.variants.first
   json.image_url(
-    main_variant&.avatar&.attached? ?
-      url_for(main_variant.avatar) :
-      "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}/placeholder.svg?height=300&width=250"
+    "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}/placeholder.svg?height=300&width=250"
   )
 end
 

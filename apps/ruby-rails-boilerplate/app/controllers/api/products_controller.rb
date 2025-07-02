@@ -31,7 +31,7 @@ class Api::ProductsController < Api::ApiController
   def show
     # Find product by model number (JP5593) instead of ID
     if params[:id].match?(/^[A-Z]{2}\d{4}$/) # Model number format like JP5593
-      @product = Product.find_by!(jan_code: params[:id])
+      @product = Product.includes(:variants, :reviews).find_by!(jan_code: params[:id])
     else
       @product = Product.find(params[:id])
     end
