@@ -31,7 +31,7 @@ export default function ProductDetailPageClient({ product }: Props) {
   const [sizeError, setSizeError] = useState("")
   const [isSticky, setIsSticky] = useState(false)
 
-  const isWishlisted = wishlistItems.some((item) => item.id === product.id.toString())
+  const isWishlisted = wishlistItems.some((item) => Number(item.id) === Number(product.id.toString()))
   const currentVariant = product.variants[selectedVariant]
 
   // Enhanced sticky sidebar logic
@@ -78,11 +78,11 @@ export default function ProductDetailPageClient({ product }: Props) {
     setSizeError("")
     dispatch(
       addToCart({
-        id: product.id.toString(),
+        id: Number(product.id.toString()),
         name: product.name,
         price: `$${product.price}`,
-        image: currentVariant.image,
-        color: currentVariant.colorName,
+        image: currentVariant.images[0],
+        color: currentVariant.color,
         size: selectedSize,
       }),
     )
@@ -91,10 +91,10 @@ export default function ProductDetailPageClient({ product }: Props) {
   const handleToggleWishlist = () => {
     dispatch(
       toggleWishlist({
-        id: product.id.toString(),
+        id: Number(product.id.toString()),
         name: product.name,
         price: `$${product.price}`,
-        image: currentVariant.image,
+        image: currentVariant.images[0],
       }),
     )
   }
@@ -135,8 +135,8 @@ export default function ProductDetailPageClient({ product }: Props) {
       "adidas PRIMEKNIT collar",
       "Sprintframe 360 firm ground outsole",
       "Imported",
-      `Product color: ${currentVariant.colorName}`,
-      `Product code: ${product.modelNumber}`,
+      `Product color: ${currentVariant.color}`,
+      `Product code: ${product.jan_code}`,
     ],
     sizeGuide: "True to size. We recommend ordering your usual size.",
     breadcrumb: "Home / Soccer / Shoes",
@@ -196,7 +196,7 @@ export default function ProductDetailPageClient({ product }: Props) {
               </div>
             )}
 
-            <ExpandableImageGallery images={product.images.map((v) => v)} productName={product.name} />
+            <ExpandableImageGallery images={product.variants.map((v) => v.images[0])} productName={product.name} />
           </div>
 
           {/* Right Column - 40% Width - Product Info with Enhanced Sticky */}
@@ -227,8 +227,8 @@ export default function ProductDetailPageClient({ product }: Props) {
                   <h1 className="text-3xl font-bold mb-4 leading-tight">{product.name}</h1>
                   <div className="flex items-center space-x-2 mb-6">
                     <span className="text-2xl font-bold">${product.price}</span>
-                    {product.originalPrice && (
-                      <span className="text-lg text-gray-500 line-through">${product.originalPrice}</span>
+                    {product.original_price && (
+                      <span className="text-lg text-gray-500 line-through">${product.original_price}</span>
                     )}
                   </div>
                   <p className="text-sm text-gray-600 mb-6">Promo codes will not apply to this product.</p>
@@ -252,7 +252,7 @@ export default function ProductDetailPageClient({ product }: Props) {
 
                 {/* Colors */}
                 <div>
-                  <h3 className="font-bold mb-3">{currentVariant.colorName}</h3>
+                  <h3 className="font-bold mb-3">{currentVariant.color}</h3>
                   <div className="flex gap-2">
                     {product.variants.map((variant, index) => (
                       <button
@@ -263,8 +263,8 @@ export default function ProductDetailPageClient({ product }: Props) {
                         }`}
                       >
                         <img
-                          src={variant.thumbnail || "/placeholder.svg"}
-                          alt={variant.colorName}
+                          src={variant.avatar_url || "/placeholder.svg"}
+                          alt={variant.color}
                           className="w-full h-full object-cover"
                         />
                       </button>
@@ -427,7 +427,7 @@ export default function ProductDetailPageClient({ product }: Props) {
               <div key={item.id} className="relative">
                 <div className="relative mb-4">
                   <img
-                    src={item.variants[0].image || "/placeholder.svg"}
+                    src={item.variants[0].images[0] || "/placeholder.svg"}
                     alt={item.name}
                     className="w-full h-48 object-cover"
                   />

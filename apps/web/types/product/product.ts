@@ -35,6 +35,8 @@ export interface Product {
   updated_at: string
   image_url: string
   availableSizes: string[]
+  collection: string
+  badge: string
   variants: Variant[]
 }
 

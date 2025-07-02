@@ -14,7 +14,7 @@ export default function ProductDetailPage({ params }: PageProps) {
   const { slug, model } = params;
 
   // Find product by model number
-  const product = soccerShoesData.find((p) => p.modelNumber === params.model)
+  const product = soccerShoesData.find((p) => p.jan_code === params.model)
   // const product = fakeLastVisitedProducts.find(
   //   (item) => item.product.model_number === params.model
   // )?.product
