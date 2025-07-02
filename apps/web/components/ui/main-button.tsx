@@ -26,6 +26,7 @@ export function MainButton({
   shadow = true,
   pressEffect = true,
   fullWidth = false,
+  variant = "default",
   className,
   theme = "black",
   ...props
@@ -55,7 +56,7 @@ export function MainButton({
       <BaseButton
         asChild={!!href}
         disabled={loading}
-        variant={undefined} // ✅ not use variant
+        variant={variant}
         className={cn(
           "relative z-10 inline-flex items-center justify-center px-4 h-12 font-bold text-base uppercase tracking-wide rounded-none transition-all border",
           bg,
