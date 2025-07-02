@@ -2,8 +2,8 @@
 
 // Product-related types
 
-import { Optional } from "../common";
-import { Variant } from "./variant";
+import { Optional } from "@/types/common";
+import { Size, Variant } from "@/types/product";
 
 // TODO: Add code here...
 
@@ -11,48 +11,31 @@ import { Variant } from "./variant";
 
 /** 🛍 Product entity */
 export interface Product {
-  id: number;
-  name: string;
-  price?: string;
-  attribute_list?: {
-    brand?: string;
-    color?: string;
-    gender?: string;
-    sale?: boolean;
-    // mở rộng tùy vào project
-  }; 
-  image?: Optional<string>;
-  model_number?: string;
-  base_model_number?: string
-  product_type?: string;
-  url?: string;
-
-  display_name?: string;
-  price_information?: any[];
-  pricing_information?: {
-    currentPrice: number;
-    standard_price: number;
-    standard_price_no_vat: number;
-  };
-  thumbnail?: string;
-  jan_code?: string;
-  gender?: string;
-  franchise?: string;
-  producttype?: string;
-  brand?: string;
-  category?: string;
-  sport?: string;
-  description_h5?: string;
-  description_p?: string;
-  specifications?: string;
-  care?: string;
-  created_at: string; // ISO 8601 timestamp
-  updated_at: string;
-  description: string;
-  image_url: string;
-  variants?: Variant[];
-  slug?: string;
-  score?: number;
+  id: number
+  jan_code: string
+  title: string
+  name: string
+  description: string
+  description_h5: string
+  specifications: string
+  care: string
+  gender: string
+  franchise: string
+  producttype: string
+  brand: string
+  category: string
+  sport: string
+  currencyId: string
+  currencyFormat: string
+  isFreeShipping: boolean
+  price: number
+  original_price: number
+  installments: number
+  created_at: string
+  updated_at: string
+  image_url: string
+  availableSizes: string[]
+  variants: Variant[]
 }
 
 /** 📄 Product listing response */

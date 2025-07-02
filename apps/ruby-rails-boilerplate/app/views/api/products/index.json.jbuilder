@@ -22,7 +22,7 @@ json.products @products do |product|
   json.currencyFormat I18n.t("number.currency.format.unit", locale: locale.to_s)
   json.isFreeShipping true
 
-  json.availableSizes variant&.sizes || []
+  json.availableSizes variant&.joins(:sizes).pluck('sizes.label').uniq || []
   json.price variant&.price
   json.original_price variant&.originalprice
   json.installments variant&.stock
@@ -38,7 +38,7 @@ json.products @products do |product|
     json.original_price variant.originalprice
     json.sku variant.sku
     json.stock variant.stock
-    json.sizes variant.sizes
+    json.sizes variant.joins(:sizes).pluck('sizes.label').uniq
     json.product_id variant.product_id
     json.created_at variant.created_at
     json.updated_at variant.updated_at

@@ -5,6 +5,7 @@
 // 📦 Type definitions for Cart (Ruby Service)
 
 import { Micropost } from "@/types/micropost/micropost";
+import { Product, Variant } from "@/types/product";
 
 export interface CartCreate {
   readonly id: string;
@@ -34,39 +35,6 @@ export interface CartItem {
   size: string;
   product_id: number;
   variant_id: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Product {
-  id: number;
-  name?: string;
-  jan_code?: string;
-  gender?: string;
-  franchise?: string;
-  producttype?: string;
-  brand?: string;
-  category?: string;
-  sport?: string;
-  description_h5?: string;
-  description_p?: string;
-  specifications?: string;
-  care?: string;
-  created_at: string;
-  updated_at: string;
-  image?: string;
-}
-
-export interface Variant {
-  id: number;
-  color?: string;
-  price?: number;
-  originalprice?: number;
-  sku?: string;
-  stock?: number;
-  size: string[];
-  images: string[];
-  product_id: number;
   created_at: string;
   updated_at: string;
 }
