@@ -1,22 +1,21 @@
-// components/ui/adidas-button.tsx
-
 "use client"
 
-import { useRouter } from "next/navigation"
 import { BaseButton, BaseButtonProps } from "@/components/ui/base-button"
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import Link from "next/link" // ✅ Thêm dòng này
+import Link from "next/link"
+import type { ReactNode } from "react"
 
 interface ButtonProps extends BaseButtonProps {
-  href?: string // ✅ Cho phép có hoặc không
-  children: React.ReactNode
+  href?: string
+  children: ReactNode
   loading?: boolean
-  showArrow?: boolean // 👈 new
+  showArrow?: boolean
   shadow?: boolean
-  fullWidth?: boolean // 👈 Thêm dòng này
+  pressEffect?: boolean
+  fullWidth?: boolean
   className?: string
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | null | undefined
+  theme?: "white" | "black"
 }
 
 export function Button({
@@ -24,33 +23,48 @@ export function Button({
   children,
   loading = false,
   showArrow = true,
-  shadow = false,
+  shadow = true,
+  pressEffect = false,
   fullWidth = false,
   className,
-  variant = "ghost",
+  theme = "white",
   ...props
 }: ButtonProps) {
-  const router = useRouter()
+  const isBlack = theme === "black"
+
+  const bg = isBlack ? "bg-black" : "bg-white"
+  const hoverBg = isBlack ? "bg-black" : "bg-white"
+  const text = isBlack ? "text-white" : "text-black"
+  const hoverText = isBlack ? "hover:text-gray-500" : "hover:text-black"
+  const borderColor = isBlack ? "border-black" : "border-white" // for look good
+  const hoverBorder = isBlack ? "border-black" : "group-hover:border-gray-400"
 
   return (
-    <div className={cn("relative group", fullWidth ? "w-full" : "w-fit")}>
-      {/* Shadow border layer */}
+    <div className={cn("relative group", fullWidth && "w-full")}>
       {shadow && (
         <span
-          className="absolute inset-0 translate-x-[6px] translate-y-[6px] border border-white group-hover:border-gray-400 pointer-events-none z-0 transition-colors"
-          aria-hidden="true"
+          className={cn(
+            "absolute inset-0 translate-x-[3px] translate-y-[3px] pointer-events-none z-0 transition-all border",
+            borderColor,
+            hoverBorder,
+            "group-active:translate-x-[3px] group-active:translate-y-[3px]"
+          )}
         />
       )}
 
-      {/* Main button */}
       <BaseButton
         asChild={!!href}
         disabled={loading}
-        variant={variant}
+        variant={undefined} // ✅ not use variant
         className={cn(
-          "relative z-10 inline-flex items-center justify-center px-4 h-12 bg-white text-black font-bold text-base uppercase tracking-wide border border-white rounded-none transition-all",
-          fullWidth ? "w-full" : "w-fit", // ✅ Thêm điều kiện rõ ràng ở đây
-          !href && "flex items-center justify-center",
+          "relative z-10 inline-flex items-center justify-center px-4 h-12 font-bold text-base uppercase tracking-wide rounded-none transition-all border",
+          bg,
+          hoverBg,
+          text,
+          hoverText,
+          borderColor,
+          pressEffect && "active:translate-x-[3px] active:translate-y-[3px]", // 👈 active pseudo-class toggle
+          fullWidth && "w-full",
           className
         )}
         {...props}
@@ -59,27 +73,30 @@ export function Button({
           <Link
             href={href}
             onClick={(e) => loading && e.preventDefault()}
-            className="flex items-center justify-center gap-1 px-2 py-1"
+            className="w-full h-full flex items-center justify-center"
           >
             {loading ? (
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             ) : (
-              <span className="-translate-y-[1px]">{children}</span>
+              <span className="mr-2 -translate-y-[1px]">{children}</span>
             )}
-            {showArrow !== false && <span className="text-[22px] font-thin leading-none">⟶</span>}
+            {showArrow && (
+              <span className="text-[22px] font-thin leading-none">⟶</span>
+            )}
           </Link>
         ) : (
           <>
             {loading ? (
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             ) : (
-              <span className="-translate-y-[1px]">{children}</span>
+              <span className="mr-2 -translate-y-[1px]">{children}</span>
             )}
-            {showArrow !== false && <span className="text-[22px] font-thin leading-none">⟶</span>}
+            {showArrow && (
+              <span className="text-[22px] font-thin leading-none">⟶</span>
+            )}
           </>
         )}
       </BaseButton>
     </div>
   )
 }
-

@@ -10,6 +10,8 @@ import { SessionResponse, SessionIndexResponse, LoginParams } from "@/types/auth
 import { ApiResponse } from "@/types/common"
 // ------------------- Products -------------------
 import { Product, ProductFilters, ProductsResponse } from "@/types/product"
+import { CartItem } from "@/types/cart"
+import { WishItem } from "@/types/wish"
 
 const javaService = {
   login: (params: LoginParams): Promise<SessionResponse> =>
@@ -31,6 +33,14 @@ const javaService = {
   fetchProducts: async (): Promise<ApiResponse<Product[]>> => {
     return api.get("/products");
   },
+
+  // Wish List (Pagination optional)
+  getWish: async (page: number = 1): Promise<ApiResponse<WishItem[]>> =>
+    api.get(`/wish?page=${page}`),
+
+  // Cart List (Pagination optional)
+  getCart: async (page: number = 1): Promise<ApiResponse<CartItem[]>> =>
+    api.get(`/cart?page=${page}`),
 
   // ------------------- Products -------------------
   getProductFilters: async () => api.get("/products/filters"),

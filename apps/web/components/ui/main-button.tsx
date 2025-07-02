@@ -1,20 +1,21 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { BaseButton, BaseButtonProps } from "@/components/ui/base-button"
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import type { ReactNode } from "react"
 
 interface MainButtonProps extends BaseButtonProps {
   href?: string
-  children: React.ReactNode
+  children: ReactNode
   loading?: boolean
   showArrow?: boolean
   shadow?: boolean
+  pressEffect?: boolean
   fullWidth?: boolean
   className?: string
-  theme?: "white" | "black" // 👈 NEW
+  theme?: "white" | "black"
 }
 
 export function MainButton({
@@ -22,46 +23,48 @@ export function MainButton({
   children,
   loading = false,
   showArrow = true,
-  shadow = false,
+  shadow = true,
+  pressEffect = true,
   fullWidth = false,
   className,
-  theme = "white", // 👈 default
+  theme = "black",
   ...props
 }: MainButtonProps) {
-  const router = useRouter()
-
   const isBlack = theme === "black"
-  const bgColor = isBlack ? "bg-black" : "bg-white"
-  const textColor = isBlack ? "text-white" : "text-black"
-  const borderColor = "border-white"
-  const hoverBorder = "group-hover:border-gray-400"
+
+  const bg = isBlack ? "bg-black" : "bg-white"
+  const hoverBg = isBlack ? "bg-black" : "bg-white"
+  const text = isBlack ? "text-white" : "text-black"
+  const hoverText = isBlack ? "hover:text-gray-500" : "hover:text-black"
+  const borderColor = isBlack ? "border-black" : "border-white" // for look good
+  const hoverBorder = isBlack ? "border-black" : "group-hover:border-gray-400"
 
   return (
-    <div className={cn("relative group", fullWidth ? "w-full" : "w-fit")}>
+    <div className={cn("relative group", fullWidth && "w-full")}>
       {shadow && (
         <span
           className={cn(
-            "absolute inset-0 translate-x-[6px] translate-y-[6px] border pointer-events-none z-0 transition-all",
+            "absolute inset-0 translate-x-[3px] translate-y-[3px] pointer-events-none z-0 transition-all border",
             borderColor,
             hoverBorder,
-            "group-active:translate-x-[4px] group-active:translate-y-[4px]"
+            "group-active:translate-x-[3px] group-active:translate-y-[3px]"
           )}
-          aria-hidden="true"
         />
       )}
 
       <BaseButton
         asChild={!!href}
         disabled={loading}
-        variant="ghost"
+        variant={undefined} // ✅ not use variant
         className={cn(
-          "relative z-10 inline-flex items-center justify-center px-4 h-12 font-bold text-base uppercase tracking-wide border rounded-none transition-all",
-          bgColor,
-          textColor,
+          "relative z-10 inline-flex items-center justify-center px-4 h-12 font-bold text-base uppercase tracking-wide rounded-none transition-all border",
+          bg,
+          hoverBg,
+          text,
+          hoverText,
           borderColor,
-          "active:translate-x-[2px] active:translate-y-[2px]",
-          fullWidth ? "w-full" : "w-fit", // ✅ Thêm điều kiện rõ ràng ở đây
-          !href && "flex items-center justify-center",
+          pressEffect && "active:translate-x-[3px] active:translate-y-[3px]", // 👈 active pseudo-class toggle
+          fullWidth && "w-full",
           className
         )}
         {...props}
@@ -77,7 +80,7 @@ export function MainButton({
             ) : (
               <span className="mr-2 -translate-y-[1px]">{children}</span>
             )}
-            {showArrow !== false && (
+            {showArrow && (
               <span className="text-[22px] font-thin leading-none">⟶</span>
             )}
           </Link>
@@ -88,7 +91,7 @@ export function MainButton({
             ) : (
               <span className="mr-2 -translate-y-[1px]">{children}</span>
             )}
-            {showArrow !== false && (
+            {showArrow && (
               <span className="text-[22px] font-thin leading-none">⟶</span>
             )}
           </>

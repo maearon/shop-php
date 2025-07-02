@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { ShoppingBag } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
