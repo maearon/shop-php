@@ -162,7 +162,7 @@ function SearchPageContent() {
           <div className="text-center py-12">
             <h3 className="text-lg font-semibold mb-2 text-red-600">Search Error</h3>
             <p className="text-gray-600 mb-4">{error}</p>
-            <Button onClick={() => performSearch(filters)}>Try Again</Button>
+            <Button shadow={false} theme="black" onClick={() => performSearch(filters)}>Try Again</Button>
           </div>
         )}
 
