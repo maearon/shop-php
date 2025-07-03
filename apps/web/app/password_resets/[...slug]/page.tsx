@@ -1,9 +1,9 @@
 "use client";
 import { useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
-import flashMessage from '@/components/shared/flashMessages'
-import { MutableRefObject, useRef, useState } from 'react'
+import flashMessage from '../../../components/shared/flashMessages'
 import javaService from '@/api/services/javaService';
+import { MutableRefObject, useRef, useState } from 'react'
 // import errorMessage from '../../components/shared/errorMessages'
 
 const initialState = {
@@ -21,7 +21,7 @@ const Edit = ({params}: {params: {slug: string[]}}) =>{
   { reset_token: params.slug[0], email: decodeURIComponent(params.slug[1]) } 
   : { reset_token: '', email: '' };
   const dispatch = useDispatch()
-  const myRef = useRef<HTMLInputElement>(null)
+  const myRef = useRef() as MutableRefObject<HTMLInputElement>
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
@@ -38,7 +38,7 @@ const Edit = ({params}: {params: {slug: string[]}}) =>{
   const handleSubmit = (e: { preventDefault: () => void }) => {
     const { password, password_confirmation } = state
 
-    javaService.updatePassword(reset_token as string,
+    javaService.resetForForgotPassword(reset_token as string,
       {
         email: email as string,
         user: {
@@ -51,7 +51,7 @@ const Edit = ({params}: {params: {slug: string[]}}) =>{
         flashMessage(...response.flash as [message_type: string, message: string])
       }
       if (response.error) { // Case (2+3)
-        // myRef.current.blur()
+        myRef.current.blur()
         setState({
           ...state,
           errorMessage: response.error,

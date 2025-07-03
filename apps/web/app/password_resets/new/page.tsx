@@ -2,8 +2,8 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/navigation'
 import React, { MutableRefObject, useRef, useState } from 'react'
-import flashMessage from '@/components/shared/flashMessages';
 import javaService from '@/api/services/javaService';
+import flashMessage from '../../../components/shared/flashMessages';
 
 const initialState = {
   email: '',
@@ -12,7 +12,7 @@ const initialState = {
 const New: NextPage = () => {
   const router = useRouter()
   const [state, setState] = useState(initialState)
-  const myRef = useRef<HTMLInputElement>(null)
+  const myRef = useRef() as MutableRefObject<HTMLInputElement>
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
@@ -29,14 +29,14 @@ const New: NextPage = () => {
   const handleSubmit = (e: { preventDefault: () => void }) => {
     const { email } = state
 
-    javaService.createPasswordReset(
+    javaService.sendForgotPasswordEmail(
       {
         password_reset: {
           email: email,
         }
       }
     ).then(response => {
-      // myRef.current.blur()
+      myRef.current.blur()
       flashMessage('success', 'The password reset email has been sent, please check your email')
       // flashMessage(...response.flash as [message_type: string, message: string])
       // if (response.flash[0] === "info") {

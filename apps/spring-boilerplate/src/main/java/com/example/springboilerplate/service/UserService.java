@@ -4,6 +4,8 @@ import com.example.springboilerplate.dto.UpdateUserRequest;
 import com.example.springboilerplate.dto.UsersResponseDto;
 import com.example.springboilerplate.model.User;
 import com.example.springboilerplate.repository.UserRepository;
+import com.example.springboilerplate.utils.TokenUtil;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,9 +56,15 @@ public class UserService {
     @Transactional
     public User create(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setActivationDigest(UUID.randomUUID().toString());
+        // user.setActivationDigest(UUID.randomUUID().toString());
+        
+        String activationToken = TokenUtil.generateToken(); // token gốc gửi cho user
+        String activationDigest = TokenUtil.generateDigest(activationToken); // digest lưu DB
+
+        user.setActivationDigest(activationDigest);
+
         User savedUser = userRepository.save(user);
-        emailService.sendActivationEmail(savedUser);
+        emailService.sendActivationEmail(savedUser, activationDigest);
         return savedUser;
     }
 
@@ -221,8 +229,25 @@ public class UserService {
         user.setDisplayName(name);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password)); // Ensure password is hashed before saving
-        user.setActivationDigest(UUID.randomUUID().toString());
-        return userRepository.save(user); // Assuming userRepository is already defined
+
+        // user.setActivationDigest(UUID.randomUUID().toString());
+        // return userRepository.save(user); // Assuming userRepository is already defined
+
+
+        // Tạo activation token + digest giống Rails Tutorial
+        String activationToken = TokenUtil.generateToken(); // token gốc gửi cho user
+        String activationDigest = TokenUtil.generateDigest(activationToken); // digest lưu DB
+
+        user.setActivationDigest(activationDigest);
+        user.setActivated(false); // mặc định chưa kích hoạt
+        user.setActivatedAt(null);
+
+        User savedUser = userRepository.save(user);
+
+        // Gửi email chứa link activate
+        emailService.sendActivationEmail(savedUser, activationToken);
+
+        return savedUser;
     }
 
     public void revokeRefreshToken(String userId) {

@@ -189,14 +189,19 @@ public class AuthApiController {
         if (name == null || name.isBlank()) {
             name = registerDto.getEmail().split("@")[0];
         }
-
-        userService.registerNewUser(
+        try {
+            userService.registerNewUser(
                 name,
                 registerDto.getEmail(),
                 registerDto.getPassword()
-        );
+            );
 
-        return ResponseEntity.ok(new ApiResponse(true, "User registered successfully"));
+            // return ResponseEntity.ok(new ApiResponse(true, "User registered successfully"));
+            return ResponseEntity.ok(new ApiResponse(true, "Please check your email to activate your account."));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(new ApiResponse(false, "Failed to register user."));
+        }
     }
 
     @DeleteMapping("/logout")

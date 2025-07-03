@@ -6,7 +6,14 @@
 
 import api from "@/api/client"
 import { UserCreateParams, UserCreateResponse } from "@/types/user"
-import { SessionResponse, SessionIndexResponse, LoginParams } from "@/types/auth/auth"
+import { 
+  SessionResponse, SessionIndexResponse, LoginParams, 
+  ResendActivationEmailResponse, ResendActivationEmailParams, 
+  User, PasswordResetCreateResponse, 
+  SendForgotPasswordEmailParams,
+  PasswordResetUpdateParams,
+  PasswordResetUpdateResponse
+} from "@/types/auth"
 import { ApiResponse } from "@/types/common"
 // ------------------- Products -------------------
 import { Product, ProductFilters, ProductsResponse } from "@/types/product"
@@ -14,6 +21,29 @@ import { CartItem } from "@/types/cart"
 import { WishItem } from "@/types/wish"
 
 const javaService = {
+  // Password Reset
+  sendForgotPasswordEmail(params: SendForgotPasswordEmailParams): Promise<PasswordResetCreateResponse> {
+    const url = '/password_resets';
+    return api.post(url, params);
+  },
+  resetForForgotPassword(reset_token: string, params: PasswordResetUpdateParams): Promise<PasswordResetUpdateResponse> {
+    const url = `/password_resets/${reset_token}`;
+    return api.patch(url, params);
+  },
+
+  // Resend and Activate
+  resendActivationEmail(params: ResendActivationEmailParams): Promise<ResendActivationEmailResponse> {
+    const url = `/account_activations`;
+    return api.post(url, params);
+  },
+
+  activateAccount(activation_token: string, email: string): Promise<ApiResponse<User>> {
+    const url = `/account_activations/${activation_token}`;
+    return api.patch(url, {email: email});
+  },
+
+  // Auth
+
   checkEmail: (email: string): Promise<{ exists: boolean, user: { activated: boolean } }> =>
     api.post("/check-email", { email }),
   

@@ -2,9 +2,9 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/navigation'
 import React, { MutableRefObject, useRef, useState } from 'react'
+import javaService from '@/api/services/javaService';
 import flashMessage from '@/components/shared/flashMessages'
 import ShowErrors, { ErrorMessageType } from '@/components/shared/errorMessages';
-import javaService from '@/api/services/javaService';
 
 const initialState = {
   name: '',
@@ -17,7 +17,7 @@ const initialState = {
 const New: NextPage = () => {
   const router = useRouter()
   const [state, setState] = useState(initialState)
-  const myRef = useRef<HTMLInputElement>(null)
+  const myRef = useRef() as MutableRefObject<HTMLInputElement>
   const [errors, setErrors] = useState<ErrorMessageType>({});
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
@@ -32,7 +32,7 @@ const New: NextPage = () => {
     e.preventDefault()
     const { email } = state
 
-    javaService.create(
+    javaService.resendActivationEmail(
       {
         resend_activation_email: {
           email: email,

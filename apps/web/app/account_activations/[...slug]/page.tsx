@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import javaService from '@/api/services/javaService';
 import flashMessage from "@/components/shared/flashMessages";
-import javaService from "@/api/services/javaService";
 
 // Kiểu dữ liệu cho params
 interface EditProps {
@@ -29,11 +29,11 @@ export default function Edit({ params }: EditProps) {
 
     // Gọi API kích hoạt tài khoản
     javaService
-      .activate(activation_token, email)
+      .activateAccount(activation_token, email)
       .then((response) => {
         flashMessage("success", "The account has been activated. Please log in.");
         setTimeout(() => {
-          router.push("/account-login");
+          router.push("/login");
         }, 3000);
       })
       .catch((error) => {

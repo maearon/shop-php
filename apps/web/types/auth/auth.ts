@@ -1,9 +1,10 @@
 // 🔐 Types for Password Reset feature
 
-export interface PasswordResetCreateParams {
-  password_reset: {
-    email: string
-  }
+// Password Reset
+export interface SendForgotPasswordEmailParams {
+  password_reset: PasswordResetCreateField
+}export interface PasswordResetCreateField {
+  email: string
 }
 
 export interface PasswordResetCreateResponse {
@@ -24,6 +25,28 @@ export interface PasswordResetUpdateResponse {
   error?: string[]
 }
 
+// Resend and Activate
+
+export interface ResendActivationEmailField {
+  email: string
+}
+
+export interface ResendActivationEmailParams {
+  resend_activation_email: ResendActivationEmailField
+}
+
+export interface ResendActivationEmailResponse {
+  user_id?: string
+  flash?: [message_type: string, message: string]
+  error?: string[]
+}
+
+export interface Response<User> {
+  user?: User
+  jwt?: string
+  token?: string
+  flash: [message_type: string, message: string]
+}
 
 // Auth-related types
 
@@ -64,8 +87,9 @@ export interface SessionIndexResponse {
 }
 
 export interface User {
-  id: number
+  readonly id: string
   email: string
   name: string
+  role?: boolean
   avatar?: string
 }
