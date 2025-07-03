@@ -13,15 +13,6 @@ import {
 import { ApiResponse } from "@/types/common"
 
 const javaService = {
-  activateAccount(activation_token: string, email: string): Promise<ApiResponse<User>> {
-    const url = `/account_activations/${activation_token}`;
-    return api.patch(url, {email: email});
-  },
-  // Auth
-
-  checkEmail: (email: string): Promise<{ exists: boolean, user: { activated: boolean } }> =>
-    api.post("/check-email", { email }),
-  
   login: (params: LoginParams): Promise<SessionResponse> =>
     api.post("/login", params),
 
