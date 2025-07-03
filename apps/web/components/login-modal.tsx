@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import LoadingButton from "@/components/LoadingButton"
 import { BaseButton } from "@/components/ui/base-button"
@@ -40,6 +40,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const { mutateAsync: checkEmail, isPending } = useCheckEmail()
   const { mutateAsync: login, isPending: isLoggingIn } = useLogin()
   const { mutateAsync: register, isPending: isRegistering } = useRegister()
+
+  useEffect(() => {
+    if (isOpen) {
+      setStep("email")
+    }
+  }, [isOpen])
 
   const handleEmailSubmit = async (values: { email: string; keepLoggedIn: boolean }) => {
     setIsLoading(true)
