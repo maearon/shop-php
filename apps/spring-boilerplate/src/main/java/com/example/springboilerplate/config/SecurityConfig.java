@@ -114,6 +114,7 @@ public class SecurityConfig {
                     "/v3/api-docs/**"
                 ).permitAll()
                 .requestMatchers("/up").permitAll()
+                .requestMatchers("/api/check-email").permitAll()
                 .anyRequest().authenticated()
             );
 

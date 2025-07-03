@@ -31,6 +31,7 @@ const validationSchema = Yup.object({
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [step, setStep] = useState<"email" | "login" | "register">("email")
   const [email, setEmail] = useState("") // lưu email sau bước 1
+  const [keepLoggedIn, setKeepLoggedIn] = useState(true) // lưu keepLoggedIn sau bước 1
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
   if (typeof window !== "undefined") {
@@ -41,16 +42,20 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const { mutateAsync: register, isPending: isRegistering } = useRegister()
 
   const handleEmailSubmit = async (values: { email: string; keepLoggedIn: boolean }) => {
+    setIsLoading(true)
     try {
       const response = await checkEmail(values.email)
 
       setEmail(values.email)
+      setKeepLoggedIn(values.keepLoggedIn)
       if (response.exists) {
         setStep("login")
       } else {
         setStep("register")
       }
+      setIsLoading(false)
     } catch (error) {
+      setIsLoading(false)
       console.log('error', error)
       flashMessage("error", "Something went wrong. Please try again.")
     }
@@ -58,7 +63,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   const handleLogin = async (password: string) => {
     try {
-      const res = await login({ email, password })
+      const res = await login({ email, password, remember_me: keepLoggedIn })
       if (res) {
         await dispatch(fetchUser())
         flashMessage("success", "Login successful!")
@@ -229,14 +234,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                   {/* Continue Button */}
                   <Button
+                    theme={"black"}
+                    shadow={true}
+                    pressEffect={true}
                     type="submit"
-                    className="w-full bg-black text-white hover:bg-gray-800 py-3"
+                    fullWidth={true}
                     loading={isPending}
                   >
                     {isPending ? "LOADING..." : "CONTINUE"}
-                    <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
                   </Button>
                 </Form>
               )}

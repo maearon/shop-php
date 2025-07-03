@@ -67,16 +67,9 @@ public class AuthApiController {
     @PostMapping("/check-email")
     public ResponseEntity<?> checkEmail(@RequestBody EmailCheckRequestDto req) {
         String email = req.getEmail();
-        Optional<User> userOpt = authService.checkEmailExists(email);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
+        if (userService.existsByEmail(email)) {
             return ResponseEntity.ok(Map.of(
-                "exists", true,
-                "user", Map.of(
-                    "name", user.getName(),
-                    "avatarUrl", user.getAvatarUrl(),
-                    "provider", user.getProvider()
-                )
+                "exists", true
             ));
         } else {
             return ResponseEntity.ok(Map.of("exists", false));
