@@ -64,7 +64,15 @@ const processQueue = (error: any, token: Nullable<string> = null) => {
 }
 
 api.interceptors.response.use(
-  (response: AxiosResponse) => response.data,
+  (response: AxiosResponse) => {
+    if (typeof response.data === "object" && response.data !== null) {
+      return {
+        ...response.data,
+        _status: response.status,
+      }
+    }
+    return response.data
+  },
   async (error) => {
     const originalRequest = error.config
 
