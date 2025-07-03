@@ -36,6 +36,17 @@
   }
 }
 
+/* Custom utilities for vertical text */
+/* @layer utilities {
+  .writing-mode-vertical-rl {
+    writing-mode: vertical-rl;
+  }
+
+  .text-orientation-mixed {
+    text-orientation: mixed;
+  }
+} */
+
 /* global.css hoặc tailwind.config.js */
 @keyframes pulse {
   0%, 100% {

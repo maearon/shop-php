@@ -13,6 +13,7 @@ import { AuthProvider } from "@/context/AuthContext"
 import { GoogleOAuthProvider } from "@react-oauth/google"
 import ReactQueryProvider from "./ReactQueryProvider"
 import RedirectListener from "@/components/RedirectListener" // ✅ THÊM DÒNG NÀY
+import { ToastContainer } from "react-toastify"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -35,6 +36,7 @@ export default function RootLayout({
               <ReactQueryProvider>
                 <RedirectListener /> {/* ✅ THÊM VÀO BODY */}
                 <Header />
+                <ToastContainer position="top-right" autoClose={3000} />
                 <main>{children}</main>
                 <Footer />
                 <ChatWidget />

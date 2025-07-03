@@ -8,10 +8,8 @@ import com.example.springboilerplate.service.AuthService;
 import com.example.springboilerplate.service.OAuth2VerifierService;
 import com.example.springboilerplate.service.UserService;
 import lombok.RequiredArgsConstructor;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,12 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.example.springboilerplate.security.UserPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.validation.Valid;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 

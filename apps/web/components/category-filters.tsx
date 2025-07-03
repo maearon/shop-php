@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { BaseButton } from "@/components/ui/base-button"
 import { Checkbox } from "@/components/ui/checkbox"
 
 type CategoryConfig = {
@@ -36,9 +36,9 @@ export default function CategoryFilters({ category }: CategoryFiltersProps) {
         <h3 className="font-bold mb-4">Size</h3>
         <div className="grid grid-cols-3 gap-2">
           {sizeOptions.map((size) => (
-            <Button key={size} variant="outline" size="sm" className="h-10 text-sm hover:bg-black hover:text-white">
+            <BaseButton key={size} variant="outline" size="sm" className="h-10 text-sm hover:bg-black hover:text-white">
               {size}
-            </Button>
+            </BaseButton>
           ))}
         </div>
       </div>
@@ -104,9 +104,9 @@ export default function CategoryFilters({ category }: CategoryFiltersProps) {
       </div>
 
       {/* Clear Filters */}
-      <Button variant="outline" className="w-full">
+      <BaseButton variant="outline" className="w-full">
         Clear All Filters
-      </Button>
+      </BaseButton>
     </div>
   )
 }

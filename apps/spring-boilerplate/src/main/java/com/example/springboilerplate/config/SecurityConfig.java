@@ -115,6 +115,7 @@ public class SecurityConfig {
                 ).permitAll()
                 .requestMatchers("/up").permitAll()
                 .requestMatchers("/api/check-email").permitAll()
+                .requestMatchers("/api/account_activations/**").permitAll()
                 .anyRequest().authenticated()
             );
 

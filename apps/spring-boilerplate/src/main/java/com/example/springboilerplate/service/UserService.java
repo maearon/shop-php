@@ -257,4 +257,32 @@ public class UserService {
             userRepository.save(user);
         });
     }
+
+    @Transactional
+    public void sendActivationEmailAgain(User user) {
+        String newToken = TokenUtil.generateToken();
+        String newDigest = TokenUtil.generateDigest(newToken);
+        user.setActivationDigest(newDigest);
+        userRepository.save(user);
+        emailService.sendActivationEmail(user, newToken);
+    }
+
+    @Transactional
+    public boolean activateWithToken(String token, String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) return false;
+
+        User user = userOpt.get();
+
+        if (user.isActivated()) return false;
+
+        if (TokenUtil.matches(token, user.getActivationDigest())) {
+            user.setActivated(true);
+            user.setActivatedAt(LocalDateTime.now());
+            userRepository.save(user);
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -1,112 +1,91 @@
 "use client";
-import { NextPage } from 'next'
-import { useRouter } from 'next/navigation'
-import React, { MutableRefObject, useRef, useState } from 'react'
-import javaService from '@/api/services/javaService';
-import flashMessage from '@/components/shared/flashMessages'
-import ShowErrors, { ErrorMessageType } from '@/components/shared/errorMessages';
 
-const initialState = {
-  name: '',
-  email: '',
-  password: '',
-  password_confirmation: '',
-  errors: {} as ErrorMessageType,
-};
+import { NextPage } from "next";
+import { useRouter } from "next/navigation";
+import React, { useRef, useState } from "react";
+import javaService from "@/api/services/javaService";
+import flashMessage from "@/components/shared/flashMessages";
+import ShowErrors, { ErrorMessageType } from "@/components/shared/errorMessages";
+import { Loader2 } from "lucide-react";
 
 const New: NextPage = () => {
-  const router = useRouter()
-  const [state, setState] = useState(initialState)
-  const myRef = useRef() as MutableRefObject<HTMLInputElement>
+  const router = useRouter();
+  const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<ErrorMessageType>({});
+  const submitRef = useRef<HTMLInputElement>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
-    const { name, value } = e.target;
-    setState({
-      ...state,
-      [name]: value,
-    });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      await javaService.resendActivationEmail({
+        resend_activation_email: { email },
+      });
+
+      submitRef.current?.blur();
+      setErrors({});
+      flashMessage("success", "The activation email has been sent again. Please check your email.");
+    } catch (err: any) {
+      const status = err.response?.status;
+      const message = err.response?.data || "An error occurred";
+
+      if (status === 404) {
+        flashMessage("error", "User not found");
+      } else if (status === 422) {
+        flashMessage("info", "Account already activated");
+      } else {
+        flashMessage("error", message.toString());
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
-    e.preventDefault()
-    const { email } = state
-
-    javaService.resendActivationEmail(
-      {
-        resend_activation_email: {
-          email: email,
-        }
-      }
-    ).then(response => {
-      // if (response.user) {
-      //   myRef.current.blur()
-      //   setState({
-      //     ...state,
-      //     errors: {},
-      //   });
-      //   flashMessage(...response.flash as [message_type: string, message: string])
-      //   router.push("/")
-      //   // window.location.assign('https://mail.google.com/mail/u/0')  
-      // }
-      // if (response.errors) {
-      //   myRef.current.blur()
-      //   setState({
-      //     ...state,
-      //     errors: response.errors,
-      //   });
-      //   setErrors(response.errors)
-      //   console.log('error1', response.errors)
-      // }
-      flashMessage('success', 'The activation email has been sent again, please check your email')
-    })
-    .catch(error => {
-      flashMessage('info', 'Account already activated')
-      // flashMessage("error", error.toString())
-      // setErrors({
-      //   "email": [
-      //       "can't be blank",
-      //       "is invalid"
-      //   ],
-      //   "password_confirmation": [
-      //       "doesn't match Password"
-      //   ]
-    })
-  }
-
   return (
-    <>
-    <h1>Resend Activation Email</h1>
+    <div className="flex items-center justify-center min-h-screen px-4 bg-gray-50">
+      <div className="bg-white w-full max-w-md shadow-xl rounded-xl p-8 border border-gray-200">
+        <h1 className="text-2xl font-extrabold text-gray-900 mb-6 text-center uppercase tracking-wide">
+          Resend Activation Email
+        </h1>
 
-    <div className="row">
-      <div className="col-md-6 col-md-offset-3">
-        <form
-        className="new_user"
-        id="new_user" action="/users"
-        acceptCharset="UTF-8"
-        method="post"
-        onSubmit={handleSubmit}
-        >
-          {Object.keys(errors).length !== 0 &&
-            <ShowErrors errorMessage={errors} />
-          }
+        {Object.keys(errors).length > 0 && <ShowErrors errorMessage={errors} />}
 
-          <label htmlFor="user_email">Email</label>
-          <input
-          className="form-control"
-          type="email"
-          name="email"
-          id="user_email"
-          value={state.email}
-          onChange={handleChange}
-          />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="user_email" className="block text-sm font-medium text-gray-700">
+              Email address
+            </label>
+            <input
+              className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2 focus:ring-black focus:border-black"
+              type="email"
+              name="email"
+              id="user_email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="you@example.com"
+            />
+          </div>
 
-          <input ref={myRef} type="submit" name="commit" value="Resend activation email" className="btn btn-primary" data-disable-with="Resend activation email" />
-        </form>  
+          <div>
+            <button
+              ref={submitRef}
+              type="submit"
+              disabled={submitting}
+              className={`w-full flex justify-center items-center px-4 py-2 text-white font-semibold bg-black rounded-md shadow-sm hover:bg-gray-800 transition ${
+                submitting ? "opacity-70 cursor-not-allowed" : ""
+              }`}
+            >
+              {submitting && <Loader2 className="animate-spin mr-2 h-5 w-5" />}
+              {submitting ? "Sending..." : "Resend Activation Email"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
-    </>
-  )
-}
+  );
+};
 
-export default New
+export default New;
