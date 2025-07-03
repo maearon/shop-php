@@ -54,7 +54,7 @@ export default function PromoCarousel<T>({ items, renderItem }: PromoCarouselPro
   }
 
   return (
-    <section className="container mx-auto px-2 py-0">
+    <section className="container mx-auto px-2 py-0 mb-1 sm:mb-10">
       <div
         className="relative overflow-hidden"
         onMouseEnter={() => setIsAutoPlaying(false)}
@@ -105,7 +105,7 @@ export default function PromoCarousel<T>({ items, renderItem }: PromoCarouselPro
         )}
 
         {/* Dots */}
-        <div className="flex justify-center mt-6 space-x-2">
+        {/* <div className="flex justify-center mt-6 space-x-2">
           {Array.from({ length: totalSlides }).map((_, index) => (
             <button
               key={index}
@@ -116,7 +116,7 @@ export default function PromoCarousel<T>({ items, renderItem }: PromoCarouselPro
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
-        </div>
+        </div> */}
       </div>
     </section>
   )

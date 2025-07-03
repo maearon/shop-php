@@ -8,12 +8,13 @@ interface Tile {
   href?: string,
   cta?: string,
 }
+
 interface TileCardProps {
-  tile: Tile, 
+  tile: Tile,
   index: number
 }
 
-export default function TileCard({ 
+export default function TileCard({
   tile = {
     title: "",
     subtitle: "",
@@ -28,7 +29,7 @@ export default function TileCard({
     <a
       key={`${tile.title}-${index}`}
       href={tile.href}
-      className="group border border-transparent hover:border-black transition duration-300"
+      className="group relative box-border border border-transparent hover:border-black transition duration-300 h-full flex flex-col"
     >
       {/* Image section */}
       <div className="aspect-[3/4] w-full overflow-hidden">
@@ -40,10 +41,10 @@ export default function TileCard({
       </div>
 
       {/* Text section */}
-      <div className="p-4">
+      <div className="p-4 flex-1 flex flex-col">
         <h3 className="font-bold text-sm md:text-base uppercase mb-1">{tile.title}</h3>
         <p className="text-sm text-gray-700 mb-3">{tile.description}</p>
-        <span className="text-sm font-bold underline">SHOP NOW</span>
+        <span className="text-sm font-bold underline mt-auto">SHOP NOW</span>
       </div>
     </a>
   )

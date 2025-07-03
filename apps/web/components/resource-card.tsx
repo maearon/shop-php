@@ -9,11 +9,11 @@ interface Resource {
   cta?: string,
 }
 interface ResourceCardProps {
-  resource: Resource, 
+  resource: Resource,
   index: number
 }
 
-export default function ResourceCard({ 
+export default function ResourceCard({
   resource = {
     title: "",
     subtitle: "",
@@ -28,21 +28,18 @@ export default function ResourceCard({
     <a
       key={`${resource.title}-${index}`}
       href={resource.href}
-      className="group border border-transparent hover:border-black transition duration-300"
+      className="group relative z-10 box-border h-full border border-transparent transition duration-300 flex flex-col"
     >
       <div
-        // ref={(el) => (imageRefs.current[i] = el)}
-        className="shrink-0 lazy-bg bg-gray-100 relative overflow-hidden"
-        data-bg={resource.image}
-        style={{
-          // width: `${100 / slides.length}%`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundImage: "none",
-          height: "24rem",
-        }}
-      >
-      <div className="absolute inset-0 bg-black bg-opacity-30" />
+  className="lazy-bg bg-gray-100 relative overflow-hidden"
+  style={{
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundImage: `url('${resource.image}')`, // <-- fix tại đây
+    height: "24rem",
+  }}
+>
+        <div className="absolute inset-0 bg-black bg-opacity-30" />
         <div className="relative h-full flex flex-col justify-end p-6 text-white">
           <h3 className="font-bold text-lg mb-2">{resource.title}</h3>
           <p className="text-sm mb-4 leading-relaxed">{resource.description}</p>

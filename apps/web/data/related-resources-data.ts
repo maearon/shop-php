@@ -1,9 +1,16 @@
 // /data/mock-slides-data.ts
 // ✅ Mock slides data
-import { Slide } from "@/components/promo-carousel";
-import { Product } from "@/types/product"
 
-export const relatedResources: Slide[] = [
+interface Resource {
+  title: string,
+  subtitle?: string,
+  description?: string,
+  image?: string,
+  href?: string,
+  cta?: string,
+}
+
+export const relatedResources: Resource[] = [
     // 1
 {
       title: "How To Clean Shoes",

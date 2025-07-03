@@ -152,7 +152,7 @@ export default function HomePage() {
       />
 
       {/* Prime Section */}
-      <section className="bg-black text-white py-20 sm:py-18 md:py-0 lg:py-8 xl:py-8 2xl:py-10 mb-0">
+      <section className="bg-black text-white py-1 sm:py-1 md:py-0 lg:py-1 xl:py-1 2xl:py-1 mb-0">
         <div className="container mx-auto px-4 flex flex-col items-center text-center gap-0">
           <Image
             src="/assets/resource/Prime_logo_d_c8da1e6868.png"
