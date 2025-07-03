@@ -23,11 +23,11 @@ import { WishItem } from "@/types/wish"
 const javaService = {
   // Password Reset
   sendForgotPasswordEmail(params: SendForgotPasswordEmailParams): Promise<PasswordResetCreateResponse> {
-    const url = '/password_resets';
+    const url = '/password-resets';
     return api.post(url, params);
   },
   resetForForgotPassword(reset_token: string, params: PasswordResetUpdateParams): Promise<PasswordResetUpdateResponse> {
-    const url = `/password_resets/${reset_token}`;
+    const url = `/password-resets/${reset_token}`;
     return api.patch(url, params);
   },
 

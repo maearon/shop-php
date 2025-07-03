@@ -31,12 +31,13 @@ public class EmailService {
     }
 
 
-    public void sendPasswordResetEmail(User user) {
+    public void sendPasswordResetEmail(User user, String resetToken) {
+        String encodedEmail = URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
         message.setSubject("Password Reset");
         message.setText("To reset your password click the link below:\n\n" +
-                "http://localhost:8080/password_resets/edit?token=" + user.getResetDigest() + "\n\n" +
+                "https://adidas-mocha.vercel.app/password_resets/" + resetToken + "/" + encodedEmail + "\n\n" +
                 "This link will expire in two hours.\n\n" +
                 "If you did not request your password to be reset, please ignore this email and your password will stay as it is.");
         mailSender.send(message);

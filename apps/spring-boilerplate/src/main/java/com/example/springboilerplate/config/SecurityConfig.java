@@ -107,7 +107,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/signup", "/api/login", "/api/oauth/callback", "/api/oauth/**", "/error").permitAll()
                 .requestMatchers("/api/users").permitAll()
                 .requestMatchers("/account-activation/**").permitAll()
-                .requestMatchers("/password-resets/**").permitAll()
+                .requestMatchers("/api/password-resets/**").permitAll()
                 .requestMatchers(
                     "/swagger-ui.html",
                     "/swagger-ui/**",

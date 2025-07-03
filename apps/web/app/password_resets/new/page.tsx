@@ -1,87 +1,74 @@
-"use client";
-import { NextPage } from 'next'
-import { useRouter } from 'next/navigation'
-import React, { MutableRefObject, useRef, useState } from 'react'
-import javaService from '@/api/services/javaService';
-import flashMessage from '../../../components/shared/flashMessages';
+"use client"
 
-const initialState = {
-  email: '',
-};
+import { NextPage } from "next";
+import { useRouter } from "next/navigation";
+import React, { useRef, useState } from "react";
+import javaService from "@/api/services/javaService";
+import flashMessage from "@/components/shared/flashMessages";
 
-const New: NextPage = () => {
-  const router = useRouter()
-  const [state, setState] = useState(initialState)
-  const myRef = useRef() as MutableRefObject<HTMLInputElement>
+const ForgotPassword: NextPage = () => {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const submitRef = useRef<HTMLInputElement>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
-    const { name, value } = e.target;
-    const nameState = name.substring(
-      name.indexOf("[") + 1, 
-      name.lastIndexOf("]")
-    );
-    setState({
-      ...state,
-      [nameState]: value,
-    });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      await javaService.sendForgotPasswordEmail({
+        password_reset: { email },
+      });
+      submitRef.current?.blur();
+      flashMessage("success", "The password reset email has been sent. Please check your inbox.");
+      // router.push("/"); // Optional: redirect
+    } catch (error: any) {
+      flashMessage("error", "Failed to send reset email. Please check your email address.");
+      console.error("ForgotPassword error:", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
-    const { email } = state
-
-    javaService.sendForgotPasswordEmail(
-      {
-        password_reset: {
-          email: email,
-        }
-      }
-    ).then(response => {
-      myRef.current.blur()
-      flashMessage('success', 'The password reset email has been sent, please check your email')
-      // flashMessage(...response.flash as [message_type: string, message: string])
-      // if (response.flash[0] === "info") {
-
-      //   router.push("/")
-      // }
-      // if (response.flash[0] === "danger") {
-        
-      // }
-    })
-    .catch(error => {
-      console.log(error)
-    })
-    e.preventDefault()
-  }
-  
   return (
-      <>
-      <h1>Forgot password</h1>
+    <div className="flex items-center justify-center min-h-[80vh] px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
+        <h2 className="text-2xl font-bold text-center mb-6">Forgot your password?</h2>
+        <p className="text-sm text-gray-600 text-center mb-6">
+          Enter your email and we’ll send you a link to reset your password.
+        </p>
 
-      <div className="row">
-        <div className="col-md-6 col-md-offset-3">
-          <form 
-          action="/password_resets" 
-          acceptCharset="UTF-8" 
-          method="post"
-          onSubmit={handleSubmit}
-          >
-            <input type="hidden" name="authenticity_token" value="4bTV1IxJZ-bJ0QgrXM22oaoPBFvSVucXkkKr3EDeHjnnZQ1lkf1-9kOsMHs1uoBYYwWMs8BsBmgVvuukuvECaw" />
-            <label htmlFor="password_reset_email">Email</label>
-            <input 
-            className="form-control" 
-            type="email" 
-            name="password_reset[email]" 
-            id="password_reset_email" 
-            value={state.email}
-            onChange={handleChange}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email address
+            </label>
+            <input
+              type="email"
+              name="password_reset[email]"
+              id="password_reset_email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="you@example.com"
             />
+          </div>
 
-            <input ref={myRef} type="submit" name="commit" value="Submit" className="btn btn-primary" data-disable-with="Submit" />
-          </form>  
-        </div>
+          <div>
+            <input
+              ref={submitRef}
+              type="submit"
+              value={submitting ? "Sending..." : "Send Reset Link"}
+              disabled={submitting}
+              className="w-full bg-black text-white py-2 rounded-xl hover:bg-neutral-900 transition"
+            />
+          </div>
+        </form>
       </div>
-      </>
-  )
-}
+    </div>
+  );
+};
 
-export default New
+export default ForgotPassword;

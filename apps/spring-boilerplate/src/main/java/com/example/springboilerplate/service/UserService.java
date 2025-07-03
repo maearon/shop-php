@@ -132,10 +132,14 @@ public class UserService {
 
     @Transactional
     public void createPasswordReset(User user) {
-        user.setResetDigest(UUID.randomUUID().toString());
+        String token = TokenUtil.generateToken();
+        String digest = TokenUtil.generateDigest(token);
+
+        user.setResetDigest(digest);
         user.setResetSentAt(LocalDateTime.now());
         userRepository.save(user);
-        emailService.sendPasswordResetEmail(user);
+
+        emailService.sendPasswordResetEmail(user, token); // cần truyền token thật
     }
 
     @Transactional
@@ -284,5 +288,21 @@ public class UserService {
         }
 
         return false;
+    }
+
+    public boolean verifyResetToken(String token, User user) {
+        if (user.getResetSentAt() == null || user.getResetSentAt().plusHours(2).isBefore(LocalDateTime.now())) {
+            return false;
+        }
+        return TokenUtil.matches(token, user.getResetDigest());
+    }
+
+    @Transactional
+    public boolean resetPasswordWithToken(User user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        user.setResetDigest(null);
+        user.setResetSentAt(null);
+        userRepository.save(user);
+        return true;
     }
 }

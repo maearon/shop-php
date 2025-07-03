@@ -1,121 +1,107 @@
 "use client";
-import { useRouter } from 'next/navigation'
-import { useDispatch } from 'react-redux'
-import flashMessage from '../../../components/shared/flashMessages'
-import javaService from '@/api/services/javaService';
-import { MutableRefObject, useRef, useState } from 'react'
-// import errorMessage from '../../components/shared/errorMessages'
 
-const initialState = {
-  password: '',
-  password_confirmation: '',
-  errorMessage: [] as string[],
-};
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+import javaService from "@/api/services/javaService";
+import flashMessage from "@/components/shared/flashMessages";
 
-const Edit = ({params}: {params: {slug: string[]}}) =>{
-  const router = useRouter()
-  const [state, setState] = useState(initialState)
-  const { reset_token, email } = 
-  params.slug.length === 2 ? 
-  // { reset_token: params.slug[0], email: params.slug[1] } 
-  { reset_token: params.slug[0], email: decodeURIComponent(params.slug[1]) } 
-  : { reset_token: '', email: '' };
-  const dispatch = useDispatch()
-  const myRef = useRef() as MutableRefObject<HTMLInputElement>
+const Edit = ({ params }: { params: { slug: string[] } }) => {
+  const router = useRouter();
+  const [state, setState] = useState({
+    password: "",
+    password_confirmation: "",
+    errorMessage: [] as string[],
+  });
+  const submitRef = useRef<HTMLInputElement>(null);
+  const reset_token = params.slug[0];
+  const email = decodeURIComponent(params.slug[1]);
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const nameState = name.substring(
-      name.indexOf("[") + 1, 
-      name.lastIndexOf("]")
-    );
-    setState({
-      ...state,
-      [nameState]: value,
-    });
+    const key = name.match(/\[(.*?)\]/)?.[1] || name;
+    setState((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
-    const { password, password_confirmation } = state
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    javaService.resetForForgotPassword(reset_token as string,
-      {
-        email: email as string,
+    try {
+      const res = await javaService.resetForForgotPassword(reset_token, {
+        email,
         user: {
-          password: password,
-          password_confirmation: password_confirmation,
-        }
+          password: state.password,
+          password_confirmation: state.password_confirmation,
+        },
+      });
+
+      if (res.flash?.[0] === "success") {
+        flashMessage("success", res.flash[1]);
+        router.push("/login");
+      } else if (res.flash?.[0] === "danger") {
+        flashMessage("error", res.flash[1]);
+      } else if (res.error) {
+        flashMessage("error", res.error.join(", "));
+      } else {
+        flashMessage("info", "Something went wrong.");
       }
-    ).then(response => {
-      if (response.flash?.[0] === "danger") { // Case (1)
-        flashMessage(...response.flash as [message_type: string, message: string])
-      }
-      if (response.error) { // Case (2+3)
-        myRef.current.blur()
-        setState({
-          ...state,
-          errorMessage: response.error,
-        });
-      }
-      if (response.flash?.[0] === "success") { // Case (4)
-        flashMessage(...response.flash as [message_type: string, message: string])
-        router.push("/users/"+response.user_id)
-      }
-      flashMessage('success', 'The password reset successfully, please try log in again')
-    })
-    .catch(error => {
-      console.log(error)
-    })
-    e.preventDefault()
-  }
+    } catch (error) {
+      flashMessage("error", "Unable to reset password. Please try again.");
+    }
+  };
 
   return (
-      <>
-      <h1>Reset password</h1>
-      <div className="row">
-        <div className="col-md-6 col-md-offset-3">
-          <form 
-          action="/password_resets/-5_dEDShHqeo6El2uBrhew" 
-          acceptCharset="UTF-8" method="post"
-          onSubmit={handleSubmit}
-          >
-            {/* { state.errorMessage.length !== 0 &&
-              errorMessage(state.errorMessage)
-            } */}
+    <div className="flex items-center justify-center min-h-screen px-4 bg-gray-50">
+      <div className="w-full max-w-md bg-white shadow-md rounded-2xl p-8">
+        <h2 className="text-2xl font-bold text-center mb-6">Reset your password</h2>
 
-            <input type="hidden" name="_method" value="patch"/><input type="hidden" name="authenticity_token" value="lzHcRJF-71OD3aFOiOtSPMemxmMm8m0FEhV8XDOwm6gTWYM0AbhPpRVbWl9-Q-7j6dM0qVMI7AQVDXHL8gm-Tg"/>
-            <input type="hidden" name="email" id="email" value="manhng132@gmail.com"/>
-            <div className="field_with_errors"><label htmlFor="user_password">Password</label></div>
-            {/* <div className="field_with_errors"> */}
-              <input 
-              className="form-control" 
-              type="password" 
-              name="user[password]" 
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="user_password" className="block text-sm font-medium text-gray-700 mb-1">
+              New Password
+            </label>
+            <input
+              type="password"
+              name="user[password]"
               id="user_password"
               value={state.password}
               onChange={handleChange}
-              />
-            {/* </div> */}
-            <div className="field_with_errors"><label htmlFor="user_password_confirmation">Confirmation</label></div>
-            {/* <div className="field_with_errors"> */}
-              <input 
-              className="form-control" 
-              type="password" 
-              name="user[password_confirmation]" 
+              required
+              className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="Enter new password"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="user_password_confirmation" className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              name="user[password_confirmation]"
               id="user_password_confirmation"
               value={state.password_confirmation}
               onChange={handleChange}
-              />
-            {/* </div> */}
-            <input ref={myRef} type="submit" name="commit" value="Update password" className="btn btn-primary" data-disable-with="Update password"/>
-          </form>  
-        </div>
-      </div>
-      {/* <h1>Account Activationing ...</h1>
-      <h1>{email}</h1>
-      <h1>{slug?.[0]}</h1> */}
-      </>
-  )
-}
+              required
+              className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="Confirm password"
+            />
+          </div>
 
-export default Edit
+          <div>
+            <input
+              ref={submitRef}
+              type="submit"
+              value="Update Password"
+              className="w-full bg-black text-white py-2 rounded-xl hover:bg-neutral-900 transition"
+            />
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Edit;
