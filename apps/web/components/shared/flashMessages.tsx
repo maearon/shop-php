@@ -19,6 +19,9 @@ const flashMessage = (message_type: string, message: string) => {
     case "info":
       toast.info(message)
       break
+    case "error":
+      toast.error(message)
+      break
     default:
   }
 }

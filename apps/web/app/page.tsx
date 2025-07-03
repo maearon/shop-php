@@ -66,15 +66,17 @@ export default function HomePage() {
       <HeroBanner
         backgroundClassName="bg-hero"
         content={{
-          title: "A TRUE MIAMI ORIGINAL",
-          description: "Dream big and live blue in the iconic Inter Miami CF 2025 Third Jersey.",
+          title: "SAVE UP TO 40% NOW",
+          description: "Shop to save on your favorite adidas items.",
           buttons: [
-            { href: "/superstar", buttonLabel: "SHOP NOW" }
+            { href: "/men-sale", buttonLabel: "SHOP MEN" },
+            { href: "/women-sale", buttonLabel: "SHOP WOMEN" },
+            { href: "/kids-sale", buttonLabel: "SHOP KIDS" }
           ],
         }}
       />
 
-      <HeroBannerSecond />
+      {/* <HeroBannerSecond /> */}
       
       {/* History Products Section */}
       <HistoryView

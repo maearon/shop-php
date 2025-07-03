@@ -152,6 +152,7 @@ export default function Header() {
           </div>
 
           <div className="flex justify-end items-center text-xs text-gray-700 px-12 py-2 w-full">
+            <Link href="/signup" className="hover:underline mr-3">sign up</Link>
             <Link href="/help" className="hover:underline mr-3">help</Link>
             <Link href="/orders" className="hover:underline mr-3">orders and returns</Link>
             <Link href="/gift-cards" className="hover:underline mr-3">gift cards</Link>

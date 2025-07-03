@@ -13,6 +13,8 @@ import { addToCart } from "@/store/cartSlice"
 import { toggleWishlist } from "@/store/wishlistSlice"
 import ExpandableImageGallery from "@/components/expandable-image-gallery"
 import { soccerShoesData } from "@/data/soccer-shoes-data"
+import HistoryView from "@/components/HistoryView"
+import { Card, CardContent } from "@/components/ui/card"
 
 type Props = {
   product: Product
@@ -117,7 +119,7 @@ export default function ProductDetailPageClient({ product }: Props) {
   }
 
   const relatedProducts = soccerShoesData.filter((p) => p.id !== product.id).slice(0, 4)
-  const youMayLike = soccerShoesData
+  const youMayAlsoLike = soccerShoesData
     .filter((p) => p.id !== product.id && p.collection !== product.collection)
     .slice(0, 4)
 
@@ -419,31 +421,112 @@ export default function ProductDetailPageClient({ product }: Props) {
           </div>
         </div>
 
-        {/* Recently Viewed Items */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-bold mb-8">RECENTLY VIEWED ITEMS</h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedProducts.slice(0, 1).map((item) => (
-              <div key={item.id} className="relative">
-                <div className="relative mb-4">
-                  <img
-                    src={item.variants[0].images[0] || "/placeholder.svg"}
-                    alt={item.name}
-                    className="w-full h-48 object-cover"
-                  />
-                  <button className="absolute top-4 right-4 w-8 h-8 border border-black rounded-none flex items-center justify-center bg-white hover:bg-black hover:text-white">
-                    <Heart size={16} />
-                  </button>
-                </div>
-                <div>
-                  <p className="font-bold mb-1">${item.price}</p>
-                  <h3 className="text-sm text-gray-700 mb-1">{item.name}</h3>
-                  <p className="text-xs text-gray-500">{item.collection}</p>
-                </div>
-              </div>
-            ))}
+        {/* Feature Section */}
+        <div className="mt-16 bg-gray-50 p-8 rounded-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div>
+              <h2 className="text-2xl font-bold mb-4">
+                LIGHTWEIGHT F50 CLEATS FOR SHOWING NON-STOP MESSI SKILLS ON FIRM GROUND
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Engineered for speed, these F50 Laceless Boots feature a lightweight Fiberskin upper and Sprintframe
+                outsole for explosive acceleration. The laceless construction provides a clean ball contact surface,
+                while Messi signature details celebrate the GOAT.
+              </p>
+            </div>
+            <div className="aspect-square bg-white rounded-lg overflow-hidden">
+              <img
+                src="/placeholder.svg?height=400&width=400"
+                alt="F50 Messi lifestyle"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
-        </section>
+        </div>
+
+        {/* F50 Messi Prestigio Section */}
+        <div className="mt-16 bg-black text-white p-8 rounded-lg">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold mb-4">F50 MESSI PRESTIGIO</h2>
+            <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
+              A lightweight boot with a soft touch, built to match Lionel's style on the pitch. Featuring the speed of
+              the F50 with a premium look.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <img src="/placeholder.svg?height=300&width=300" alt="F50 Messi 1" className="w-full rounded-lg" />
+              <img src="/placeholder.svg?height=300&width=300" alt="F50 Messi 2" className="w-full rounded-lg" />
+              <img src="/placeholder.svg?height=300&width=300" alt="F50 Messi 3" className="w-full rounded-lg" />
+            </div>
+          </div>
+        </div>
+
+        {/* Complete The Look */}
+        <div className="mt-16">
+          {/* <h2 className="text-2xl font-bold mb-8">COMPLETE THE LOOK</h2> */}
+          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {relatedProducts.map((item) => (
+              <Card key={item.id} className="border-none shadow-none">
+                <CardContent className="p-0">
+                  <div className="aspect-square bg-gray-50 mb-4 overflow-hidden">
+                    <img
+                      src={item.image_url || "/placeholder.svg"}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="font-medium text-sm mb-2">{item.name}</h3>
+                  <p className="font-bold">${item.price}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div> */}
+          <HistoryView
+                  title={
+                    <>
+                      COMPLETE THE LOOK
+                    </>
+                  }
+                />
+        </div>
+
+        {/* You May Also Like */}
+        <div className="mt-16">
+          {/* <h2 className="text-2xl font-bold mb-8">YOU MAY ALSO LIKE</h2> */}
+          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {youMayAlsoLike.map((item) => (
+              <Card key={item.id} className="border-none shadow-none">
+                <CardContent className="p-0">
+                  <div className="aspect-square bg-gray-50 mb-4 overflow-hidden">
+                    <img
+                      src={item.image_url || "/placeholder.svg"}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="font-medium text-sm mb-2">{item.name}</h3>
+                  <p className="font-bold">${item.price}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div> */}
+          <HistoryView
+                  title={
+                    <>
+                      YOU MAY ALSO LIKE
+                    </>
+                  }
+                />
+        </div>
+
+        {/* Recently Viewed Items */}
+        <HistoryView
+          title={
+            <>
+              RECENTLY VIEWED ITEMS
+            </>
+          }
+          showIndicatorsInProductCarousel={false}
+        />
       </main>
       
     </div>

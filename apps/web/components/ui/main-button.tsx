@@ -92,7 +92,7 @@ export function MainButton({
             ) : (
               <span className="mr-2 -translate-y-[1px]">{children}</span>
             )}
-            {showArrow && (
+            {showArrow && !loading && (
               <span className="text-[22px] font-thin leading-none">⟶</span>
             )}
           </>
