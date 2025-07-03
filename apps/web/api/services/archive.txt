@@ -61,6 +61,34 @@ const javaService = {
 
   // Ìninity
   test: (): Promise<any> => api.get("/"),
+
+  // test products
+  // fetchProducts: async (): Promise<ApiResponse<Product[]>> => {
+  //   return api.get("/products");
+  // },
+
+  // Wish List (Pagination optional)
+  // getWish: async (page: number = 1): Promise<ApiResponse<WishItem[]>> =>
+  //   api.get(`/wish?page=${page}`),
+
+  // // Cart List (Pagination optional)
+  // getCart: async (page: number = 1): Promise<ApiResponse<CartItem[]>> =>
+  //   api.get(`/cart?page=${page}`),
+
+  // ------------------- Products -------------------
+  // getProductFilters: async () => api.get("/products/filters"),
+
+  // getProducts: async (filters: ProductFilters = {}): Promise<ProductsResponse> => {
+  //   const params = new URLSearchParams()
+  //   Object.entries(filters).forEach(([key, value]) => {
+  //     if (value !== undefined && value !== null && value !== "") {
+  //       params.append(key, value.toString())
+  //     }
+  //   })
+  //   return api.get(`/products${params.toString() ? `?${params.toString()}` : ""}`)
+  // },
+
+  // getProduct: async (id: number | string, params?: any) => api.get(`/products/${id}`, { params })
   }
 
 export default javaService
