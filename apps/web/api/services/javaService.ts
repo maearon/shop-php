@@ -15,10 +15,6 @@ import {
   PasswordResetUpdateResponse
 } from "@/types/auth"
 import { ApiResponse } from "@/types/common"
-// ------------------- Products -------------------
-import { Product, ProductFilters, ProductsResponse } from "@/types/product"
-import { CartItem } from "@/types/cart"
-import { WishItem } from "@/types/wish"
 
 const javaService = {
   // Password Reset
@@ -59,7 +55,7 @@ const javaService = {
   getCurrentSession: (): Promise<SessionIndexResponse> =>
     api.get("/sessions"),
 
-  // Ìninity
+  // Ininity
   test: (): Promise<any> => api.get("/"),
   }
 
