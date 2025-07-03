@@ -203,7 +203,7 @@ const LoginPage: NextPage = () => {
                       // ref={inputEl}
                       className="w-full bg-black text-white py-3 font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center"
                     >
-                      CONTINUE →
+                      CONTINUE
                     </Button>
                   </Form>
                 )}
