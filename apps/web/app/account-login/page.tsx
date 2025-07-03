@@ -15,6 +15,7 @@ import type { AppDispatch } from "@/store/store"
 import { useAppSelector } from "@/store/hooks"
 import { useLoginMutation } from "@/api/hooks/useLoginMutation"
 import { useCurrentUser } from "@/api/hooks/useCurrentUser"
+import { Button } from "@/components/ui/button"
 
 const initialValues = {
   email: "",
@@ -56,29 +57,25 @@ const LoginPage: NextPage = () => {
     password: Yup.string().required("Required"),
   })
 
-  const loginMutation = useLoginMutation()
+  const {
+    mutateAsync: loginMutation,
+    isPending,
+    status,
+    error,
+  } = useLoginMutation()
 
   const onSubmit = async (values: MyFormValues) => {
     try {
-      // ✅ Handle session vs local storage
-      // if (values.rememberMe === "1") {
-      //   sessionStorage.removeItem("auth_storage")
-      // } else {
-      //   sessionStorage.setItem("auth_storage", "session")
-      // }
-      // has logic !!localStorage.getItem("token"), const storage = remember ?
-
-      const response = await loginMutation.mutateAsync({
+      const response = await loginMutation({
         email: values.email,
         password: values.password,
-        remember_me: values.rememberMe === "1", // ✅ Truyền boolean
+        remember_me: values.rememberMe === "1",
       })
 
-      inputEl.current?.blur()
-      router.push("/")
-      if (response.tokens) flashMessage("Logged in successfully", "success")
-    } catch (error: any) {
-      console.log("error", error)
+      
+      if (response.tokens) { flashMessage("Logged in successfully", "success"); router.push("/") }
+    } catch (error) {
+      console.error("Login error", error)
       setErrors({ email: ["or password incorrect"] })
     }
   }
@@ -200,13 +197,14 @@ const LoginPage: NextPage = () => {
                       </label>
                     </div>
 
-                    <button
+                    <Button
+                      loading={isPending}
                       type="submit"
-                      ref={inputEl}
+                      // ref={inputEl}
                       className="w-full bg-black text-white py-3 font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center"
                     >
                       CONTINUE →
-                    </button>
+                    </Button>
                   </Form>
                 )}
               </Formik>

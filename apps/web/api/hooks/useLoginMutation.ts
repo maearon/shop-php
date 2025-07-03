@@ -15,6 +15,7 @@ export const useLoginMutation = () => {
   const dispatch = useDispatch<AppDispatch>()
 
   return useMutation({
+    mutationKey: ['Login'],
     mutationFn: async ({ email, password, remember_me = true }: LoginPayload) => {
       const response = await javaService.login({
         session: { email, password },
