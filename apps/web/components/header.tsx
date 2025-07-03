@@ -231,7 +231,7 @@ export default function Header() {
                     <Link
                       href={item.href}
                       className={cn(
-                        "text-sm hover:underline py-2",
+                        "text-sm hover:underline py-2 whitespace-nowrap",
                         (item.name === "MEN" || item.name === "WOMEN" || item.name === "KIDS") ? "font-bold uppercase" : "font-medium",
                         pathname === item.href && "border-b-2 border-black",
                         activeMenu === item.name && "border-b-2 border-black",
