@@ -29,7 +29,7 @@ const validationSchema = Yup.object({
 })
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
-  const [step, setStep] = useState<"email" | "login" | "register">("email")
+  const [step, setStep] = useState<"email" | "login" | "register"| "activate">("email")
   const [email, setEmail] = useState("") // lưu email sau bước 1
   const [keepLoggedIn, setKeepLoggedIn] = useState(true) // lưu keepLoggedIn sau bước 1
   const [isLoading, setIsLoading] = useState(false)
@@ -49,7 +49,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       setEmail(values.email)
       setKeepLoggedIn(values.keepLoggedIn)
       if (response.exists) {
-        setStep("login")
+        if (response.user?.activated === false) {
+          setStep("activate")
+        } else {
+          setStep("login")
+        }
       } else {
         setStep("register")
       }
@@ -84,9 +88,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         password
       })
       if (res.success) {
-        flashMessage("success", "Account created!")
-        await dispatch(fetchUser())
-        onClose()
+        // flashMessage("success", "Account created!")
+        // await dispatch(fetchUser())
+        // onClose()
       } else {
         flashMessage("error", "Failed to create account")
       }
@@ -99,7 +103,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     console.log(`Login with ${provider}`)
   }
 
-  return (
+  return step !== "activate" ? (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         className="w-[95vw] sm:max-w-md max-h-[95vh] overflow-y-auto bg-white p-0 rounded-xl"
@@ -323,6 +327,41 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             </p>
           </div>
         </div>
+      </DialogContent>
+    </Dialog>
+  ) : (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="w-[95vw] sm:max-w-md max-h-[95vh] overflow-y-auto bg-white p-0 rounded-xl">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-black z-10"
+        >
+          {/* <X className="w-5 h-5" /> */}
+        </button>
+
+        {step === "activate" ? (
+          <div className="p-6 sm:p-8 text-center">
+            {/* Logo */}
+            <div className="inline-flex items-center justify-center mb-6">
+              <span className="text-2xl font-bold">adi</span>
+              <span className="text-2xl font-bold text-blue-600 italic">club</span>
+              <div className="ml-2 w-12 h-6 border-2 border-blue-600 rounded-full relative">
+                <div className="absolute inset-0 border-2 border-blue-600 rounded-full transform rotate-12"></div>
+              </div>
+            </div>
+
+            {/* Title + Content */}
+            <h2 className="text-xl font-bold mb-2">ACTIVATE YOUR ACCOUNT</h2>
+            <p className="text-gray-600 text-sm">
+              Looks like you already have an account. We’ve sent you an email to activate it and get full access to adiClub benefits.
+            </p>
+          </div>
+        ) : (
+          // Các bước cũ (email, login, register) giữ nguyên
+          <div className="p-6 sm:p-8">
+            {/* ... như bạn đang có */}
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   )

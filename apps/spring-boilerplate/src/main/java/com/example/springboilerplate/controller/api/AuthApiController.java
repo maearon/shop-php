@@ -67,9 +67,14 @@ public class AuthApiController {
     @PostMapping("/check-email")
     public ResponseEntity<?> checkEmail(@RequestBody EmailCheckRequestDto req) {
         String email = req.getEmail();
-        if (userService.existsByEmail(email)) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
             return ResponseEntity.ok(Map.of(
-                "exists", true
+                    "exists", true,
+                    "user", Map.of(
+                            "activated", user.isActivated() // assuming `isActivated()` is a boolean getter
+                    )
             ));
         } else {
             return ResponseEntity.ok(Map.of("exists", false));

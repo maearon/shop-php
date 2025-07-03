@@ -14,7 +14,7 @@ import { CartItem } from "@/types/cart"
 import { WishItem } from "@/types/wish"
 
 const javaService = {
-  checkEmail: (email: string): Promise<{ exists: boolean }> =>
+  checkEmail: (email: string): Promise<{ exists: boolean, user: { activated: boolean } }> =>
     api.post("/check-email", { email }),
   
   login: (params: LoginParams): Promise<SessionResponse> =>
