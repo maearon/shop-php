@@ -8,36 +8,15 @@ import api from "@/api/client"
 import { UserCreateParams, UserCreateResponse } from "@/types/user"
 import { 
   SessionResponse, SessionIndexResponse, LoginParams, 
-  ResendActivationEmailResponse, ResendActivationEmailParams, 
-  User, PasswordResetCreateResponse, 
-  SendForgotPasswordEmailParams,
-  PasswordResetUpdateParams,
-  PasswordResetUpdateResponse
+  User
 } from "@/types/auth"
 import { ApiResponse } from "@/types/common"
 
 const javaService = {
-  // Password Reset
-  sendForgotPasswordEmail(params: SendForgotPasswordEmailParams): Promise<PasswordResetCreateResponse> {
-    const url = '/password-resets';
-    return api.post(url, params);
-  },
-  resetForForgotPassword(reset_token: string, params: PasswordResetUpdateParams): Promise<PasswordResetUpdateResponse> {
-    const url = `/password-resets/${reset_token}`;
-    return api.patch(url, params);
-  },
-
-  // Resend and Activate
-  resendActivationEmail(params: ResendActivationEmailParams): Promise<ResendActivationEmailResponse> {
-    const url = `/account_activations`;
-    return api.post(url, params);
-  },
-
   activateAccount(activation_token: string, email: string): Promise<ApiResponse<User>> {
     const url = `/account_activations/${activation_token}`;
     return api.patch(url, {email: email});
   },
-
   // Auth
 
   checkEmail: (email: string): Promise<{ exists: boolean, user: { activated: boolean } }> =>
