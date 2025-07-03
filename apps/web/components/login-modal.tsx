@@ -15,6 +15,9 @@ import type { AppDispatch } from "@/store/store"
 import { fetchUser } from "@/store/sessionSlice"
 import flashMessage from "./shared/flashMessages"
 import javaService from "@/api/services/javaService"
+import { useCheckEmail } from "@/api/hooks/useCheckEmail"
+import { useLogin } from "@/api/hooks/useLogin"
+import { useRegister } from "@/api/hooks/useRegister"
 
 interface LoginModalProps {
   isOpen: boolean
@@ -26,37 +29,64 @@ const validationSchema = Yup.object({
 })
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
+  const [step, setStep] = useState<"email" | "login" | "register">("email")
+  const [email, setEmail] = useState("") // lưu email sau bước 1
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   }
+  const { mutateAsync: checkEmail, isPending } = useCheckEmail()
+  const { mutateAsync: login, isPending: isLoggingIn } = useLogin()
+  const { mutateAsync: register, isPending: isRegistering } = useRegister()
 
-  const handleSubmit = async (values: { email: string; keepLoggedIn: boolean }) => {
-    setIsLoading(true)
+  const handleEmailSubmit = async (values: { email: string; keepLoggedIn: boolean }) => {
     try {
-      const response = await javaService.login({
-        session: {
-          email: values.email,
-          password: 'Abc@0974006087',
-        }
-      })
+      const response = await checkEmail(values.email)
 
-      if (response.success) {
-        if (token) {
-          await dispatch(fetchUser())
-        }
+      setEmail(values.email)
+      if (response.exists) {
+        setStep("login")
+      } else {
+        setStep("register")
+      }
+    } catch (error) {
+      console.log('error', error)
+      flashMessage("error", "Something went wrong. Please try again.")
+    }
+  }
+
+  const handleLogin = async (password: string) => {
+    try {
+      const res = await login({ email, password })
+      if (res) {
+        await dispatch(fetchUser())
         flashMessage("success", "Login successful!")
         onClose()
       } else {
-        flashMessage("error", response.message || "Login failed")
-        console.log("Error occurred response, please try again.", response)
+        flashMessage("error", "Invalid password")
       }
-    } catch (error: any) {
-      flashMessage("error", error.message || "Login failed")
-      console.log("Error occurred, please try again.", error)
-    } finally {
-      setIsLoading(false)
+    } catch (err) {
+      flashMessage("error", "Login failed")
+    }
+  }
+
+  const handleRegister = async (password: string) => {
+    try {
+      const name = email.split("@")[0]
+      const res = await register({
+        email,
+        password
+      })
+      if (res.success) {
+        flashMessage("success", "Account created!")
+        await dispatch(fetchUser())
+        onClose()
+      } else {
+        flashMessage("error", "Failed to create account")
+      }
+    } catch (err) {
+      flashMessage("error", "Something went wrong")
     }
   }
 
@@ -134,82 +164,146 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               <span className="text-purple-600 font-bold text-lg">Y!</span>
             </BaseButton>
           </div>
-
+          
           {/* Email Form */}
-          <Formik
-            initialValues={{ email: "", keepLoggedIn: false }}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ values, setFieldValue, errors, touched }) => (
-              <Form className="space-y-4">
-                <div>
-                  <Field name="email">
+          {step === "email" && (
+            <Formik
+              initialValues={{ email: "", keepLoggedIn: false }}
+              validationSchema={validationSchema}
+              onSubmit={handleEmailSubmit}
+            >
+              {({ values, setFieldValue, errors, touched }) => (
+                <Form className="space-y-4">
+                  <div>
+                    <Field name="email">
+                      {({ field }: any) => (
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            type="email"
+                            placeholder="EMAIL ADDRESS *"
+                            className={`w-full ${
+                              errors.email && touched.email
+                                ? "border-red-500 focus:border-red-500"
+                                : values.email && !errors.email
+                                  ? "border-green-500 focus:border-green-500"
+                                  : ""
+                            }`}
+                          />
+                          {values.email && !errors.email && (
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                              <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            </div>
+                          )}
+                          {errors.email && touched.email && (
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                              <X className="h-5 w-5 text-red-500" />
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </Field>
+                    <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
+                  </div>
+
+                  {/* Keep me logged in */}
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="keepLoggedIn"
+                      checked={values.keepLoggedIn}
+                      onCheckedChange={(checked) => setFieldValue("keepLoggedIn", checked)}
+                    />
+                    <label htmlFor="keepLoggedIn" className="text-sm">
+                      Keep me logged in. Applies to all options.{" "}
+                      <button type="button" className="underline">
+                        More info
+                      </button>
+                    </label>
+                  </div>
+
+                  {/* Continue Button */}
+                  <Button
+                    type="submit"
+                    className="w-full bg-black text-white hover:bg-gray-800 py-3"
+                    loading={isPending}
+                  >
+                    {isPending ? "LOADING..." : "CONTINUE"}
+                    <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Button>
+                </Form>
+              )}
+            </Formik>
+          )}
+
+          {/* Password Form */}
+          {step === "login" && (
+            <Formik
+              initialValues={{ password: "" }}
+              onSubmit={async (values) => {
+                await handleLogin(values.password)
+              }}
+            >
+              {({ isSubmitting }) => (
+                <Form className="space-y-4">
+                  <Field name="password">
                     {({ field }: any) => (
-                      <div className="relative">
-                        <Input
-                          {...field}
-                          type="email"
-                          placeholder="EMAIL ADDRESS *"
-                          className={`w-full ${
-                            errors.email && touched.email
-                              ? "border-red-500 focus:border-red-500"
-                              : values.email && !errors.email
-                                ? "border-green-500 focus:border-green-500"
-                                : ""
-                          }`}
-                        />
-                        {values.email && !errors.email && (
-                          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                            <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </div>
-                        )}
-                        {errors.email && touched.email && (
-                          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                            <X className="h-5 w-5 text-red-500" />
-                          </div>
-                        )}
-                      </div>
+                      <Input {...field} type="password" placeholder="Password *" />
                     )}
                   </Field>
-                  <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
-                </div>
+                  <Button
+                    type="submit"
+                    loading={isLoggingIn || isSubmitting}
+                    className="w-full bg-black text-white py-3"
+                  >
+                    {isLoggingIn ? "LOADING..." : "SIGN IN"}
+                  </Button>
+                </Form>
+              )}
+            </Formik>
+          )}
 
-                {/* Keep me logged in */}
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="keepLoggedIn"
-                    checked={values.keepLoggedIn}
-                    onCheckedChange={(checked) => setFieldValue("keepLoggedIn", checked)}
-                  />
-                  <label htmlFor="keepLoggedIn" className="text-sm">
-                    Keep me logged in. Applies to all options.{" "}
-                    <button type="button" className="underline">
-                      More info
-                    </button>
-                  </label>
-                </div>
-
-                {/* Continue Button */}
-                <LoadingButton
-                  type="submit"
-                  className="w-full bg-black text-white hover:bg-gray-800 py-3"
-                  loading={isLoading}
-                >
-                  {isLoading ? "LOADING..." : "CONTINUE"}
-                  <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </LoadingButton>
-              </Form>
-            )}
-          </Formik>
+          {step === "register" && (
+            <Formik
+              initialValues={{ password: "" }}
+              validationSchema={Yup.object({
+                password: Yup.string()
+                  .required("Required")
+                  .min(8, "Min 8 characters")
+                  .matches(/[A-Z]/, "1 uppercase")
+                  .matches(/[a-z]/, "1 lowercase")
+                  .matches(/[0-9]/, "1 number")
+                  .matches(/[@$!%*?&#]/, "1 special character"),
+              })}
+              onSubmit={async (values) => {
+                await handleRegister(values.password)
+              }}
+            >
+              {({ isSubmitting }) => (
+                <Form className="space-y-4">
+                  <Field name="password">
+                    {({ field }: any) => (
+                      <Input {...field} type="password" placeholder="Create Password *" />
+                    )}
+                  </Field>
+                  <Button
+                    type="submit"
+                    className="w-full bg-black text-white hover:bg-gray-800 py-3"
+                    loading={isRegistering}
+                  >
+                    {isRegistering ? "LOADING..." : "CREATE PASSWORD"}
+                  </Button>
+                </Form>
+              )}
+            </Formik>
+          )}
 
           {/* Terms */}
           <div className="mt-6 text-xs text-gray-500">

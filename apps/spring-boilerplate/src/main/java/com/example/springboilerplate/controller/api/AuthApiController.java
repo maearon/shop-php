@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.example.springboilerplate.security.UserPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -61,6 +62,25 @@ public class AuthApiController {
                 .build();
 
         return ResponseEntity.ok(Map.of("user", userDto));
+    }
+
+    @PostMapping("/check-email")
+    public ResponseEntity<?> checkEmail(@RequestBody EmailCheckRequestDto req) {
+        String email = req.getEmail();
+        Optional<User> userOpt = authService.checkEmailExists(email);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            return ResponseEntity.ok(Map.of(
+                "exists", true,
+                "user", Map.of(
+                    "name", user.getName(),
+                    "avatarUrl", user.getAvatarUrl(),
+                    "provider", user.getProvider()
+                )
+            ));
+        } else {
+            return ResponseEntity.ok(Map.of("exists", false));
+        }
     }
 
     @PostMapping("/oauth/callback")
@@ -167,9 +187,13 @@ public class AuthApiController {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse(false, "Email is already taken!"));
         }
+        String name = registerDto.getName();
+        if (name == null || name.isBlank()) {
+            name = registerDto.getEmail().split("@")[0];
+        }
 
         userService.registerNewUser(
-                registerDto.getName(),
+                name,
                 registerDto.getEmail(),
                 registerDto.getPassword()
         );

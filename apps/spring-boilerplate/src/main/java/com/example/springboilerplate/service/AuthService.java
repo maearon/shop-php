@@ -30,6 +30,10 @@ public class AuthService {
     @Autowired
     private JwtTokenProvider tokenProvider;
 
+    public Optional<User> checkEmailExists(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     // Dùng trong xử lý OAuth login
     public User findOrCreateUserFromOAuth(OAuthUserInfo oauthInfo, String provider) {
         String providerUserId = oauthInfo.getProviderUserId();

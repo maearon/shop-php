@@ -14,10 +14,13 @@ import { CartItem } from "@/types/cart"
 import { WishItem } from "@/types/wish"
 
 const javaService = {
+  checkEmail: (email: string): Promise<{ exists: boolean }> =>
+    api.post("/check_email", { email }),
+  
   login: (params: LoginParams): Promise<SessionResponse> =>
     api.post("/login", params),
 
-  createUser: (params: UserCreateParams): Promise<UserCreateResponse> =>
+  register: (params: UserCreateParams): Promise<UserCreateResponse> =>
     api.post("/signup", params),
 
   logout: (): Promise<void> => api.delete("/logout"),

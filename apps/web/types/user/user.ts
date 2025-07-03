@@ -1,6 +1,11 @@
 // 📁 @types/user.ts
 
 // ...
+export interface RegisterInput {
+  email: string
+  password: string
+}
+
 export interface UserCreateParams {
   user: {
     name: string
