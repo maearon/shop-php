@@ -5,6 +5,22 @@ import { Product } from "@/types/product"
 
 export const mockSlides: Slide[] = [
 {
+    title: "MÉXICO DE ORO",
+    subtitle: "",
+    description: "The adidas x México Third Jersey collection, inspired by the splendor of Mexican music and art.",
+    image: "/assets/resource/hp_1ca41e3ff1.jpg",
+    cta: "SHOP NOW",
+    href: "/club_america%7Cmexico",
+},
+{
+    title: "BACK TO SCHOOL MUST HAVES",
+    subtitle: "",
+    description: "Shop trending back to school styles for everyone from the 3-Stripes.",
+    image: "/assets/resource/xcat_fw25_bts_tcc_htt_mw_d_539f2055e6.jpeg",
+    cta: "SHOP NOW",
+    href: "/back_to_school",
+},
+{
     title: "ADIZERO EVO SL",
     subtitle: "",
     description: "Feel fast. In all aspects of life.",

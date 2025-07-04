@@ -16,6 +16,8 @@ import { mockSlides } from "@/data/mock-slides-data"
 import { relatedResources } from "@/data/related-resources-data"
 import HistoryView from "@/components/HistoryView"
 import PageFooter from "@/components/page-footer"
+import TileCard from "@/components/tile-card"
+import ResourceCard from "@/components/resource-card"
 
 export default function HomePage() {
   const router = useRouter()
@@ -141,7 +143,13 @@ export default function HomePage() {
           ))}
         </div>
       </section> */}
-      <PromoCarousel slides={mockSlides}/>
+      {/* <PromoCarousel slides={mockSlides}/> */}
+      <PromoCarousel
+        items={mockSlides}
+        renderItem={(slide, i) => (
+          <TileCard tile={slide} index={i} />
+        )}
+      />
 
       {/* Prime Section */}
       <section className="bg-black text-white py-20 sm:py-18 md:py-0 lg:py-8 xl:py-8 2xl:py-10 mb-0">
@@ -208,7 +216,16 @@ export default function HomePage() {
       </section> */}
 
       {/* Related Resources Carousel */}
-      <PromoCarousel slides={relatedResources}/>
+      <section className="container mx-auto px-2 py-0">
+        <h4 className="text-[24px] font-bold mb-2">RELATED RESOURCES</h4>
+        {/* <PromoCarousel slides={relatedResources}/> */}
+        <PromoCarousel
+          items={relatedResources}
+          renderItem={(slide, i) => (
+            <ResourceCard resource={slide} index={i} />
+          )}
+        />
+      </section>
 
       {/* Footer Categories */}
       <PageFooter currentPage="home" />

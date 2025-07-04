@@ -1,41 +1,28 @@
 "use client"
 
 import { useState, useEffect, useRef, useMemo } from "react"
-import { BaseButton } from "@/components/ui/base-button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { BaseButton } from "@/components/ui/base-button"
 
-export type Slide = {
-  id: number
-  title: string
-  description: string
-  image: string
-  cta: string
-  href: string
+interface PromoCarouselProps<T> {
+  items: T[]
+  renderItem: (item: T, index: number) => React.ReactNode
 }
 
-interface PromoCarouselProps {
-  slides: Slide[]
-}
-
-export default function PromoCarousel({ slides }: PromoCarouselProps) {
+export default function PromoCarousel<T>({ items, renderItem }: PromoCarouselProps<T>) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(false)
   const [itemsPerView, setItemsPerView] = useState(4)
-  const imageRefs = useRef<(HTMLDivElement | null)[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Tính số trang (slide page-based, không phải từng item)
   const totalSlides = useMemo(() => {
-    return Math.ceil(slides.length / itemsPerView)
-  }, [slides.length, itemsPerView])
+    return Math.ceil(items.length / itemsPerView)
+  }, [items.length, itemsPerView])
 
-  // Tự set số lượng item theo width
   useEffect(() => {
     const updateItems = () => {
       const width = window.innerWidth
-      if (width < 640) setItemsPerView(1.2) // show 1.2 items like Adidas mobile
+      if (width < 640) setItemsPerView(1.2)
       else if (width < 1024) setItemsPerView(2)
       else if (width < 1280) setItemsPerView(3)
       else setItemsPerView(4)
@@ -46,38 +33,10 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
     return () => window.removeEventListener("resize", updateItems)
   }, [])
 
-  // Reset lại index khi itemsPerView thay đổi
   useEffect(() => {
     setCurrentIndex(0)
   }, [itemsPerView])
 
-  // Lazy-load bg
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const target = entry.target as HTMLElement
-            const bg = target.dataset.bg
-            if (bg) {
-              target.style.backgroundImage = `url('${bg}')`
-              target.classList.remove("lazy-bg")
-              observer.unobserve(target)
-            }
-          }
-        }
-      },
-      { rootMargin: "100px" }
-    )
-
-    imageRefs.current.forEach((el) => {
-      if (el) observer.observe(el)
-    })
-
-    return () => observer.disconnect()
-  }, [slides])
-
-  // Auto-play (mặc định là false)
   useEffect(() => {
     if (!isAutoPlaying) return
     const interval = setInterval(() => {
@@ -99,44 +58,25 @@ export default function PromoCarousel({ slides }: PromoCarouselProps) {
       <div
         className="relative overflow-hidden"
         onMouseEnter={() => setIsAutoPlaying(false)}
-        // onMouseLeave={() => setIsAutoPlaying(true)}
       >
         <div className="relative">
           <div
             ref={containerRef}
             className="flex transition-transform duration-500 ease-in-out gap-6"
             style={{
-              transform: `translateX(-${(100 / slides.length) * itemsPerView * currentIndex}%)`,
-              width: `${(100 / itemsPerView) * slides.length}%`,
+              transform: `translateX(-${(100 / items.length) * itemsPerView * currentIndex}%)`,
+              width: `${(100 / itemsPerView) * items.length}%`,
             }}
           >
-            {slides.map((slide, i) => (
+            {items.map((item, index) => (
               <div
-                key={i}
-                ref={(el) => (imageRefs.current[i] = el)}
-                className="shrink-0 lazy-bg bg-gray-100 relative overflow-hidden"
-                data-bg={slide.image}
+                key={index}
+                className="shrink-0 relative"
                 style={{
-                  width: `${100 / slides.length}%`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  backgroundImage: "none",
-                  height: "24rem",
+                  width: `${100 / items.length}%`,
                 }}
               >
-                <div className="absolute inset-0 bg-black bg-opacity-30" />
-                <div className="relative h-full flex flex-col justify-end p-6 text-white">
-                  <h3 className="font-bold text-lg mb-2">{slide.title}</h3>
-                  <p className="text-sm mb-4 leading-relaxed">{slide.description}</p>
-                  <Button
-                    href={slide.href}
-                    variant="outline"
-                    size="sm"
-                    className="bg-white text-black hover:bg-gray-100 font-bold border-0"
-                  >
-                    {slide.cta}
-                  </Button>
-                </div>
+                {renderItem(item, index)}
               </div>
             ))}
           </div>

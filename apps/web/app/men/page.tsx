@@ -11,6 +11,7 @@ import ProductCarousel from "@/components/product-carousel"
 import { useEffect, useState } from "react"
 import { newArrivalProducts } from "@/data/fake-new-arrival-products"
 import { Product } from "@/types/product"
+import TileCard from "@/components/tile-card"
 
 export default function MenPage() {
   const [newArrivalProductsTab, setNewArrivalProductsTab] = useState<Product[]>([])
@@ -136,27 +137,28 @@ export default function MenPage() {
       <section className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {promoTiles.map((tile, index) => (
-            <a
-              key={index}
-              href={tile.href}
-              className="group border border-transparent hover:border-black transition duration-300"
-            >
-              {/* Image section */}
-              <div className="aspect-[3/4] w-full overflow-hidden">
-                <img
-                  src={tile.image}
-                  alt={tile.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
+            <TileCard tile={tile} index={index} />
+            // <a
+            //   key={index}
+            //   href={tile.href}
+            //   className="group border border-transparent hover:border-black transition duration-300"
+            // >
+            //   {/* Image section */}
+            //   <div className="aspect-[3/4] w-full overflow-hidden">
+            //     <img
+            //       src={tile.image}
+            //       alt={tile.title}
+            //       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            //     />
+            //   </div>
 
-              {/* Text section */}
-              <div className="p-4">
-                <h3 className="font-bold text-sm md:text-base uppercase mb-1">{tile.title}</h3>
-                <p className="text-sm text-gray-700 mb-3">{tile.description}</p>
-                <span className="text-sm font-bold underline">SHOP NOW</span>
-              </div>
-            </a>
+            //   {/* Text section */}
+            //   <div className="p-4">
+            //     <h3 className="font-bold text-sm md:text-base uppercase mb-1">{tile.title}</h3>
+            //     <p className="text-sm text-gray-700 mb-3">{tile.description}</p>
+            //     <span className="text-sm font-bold underline">SHOP NOW</span>
+            //   </div>
+            // </a>
           ))}
         </div>
       </section>

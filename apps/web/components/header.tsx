@@ -75,6 +75,7 @@ export default function Header() {
     { name: "MEN", href: "/men" },
     { name: "WOMEN", href: "/women" },
     { name: "KIDS", href: "/kids" },
+    { name: "BACK TO SCHOOL", href: "/back_to_school" },
     { name: "SALE", href: "/sale" },
     { name: "NEW & TRENDING", href: "/trending" },
   ]
