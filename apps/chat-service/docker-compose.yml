@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  chat-service:
+    build: .
+    ports:
+      - "3002:3002"
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/chatdb
+      - JWT_SECRET=your-super-secret-jwt-key-here
+      - PORT=3002
+      - CORS_ORIGIN=http://localhost:3000
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=chatdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
