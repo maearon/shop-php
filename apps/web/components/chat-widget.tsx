@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from "react"
 import { MessageCircle, X, Minus, Send } from 'lucide-react'
-import { Button } from "@/components/ui/button"
+import { BaseButton } from "@/components/ui/base-button"
 import { Input } from "@/components/ui/input"
 import { useAppSelector } from "@/store/hooks"
 import { io, Socket } from "socket.io-client"
 import { getGravatarUrl } from "@/utils/gravatar"
+import { useCurrentUser } from "@/api/hooks/useCurrentUser";
 
 interface ChatMessage {
   id: string
@@ -22,6 +23,7 @@ interface ChatMessage {
 }
 
 export default function ChatWidget() {
+  const { data: userData, status } = useCurrentUser();
   const [isOpen, setIsOpen] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -49,7 +51,7 @@ export default function ChatWidget() {
 
   // Initialize socket connection
   useEffect(() => {
-    if (isLoggedIn && userToken && isOpen) {
+    if (isLoggedIn && userToken && isOpen && status === "success") {
       // Base URL config
       const CHAT_SERVICE_URL = process.env.NODE_ENV === "development"
         ? "http://localhost:3002"
@@ -79,6 +81,7 @@ export default function ChatWidget() {
 
       // Message events
       socket.on('message_history', (data: { messages: any[] }) => {
+        console.log("messages", data.messages)
         const formattedMessages = data.messages.map((msg: any) => {
           const isBot = msg.user?.email?.includes('admin') || msg.user?.email?.includes('support');
 
@@ -95,6 +98,7 @@ export default function ChatWidget() {
       })
 
       socket.on('new_message', (message: any) => {
+        console.log("message.user", message.user)
         const isBot = message.user?.email?.includes('admin') || message.user?.email?.includes('support');
 
         const formattedMessage: ChatMessage = {
@@ -221,6 +225,7 @@ export default function ChatWidget() {
                         <img
                           src={getGravatarUrl(message.user?.email)}
                           alt={message.user?.name || "User"}
+                          title={message.user?.email} // 👈 show email when hover
                           className="w-8 h-8 rounded-full object-cover flex-shrink-0"
                         />
                         {!message.user ? (
@@ -252,6 +257,7 @@ export default function ChatWidget() {
                         </div>
                         <img
                           src={getGravatarUrl(message.user?.email)}
+                          title={message.user?.email} // 👈 show email when hover
                           alt={message.user?.name || "User"}
                           className="w-8 h-8 rounded-full object-cover flex-shrink-0"
                         />
@@ -285,13 +291,13 @@ export default function ChatWidget() {
                     disabled={!isConnected}
                     className="flex-1"
                   />
-                  <Button 
+                  <BaseButton
                     type="submit" 
                     disabled={!inputMessage.trim() || !isConnected}
                     size="sm"
                   >
                     <Send className="h-4 w-4" />
-                  </Button>
+                  </BaseButton>
                 </form>
               </div>
             </div>

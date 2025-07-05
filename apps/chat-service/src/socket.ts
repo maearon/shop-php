@@ -46,29 +46,33 @@ export function initializeSocket(io: Server, prisma: PrismaClient) {
 
       // Find or create user
       let user = await prisma.user.findUnique({
-        where: { email: decoded.email || decoded.sub },
+        where: { id: decoded.sub }, // ✅ lấy id từ sub
       });
 
       if (!user) {
-        const email = decoded.email || decoded.sub;
-        const name = decoded.name || 'Anonymous User';
-
-        user = await prisma.user.create({
-          data: {
-            email,
-            name,
-            displayName: name,
-            username: email?.split('@')[0] ?? `user_${Date.now()}`,
-            created_at: new Date(),
-            updated_at: new Date(),
-            date_joined: new Date(),
-            password: '', // hoặc một hash mặc định nếu cần
-            first_name: '',
-            last_name: '',
-            avatarUrl: decoded.picture || getGravatarUrl(email),
-          },
-        });
+        return next(new Error('User not found from token sub'));
       }
+
+      // if (!user) {
+      //   const email = decoded.email || decoded.sub;
+      //   const name = decoded.name || 'Anonymous User';
+
+      //   user = await prisma.user.create({
+      //     data: {
+      //       email,
+      //       name,
+      //       displayName: name,
+      //       username: email?.split('@')[0] ?? `user_${Date.now()}`,
+      //       created_at: new Date(),
+      //       updated_at: new Date(),
+      //       date_joined: new Date(),
+      //       password: '', // hoặc một hash mặc định nếu cần
+      //       first_name: '',
+      //       last_name: '',
+      //       avatarUrl: decoded.picture || getGravatarUrl(email),
+      //     },
+      //   });
+      // }
 
       socket.userId = user.id;
       socket.userEmail = user.email;
@@ -101,7 +105,7 @@ export function initializeSocket(io: Server, prisma: PrismaClient) {
 
         const messages = await prisma.message.findMany({
           where: { room_id: roomId },
-          include: { users: { select: { id: true, name: true, email: true } } },
+          include: { user: { select: { id: true, name: true, email: true } } },
           orderBy: { created_at: 'desc' },
           take: 50,
         });
