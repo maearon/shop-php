@@ -19,7 +19,7 @@ const authenticateToken = (req: any, res: any, next: any) => {
       return res.status(403).json({ error: 'Invalid token' });
     }
     req.user = user;
-    next();
+    return next();
   });
 };
 
@@ -35,30 +35,30 @@ router.get('/:roomId/messages', authenticateToken, async (req, res) => {
       where: { room_id: roomId },
       include: {
         user: {
-          select: { id: true, name: true, email: true, avatar: true }
-        }
+          select: { id: true, name: true, email: true, avatar: true },
+        },
       },
       orderBy: { created_at: 'desc' },
       skip: offset,
-      take: limit
+      take: limit,
     });
 
     const total = await prisma.message.count({
-      where: { room_id: roomId }
+      where: { room_id: roomId },
     });
 
-    res.json({
+    return res.json({
       messages: messages.reverse(),
       pagination: {
         page,
         limit,
         total,
-        pages: Math.ceil(total / limit)
-      }
+        pages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
     console.error('Error fetching messages:', error);
-    res.status(500).json({ error: 'Failed to fetch messages' });
+    return res.status(500).json({ error: 'Failed to fetch messages' });
   }
 });
 
@@ -68,16 +68,16 @@ router.get('/', authenticateToken, async (req, res) => {
     const rooms = await prisma.room.findMany({
       include: {
         _count: {
-          select: { messages: true }
-        }
+          select: { messages: true },
+        },
       },
-      orderBy: { last_message_at: 'desc' }
+      orderBy: { last_message_at: 'desc' },
     });
 
-    res.json({ rooms });
+    return res.json({ rooms });
   } catch (error) {
     console.error('Error fetching rooms:', error);
-    res.status(500).json({ error: 'Failed to fetch rooms' });
+    return res.status(500).json({ error: 'Failed to fetch rooms' });
   }
 });
 
@@ -91,13 +91,13 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     const room = await prisma.room.create({
-      data: { id, name, type }
+      data: { id, name, type },
     });
 
-    res.status(201).json({ room });
+    return res.status(201).json({ room });
   } catch (error) {
     console.error('Error creating room:', error);
-    res.status(500).json({ error: 'Failed to create room' });
+    return res.status(500).json({ error: 'Failed to create room' });
   }
 });
 

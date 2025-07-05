@@ -44,44 +44,22 @@ export function initializeSocket(io: Server, prisma: PrismaClient) {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
 
-      // Find or create user
-      let user = await prisma.user.findUnique({
-        where: { id: decoded.sub }, // ✅ lấy id từ sub
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.sub },
       });
 
       if (!user) {
         return next(new Error('User not found from token sub'));
       }
 
-      // if (!user) {
-      //   const email = decoded.email || decoded.sub;
-      //   const name = decoded.name || 'Anonymous User';
-
-      //   user = await prisma.user.create({
-      //     data: {
-      //       email,
-      //       name,
-      //       displayName: name,
-      //       username: email?.split('@')[0] ?? `user_${Date.now()}`,
-      //       created_at: new Date(),
-      //       updated_at: new Date(),
-      //       date_joined: new Date(),
-      //       password: '', // hoặc một hash mặc định nếu cần
-      //       first_name: '',
-      //       last_name: '',
-      //       avatarUrl: decoded.picture || getGravatarUrl(email),
-      //     },
-      //   });
-      // }
-
       socket.userId = user.id;
       socket.userEmail = user.email;
 
       console.log(`✅ User authenticated: ${user.email} (${user.id})`);
-      next();
+      return next();
     } catch (error) {
       console.error('❌ Socket authentication failed:', error);
-      next(new Error('Invalid authentication token'));
+      return next(new Error('Invalid authentication token'));
     }
   });
 
@@ -122,9 +100,10 @@ export function initializeSocket(io: Server, prisma: PrismaClient) {
         });
 
         console.log(`👥 User ${socket.userEmail} joined room: ${roomId}`);
+        return;
       } catch (error) {
         console.error('❌ Error joining room:', error);
-        socket.emit('error', { message: 'Failed to join room' });
+        return socket.emit('error', { message: 'Failed to join room' });
       }
     });
 
@@ -174,9 +153,10 @@ export function initializeSocket(io: Server, prisma: PrismaClient) {
         });
 
         console.log(`💬 Message sent in ${roomId} by ${socket.userEmail}`);
+        return;
       } catch (error) {
         console.error('❌ Error sending message:', error);
-        socket.emit('error', { message: 'Failed to send message' });
+        return socket.emit('error', { message: 'Failed to send message' });
       }
     });
 
@@ -186,6 +166,7 @@ export function initializeSocket(io: Server, prisma: PrismaClient) {
         userEmail: socket.userEmail,
         isTyping,
       });
+      return;
     });
 
     socket.on('leave_room', async ({ roomId }: LeaveRoomData) => {
@@ -198,13 +179,16 @@ export function initializeSocket(io: Server, prisma: PrismaClient) {
         });
 
         console.log(`👋 User ${socket.userEmail} left room: ${roomId}`);
+        return;
       } catch (error) {
         console.error('❌ Error leaving room:', error);
+        return;
       }
     });
 
     socket.on('disconnect', () => {
       console.log(`🔌 User disconnected: ${socket.userEmail} (${socket.id})`);
+      return;
     });
   });
 }
