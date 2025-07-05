@@ -32,19 +32,19 @@ router.get('/:roomId/messages', authenticateToken, async (req, res) => {
     const offset = (page - 1) * limit;
 
     const messages = await prisma.message.findMany({
-      where: { roomId },
+      where: { room_id: roomId },
       include: {
         user: {
           select: { id: true, name: true, email: true, avatar: true }
         }
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { created_at: 'desc' },
       skip: offset,
       take: limit
     });
 
     const total = await prisma.message.count({
-      where: { roomId }
+      where: { room_id: roomId }
     });
 
     res.json({
@@ -71,7 +71,7 @@ router.get('/', authenticateToken, async (req, res) => {
           select: { messages: true }
         }
       },
-      orderBy: { lastMessageAt: 'desc' }
+      orderBy: { last_message_at: 'desc' }
     });
 
     res.json({ rooms });
