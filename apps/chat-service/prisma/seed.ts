@@ -1,72 +1,117 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log("🌱 Seeding database...")
+  console.log('🌱 Seeding database...')
 
   // Create sample users
   const user1 = await prisma.user.upsert({
-    where: { id: "user1" },
+    where: { email: 'admin@adidas.com' },
     update: {},
     create: {
-      id: "user1",
-      username: "Alice",
-      email: "alice@example.com",
-    },
+      email: 'admin@adidas.com',
+      name: 'Adidas Admin',
+      avatar: 'https://ui-avatars.com/api/?name=Adidas+Admin&background=000&color=fff',
+      username: 'admin',
+      displayName: 'Admin Adidas',
+      created_at: new Date(),
+      updated_at: new Date(),
+      date_joined: new Date(),
+      password: 'pbkdf2_sha256$720000$sample$JEXwqKpSjnuNmBE42U9DFtjLO6x2fIPCnOQ9oA59iHo=',
+      first_name: '',
+      last_name: '',
+      admin: true,
+      activated: true
+    }
   })
 
   const user2 = await prisma.user.upsert({
-    where: { id: "user2" },
+    where: { email: 'support@adidas.com' },
     update: {},
     create: {
-      id: "user2",
-      username: "Bob",
-      email: "bob@example.com",
-    },
+      email: 'support@adidas.com',
+      name: 'Adidas Support',
+      avatar: 'https://ui-avatars.com/api/?name=Adidas+Support&background=000&color=fff',
+      username: 'support',
+      displayName: 'Support Adidas',
+      created_at: new Date(),
+      updated_at: new Date(),
+      date_joined: new Date(),
+      password: 'pbkdf2_sha256$720000$sample$JEXwqKpSjnuNmBE42U9DFtjLO6x2fIPCnOQ9oA59iHo=',
+      first_name: '',
+      last_name: '',
+      activated: true
+    }
   })
 
-  // Create sample room
-  const room = await prisma.room.upsert({
-    where: { id: "general" },
+  // Create sample rooms
+  const generalRoom = await prisma.room.upsert({
+    where: { id: 'general' },
     update: {},
     create: {
-      id: "general",
-      name: "General Chat",
-      createdBy: user1.id,
-    },
+      id: 'general',
+      name: 'General Chat',
+      type: 'public',
+      last_message: 'Welcome to Adidas chat!',
+      last_message_at: new Date(),
+      created_at: new Date(),
+      updated_at: new Date()
+    }
+  })
+
+  const supportRoom = await prisma.room.upsert({
+    where: { id: 'support' },
+    update: {},
+    create: {
+      id: 'support',
+      name: 'Customer Support',
+      type: 'public',
+      last_message: 'How can we help you today?',
+      last_message_at: new Date(),
+      created_at: new Date(),
+      updated_at: new Date()
+    }
   })
 
   // Create sample messages
   await prisma.message.createMany({
     data: [
       {
-        content: "Hello everyone! 👋",
-        roomId: room.id,
-        userId: user1.id,
-        type: "TEXT",
+        content: 'Welcome to Adidas chat! How can we help you today?',
+        type: 'TEXT',
+        room_id: 'general',
+        user_id: user1.id,
+        created_at: new Date(),
+        updated_at: new Date()
       },
       {
-        content: "Hi Alice! How are you doing?",
-        roomId: room.id,
-        userId: user2.id,
-        type: "TEXT",
+        content: 'Feel free to ask any questions about our products!',
+        type: 'TEXT',
+        room_id: 'general',
+        user_id: user2.id,
+        created_at: new Date(),
+        updated_at: new Date()
       },
       {
-        content: "I'm doing great! Thanks for asking 😊",
-        roomId: room.id,
-        userId: user1.id,
-        type: "TEXT",
-      },
-    ],
+        content: 'Our customer support team is here to help!',
+        type: 'TEXT',
+        room_id: 'support',
+        user_id: user2.id,
+        created_at: new Date(),
+        updated_at: new Date()
+      }
+    ]
   })
 
-  console.log("✅ Database seeded successfully!")
+  console.log('✅ Database seeded successfully!')
+  console.log(`👤 Created users: ${user1.email}, ${user2.email}`)
+  console.log(`🏠 Created rooms: ${generalRoom.name}, ${supportRoom.name}`)
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Error seeding database:", e)
+    console.error('❌ Error seeding database:', e)
     process.exit(1)
   })
   .finally(async () => {

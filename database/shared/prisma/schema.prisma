@@ -41,6 +41,8 @@ model User {
   first_name                  String           @default("") @db.VarChar
   last_name                   String           @default("") @db.VarChar
   provider                    String?          @db.VarChar(50)
+  avatar                      String?
+  updatedAt                   DateTime?        @default(now()) @db.Timestamptz(6)
   Account                     Account[]
   Game                        Game[]
   bookmarks                   Bookmark[]
@@ -49,6 +51,7 @@ model User {
   following                   Follow[]         @relation("Following")
   followers                   Follow[]         @relation("Followers")
   likes                       Like[]
+  messages                    Message[]
   microposts                  Micropost[]
   issuedNotifications         Notification[]   @relation("Issuer")
   receivedNotifications       Notification[]   @relation("Recipient")
@@ -297,6 +300,7 @@ model Post {
   content             String
   userId              String
   createdAt           DateTime       @default(now())
+  expiresAt           DateTime?      @default(now()) @db.Timestamp(6)
   bookmarks           Bookmark[]
   comments            Comment[]
   likes               Like[]
@@ -381,24 +385,29 @@ model Micropost {
 }
 
 model Room {
-  id         BigInt    @id @default(autoincrement())
-  name       String?   @db.VarChar
-  created_at DateTime  @db.Timestamp(6)
-  updated_at DateTime  @updatedAt @db.Timestamp(6)
-  messages   Message[]
+  id              String    @id
+  name            String
+  type            String    @default("public")
+  last_message    String?
+  last_message_at DateTime? @db.Timestamptz(6)
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime? @default(now()) @db.Timestamptz(6)
+  messages        Message[]
 
   @@map("rooms")
 }
 
 model Message {
-  id         BigInt   @id @default(autoincrement())
-  room_id    BigInt
-  content    String?
-  created_at DateTime @db.Timestamp(6)
-  updated_at DateTime @updatedAt @db.Timestamp(6)
-  room       Room     @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_a8db0fb63a")
+  id         String       @id @default(cuid())
+  content    String
+  type       MessageType? @default(TEXT)
+  room_id    String
+  user_id    String
+  created_at DateTime?    @default(now()) @db.Timestamptz(6)
+  updated_at DateTime?    @default(now()) @db.Timestamptz(6)
+  rooms      Room         @relation(fields: [room_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_room")
+  users      User         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user")
 
-  @@index([room_id], map: "index_messages_on_room_id")
   @@map("messages")
 }
 
@@ -459,26 +468,24 @@ model Account {
 }
 
 model AspNetRoleClaims {
-  Id          Int         @id(map: "PK_AspNetRoleClaims") @default(autoincrement())
-  RoleId      String
-  ClaimType   String?
-  ClaimValue  String?
-  AspNetRoles AspNetRoles @relation(fields: [RoleId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_AspNetRoleClaims_AspNetRoles_RoleId")
+  Id         Int     @id
+  RoleId     String
+  ClaimType  String?
+  ClaimValue String?
 
   @@index([RoleId], map: "IX_AspNetRoleClaims_RoleId")
 }
 
 model AspNetRoles {
-  Id               String             @id(map: "PK_AspNetRoles")
-  Name             String?            @db.VarChar(256)
-  NormalizedName   String?            @unique(map: "RoleNameIndex") @db.VarChar(256)
+  Id               String            @id(map: "PK_AspNetRoles")
+  Name             String?           @db.VarChar(256)
+  NormalizedName   String?           @unique(map: "RoleNameIndex") @db.VarChar(256)
   ConcurrencyStamp String?
-  AspNetRoleClaims AspNetRoleClaims[]
   AspNetUserRoles  AspNetUserRoles[]
 }
 
 model AspNetUserClaims {
-  Id          Int         @id(map: "PK_AspNetUserClaims") @default(autoincrement())
+  Id          Int         @id
   UserId      String
   ClaimType   String?
   ClaimValue  String?
@@ -494,7 +501,7 @@ model AspNetUserLogins {
   UserId              String
   AspNetUsers         AspNetUsers @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_AspNetUserLogins_AspNetUsers_UserId")
 
-  @@id([LoginProvider, ProviderKey], map: "PK_AspNetUserLogins")
+  @@id([LoginProvider, ProviderKey])
   @@index([UserId], map: "IX_AspNetUserLogins_UserId")
 }
 
@@ -504,7 +511,7 @@ model AspNetUserRoles {
   AspNetRoles AspNetRoles @relation(fields: [RoleId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_AspNetUserRoles_AspNetRoles_RoleId")
   AspNetUsers AspNetUsers @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_AspNetUserRoles_AspNetUsers_UserId")
 
-  @@id([UserId, RoleId], map: "PK_AspNetUserRoles")
+  @@id([UserId, RoleId])
   @@index([RoleId], map: "IX_AspNetUserRoles_RoleId")
 }
 
@@ -515,11 +522,11 @@ model AspNetUserTokens {
   Value         String?
   AspNetUsers   AspNetUsers @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_AspNetUserTokens_AspNetUsers_UserId")
 
-  @@id([UserId, LoginProvider, Name], map: "PK_AspNetUserTokens")
+  @@id([UserId, LoginProvider, Name])
 }
 
 model AspNetUsers {
-  Id                                                  String             @id(map: "PK_AspNetUsers")
+  Id                                                  String             @id
   Name                                                String             @db.VarChar(50)
   ActivationDigest                                    String?
   Activated                                           Boolean
@@ -569,7 +576,7 @@ model Game {
 }
 
 model Microposts {
-  Id          BigInt      @id(map: "PK_Microposts") @default(autoincrement())
+  Id          BigInt      @id
   Content     String      @db.VarChar(140)
   UserId      String
   ImagePath   String?
@@ -603,12 +610,12 @@ model Relationships {
   AspNetUsers_Relationships_FollowedIdToAspNetUsers AspNetUsers @relation("Relationships_FollowedIdToAspNetUsers", fields: [FollowedId], references: [Id], onUpdate: NoAction, map: "FK_Relationships_AspNetUsers_FollowedId")
   AspNetUsers_Relationships_FollowerIdToAspNetUsers AspNetUsers @relation("Relationships_FollowerIdToAspNetUsers", fields: [FollowerId], references: [Id], onUpdate: NoAction, map: "FK_Relationships_AspNetUsers_FollowerId")
 
-  @@id([FollowerId, FollowedId], map: "PK_Relationships")
+  @@id([FollowerId, FollowedId])
   @@index([FollowedId], map: "IX_Relationships_FollowedId")
 }
 
 model EFMigrationsHistory {
-  MigrationId    String @id(map: "PK___EFMigrationsHistory") @db.VarChar(150)
+  MigrationId    String @id @db.VarChar(150)
   ProductVersion String @db.VarChar(32)
 
   @@map("__EFMigrationsHistory")
@@ -616,7 +623,7 @@ model EFMigrationsHistory {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model account_emailaddress {
-  id                        Int                         @id @default(autoincrement())
+  id                        Int                         @id
   email                     String                      @db.VarChar(254)
   verified                  Boolean
   primary                   Boolean
@@ -632,7 +639,7 @@ model account_emailaddress {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model account_emailconfirmation {
-  id                   Int                  @id @default(autoincrement())
+  id                   Int                  @id
   created              DateTime             @db.Timestamptz(6)
   sent                 DateTime?            @db.Timestamptz(6)
   key                  String               @unique @db.VarChar(64)
@@ -644,7 +651,7 @@ model account_emailconfirmation {
 }
 
 model accounts_user {
-  id                                                                               BigInt                             @id @default(autoincrement())
+  id                                                                               BigInt                             @id
   password                                                                         String                             @db.VarChar(128)
   last_login                                                                       DateTime?                          @db.Timestamptz(6)
   is_superuser                                                                     Boolean
@@ -681,7 +688,7 @@ model accounts_user {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model accounts_user_groups {
-  id            BigInt        @id @default(autoincrement())
+  id            BigInt        @id
   user_id       BigInt
   group_id      Int
   auth_group    auth_group    @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "accounts_user_groups_group_id_bd11a704_fk_auth_group_id")
@@ -694,7 +701,7 @@ model accounts_user_groups {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model accounts_user_user_permissions {
-  id              BigInt          @id @default(autoincrement())
+  id              BigInt          @id
   user_id         BigInt
   permission_id   Int
   auth_permission auth_permission @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "accounts_user_user_p_permission_id_113bb443_fk_auth_perm")
@@ -749,7 +756,7 @@ model ar_internal_metadata {
 }
 
 model auth_group {
-  id                     Int                      @id @default(autoincrement())
+  id                     Int                      @id
   name                   String                   @unique @db.VarChar(150)
   accounts_user_groups   accounts_user_groups[]
   auth_group_permissions auth_group_permissions[]
@@ -759,7 +766,7 @@ model auth_group {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model auth_group_permissions {
-  id              BigInt          @id @default(autoincrement())
+  id              BigInt          @id
   group_id        Int
   permission_id   Int
   auth_permission auth_permission @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm")
@@ -772,7 +779,7 @@ model auth_group_permissions {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model auth_permission {
-  id                             Int                              @id @default(autoincrement())
+  id                             Int                              @id
   name                           String                           @db.VarChar(255)
   content_type_id                Int
   codename                       String                           @db.VarChar(100)
@@ -787,7 +794,7 @@ model auth_permission {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model django_admin_log {
-  id                  Int                  @id @default(autoincrement())
+  id                  Int                  @id
   action_time         DateTime             @db.Timestamptz(6)
   object_id           String?
   object_repr         String               @db.VarChar(200)
@@ -803,7 +810,7 @@ model django_admin_log {
 }
 
 model django_content_type {
-  id               Int                @id @default(autoincrement())
+  id               Int                @id
   app_label        String             @db.VarChar(100)
   model            String             @db.VarChar(100)
   auth_permission  auth_permission[]
@@ -813,7 +820,7 @@ model django_content_type {
 }
 
 model django_migrations {
-  id      BigInt   @id @default(autoincrement())
+  id      BigInt   @id
   app     String   @db.VarChar(255)
   name    String   @db.VarChar(255)
   applied DateTime @db.Timestamptz(6)
@@ -829,7 +836,7 @@ model django_session {
 }
 
 model django_site {
-  id                            Int                             @id @default(autoincrement())
+  id                            Int                             @id
   domain                        String                          @unique(map: "django_site_domain_a2e37b91_uniq") @db.VarChar(100)
   name                          String                          @db.VarChar(50)
   socialaccount_socialapp_sites socialaccount_socialapp_sites[]
@@ -838,7 +845,7 @@ model django_site {
 }
 
 model events_event {
-  id          BigInt   @id @default(autoincrement())
+  id          BigInt   @id
   title       String   @db.VarChar(200)
   description String
   location    String   @db.VarChar(255)
@@ -849,7 +856,7 @@ model events_event {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model microposts_micropost {
-  id            BigInt        @id @default(autoincrement())
+  id            BigInt        @id
   content       String
   picture       String?       @db.VarChar(100)
   created_at    DateTime      @db.Timestamptz(6)
@@ -862,7 +869,7 @@ model microposts_micropost {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model relationships_relationship {
-  id                                                                  BigInt        @id @default(autoincrement())
+  id                                                                  BigInt        @id
   created_at                                                          DateTime      @db.Timestamptz(6)
   followed_id                                                         BigInt
   follower_id                                                         BigInt
@@ -880,20 +887,17 @@ model schema_migrations {
 
 model sizes {
   id            Int             @id @default(autoincrement())
-  label         String          @db.VarChar(20)
+  label         String          @db.VarChar(10)
   system        String          @db.VarChar(20)
+  location      String          @db.VarChar(10)
   created_at    DateTime?       @default(now()) @db.Timestamp(6)
   updated_at    DateTime?       @default(now()) @db.Timestamp(6)
-  location      String?         @db.VarChar(10)
   variant_sizes variant_sizes[]
-
-  @@unique([label, system, location])
-  @@index([label, system], map: "idx_sizes_label_system")
 }
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model socialaccount_socialaccount {
-  id                        Int                         @id @default(autoincrement())
+  id                        Int                         @id
   provider                  String                      @db.VarChar(200)
   uid                       String                      @db.VarChar(191)
   last_login                DateTime                    @db.Timestamptz(6)
@@ -908,7 +912,7 @@ model socialaccount_socialaccount {
 }
 
 model socialaccount_socialapp {
-  id                            Int                             @id @default(autoincrement())
+  id                            Int                             @id
   provider                      String                          @db.VarChar(30)
   name                          String                          @db.VarChar(40)
   client_id                     String                          @db.VarChar(191)
@@ -922,7 +926,7 @@ model socialaccount_socialapp {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model socialaccount_socialapp_sites {
-  id                      BigInt                  @id @default(autoincrement())
+  id                      BigInt                  @id
   socialapp_id            Int
   site_id                 Int
   django_site             django_site             @relation(fields: [site_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "socialaccount_social_site_id_2579dee5_fk_django_si")
@@ -935,7 +939,7 @@ model socialaccount_socialapp_sites {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model socialaccount_socialtoken {
-  id                          Int                         @id @default(autoincrement())
+  id                          Int                         @id
   token                       String
   token_secret                String
   expires_at                  DateTime?                   @db.Timestamptz(6)
@@ -951,7 +955,7 @@ model socialaccount_socialtoken {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model token_blacklist_blacklistedtoken {
-  id                               BigInt                           @id @default(autoincrement())
+  id                               BigInt                           @id
   blacklisted_at                   DateTime                         @db.Timestamptz(6)
   token_id                         BigInt                           @unique
   token_blacklist_outstandingtoken token_blacklist_outstandingtoken @relation(fields: [token_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "token_blacklist_blacklistedtoken_token_id_3cc7fe56_fk")
@@ -959,7 +963,7 @@ model token_blacklist_blacklistedtoken {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model token_blacklist_outstandingtoken {
-  id                               BigInt                            @id @default(autoincrement())
+  id                               BigInt                            @id
   token                            String
   created_at                       DateTime?                         @db.Timestamptz(6)
   expires_at                       DateTime                          @db.Timestamptz(6)
@@ -981,10 +985,6 @@ model variant_sizes {
   updated_at DateTime? @default(now()) @db.Timestamp(6)
   sizes      sizes     @relation(fields: [size_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_size")
   variants   Variant   @relation(fields: [variant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_variant")
-
-  @@unique([variant_id, size_id])
-  @@index([size_id], map: "idx_variant_sizes_size_id")
-  @@index([variant_id], map: "idx_variant_sizes_variant_id")
 }
 
 model user_providers {
@@ -1003,6 +1003,46 @@ model user_providers {
   users            User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([provider, provider_user_id])
+}
+
+model users_for_mailer_tests {
+  id                          String    @id
+  name                        String?   @db.VarChar
+  username                    String    @unique(map: "mailer_users_username_key")
+  displayName                 String
+  email                       String?   @unique(map: "index_mailer_users_email_uniqueness") @db.VarChar
+  refresh_token               String?   @unique(map: "index_mailer_users_refresh_token_uniqueness") @db.VarChar
+  refresh_token_expiration_at DateTime? @db.Timestamp(6)
+  created_at                  DateTime  @db.Timestamp(6)
+  createdAt                   DateTime  @default(now())
+  updated_at                  DateTime  @db.Timestamp(6)
+  password_digest             String?   @db.VarChar
+  passwordHash                String?
+  googleId                    String?   @unique(map: "mailer_users_googleId_key")
+  avatarUrl                   String?
+  bio                         String?
+  remember_digest             String?   @db.VarChar
+  admin                       Boolean?  @default(false)
+  activation_digest           String?   @db.VarChar
+  activated                   Boolean?  @default(false)
+  activated_at                DateTime? @db.Timestamp(6)
+  reset_digest                String?   @db.VarChar
+  reset_sent_at               DateTime? @db.Timestamp(6)
+  is_staff                    Boolean   @default(false)
+  is_active                   Boolean   @default(true)
+  date_joined                 DateTime  @default(now()) @db.Timestamp(6)
+  last_login                  DateTime? @db.Timestamp(6)
+  is_superuser                Boolean   @default(false)
+  password                    String    @default("pbkdf2_sha256$720000$mf7gOJi6b6lcClmMxd0UaY$JEXwqKpSjnuNmBE42U9DFtjLO6x2fIPCnOQ9oA59iHo=") @db.VarChar
+  first_name                  String    @default("") @db.VarChar
+  last_name                   String    @default("") @db.VarChar
+  provider                    String?   @db.VarChar(50)
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
 }
 
 enum GameType {

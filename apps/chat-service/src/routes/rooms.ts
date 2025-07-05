@@ -1,127 +1,104 @@
-import { Router } from "express"
-import { PrismaClient } from "@prisma/client"
-import jwt from "jsonwebtoken"
+import express from 'express';
+import { PrismaClient } from '@prisma/client';
+import jwt from 'jsonwebtoken';
 
-const router = Router()
-const prisma = new PrismaClient()
+const router = express.Router();
+const prisma = new PrismaClient();
 
-// Middleware to verify JWT token
+// Auth middleware
 const authenticateToken = (req: any, res: any, next: any) => {
-  const authHeader = req.headers["authorization"]
-  const token = authHeader && authHeader.split(" ")[1]
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ error: "Access token required" })
+    return res.status(401).json({ error: 'Access token required' });
   }
 
   jwt.verify(token, process.env.JWT_SECRET!, (err: any, user: any) => {
     if (err) {
-      return res.status(403).json({ error: "Invalid or expired token" })
+      return res.status(403).json({ error: 'Invalid token' });
     }
-    req.user = user
-    next()
-  })
-}
+    req.user = user;
+    next();
+  });
+};
 
-// Get chat history of a room
-router.get("/:roomId/messages", authenticateToken, async (req, res) => {
+// Get chat history for a room
+router.get('/:roomId/messages', authenticateToken, async (req, res) => {
   try {
-    const { roomId } = req.params
-    const { page = 1, limit = 50 } = req.query
-
-    const skip = (Number(page) - 1) * Number(limit)
+    const { roomId } = req.params;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 50;
+    const offset = (page - 1) * limit;
 
     const messages = await prisma.message.findMany({
       where: { roomId },
       include: {
         user: {
-          select: { id: true, username: true },
-        },
+          select: { id: true, name: true, email: true, avatar: true }
+        }
       },
-      orderBy: { createdAt: "desc" },
-      skip,
-      take: Number(limit),
-    })
+      orderBy: { createdAt: 'desc' },
+      skip: offset,
+      take: limit
+    });
 
-    const totalMessages = await prisma.message.count({
-      where: { roomId },
-    })
+    const total = await prisma.message.count({
+      where: { roomId }
+    });
 
     res.json({
       messages: messages.reverse(),
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total: totalMessages,
-        totalPages: Math.ceil(totalMessages / Number(limit)),
-      },
-    })
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
-    console.error("Error fetching messages:", error)
-    res.status(500).json({ error: "Failed to fetch messages" })
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ error: 'Failed to fetch messages' });
   }
-})
+});
 
-// List active chat rooms
-router.get("/", authenticateToken, async (req, res) => {
+// List active rooms
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const rooms = await prisma.room.findMany({
       include: {
-        messages: {
-          take: 1,
-          orderBy: { createdAt: "desc" },
-          include: {
-            user: {
-              select: { id: true, username: true },
-            },
-          },
-        },
         _count: {
-          select: { messages: true },
-        },
+          select: { messages: true }
+        }
       },
-      orderBy: { updatedAt: "desc" },
-    })
+      orderBy: { lastMessageAt: 'desc' }
+    });
 
-    const roomsWithLastMessage = rooms.map((room) => ({
-      id: room.id,
-      name: room.name,
-      createdBy: room.createdBy,
-      createdAt: room.createdAt,
-      updatedAt: room.updatedAt,
-      messageCount: room._count.messages,
-      lastMessage: room.messages[0] || null,
-    }))
-
-    res.json({ rooms: roomsWithLastMessage })
+    res.json({ rooms });
   } catch (error) {
-    console.error("Error fetching rooms:", error)
-    res.status(500).json({ error: "Failed to fetch rooms" })
+    console.error('Error fetching rooms:', error);
+    res.status(500).json({ error: 'Failed to fetch rooms' });
   }
-})
+});
 
-// Create a new room
-router.post("/", authenticateToken, async (req: any, res) => {
+// Create new room
+router.post('/', authenticateToken, async (req, res) => {
   try {
-    const { name, id } = req.body
+    const { id, name, type = 'public' } = req.body;
 
-    if (!name) {
-      return res.status(400).json({ error: "Room name is required" })
+    if (!id || !name) {
+      return res.status(400).json({ error: 'Room id and name are required' });
     }
 
     const room = await prisma.room.create({
-      data: {
-        id: id || undefined, // Let Prisma generate if not provided
-        name,
-        createdBy: req.user.userId || req.user.id,
-      },
-    })
+      data: { id, name, type }
+    });
 
-    res.status(201).json({ room })
+    res.status(201).json({ room });
   } catch (error) {
-    console.error("Error creating room:", error)
-    res.status(500).json({ error: "Failed to create room" })
+    console.error('Error creating room:', error);
+    res.status(500).json({ error: 'Failed to create room' });
   }
-})
+});
 
-export default router
+export default router;

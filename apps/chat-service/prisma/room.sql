@@ -1,0 +1,48 @@
+DROP TABLE IF EXISTS messages CASCADE;
+DROP TABLE IF EXISTS rooms CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+DROP TYPE IF EXISTS "message_type" CASCADE;
+DROP TYPE IF EXISTS "messagetype" CASCADE;
+
+
+CREATE TABLE users (
+  id         TEXT PRIMARY KEY,
+  email      TEXT NOT NULL UNIQUE,
+  name       TEXT NOT NULL,
+  avatar     TEXT,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE users ADD COLUMN avatar TEXT;
+
+ALTER TABLE users 
+  ADD COLUMN "createdAt" TIMESTAMPTZ DEFAULT NOW(),
+  ADD COLUMN "updatedAt" TIMESTAMPTZ DEFAULT NOW();
+
+ALTER TABLE users ADD COLUMN "updatedAt" TIMESTAMPTZ DEFAULT NOW();
+
+CREATE TABLE rooms (
+  id               TEXT PRIMARY KEY,
+  name             TEXT NOT NULL,
+  type             TEXT NOT NULL DEFAULT 'public',
+  last_message     TEXT,
+  last_message_at  TIMESTAMPTZ,
+  created_at       TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at       TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TYPE MessageType AS ENUM ('TEXT', 'IMAGE', 'FILE');
+
+CREATE TABLE messages (
+  id         TEXT PRIMARY KEY,
+  content    TEXT NOT NULL,
+  type       "MessageType" DEFAULT 'TEXT',
+  room_id    TEXT NOT NULL,
+  user_id    TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_room FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
+  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

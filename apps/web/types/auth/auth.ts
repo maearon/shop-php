@@ -92,4 +92,6 @@ export interface User {
   name: string
   role?: boolean
   avatar?: string
+  level?: string
+  token?: string
 }

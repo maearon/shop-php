@@ -52,7 +52,9 @@ public class AuthApiController {
                 .email(currentUser.getEmail())
                 .name(currentUser.getName())
                 .admin(currentUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")))
-                .gravatar(currentUser.getGravatar())
+                .avatar(currentUser.getGravatar())
+                .level("LEVEL 1")
+                .token(currentUser.getToken()) // ✅ giống Rails: json.token @current_user_token
                 .build();
 
         return ResponseEntity.ok(Map.of("user", userDto));

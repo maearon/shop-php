@@ -31,9 +31,9 @@ public class SessionResponseDto {
         private String email;
         private String name;
         private boolean admin;
-        private String gravatar;
-        // private String passwordHash;
-        // private String token;
+        private String avatar;
+        private String level;
+        private String token;
     }
 
     @Data

@@ -94,6 +94,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 if (userId != null) {
                     UserDetails userDetails = customUserDetailsService.loadUserById(userId);
+                    if (userDetails instanceof UserPrincipal) {
+                        // ✅ giống Rails:@current_user_token = current_user_token
+                        ((UserPrincipal) userDetails).setToken(jwt); // ✅ gán lại token lấy từ header
+                    }
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities()
                     );

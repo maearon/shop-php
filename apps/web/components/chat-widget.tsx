@@ -1,102 +1,163 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { MessageCircle, X, Minus } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { MessageCircle, X, Minus, Send } from 'lucide-react'
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useAppSelector } from "@/store/hooks"
+import { io, Socket } from "socket.io-client"
+import { getGravatarUrl } from "@/utils/gravatar"
 
 interface ChatMessage {
   id: string
-  text: string
+  content: string
   isBot: boolean
   timestamp: Date
-  options?: string[]
+  user?: {
+    id: string
+    name: string
+    email: string
+    avatar?: string
+  }
 }
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [chatStartTime, setChatStartTime] = useState<Date | null>(null)
-  const [isChatEnded, setIsChatEnded] = useState(false)
+  const [inputMessage, setInputMessage] = useState("")
+  const [isConnected, setIsConnected] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
+  const socketRef = useRef<Socket | null>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Get user data from Redux
-  const userData = useAppSelector((state) => state.session)
-  const isLoggedIn = userData.loggedIn
+  const sessionState = useAppSelector((state) => state.session)
+  const isLoggedIn = sessionState?.loggedIn || false
+  const userName = sessionState?.value?.name || "Guest"
+  const userLevel = sessionState?.value?.level || "LEVEL 1"
+  const userToken = sessionState?.value?.token // Assuming you have JWT token in session
+
+  // Scroll to bottom of messages
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
 
   useEffect(() => {
-    if (isLoggedIn && isOpen && messages.length === 0) {
-      // Initialize chat with welcome message
-      const welcomeTime = new Date()
-      setChatStartTime(welcomeTime)
+    scrollToBottom()
+  }, [messages])
 
-      const welcomeMessages: ChatMessage[] = [
-        {
-          id: "1",
-          text: `Chat started at ${welcomeTime.toLocaleTimeString()}`,
-          isBot: true,
-          timestamp: welcomeTime,
-        },
-        {
-          id: "2",
-          text: "You are chatting with adidas virtual agent",
-          isBot: true,
-          timestamp: new Date(welcomeTime.getTime() + 1000),
-        },
-        {
-          id: "3",
-          text: `Welcome to the adidas virtual agent, ${userData.value?.name || "there"}.`,
-          isBot: true,
-          timestamp: new Date(welcomeTime.getTime() + 2000),
-        },
-        {
-          id: "4",
-          text: "Do you need help with an existing order?",
-          isBot: true,
-          timestamp: new Date(welcomeTime.getTime() + 3000),
-          options: ["YES", "NO"],
-        },
-      ]
+  // Initialize socket connection
+  useEffect(() => {
+    if (isLoggedIn && userToken && isOpen) {
+      // Base URL config
+      const CHAT_SERVICE_URL = process.env.NODE_ENV === "development"
+        ? "http://localhost:3002"
+        : "https://adidas-microservices.onrender.com"
+      // Replace with your deployed chat service URL
+      // const CHAT_SERVICE_URL = "https://your-chat-service.onrender.com"
+      
+      socketRef.current = io(CHAT_SERVICE_URL, {
+        query: { token: userToken },
+        transports: ['websocket', 'polling']
+      })
 
-      setMessages(welcomeMessages)
+      const socket = socketRef.current
+
+      // Connection events
+      socket.on('connect', () => {
+        console.log('✅ Connected to chat service')
+        setIsConnected(true)
+        // Join general room
+        socket.emit('join_room', { roomId: 'general' })
+      })
+
+      socket.on('disconnect', () => {
+        console.log('❌ Disconnected from chat service')
+        setIsConnected(false)
+      })
+
+      // Message events
+      socket.on('message_history', (data: { messages: any[] }) => {
+        const formattedMessages = data.messages.map((msg: any) => {
+          const isBot = msg.user?.email?.includes('admin') || msg.user?.email?.includes('support');
+
+          return {
+            id: msg.id,
+            content: msg.content,
+            isBot: !!isBot,
+            timestamp: msg.createdAt ? new Date(msg.createdAt) : new Date(),
+            user: msg.user
+          }
+        })
+
+        setMessages(formattedMessages)
+      })
+
+      socket.on('new_message', (message: any) => {
+        const isBot = message.user?.email?.includes('admin') || message.user?.email?.includes('support');
+
+        const formattedMessage: ChatMessage = {
+          id: message.id,
+          content: message.content,
+          isBot: !!isBot,
+          timestamp: message.createdAt ? new Date(message.createdAt) : new Date(),
+          user: message.user ?? null,
+        }
+
+        setMessages(prev => [...prev, formattedMessage])
+      })
+
+
+      socket.on('user_typing', (data: { userEmail: string; isTyping: boolean }) => {
+        if (data.userEmail !== sessionState?.value?.email) {
+          setIsTyping(data.isTyping)
+        }
+      })
+
+      socket.on('error', (error: { message: string }) => {
+        console.error('Chat error:', error.message)
+      })
+
+      return () => {
+        socket.disconnect()
+        socketRef.current = null
+        setIsConnected(false)
+      }
     }
-  }, [isOpen, userData.value?.name, isLoggedIn, messages.length])
+  }, [isLoggedIn, userToken, isOpen, sessionState?.value?.email])
 
   // Don't show chat widget if user is not logged in
   if (!isLoggedIn) {
     return null
   }
 
-  const handleOptionClick = (option: string) => {
-    // Add user response
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      text: option,
-      isBot: false,
-      timestamp: new Date(),
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!inputMessage.trim() || !socketRef.current || !isConnected) {
+      return
     }
 
-    setMessages((prev) => [...prev, userMessage])
+    socketRef.current.emit('message', {
+      roomId: 'general',
+      content: inputMessage.trim(),
+      type: 'text'
+    })
 
-    // Simulate bot response
-    setTimeout(() => {
-      if (option === "NO") {
-        setIsChatEnded(true)
-        const endMessage: ChatMessage = {
-          id: (Date.now() + 1).toString(),
-          text: "CHAT ENDED",
-          isBot: true,
-          timestamp: new Date(),
-        }
-        setMessages((prev) => [...prev, endMessage])
-      }
-    }, 1000)
+    setInputMessage("")
   }
 
-  const handleNewChat = () => {
-    setMessages([])
-    setIsChatEnded(false)
-    setChatStartTime(null)
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputMessage(e.target.value)
+    
+    // Send typing indicator
+    if (socketRef.current) {
+      socketRef.current.emit('typing', {
+        roomId: 'general',
+        isTyping: e.target.value.length > 0
+      })
+    }
   }
 
   const toggleChat = () => {
@@ -133,7 +194,9 @@ export default function ChatWidget() {
               </div>
               <div>
                 <h3 className="font-bold text-sm">CHAT</h3>
-                <p className="text-xs text-gray-500">adiclub LEVEL 1</p>
+                <p className="text-xs text-gray-500">
+                  adiclub {userLevel} • {isConnected ? 'Online' : 'Connecting...'}
+                </p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -153,49 +216,70 @@ export default function ChatWidget() {
               <div className="flex-1 p-4 overflow-y-auto space-y-4">
                 {messages.map((message) => (
                   <div key={message.id} className={`${message.isBot ? "text-left" : "text-right"}`}>
-                    {message.isBot && (
+                    {message.isBot ? (
                       <div className="flex items-start space-x-2">
-                        <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-white text-xs font-bold">A</span>
-                        </div>
-                        <div className="bg-gray-100 rounded-lg p-3 max-w-xs">
-                          <p className="text-sm">{message.text}</p>
-                          {message.options && (
-                            <div className="flex space-x-2 mt-2">
-                              {message.options.map((option) => (
-                                <Button
-                                  key={option}
-                                  onClick={() => handleOptionClick(option)}
-                                  variant="outline"
-                                  size="sm"
-                                  className="text-xs"
-                                >
-                                  {option}
-                                </Button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
+                        <img
+                          src={getGravatarUrl(message.user?.email)}
+                          alt={message.user?.name || "User"}
+                          className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                        />
+                        {!message.user ? (
+                          <div className="bg-gray-100 rounded-lg p-3 max-w-xs">
+                            <p className="text-sm text-gray-500 italic">[System message]</p>
+                          </div>
+                        ) : (
+                          <div className="bg-gray-100 rounded-lg p-3 max-w-xs">
+                            <p className="text-sm">{message.content}</p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {message.timestamp.toLocaleTimeString()}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                    )}
-                    {!message.isBot && (
+                    ) : (
                       <div className="bg-black text-white rounded-lg p-3 max-w-xs ml-auto">
-                        <p className="text-sm">{message.text}</p>
+                        <p className="text-sm">{message.content}</p>
+                        <p className="text-xs text-gray-300 mt-1">
+                          {message.timestamp.toLocaleTimeString()}
+                        </p>
                       </div>
                     )}
                   </div>
                 ))}
-
-                {/* Chat Ended Section */}
-                {isChatEnded && (
-                  <div className="text-center space-y-4 mt-6">
-                    <p className="text-sm text-gray-500">This chat was inactive for over 15 minutes.</p>
-                    <p className="text-sm text-gray-500">If you still need help, please start a new chat.</p>
-                    <Button onClick={handleNewChat} className="bg-black text-white hover:bg-gray-800 font-bold">
-                      NEW CHAT →
-                    </Button>
+                
+                {/* Typing indicator */}
+                {isTyping && (
+                  <div className="flex items-start space-x-2">
+                    <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-white text-xs font-bold">A</span>
+                    </div>
+                    <div className="bg-gray-100 rounded-lg p-3">
+                      <p className="text-sm text-gray-500">Typing...</p>
+                    </div>
                   </div>
                 )}
+                
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Message Input */}
+              <div className="border-t border-gray-200 p-4">
+                <form onSubmit={handleSendMessage} className="flex space-x-2">
+                  <Input
+                    value={inputMessage}
+                    onChange={handleInputChange}
+                    placeholder={isConnected ? "Type a message..." : "Connecting..."}
+                    disabled={!isConnected}
+                    className="flex-1"
+                  />
+                  <Button 
+                    type="submit" 
+                    disabled={!inputMessage.trim() || !isConnected}
+                    size="sm"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </form>
               </div>
             </div>
           )}

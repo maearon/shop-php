@@ -1,27 +1,26 @@
-# Chat Service 💬
+# 💬 Adidas Chat Service
 
-A real-time chat service built with Node.js, Express, Socket.IO, and PostgreSQL. Features JWT authentication, room-based messaging, and REST API endpoints.
+A real-time chat service built with Node.js, Express, Socket.IO, and PostgreSQL for the Adidas platform.
 
 ## 🚀 Features
 
 - **Real-time messaging** with Socket.IO
-- **JWT authentication** for secure connections
+- **JWT Authentication** for secure connections
 - **PostgreSQL database** with Prisma ORM
-- **Room-based chat** system
+- **Room-based chat system**
 - **REST API** for chat history and room management
 - **Docker support** for easy deployment
-- **Render deployment** ready
-- **TypeScript** for type safety
+- **Render deployment ready**
 
 ## 📦 Tech Stack
 
 - **Backend**: Node.js + Express + TypeScript
-- **WebSocket**: Socket.IO
+- **Real-time**: Socket.IO
 - **Database**: PostgreSQL + Prisma ORM
 - **Authentication**: JWT
 - **Deployment**: Docker + Render
 
-## 🛠️ Setup Instructions
+## 🛠️ Quick Start
 
 ### Prerequisites
 
@@ -29,68 +28,75 @@ A real-time chat service built with Node.js, Express, Socket.IO, and PostgreSQL.
 - PostgreSQL database
 - npm or yarn
 
-### 1. Clone and Install
+### 1. Installation
+
+```
+npx prisma introspect
+PS C:\Users\manhn\code\shop-php\apps\chat-service\prisma> npx prisma generate
+Environment variables loaded from ..\.env
+Prisma schema loaded from schema.prisma
+
+✔ Generated Prisma Client (v5.22.0) to .\..\node_modules\@prisma\client in 501ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+┌─────────────────────────────────────────────────────────┐
+│  Update available 5.22.0 -> 6.11.1                      │
+│                                                         │
+│  This is a major update - please follow the guide at    │
+│  https://pris.ly/d/major-version-upgrade                │
+│                                                         │
+│  Run the following to update                            │
+│    npm i --save-dev prisma@latest                       │
+│    npm i @prisma/client@latest                          │
+└─────────────────────────────────────────────────────────┘
+```
 
 \`\`\`bash
-git clone <your-repo>
+# Clone and setup
+git clone <repository>
 cd chat-service
+
+# Install dependencies
+make install
+# or
 npm install
-\`\`\`
 
-### 2. Environment Setup
-
-\`\`\`bash
+# Setup environment
 cp .env.example .env
+# Edit .env with your database URL and JWT secret
 \`\`\`
 
-Edit `.env` with your configuration:
-
-\`\`\`env
-DATABASE_URL="your-postgresql-connection-string"
-PORT=3002
-JWT_SECRET="your-super-secret-jwt-key"
-CORS_ORIGIN="http://localhost:3000"
-\`\`\`
-
-### 3. Database Setup
+### 2. Database Setup
 
 \`\`\`bash
 # Generate Prisma client
-npm run generate
+make generate
 
 # Run migrations
-npm run migrate
+make migrate
 
-# Seed database (optional)
-npm run seed
+# Seed sample data
+make seed
 \`\`\`
 
-### 4. Development
+### 3. Development
 
 \`\`\`bash
 # Start development server
+make dev
+# or
 npm run dev
 
-# Or use Makefile
-make dev
+# Server will start on http://localhost:3002
 \`\`\`
 
-### 5. Production Build
+### 4. Docker (Alternative)
 
 \`\`\`bash
-# Build the application
-npm run build
-
-# Start production server
-npm start
-\`\`\`
-
-## 🐳 Docker Development
-
-### Using Docker Compose (Recommended)
-
-\`\`\`bash
-# Start all services (app + PostgreSQL)
+# Start with Docker Compose
 make docker-up
 
 # View logs
@@ -100,28 +106,46 @@ make docker-logs
 make docker-down
 \`\`\`
 
-### Manual Docker Build
+## 🌐 API Endpoints
 
-\`\`\`bash
-# Build image
-docker build -t chat-service .
+### REST API
 
-# Run container
-docker run -p 3002:3002 \
-  -e DATABASE_URL="your-db-url" \
-  -e JWT_SECRET="your-secret" \
-  chat-service
-\`\`\`
+- `GET /health` - Health check
+- `GET /api/rooms` - List active rooms
+- `GET /api/rooms/:roomId/messages` - Get chat history
+- `POST /api/rooms` - Create new room
 
-## 🌐 Render Deployment
+### WebSocket Events
 
-### 1. Create Render Web Service
+**Client → Server:**
+- `join_room` - Join a chat room
+- `message` - Send a message
+- `leave_room` - Leave a room
+- `typing` - Typing indicator
+
+**Server → Client:**
+- `message_history` - Chat history when joining
+- `new_message` - New message broadcast
+- `user_joined` - User joined room
+- `user_left` - User left room
+- `user_typing` - Typing indicator
+
+## 🔐 Authentication
+
+The service uses JWT tokens for authentication. Include the token in:
+
+1. **Socket.IO connection**: `?token=your_jwt_token`
+2. **REST API**: `Authorization: Bearer your_jwt_token`
+
+## 🚀 Deployment to Render
+
+### 1. Create Web Service
 
 1. Go to [Render Dashboard](https://dashboard.render.com)
 2. Click "New" → "Web Service"
-3. Connect your GitHub repository
+3. Connect your repository
 4. Configure:
-   - **Name**: `chat-service`
+   - **Name**: `adidas-chat-service`
    - **Environment**: `Node`
    - **Build Command**: `npm install && npm run build`
    - **Start Command**: `npm start`
@@ -130,312 +154,125 @@ docker run -p 3002:3002 \
 
 Add these environment variables in Render:
 
-\`\`\`
+\`\`\`env
 DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
-JWT_SECRET=somethingsecure
-PORT=3002
+JWT_SECRET=your-super-secure-jwt-secret-here
 CORS_ORIGIN=https://your-frontend-domain.com
+PORT=3002
+NODE_ENV=production
 \`\`\`
 
 ### 3. Deploy
 
-\`\`\`bash
-# Deploy using Render CLI (optional)
-make deploy
-\`\`\`
+1. Click "Create Web Service"
+2. Wait for deployment to complete
+3. Your service will be available at: `https://your-service-name.onrender.com`
 
-Your service will be available at: `https://your-service-name.onrender.com`
+### 4. Run Migrations
 
-## 📡 API Endpoints
-
-### REST API
+After deployment, run migrations:
 
 \`\`\`bash
-# Health check
-GET /health
-
-# Get chat rooms (requires JWT)
-GET /rooms
-Authorization: Bearer <jwt-token>
-
-# Get room messages (requires JWT)
-GET /rooms/:roomId/messages?page=1&limit=50
-Authorization: Bearer <jwt-token>
-
-# Create new room (requires JWT)
-POST /rooms
-Authorization: Bearer <jwt-token>
-Content-Type: application/json
-{
-  "name": "Room Name",
-  "id": "optional-custom-id"
-}
-\`\`\`
-
-### WebSocket Events
-
-#### Client → Server
-
-\`\`\`javascript
-// Join a room
-socket.emit('join_room', { roomId: 'general' });
-
-// Send message
-socket.emit('message', {
-  roomId: 'general',
-  content: 'Hello world!',
-  type: 'text' // optional: 'text', 'image', 'file'
-});
-
-// Leave room
-socket.emit('leave_room', { roomId: 'general' });
-
-// Typing indicators
-socket.emit('typing_start', { roomId: 'general' });
-socket.emit('typing_stop', { roomId: 'general' });
-\`\`\`
-
-#### Server → Client
-
-\`\`\`javascript
-// Room history when joining
-socket.on('room_history', (data) => {
-  console.log('Messages:', data.messages);
-});
-
-// New message received
-socket.on('new_message', (message) => {
-  console.log('New message:', message);
-});
-
-// User events
-socket.on('user_joined', (data) => {
-  console.log('User joined:', data.username);
-});
-
-socket.on('user_left', (data) => {
-  console.log('User left:', data.username);
-});
-
-// Typing indicators
-socket.on('user_typing', (data) => {
-  console.log(`${data.username} is typing...`);
-});
-
-socket.on('user_stopped_typing', (data) => {
-  console.log(`${data.username} stopped typing`);
-});
-
-// Error handling
-socket.on('error', (error) => {
-  console.error('Socket error:', error);
-});
-\`\`\`
-
-## 🔧 Makefile Commands
-
-\`\`\`bash
-make dev              # Start development server
-make build            # Build for production
-make start            # Start production server
-make migrate          # Run database migrations
-make generate         # Generate Prisma client
-make studio           # Open Prisma Studio
-make seed             # Seed database
-make docker-up        # Start with Docker Compose
-make docker-down      # Stop Docker services
-make clean            # Clean build files
-make test             # Test service health
+# In Render console or locally with production DATABASE_URL
+npx prisma migrate deploy
 \`\`\`
 
 ## 🔌 Frontend Integration
 
-### Next.js Chat Widget Example
+### Next.js Integration
+
+Install Socket.IO client:
+
+\`\`\`bash
+npm install socket.io-client
+\`\`\`
+
+Update your `chat-widget.tsx`:
 
 \`\`\`typescript
-// components/chat-widget.tsx
-'use client';
-
-import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-interface Message {
-  id: string;
-  content: string;
-  user: { username: string };
-  createdAt: string;
-}
+// Initialize socket connection
+const socket = io('https://your-chat-service.onrender.com', {
+  query: { token: userToken },
+  transports: ['websocket', 'polling']
+});
 
-export default function ChatWidget() {
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [isConnected, setIsConnected] = useState(false);
+// Join room
+socket.emit('join_room', { roomId: 'general' });
 
-  useEffect(() => {
-    // Get JWT token from your auth system
-    const token = localStorage.getItem('authToken');
-    
-    if (!token) return;
+// Send message
+socket.emit('message', { 
+  roomId: 'general', 
+  content: 'Hello!',
+  type: 'text'
+});
 
-    // Connect to chat service
-    const socketInstance = io('https://your-chat-service.onrender.com', {
-      query: { token }
-    });
-
-    socketInstance.on('connect', () => {
-      setIsConnected(true);
-      // Join a room (e.g., general chat)
-      socketInstance.emit('join_room', { roomId: 'general' });
-    });
-
-    socketInstance.on('disconnect', () => {
-      setIsConnected(false);
-    });
-
-    socketInstance.on('room_history', (data) => {
-      setMessages(data.messages);
-    });
-
-    socketInstance.on('new_message', (message) => {
-      setMessages(prev => [...prev, message]);
-    });
-
-    socketInstance.on('error', (error) => {
-      console.error('Chat error:', error);
-    });
-
-    setSocket(socketInstance);
-
-    return () => {
-      socketInstance.disconnect();
-    };
-  }, []);
-
-  const sendMessage = () => {
-    if (!socket || !newMessage.trim()) return;
-
-    socket.emit('message', {
-      roomId: 'general',
-      content: newMessage,
-      type: 'text'
-    });
-
-    setNewMessage('');
-  };
-
-  return (
-    <div className="chat-widget">
-      <div className="chat-header">
-        Chat {isConnected ? '🟢' : '🔴'}
-      </div>
-      
-      <div className="chat-messages">
-        {messages.map((message) => (
-          <div key={message.id} className="message">
-            <strong>{message.user.username}:</strong> {message.content}
-          </div>
-        ))}
-      </div>
-      
-      <div className="chat-input">
-        <input
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          placeholder="Type a message..."
-        />
-        <button onClick={sendMessage}>Send</button>
-      </div>
-    </div>
-  );
-}
+// Listen for messages
+socket.on('new_message', (message) => {
+  console.log('New message:', message);
+});
 \`\`\`
 
-## 🔒 Authentication
+## 📁 Project Structure
 
-The service expects JWT tokens with the following payload:
-
-\`\`\`json
-{
-  "userId": "user123",
-  "username": "john_doe",
-  "iat": 1640995200,
-  "exp": 1641081600
-}
+\`\`\`
+chat-service/
+├── src/
+│   ├── server.ts          # Express server setup
+│   ├── socket.ts          # Socket.IO handlers
+│   └── routes/
+│       └── rooms.ts       # REST API routes
+├── prisma/
+│   ├── schema.prisma      # Database schema
+│   └── seed.ts           # Database seeding
+├── Dockerfile            # Docker configuration
+├── docker-compose.yml    # Local development
+├── Makefile             # Development commands
+└── README.md            # This file
 \`\`\`
 
-Pass the token via:
-- **Query parameter**: `?token=your-jwt-token`
-- **Authorization header**: `Authorization: Bearer your-jwt-token`
+## 🧪 Testing
 
-## 📊 Database Schema
+\`\`\`bash
+# Test health endpoint
+curl http://localhost:3002/health
 
-\`\`\`sql
--- Users table
-CREATE TABLE users (
-  id TEXT PRIMARY KEY,
-  username TEXT NOT NULL,
-  email TEXT UNIQUE,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
+# Test with authentication
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+     http://localhost:3002/api/rooms
+\`\`\`
 
--- Rooms table
-CREATE TABLE rooms (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  created_by TEXT REFERENCES users(id),
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
+## 🔧 Development Commands
 
--- Messages table
-CREATE TABLE messages (
-  id TEXT PRIMARY KEY,
-  content TEXT NOT NULL,
-  type TEXT DEFAULT 'TEXT',
-  room_id TEXT REFERENCES rooms(id) ON DELETE CASCADE,
-  user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
+\`\`\`bash
+make help          # Show all available commands
+make dev           # Start development server
+make build         # Build for production
+make migrate       # Run database migrations
+make seed          # Seed database
+make docker-up     # Start with Docker
+make clean         # Clean build artifacts
 \`\`\`
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-1. **Connection refused**
-   \`\`\`bash
-   # Check if service is running
-   make test
-   curl http://localhost:3002/health
-   \`\`\`
+1. **Database connection failed**
+   - Check DATABASE_URL in .env
+   - Ensure PostgreSQL is running
+   - Run `make migrate` to setup tables
 
-2. **Database connection failed**
-   \`\`\`bash
-   # Verify DATABASE_URL
-   echo $DATABASE_URL
-   
-   # Test connection
-   npx prisma db pull
-   \`\`\`
+2. **Socket.IO connection failed**
+   - Check CORS_ORIGIN configuration
+   - Verify JWT token is valid
+   - Check network connectivity
 
-3. **JWT authentication failed**
-   \`\`\`bash
-   # Verify JWT_SECRET is set
-   echo $JWT_SECRET
-   
-   # Check token format in frontend
-   console.log('Token:', localStorage.getItem('authToken'));
-   \`\`\`
-
-4. **CORS issues**
-   \`\`\`bash
-   # Update CORS_ORIGIN in .env
-   CORS_ORIGIN="https://your-frontend-domain.com"
-   \`\`\`
+3. **Authentication errors**
+   - Verify JWT_SECRET matches between services
+   - Check token expiration
+   - Ensure token format is correct
 
 ### Logs
 
@@ -447,36 +284,26 @@ make docker-logs
 # Check Render dashboard logs section
 \`\`\`
 
-## 📈 Monitoring
+## 📝 License
 
-### Health Check
-
-\`\`\`bash
-curl https://your-service.onrender.com/health
-\`\`\`
-
-### Metrics
-
-The service provides basic logging for:
-- User connections/disconnections
-- Message sending
-- Room joining/leaving
-- Authentication attempts
+MIT License - see LICENSE file for details.
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-MIT License - see LICENSE file for details.
+2. Create feature branch
+3. Make changes
+4. Add tests
+5. Submit pull request
 
 ---
 
-**🚀 Your chat service is ready to deploy!**
+**Made with ❤️ for Adidas Platform**
+\`\`\`
 
-For questions or support, please open an issue in the repository.
+Now, here's exactly what you need to modify in your existing `chat-widget.tsx` to make it work with the real chat service:
+
+```typescriptreact file="components/chat-widget.tsx"
+[v0-no-op-code-block-prefix]"use client"
+...
+```

@@ -1,54 +1,76 @@
-import express from "express"
-import { createServer } from "http"
-import { Server } from "socket.io"
-import cors from "cors"
-import dotenv from "dotenv"
-import { PrismaClient } from "@prisma/client"
-import { setupSocket } from "./socket"
-import roomRoutes from "./routes/rooms"
+import express from 'express';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { PrismaClient } from '@prisma/client';
+import roomRoutes from './routes/rooms';
+import { initializeSocket } from './socket';
 
-dotenv.config()
+dotenv.config();
 
-const app = express()
-const server = createServer(app)
+const app = express();
+const server = createServer(app);
+const prisma = new PrismaClient();
+
+// CORS configuration
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000', 'https://adidas-clone.vercel.app'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-requested-with']
+};
+
+app.use(cors(corsOptions));
+app.use(express.json());
+
+// Socket.IO setup
 const io = new Server(server, {
-  cors: {
-    origin: process.env.CORS_ORIGIN || "*",
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-})
+  cors: corsOptions,
+  transports: ['websocket', 'polling']
+});
 
-const prisma = new PrismaClient()
-
-// Middleware
-app.use(cors())
-app.use(express.json())
-
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.json({ status: "OK", timestamp: new Date().toISOString() })
-})
+// Initialize socket handlers
+initializeSocket(io, prisma);
 
 // Routes
-app.use("/rooms", roomRoutes)
+app.use('/api/rooms', roomRoutes);
 
-// Setup Socket.IO
-setupSocket(io, prisma)
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    service: 'chat-service'
+  });
+});
 
-const PORT = process.env.PORT || 3002
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Adidas Chat Service',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      rooms: '/api/rooms',
+      socket: '/socket.io'
+    }
+  });
+});
+
+const PORT = process.env.PORT || 3002;
 
 server.listen(PORT, () => {
-  console.log(`🚀 Chat service running on port ${PORT}`)
-  console.log(`📡 Socket.IO server ready for connections`)
-})
+  console.log(`🚀 Chat service running on port ${PORT}`);
+  console.log(`📡 Socket.IO server ready`);
+  console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+});
 
 // Graceful shutdown
-process.on("SIGTERM", async () => {
-  console.log("🔄 Shutting down gracefully...")
-  await prisma.$disconnect()
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  await prisma.$disconnect();
   server.close(() => {
-    console.log("✅ Server closed")
-    process.exit(0)
-  })
-})
+    console.log('Process terminated');
+  });
+});

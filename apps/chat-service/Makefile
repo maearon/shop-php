@@ -1,4 +1,20 @@
-.PHONY: dev build start migrate generate studio seed docker-up docker-down clean
+.PHONY: help dev build start migrate seed docker-up docker-down clean
+
+# Default target
+help:
+	@echo "Available commands:"
+	@echo "  dev          - Start development server with hot reload"
+	@echo "  build        - Build TypeScript to JavaScript"
+	@echo "  start        - Start production server"
+	@echo "  migrate      - Run database migrations"
+	@echo "  migrate-prod - Run production database migrations"
+	@echo "  seed         - Seed database with sample data"
+	@echo "  generate     - Generate Prisma client"
+	@echo "  studio       - Open Prisma Studio"
+	@echo "  docker-up    - Start with Docker Compose"
+	@echo "  docker-down  - Stop Docker Compose"
+	@echo "  clean        - Clean build artifacts"
+	@echo "  install      - Install dependencies"
 
 # Development
 dev:
@@ -10,23 +26,23 @@ build:
 
 # Start production
 start:
-	npm start
+	npm run start
 
 # Database operations
 migrate:
 	npm run migrate
 
-migrate-deploy:
+migrate-prod:
 	npm run migrate:deploy
 
 generate:
 	npm run generate
 
-studio:
-	npm run studio
-
 seed:
 	npm run seed
+
+studio:
+	npm run studio
 
 # Docker operations
 docker-up:
@@ -35,28 +51,21 @@ docker-up:
 docker-down:
 	docker-compose down
 
-docker-build:
-	docker-compose build
-
 docker-logs:
 	docker-compose logs -f chat-service
 
 # Utility
-clean:
-	rm -rf dist node_modules
-	npm install
-
 install:
 	npm install
 
-# Deploy to Render (requires render CLI)
-deploy:
-	@echo "Deploying to Render..."
-	@echo "Make sure you have set the following environment variables in Render:"
-	@echo "- DATABASE_URL"
-	@echo "- JWT_SECRET"
-	@echo "- PORT=3002"
+clean:
+	rm -rf dist
+	rm -rf node_modules/.cache
 
-# Test connection
-test:
-	curl -f http://localhost:3002/health || echo "Service not running"
+# Setup for new environment
+setup: install generate migrate seed
+	@echo "✅ Setup complete! Run 'make dev' to start development server"
+
+# Deploy preparation
+deploy-prep: install generate build
+	@echo "✅ Ready for deployment!"

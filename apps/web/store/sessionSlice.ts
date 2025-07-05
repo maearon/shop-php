@@ -6,10 +6,12 @@ import { Nullable } from '@/types/common'
 
 // ---- User model định nghĩa nhất quán với BE JWT response ----
 export interface User {
-  id: number
+  id: string; // ✅ sửa thành string
   email: string
   name: string
   avatar?: string
+  level?: string
+  token?: string
 }
 
 // ---- Slice state ----
@@ -41,6 +43,8 @@ export const fetchUser = createAsyncThunk(
           email: user.email,
           name: user.name,
           avatar: user.avatar ?? '',
+          level: user.level ?? 'LEVEL 1',
+          token: user.token ?? '',
         } as User
       }
       return thunkAPI.rejectWithValue('Cannot fetch user')

@@ -1,183 +1,206 @@
-import type { Server, Socket } from "socket.io"
-import type { PrismaClient } from "@prisma/client"
-import jwt from "jsonwebtoken"
+import { Server, Socket } from 'socket.io';
+import { PrismaClient } from '@prisma/client';
+import jwt from 'jsonwebtoken';
+import md5 from "blueimp-md5";
+
+export const getGravatarUrl = (email: string, size = 50): string => {
+  const hash = md5(email.trim().toLowerCase());
+  return `https://secure.gravatar.com/avatar/${hash}?s=${size}`;
+};
+
+enum MessageType {
+  TEXT = 'TEXT',
+  IMAGE = 'IMAGE',
+  FILE = 'FILE'
+}
 
 interface AuthenticatedSocket extends Socket {
-  userId?: string
-  username?: string
+  userId?: string;
+  userEmail?: string | null;
 }
 
 interface JoinRoomData {
-  roomId: string
+  roomId: string;
 }
 
 interface MessageData {
-  roomId: string
-  content: string
-  type?: "text" | "image" | "file"
+  roomId: string;
+  content: string;
+  type?: 'text' | 'image' | 'file';
 }
 
 interface LeaveRoomData {
-  roomId: string
+  roomId: string;
 }
 
-export function setupSocket(io: Server, prisma: PrismaClient) {
-  // Authentication middleware
+export function initializeSocket(io: Server, prisma: PrismaClient) {
   io.use(async (socket: AuthenticatedSocket, next) => {
     try {
       const token =
-        (socket.handshake.query.token as string) || socket.handshake.headers.authorization?.replace("Bearer ", "")
+        (socket.handshake.query.token as string) ||
+        socket.handshake.headers.authorization?.replace('Bearer ', '');
 
-      if (!token) {
-        return next(new Error("Authentication token required"))
+      if (!token) return next(new Error('Authentication token required'));
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+
+      // Find or create user
+      let user = await prisma.user.findUnique({
+        where: { email: decoded.email || decoded.sub },
+      });
+
+      if (!user) {
+        const email = decoded.email || decoded.sub;
+        const name = decoded.name || 'Anonymous User';
+
+        user = await prisma.user.create({
+          data: {
+            email,
+            name,
+            displayName: name,
+            username: email?.split('@')[0] ?? `user_${Date.now()}`,
+            created_at: new Date(),
+            updated_at: new Date(),
+            date_joined: new Date(),
+            password: '', // hoặc một hash mặc định nếu cần
+            first_name: '',
+            last_name: '',
+            avatarUrl: decoded.picture || getGravatarUrl(email),
+          },
+        });
       }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any
-      socket.userId = decoded.userId || decoded.id
-      socket.username = decoded.username || decoded.name || `User_${socket.userId}`
+      socket.userId = user.id;
+      socket.userEmail = user.email;
 
-      console.log(`🔐 User ${socket.username} (${socket.userId}) authenticated`)
-      next()
+      console.log(`✅ User authenticated: ${user.email} (${user.id})`);
+      next();
     } catch (error) {
-      console.error("❌ Authentication failed:", error)
-      next(new Error("Invalid authentication token"))
+      console.error('❌ Socket authentication failed:', error);
+      next(new Error('Invalid authentication token'));
     }
-  })
+  });
 
-  io.on("connection", (socket: AuthenticatedSocket) => {
-    console.log(`👋 User ${socket.username} connected (${socket.id})`)
+  io.on('connection', (socket: AuthenticatedSocket) => {
+    console.log(`🔌 User connected: ${socket.userEmail} (${socket.id})`);
 
-    // Join room event
-    socket.on("join_room", async (data: JoinRoomData) => {
+    socket.on('join_room', async ({ roomId }: JoinRoomData) => {
       try {
-        const { roomId } = data
-
-        // Create room if it doesn't exist
-        await prisma.room.upsert({
-          where: { id: roomId },
-          update: { updatedAt: new Date() },
-          create: {
-            id: roomId,
-            name: `Room ${roomId}`,
-            createdBy: socket.userId!,
-          },
-        })
-
-        // Join the socket room
-        socket.join(roomId)
-
-        // Get recent messages (last 50)
-        const messages = await prisma.message.findMany({
-          where: { roomId },
-          include: {
-            user: {
-              select: { id: true, username: true },
+        let room = await prisma.room.findUnique({ where: { id: roomId } });
+        if (!room) {
+          room = await prisma.room.create({
+            data: {
+              id: roomId,
+              name: roomId,
+              type: 'public',
             },
-          },
-          orderBy: { createdAt: "desc" },
-          take: 50,
-        })
+          });
+        }
 
-        // Send recent messages to the user
-        socket.emit("room_history", {
+        socket.join(roomId);
+
+        const messages = await prisma.message.findMany({
+          where: { room_id: roomId },
+          include: { users: { select: { id: true, name: true, email: true } } },
+          orderBy: { created_at: 'desc' },
+          take: 50,
+        });
+
+        socket.emit('message_history', {
           roomId,
           messages: messages.reverse(),
-        })
+        });
 
-        // Notify others in the room
-        socket.to(roomId).emit("user_joined", {
+        socket.to(roomId).emit('user_joined', {
           userId: socket.userId,
-          username: socket.username,
-          timestamp: new Date(),
-        })
+          userEmail: socket.userEmail,
+          roomId,
+        });
 
-        console.log(`📥 User ${socket.username} joined room ${roomId}`)
+        console.log(`👥 User ${socket.userEmail} joined room: ${roomId}`);
       } catch (error) {
-        console.error("❌ Error joining room:", error)
-        socket.emit("error", { message: "Failed to join room" })
+        console.error('❌ Error joining room:', error);
+        socket.emit('error', { message: 'Failed to join room' });
       }
-    })
+    });
 
-    // Message event
-    socket.on("message", async (data: MessageData) => {
+    socket.on('message', async ({ roomId, content, type = 'text' }: MessageData) => {
       try {
-        const { roomId, content, type = "text" } = data
+        if (!content?.trim()) {
+          return socket.emit('error', { message: 'Message content is required' });
+        }
 
-        // Create user if doesn't exist
-        await prisma.user.upsert({
-          where: { id: socket.userId! },
-          update: { username: socket.username! },
-          create: {
-            id: socket.userId!,
-            username: socket.username!,
-          },
-        })
+        const prismaType = (type?.toUpperCase() as keyof typeof MessageType) || 'TEXT';
 
-        // Save message to database
         const message = await prisma.message.create({
           data: {
-            content,
-            type,
-            roomId,
-            userId: socket.userId!,
+            content: content.trim(),
+            type: MessageType[prismaType],
+            room_id: roomId,
+            user_id: socket.userId!,
           },
           include: {
             user: {
-              select: { id: true, username: true },
+              select: { id: true, name: true, email: true },
             },
           },
-        })
+        });
 
-        // Broadcast message to all users in the room
-        io.to(roomId).emit("new_message", {
+        await prisma.room.update({
+          where: { id: roomId },
+          data: {
+            last_message_at: new Date(),
+            last_message: content.trim(),
+          },
+        });
+
+        const avatarUrl = getGravatarUrl(message.user.email ?? 'default@example.com');
+
+        io.to(roomId).emit('new_message', {
           id: message.id,
           content: message.content,
           type: message.type,
-          roomId: message.roomId,
-          user: message.user,
-          createdAt: message.createdAt,
-        })
+          roomId: message.room_id,
+          user: {
+            ...message.user,
+            avatar: avatarUrl,
+          },
+          createdAt: message.created_at,
+          isBot: false,
+        });
 
-        console.log(`💬 Message from ${socket.username} in room ${roomId}: ${content.substring(0, 50)}...`)
+        console.log(`💬 Message sent in ${roomId} by ${socket.userEmail}`);
       } catch (error) {
-        console.error("❌ Error sending message:", error)
-        socket.emit("error", { message: "Failed to send message" })
+        console.error('❌ Error sending message:', error);
+        socket.emit('error', { message: 'Failed to send message' });
       }
-    })
+    });
 
-    // Leave room event
-    socket.on("leave_room", (data: LeaveRoomData) => {
-      const { roomId } = data
-      socket.leave(roomId)
-
-      // Notify others in the room
-      socket.to(roomId).emit("user_left", {
+    socket.on('typing', ({ roomId, isTyping }: { roomId: string; isTyping: boolean }) => {
+      socket.to(roomId).emit('user_typing', {
         userId: socket.userId,
-        username: socket.username,
-        timestamp: new Date(),
-      })
+        userEmail: socket.userEmail,
+        isTyping,
+      });
+    });
 
-      console.log(`📤 User ${socket.username} left room ${roomId}`)
-    })
+    socket.on('leave_room', async ({ roomId }: LeaveRoomData) => {
+      try {
+        socket.leave(roomId);
+        socket.to(roomId).emit('user_left', {
+          userId: socket.userId,
+          userEmail: socket.userEmail,
+          roomId,
+        });
 
-    // Typing indicators
-    socket.on("typing_start", (data: { roomId: string }) => {
-      socket.to(data.roomId).emit("user_typing", {
-        userId: socket.userId,
-        username: socket.username,
-      })
-    })
+        console.log(`👋 User ${socket.userEmail} left room: ${roomId}`);
+      } catch (error) {
+        console.error('❌ Error leaving room:', error);
+      }
+    });
 
-    socket.on("typing_stop", (data: { roomId: string }) => {
-      socket.to(data.roomId).emit("user_stopped_typing", {
-        userId: socket.userId,
-        username: socket.username,
-      })
-    })
-
-    // Disconnect event
-    socket.on("disconnect", () => {
-      console.log(`👋 User ${socket.username} disconnected (${socket.id})`)
-    })
-  })
+    socket.on('disconnect', () => {
+      console.log(`🔌 User disconnected: ${socket.userEmail} (${socket.id})`);
+    });
+  });
 }

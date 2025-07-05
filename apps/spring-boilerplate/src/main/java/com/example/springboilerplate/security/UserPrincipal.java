@@ -124,4 +124,14 @@ public class UserPrincipal implements UserDetails {
         String emailHash = DigestUtils.md5DigestAsHex(validEmail.trim().toLowerCase().getBytes());
         return "https://secure.gravatar.com/avatar/" + emailHash + "?s=80";
     }
+
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }
