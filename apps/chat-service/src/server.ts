@@ -37,6 +37,9 @@ initializeSocket(io, prisma);
 app.use('/api/rooms', roomRoutes);
 
 // Health check
+app.head('/health', (req, res) => {
+  res.status(200).end();
+});
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'ok', 

@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [api-gateway, web, api, payments, legacy, api-java, api-ruby, api-python]
+        service: [api-gateway, web, api, payments, legacy, api-java, api-ruby, api-python, chat-service]
     
     steps:
       - name: Checkout code
@@ -67,7 +67,7 @@ jobs:
 
           echo "Running tests for service: ${{ matrix.service }}"
           case "${{ matrix.service }}" in
-            api-gateway|web)
+            api-gateway|web|chat-service)
               cd apps/${{ matrix.service }}
               echo "Checking package-lock.json..."
               if [ ! -f package-lock.json ]; then
@@ -171,6 +171,18 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
+      - name: Deploy Api gateway to Render
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.RENDER_SERVICE_ID_GATEWAY }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
+
+      - name: Deploy Chat service to Render
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.RENDER_SERVICE_ID_CHAT }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
+
       - name: Deploy Spring service to Render
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:

@@ -29,7 +29,30 @@ services:
     #   api-java:
     #     condition: service_healthy
     networks:
-      - adidas-network 
+      - adidas-network
+  
+  chat-service:
+    build:
+      context: .
+      dockerfile: docker/chat-service.Dockerfile
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./apps/chat-service/.env
+    environment:
+      - NODE_ENV=development
+      - PORT=3002
+      - DATABASE_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech/verceldb?pgbouncer=true&connect_timeout=15&sslmode=require
+      - JWT_SECRET=f2dc6dd1e38c7a0368dcd4c6298cd86af6bd5735cb4e7cf2f0a8dfceeaf47a59eb36906aac1f7003dad1c019c731d0016b58ad5e7c6268b9b4b1fca43a07f7d7
+      - CORS_ORIGIN=http://localhost:3001,https://adidas-mocha.vercel.app
+    # depends_on:
+    #   - postgres
+    volumes:
+      - ./apps/chat-service:/app
+      - /app/node_modules
+    command: npm run dev
+    networks:
+      - adidas-network
 
   # Frontend
   web:
