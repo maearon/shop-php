@@ -53,7 +53,7 @@ export default function ChatWidget() {
       // Base URL config
       const CHAT_SERVICE_URL = process.env.NODE_ENV === "development"
         ? "http://localhost:3002"
-        : "https://adidas-microservices.onrender.com"
+        : "https://adidas-chat-service.onrender.com"
       // Replace with your deployed chat service URL
       // const CHAT_SERVICE_URL = "https://your-chat-service.onrender.com"
       
@@ -231,17 +231,30 @@ export default function ChatWidget() {
                           <div className="bg-gray-100 rounded-lg p-3 max-w-xs">
                             <p className="text-sm">{message.content}</p>
                             <p className="text-xs text-gray-500 mt-1">
-                              {message.timestamp.toLocaleTimeString()}
+                              {message.timestamp.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
                             </p>
                           </div>
                         )}
                       </div>
                     ) : (
-                      <div className="bg-black text-white rounded-lg p-3 max-w-xs ml-auto">
-                        <p className="text-sm">{message.content}</p>
-                        <p className="text-xs text-gray-300 mt-1">
-                          {message.timestamp.toLocaleTimeString()}
-                        </p>
+                      // <div className="bg-black text-white rounded-lg p-3 max-w-xs ml-auto">
+                      //   <p className="text-sm">{message.content}</p>
+                      //   <p className="text-xs text-gray-300 mt-1">
+                      //     {message.timestamp.toLocaleTimeString()}
+                      //   </p>
+                      // </div>
+                      <div className="flex items-end justify-end space-x-2">
+                        <div className="bg-black text-white rounded-lg p-3 max-w-xs ml-auto">
+                          <p className="text-sm">{message.content}</p>
+                          <p className="text-xs text-gray-300 mt-1">
+                            {message.timestamp.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+                          </p>
+                        </div>
+                        <img
+                          src={getGravatarUrl(message.user?.email)}
+                          alt={message.user?.name || "User"}
+                          className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                        />
                       </div>
                     )}
                   </div>
