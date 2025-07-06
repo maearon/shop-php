@@ -26,7 +26,7 @@ export default function HeroBanner({
 
   return (
     <section className={cn("relative h-[83vh] bg-cover bg-top text-white mb-10", backgroundClassName)}>
-      <div className="relative z-10 container mx-auto px-10 sm:px-2 h-full flex items-end pb-11 sm:pb-20">
+      <div className="relative z-10 container mx-auto px-1 sm:px-20 h-full flex items-end pb-1 sm:pb-20">
         <div className="max-w-xl">
           {/* Title */}
           <h1 className="block w-fit bg-white text-black text-base sm:text-lg md:text-xl font-bold px-1.5 py-0.5 mb-2 tracking-tight">
