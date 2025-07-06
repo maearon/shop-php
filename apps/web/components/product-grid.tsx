@@ -61,6 +61,7 @@ export default function ProductGrid({
               ...product,
               id: Number(product.id),
               price: String(product.price),
+              original_price: String(product.original_price),
             }}
           />
         ))}

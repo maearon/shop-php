@@ -1,29 +1,59 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { ArrowLeft, SlidersHorizontal } from "lucide-react"
+import { useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
+import { ArrowLeft, SlidersHorizontal, Loader2 } from "lucide-react"
 
 import { BaseButton } from "@/components/ui/base-button"
 import { Badge } from "@/components/ui/badge"
 import ProductGrid from "@/components/product-grid"
 import FiltersSidebar from "@/components/filters-sidebar"
-import { getCategoryConfig } from "@/utils/category-config"
-import { useProducts } from "@/hooks/useProducts"
+import { getCategoryConfig, categoryConfigs, formatSlugTitle } from "@/utils/category-config.auto"
 import type { ProductQuery } from "@/api/services/rubyService"
+import { useProducts } from "@/api/hooks/useProducts"
+import Link from "next/link"
 
 interface CategoryPageClientProps {
   params: { slug: string }
-  searchParams?: Partial<ProductQuery>
+  searchParams?: Record<string, string | undefined>
 }
 
-export default function CategoryPageClient({ params, searchParams = {} }: CategoryPageClientProps) {
+function searchParamsToString(obj?: Record<string, string | undefined>): string {
+  if (!obj) return ""
+  const params = new URLSearchParams()
+  for (const [key, value] of Object.entries(obj)) {
+    if (value != null) params.set(key, value)
+  }
+  return params.toString()
+}
+
+function getBreadcrumbTrail(slug: string): { label: string; href: string }[] {
+  const trail: { label: string; href: string }[] = []
+  let currentSlug = slug
+  let depth = 0
+
+  while (currentSlug && depth < 4) {
+    const config = getCategoryConfig(currentSlug)
+    trail.unshift({
+      label: config.breadcrumb || formatSlugTitle(currentSlug),
+      href: config.href || `/${currentSlug}`,
+    })
+
+    const parent = Object.entries(categoryConfigs).find(([_, c]) =>
+      c.tabs.some((tab) => tab.slug === currentSlug)
+    )
+    currentSlug = parent?.[0] || ""
+    depth++
+  }
+
+  return [{ label: "Home", href: "/" }, ...trail]
+}
+
+export default function CategoryPageClient({ params, searchParams }: CategoryPageClientProps) {
   const router = useRouter()
-  const urlSearchParams = useSearchParams()
   const [showFilters, setShowFilters] = useState(false)
 
   const config = getCategoryConfig(params.slug)
-  const currentTab = searchParams.category || config.tabs[0]?.slug || params.slug
 
   const allowedKeys: (keyof ProductQuery)[] = [
     "page", "sort", "gender", "category", "activity", "sport",
@@ -31,24 +61,24 @@ export default function CategoryPageClient({ params, searchParams = {} }: Catego
     "collection", "min_price", "max_price", "shipping"
   ]
 
-  const toNumber = (val: unknown): number | undefined => {
-    const n = Number(val)
-    return isNaN(n) ? undefined : n
-  }
+  const queryParams: ProductQuery = useMemo(() => {
+    const query: Partial<ProductQuery> = { slug: params.slug }
+    const search = searchParams || {}
 
-  const queryParams: ProductQuery = {
-    slug: params.slug,
-  }
+    for (const key of allowedKeys) {
+      const value = search[key]
+      if (!value) continue
 
-  for (const [key, value] of Object.entries(searchParams)) {
-    if (!value || !allowedKeys.includes(key as keyof ProductQuery)) continue
-
-    if (key === "min_price" || key === "max_price" || key === "page") {
-      (queryParams as any)[key] = toNumber(value)
-    } else {
-      (queryParams as any)[key] = value
+      if (["min_price", "max_price", "page"].includes(key)) {
+        const num = Number(value)
+        if (!isNaN(num)) query[key] = num as any
+      } else {
+        query[key] = value as any
+      }
     }
-  }
+
+    return query as ProductQuery
+  }, [searchParams, params.slug])
 
   const { data, loading } = useProducts(queryParams)
 
@@ -61,56 +91,51 @@ export default function CategoryPageClient({ params, searchParams = {} }: Catego
     filters_applied: {},
   }
 
-  const handleTabChange = (tabSlug: string) => router.push(`/${tabSlug}`)
+  const currentTab = queryParams.category || config.tabs[0]?.slug || params.slug
+
+  const handleTabChange = (tabHref: string) => router.push(tabHref)
 
   const handleFilterChange = (filters: Record<string, any>) => {
-    const queryParams = new URLSearchParams()
+    const newParams = new URLSearchParams()
     Object.entries(filters).forEach(([key, value]) => {
       if (value && !(Array.isArray(value) && value.length === 0)) {
-        queryParams.set(key, Array.isArray(value) ? value.join(",") : value.toString())
+        newParams.set(key, Array.isArray(value) ? value.join(",") : value.toString())
       }
     })
-    router.push(`/${params.slug}?${queryParams.toString()}`)
+    router.push(`/${params.slug}?${newParams.toString()}`)
     setShowFilters(false)
   }
 
   const handlePageChange = (page: number) => {
-    const queryParams = new URLSearchParams(urlSearchParams.toString())
-    queryParams.set("page", page.toString())
-    router.push(`/${params.slug}?${queryParams.toString()}`)
+    const newParams = new URLSearchParams(searchParamsToString(searchParams))
+    newParams.set("page", page.toString())
+    router.push(`/${params.slug}?${newParams.toString()}`)
   }
 
   const removeFilter = (key: string, valueToRemove?: string) => {
-    const params = new URLSearchParams(urlSearchParams.toString())
-
-    if (valueToRemove && params.get(key)?.includes(",")) {
-      const values = (params.get(key)?.split(",") || []).filter((v) => v !== valueToRemove)
-      values.length ? params.set(key, values.join(",")) : params.delete(key)
+    const paramsCopy = new URLSearchParams(searchParamsToString(searchParams))
+    if (valueToRemove && paramsCopy.get(key)?.includes(",")) {
+      const values = (paramsCopy.get(key)?.split(",") || []).filter((v) => v !== valueToRemove)
+      values.length ? paramsCopy.set(key, values.join(",")) : paramsCopy.delete(key)
     } else {
-      params.delete(key)
+      paramsCopy.delete(key)
     }
-
-    router.push(`/${params.get("slug") || queryParams.slug}?${params.toString()}`)
+    router.push(`/${queryParams.slug}?${paramsCopy.toString()}`)
   }
 
   const clearAllFilters = () => router.push(`/${params.slug}`)
 
   const generateAppliedFiltersTitle = () => {
     const parts: string[] = []
-
-    if (searchParams.gender) parts.push(searchParams.gender.split(",").map(g => g.toUpperCase()).join(" + "))
-    if (searchParams.sport || searchParams.activity) parts.push((searchParams.sport || searchParams.activity)!.toUpperCase())
-    if (searchParams.product_type || searchParams.category) parts.push((searchParams.product_type || searchParams.category)!.toUpperCase())
-    if (searchParams.material) parts.push(searchParams.material.toUpperCase())
-    if (searchParams.collection) parts.push(searchParams.collection.toUpperCase())
-
+    if (queryParams.gender) parts.push(queryParams.gender.split(",").map((g) => g.toUpperCase()).join(" + "))
+    if (queryParams.sport || queryParams.activity) parts.push((queryParams.sport || queryParams.activity)!.toUpperCase())
+    if (queryParams.product_type || queryParams.category) parts.push((queryParams.product_type || queryParams.category)!.toUpperCase())
+    if (queryParams.material) parts.push(queryParams.material.toUpperCase())
+    if (queryParams.collection) parts.push(queryParams.collection.toUpperCase())
     return parts.length ? parts.join(" · ") : config.title
   }
 
-  const breadcrumbs = [
-    { label: "Home", href: "/" },
-    { label: config.breadcrumb, href: `/${params.slug}` },
-  ]
+  const breadcrumbs = getBreadcrumbTrail(params.slug)
 
   return (
     <div className="min-h-screen bg-white">
@@ -125,9 +150,12 @@ export default function CategoryPageClient({ params, searchParams = {} }: Catego
             {breadcrumbs.map((crumb, index) => (
               <span key={index} className="flex items-center">
                 {index > 0 && <span className="mx-2">/</span>}
-                <button onClick={() => router.push(crumb.href)} className="hover:underline">
+                {/* <button onClick={() => router.push(crumb.href)} className="hover:underline">
                   {crumb.label}
-                </button>
+                </button> */}
+                <Link href={crumb.href} className="hover:underline">
+                  {crumb.label}
+                </Link>
               </span>
             ))}
           </div>
@@ -135,10 +163,14 @@ export default function CategoryPageClient({ params, searchParams = {} }: Catego
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl font-bold mb-2">
-                {generateAppliedFiltersTitle()}
+                {Object.keys(queryParams).length > 1
+                  ? generateAppliedFiltersTitle()
+                  : config.title !== "Products"
+                  ? config.title
+                  : formatSlugTitle(params.slug)}
                 <span className="text-gray-500 ml-2 text-lg font-normal">({meta.total_count})</span>
               </h1>
-              {Object.keys(searchParams).length === 0 && (
+              {Object.keys(queryParams).length === 1 && (
                 <p className="text-gray-600 max-w-4xl">{config.description}</p>
               )}
             </div>
@@ -153,7 +185,7 @@ export default function CategoryPageClient({ params, searchParams = {} }: Catego
             {config.tabs.map((tab) => (
               <button
                 key={tab.slug}
-                onClick={() => handleTabChange(tab.slug)}
+                onClick={() => handleTabChange(tab.href)}
                 className={`whitespace-nowrap pb-2 border-b-2 transition-colors ${
                   currentTab === tab.slug || params.slug === tab.slug
                     ? "border-black text-black font-medium"
@@ -168,13 +200,13 @@ export default function CategoryPageClient({ params, searchParams = {} }: Catego
       </div>
 
       {/* Applied Filters */}
-      {Object.keys(searchParams).length > 0 && (
+      {Object.keys(queryParams).length > 1 && (
         <div className="border-b bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm font-medium">Applied Filters:</span>
-              {Object.entries(searchParams).map(([key, value]) => {
-                if (key === "page") return null
+              {Object.entries(queryParams).map(([key, value]) => {
+                if (key === "slug" || key === "page") return null
                 if (typeof value === "string" && value.includes(",")) {
                   return value.split(",").map((val) => (
                     <Badge key={`${key}-${val}`} variant="secondary" className="flex items-center gap-1">
@@ -199,7 +231,12 @@ export default function CategoryPageClient({ params, searchParams = {} }: Catego
       )}
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 relative">
+        {loading && (
+          <div className="absolute inset-0 bg-white/60 flex justify-center items-center z-10">
+            <Loader2 className="w-8 h-8 animate-spin text-gray-700" />
+          </div>
+        )}
         <ProductGrid
           products={products}
           loading={loading}
@@ -215,7 +252,7 @@ export default function CategoryPageClient({ params, searchParams = {} }: Catego
         onClose={() => setShowFilters(false)}
         onApplyFilters={handleFilterChange}
         slug={params.slug}
-        currentFilters={searchParams}
+        currentFilters={queryParams}
       />
     </div>
   )

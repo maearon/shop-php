@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { BaseButton } from "@/components/ui/base-button"
 import ProductCarousel from "@/components/product-carousel"
-import { useProducts } from "@/hooks/useProducts"
 import { Product } from "@/types/product"
+import { useProducts } from "@/api/hooks/useProducts"
 
 type ProductTabsProps = {
   initialProductsByTab?: {

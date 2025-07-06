@@ -23,6 +23,7 @@ interface ProductCardProps {
     id: number
     name: string
     price: string
+    original_price?: string
     image?: string
     image_url?: string
     category?: string
@@ -85,7 +86,7 @@ export default function ProductCard({
   }
 
   return (
-    <Link href={product.url ?? "https://adidas-mocha.vercel.app/f50-messi-elite-firm-ground-cleats/JP5593.html"}>
+    <Link href={product.url ?? "/f50-messi-elite-firm-ground-cleats/JP5593.html"}>
       <Card className="flex flex-col justify-between border border-transparent hover:border-black transition-all shadow-none cursor-pointer rounded-none">
         <CardContent className="p-0 flex flex-col h-full">
           {/* Image Section */}
