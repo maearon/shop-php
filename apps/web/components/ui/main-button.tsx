@@ -37,18 +37,18 @@ export function MainButton({
   const hoverBg = isBlack ? "bg-black" : "bg-white"
   const text = isBlack ? "text-white" : "text-black"
   const hoverText = isBlack ? "hover:text-gray-500" : "hover:text-black"
-  const borderColor = isBlack ? "border-black" : "border-white" // for look good
-  const hoverBorder = isBlack ? "border-black" : "group-hover:border-gray-400"
+  const borderColor = isBlack ? "border-black" : "border-white"
+   const shadowBorderClass = isBlack
+  ? "border-black"
+  : "border-white group-hover:border-gray-400"
 
   return (
     <div className={cn("relative group", fullWidth && "w-full")}>
       {shadow && (
         <span
           className={cn(
-            "absolute inset-0 translate-x-[3px] translate-y-[3px] pointer-events-none z-0 transition-all border",
-            borderColor,
-            isBlack ? "border-black" : "group-hover:border-gray-400",
-            "group-active:translate-x-[3px] group-active:translate-y-[3px]"
+            "absolute inset-0 translate-x-[3px] translate-y-[3px] pointer-events-none z-0 transition-all border group-active:translate-x-[3px] group-active:translate-y-[3px]",
+            shadowBorderClass
           )}
         />
       )}

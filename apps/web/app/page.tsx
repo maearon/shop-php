@@ -181,6 +181,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-6">
           {popularCategories.slice(0, 6).map((category, index) => (
             <Button
+              shadow={false}
               key={`${category}-${index}`}
               variant="ghost"
               className="w-full justify-start text-left text-[44px] font-extrabold pb-10
