@@ -25,16 +25,16 @@ export default function HeroBanner({
 
 
   return (
-    <section className={cn("relative h-[80vh] bg-cover bg-top text-white", backgroundClassName)}>
-      <div className="relative z-10 container mx-auto px-1 sm:px-2 md:px-3 lg:px-10 xl:px-20 2xl:px-20 h-full flex items-end pb-11">
-        <div className="max-w-md">
+    <section className={cn("relative h-[83vh] bg-cover bg-top text-white mb-10", backgroundClassName)}>
+      <div className="relative z-10 container mx-auto px-10 sm:px-2 h-full flex items-end pb-11 sm:pb-20">
+        <div className="max-w-xl">
           {/* Title */}
-          <h1 className="inline-block bg-white text-black text-base sm:text-lg md:text-xl font-bold px-1.5 py-0.5 mb-2 tracking-tight">
+          <h1 className="block w-fit bg-white text-black text-base sm:text-lg md:text-xl font-bold px-1.5 py-0.5 mb-2 tracking-tight">
             {content.title}
           </h1>
 
           {/* Description */}
-          <p className="inline-block bg-white text-black text-xs sm:text-sm px-1.5 py-0.5 mb-4 leading-snug">
+          <p className="block w-fit bg-white text-black text-xs sm:text-sm px-1.5 py-0.5 mb-4 leading-snug">
             {content.description}
           </p>
 
