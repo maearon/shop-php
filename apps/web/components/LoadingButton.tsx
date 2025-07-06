@@ -18,8 +18,11 @@ export default function LoadingButton({
       className={cn("flex items-center gap-2", className)}
       {...props}
     >
-      {loading && <Loader2 className="size-5 animate-spin" />}
-      {props.children}
+      {loading ? (
+        <Loader2 className="size-5 animate-spin" />
+      ) : (
+        props.children
+      )}
     </BaseButton>
   );
 }
