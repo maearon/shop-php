@@ -1,17 +1,39 @@
+import { Optional } from "@/types/common"
 
+/** 👟 Size type (used in Product Variant and CartItem) */
+export interface Size {
+  id?: number
+  label?: string
+  system?: string
+  location?: string
+  created_at?: string
+  updated_at?: string
+  stock: number
+  isAvailable: boolean
+  name?: string // optional alias cho label nếu cần
+}
 
-// Product-related types
+/** 🎨 Product variant */
+export interface Variant {
+  id: number | string
+  color: string
+  price: number
+  original_price: number
+  sku?: string
+  stock?: number
+  sizes: Size[] // ✅ Sử dụng size chuẩn ở trên
+  product_id?: number
+  created_at?: string
+  updated_at?: string
+  images?: string[]
+  avatar_url?: string
+  image_url?: string
+  available?: boolean
+}
 
-import { Optional } from "@/types/common";
-import { Size, Variant } from "@/types/product";
-
-// TODO: Add code here...
-
-// 📁 @types/product.ts
-
-/** 🛍 Product entity */
+// 🛍 Product entity (thông tin đầy đủ)
 export interface Product {
-  id: number
+  id: number | string
   jan_code: string
   title: string
   name: string
@@ -33,55 +55,64 @@ export interface Product {
   installments: number
   created_at: string
   updated_at: string
-  image_url: string
+  image?: string
+  image_url?: string
   availableSizes: string[]
   collection: string
   badge: string
   variants: Variant[]
+  slug: string
+  reviews_count: number
+  average_rating: number
+  url?: string
+  model_number: string
 }
 
-/** 📄 Product listing response */
+// 📦 API response for product listing
 export interface ProductsResponse {
-  products: Product[];
+  products: Product[]
   meta: {
-    current_page: number;
-    total_pages: number;
-    total_count: number;
-    per_page: number;
-    filters_applied: Record<string, any>;
+    current_page: number
+    total_pages: number
+    total_count: number
+    per_page: number
+    filters_applied: Record<string, any>
     category_info: {
-      title: string;
-      breadcrumb: string;
-      description: string;
-    };
-  };
+      title: string
+      breadcrumb: string
+      description: string
+    }
+  }
 }
 
-/** 🧾 Product detail response */
+// 🧾 Product detail (kế thừa từ Product)
 export interface ProductDetails extends Product {
-  // Extend if needed
+  // Extend here if needed
 }
 
-/** 📝 Follow feature: product user follow data */
+// 👤 Product follow feature
 export interface ProductFollow {
-  readonly id: string;
-  name: string;
-  gravatar_id: string;
-  size: number;
-}
-
-export interface FollowResponse<ProductFollow, IProductFollow> {
-  products: ProductFollow[];
-  xproducts: ProductFollow[];
-  total_count: number;
-  product: IProductFollow;
+  readonly id: string
+  name: string
+  gravatar_id: string
+  size: number
 }
 
 export interface IProductFollow {
-  readonly id: string;
-  name: string;
-  followers: number;
-  following: number;
-  gravatar: string;
-  micropost: number;
+  readonly id: string
+  name: string
+  followers: number
+  following: number
+  gravatar: string
+  micropost: number
+}
+
+export interface FollowResponse<
+  TFollow = ProductFollow,
+  TProduct = IProductFollow
+> {
+  products: TFollow[]
+  xproducts: TFollow[]
+  total_count: number
+  product: TProduct
 }

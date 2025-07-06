@@ -1,28 +1,10 @@
 "use client"
+
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { BaseButton } from "@/components/ui/base-button"
 import { Button } from "@/components/ui/button"
 import ProductCard from "@/components/product-card"
-
-interface Product {
-  id: string
-  name: string
-  price: number
-  original_price?: number
-  brand: string
-  category: string
-  gender: string
-  sport: string
-  jan_code: string
-  model_number: string
-  description: string
-  badge?: string
-  image_url: string
-  variants: any[]
-  slug: string
-  reviews_count: number
-  average_rating: number
-  url?: string
-}
+import type { Product } from "@/types/product" // ✅ dùng chung type đã khai báo
 
 interface ProductGridProps {
   products: Product[]
@@ -37,16 +19,21 @@ interface ProductGridProps {
   slug: string
 }
 
-export default function ProductGrid({ products, loading, pagination, onPageChange, slug }: ProductGridProps) {
+export default function ProductGrid({
+  products,
+  loading,
+  pagination,
+  onPageChange,
+  slug,
+}: ProductGridProps) {
   if (loading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {Array.from({ length: 8 }).map((_, index) => (
-          <div key={index} className="animate-pulse">
-            <div className="bg-gray-200 aspect-square rounded-lg mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div key={index} className="animate-pulse space-y-2">
+            <div className="bg-gray-200 aspect-square rounded-lg" />
+            <div className="h-4 bg-gray-200 rounded w-3/4" />
+            <div className="h-4 bg-gray-200 rounded w-1/2" />
           </div>
         ))}
       </div>
@@ -67,14 +54,22 @@ export default function ProductGrid({ products, loading, pagination, onPageChang
       {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} slug={slug} />
+          <ProductCard
+            key={String(product.id)}
+            slug={slug}
+            product={{
+              ...product,
+              id: Number(product.id),
+              price: String(product.price),
+            }}
+          />
         ))}
       </div>
 
       {/* Pagination */}
       {pagination.total_pages > 1 && (
         <div className="flex items-center justify-center gap-4">
-          <Button
+          <BaseButton
             variant="outline"
             onClick={() => onPageChange(pagination.current_page - 1)}
             disabled={pagination.current_page <= 1}
@@ -82,16 +77,14 @@ export default function ProductGrid({ products, loading, pagination, onPageChang
           >
             <ChevronLeft className="w-4 h-4" />
             Previous
-          </Button>
+          </BaseButton>
 
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">
-              Page {pagination.current_page} of {pagination.total_pages}
-            </span>
-            <span className="text-sm text-gray-400">({pagination.total_count} total items)</span>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            Page <strong>{pagination.current_page}</strong> of {pagination.total_pages}
+            <span className="text-gray-400">({pagination.total_count} items)</span>
           </div>
 
-          <Button
+          <BaseButton
             variant="outline"
             onClick={() => onPageChange(pagination.current_page + 1)}
             disabled={pagination.current_page >= pagination.total_pages}
@@ -99,7 +92,7 @@ export default function ProductGrid({ products, loading, pagination, onPageChang
           >
             Next
             <ChevronRight className="w-4 h-4" />
-          </Button>
+          </BaseButton>
         </div>
       )}
     </div>

@@ -1,13 +1,24 @@
-// 🔧 /lib/mappers/product-to-wishlist.ts
-import { ProductData } from "@/types/product";
-import { WishlistItem } from "@/types/wish";
+// 📁 @/lib/mappers/product-to-wishlist.ts
 
-export function mapProductToWishItem(product: ProductData): WishlistItem {
+import type { WishlistItem } from "@/types/wish"
+
+interface PartialProductForWishlist {
+  id: number
+  name: string
+  price: string
+  image?: string
+  image_url?: string
+  category?: string
+  url?: string
+}
+
+export function mapProductToWishlistItem(product: PartialProductForWishlist): WishlistItem {
   return {
-    id: Number(product.id),
+    id: product.id,
     name: product.name,
-    price: String(product.pricing_information.currentPrice),
-    image: product.image_url,
-    category: product.attribute_list?.brand,
-  };
+    price: product.price,
+    image: product.image || product.image_url || "/placeholder.png",
+    category: product.category,
+    url: product.url,
+  }
 }

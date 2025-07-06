@@ -1,9 +1,61 @@
 "use client"
 
-import javaService from "@/api/services/javaService"
 import { useState, useEffect } from "react"
+import javaService from "@/api/services/javaService"
 import { Nullable } from "@/types/common"
-import { ProductFilters, ProductsResponse } from "@/types/product"
+import { ProductFilters, ProductsResponse, Product } from "@/types/product"
+
+// 👇 Fallback types (KHÔNG dùng Product / Variant / Size thật ở đây)
+interface FallbackSize {
+  name: string
+  stock: number
+  isAvailable: boolean
+}
+
+interface FallbackVariant {
+  id: string | number
+  color: string
+  price: number
+  original_price: number
+  sizes: FallbackSize[]
+  image_url?: string
+  available?: boolean
+}
+
+interface FallbackProduct {
+  id: number | string
+  name: string
+  title: string
+  jan_code: string
+  description: string
+  description_h5: string
+  specifications: string
+  care: string
+  gender: string
+  franchise: string
+  producttype: string
+  brand: string
+  category: string
+  sport: string
+  currencyId: string
+  currencyFormat: string
+  isFreeShipping: boolean
+  price: number
+  original_price: number
+  installments: number
+  created_at: string
+  updated_at: string
+  image: string
+  image_url: string
+  availableSizes: string[]
+  collection: string
+  badge: string
+  model_number: string
+  reviews_count: number
+  average_rating: number
+  slug: string
+  variants: FallbackVariant[]
+}
 
 export function useProducts(initialFilters: ProductFilters = {}) {
   const [data, setData] = useState<ProductsResponse | null>(null)
@@ -25,10 +77,11 @@ export function useProducts(initialFilters: ProductFilters = {}) {
       console.error("Failed to fetch products:", err)
       setError(err instanceof Error ? err.message : "Failed to fetch products")
 
-      // Fallback to mock data if API fails
       const mergedFilters = { ...filters, ...newFilters }
+
+      // 👇 ép kiểu rõ ràng fallback về Product[]
       setData({
-        products: generateFallbackProducts(filters.slug || "", 20),
+        products: generateFallbackProducts(filters.slug || "", 20) as unknown as Product[],
         meta: {
           current_page: 1,
           total_pages: 3,
@@ -57,7 +110,7 @@ export function useProducts(initialFilters: ProductFilters = {}) {
 
   useEffect(() => {
     fetchProducts(initialFilters)
-  }, []) // Only run on mount
+  }, [])
 
   return {
     data,
@@ -70,75 +123,68 @@ export function useProducts(initialFilters: ProductFilters = {}) {
   }
 }
 
-// Fallback functions for when API fails
-function generateFallbackProducts(slug: string, count: number) {
-  const products = []
+// ✅ Fallback mock data
+function generateFallbackProducts(slug: string, count: number): FallbackProduct[] {
+  const products: FallbackProduct[] = []
 
   for (let i = 1; i <= count; i++) {
-    let name = ""
-    let price = 0
-
-    if (slug.includes("soccer") && slug.includes("shoes")) {
-      const soccerShoes = [
-        "Predator Elite Firm Ground Cleats",
-        "X Crazyfast Elite Firm Ground Cleats",
-        "Copa Pure Elite Firm Ground Cleats",
-        "Nemeziz Messi Elite Firm Ground Cleats",
-        "F50 Elite Firm Ground Cleats",
-      ]
-      name = soccerShoes[i % soccerShoes.length]
-      price = Math.floor(Math.random() * 200) + 100
-    } else if (slug.includes("tops")) {
-      const tops = [
-        "Essentials 3-Stripes T-Shirt",
-        "Adicolor Classics Trefoil Tee",
-        "Training Tech T-Shirt",
-        "Run It 3-Stripes Tee",
-        "Badge of Sport Tee",
-      ]
-      name = tops[i % tops.length]
-      price = Math.floor(Math.random() * 80) + 20
-    } else {
-      name = `Product ${i}`
-      price = Math.floor(Math.random() * 150) + 50
-    }
+    const name = `Product ${i}`
+    const price = Math.floor(Math.random() * 150) + 50
 
     products.push({
       id: i,
       name,
-      price,
-      brand: "adidas",
-      category: slug.includes("shoes") ? "Shoes" : "Apparel",
-      gender: slug.includes("men") ? "Men" : slug.includes("women") ? "Women" : "Kids",
-      sport: slug.includes("soccer") ? "Soccer" : slug.includes("running") ? "Running" : "Lifestyle",
+      title: name,
       jan_code: `JAN${i.toString().padStart(6, "0")}`,
       description: `High-quality ${name.toLowerCase()} for your active lifestyle.`,
-      image_url: "/placeholder.svg?height=400&width=400",
-      variants: [
-        {
-          id: i * 10,
-          color: ["Black", "White", "Blue", "Red"][i % 4],
-          size: ["M"],
-          images: ["/placeholder.svg?height=400&width=400"],
-          product_id: i,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          sizes: [
-            { id: i * 100, label: "S", system: "US", available: true },
-            { id: i * 100 + 1, label: "M", system: "US", available: true },
-            { id: i * 100 + 2, label: "L", system: "US", available: Math.random() > 0.3 },
-          ],
-        },
-      ],
-      slug: `${slug}-${i}`,
+      description_h5: "Comfortable and durable.",
+      specifications: "Made of synthetic material. Imported.",
+      care: "Hand wash cold. Do not bleach.",
+      gender: "Unisex",
+      franchise: "Main",
+      producttype: "Tops",
+      brand: "adidas",
+      category: "Clothing",
+      sport: "Lifestyle",
+      currencyId: "USD",
+      currencyFormat: "$",
+      isFreeShipping: true,
+      price,
+      original_price: price + 20,
+      installments: 4,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
+      image: "/placeholder.svg",
+      image_url: "/placeholder.svg",
+      availableSizes: ["S", "M", "L"],
+      collection: "2025 Spring",
+      badge: "New",
+      model_number: `MOD${i}`,
+      reviews_count: Math.floor(Math.random() * 100),
+      average_rating: parseFloat((Math.random() * 5).toFixed(1)),
+      slug: `${slug}-${i}`,
+      variants: [
+        {
+          id: `${i * 10}`,
+          color: ["Black", "White", "Blue", "Red"][i % 4],
+          price,
+          original_price: price + 20,
+          sizes: [
+            { name: "S", stock: 10, isAvailable: true },
+            { name: "M", stock: 5, isAvailable: true },
+            { name: "L", stock: 0, isAvailable: false },
+          ],
+          image_url: "/placeholder.svg",
+          available: true,
+        },
+      ],
     })
   }
 
   return products
 }
 
+// 📂 Fallback category info
 function getFallbackCategoryInfo(slug: string) {
   const categoryMap: Record<string, any> = {
     "men-soccer-shoes": {

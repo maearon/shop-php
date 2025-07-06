@@ -13,6 +13,7 @@ export interface WishlistItem {
   price: string
   image: string
   category?: string
+  url?:string
 }
 
 export interface WishlistState {
