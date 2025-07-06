@@ -11,7 +11,7 @@ import { Search, ShoppingBag, User, Heart, MenuIcon, LogOut, LogIn, ChevronDown 
 import { cn } from "@/lib/utils"
 import { useAppSelector } from "@/store/hooks"
 import MegaMenu from "./mega-menu"
-// import LoginModal from "./login-modal"
+import LoginModal from "./login-modal"
 import UserAccountSlideout from "./user-account-slideout"
 import AdidasLogo from "./adidas-logo"
 import type { AppDispatch } from "@/store/store"
@@ -369,7 +369,7 @@ export default function Header() {
         setSearchQuery={setSearchQuery}
         onSearch={handleSearchSubmit}
       />
-      {/*<LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />*/}
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <UserAccountSlideout isOpen={showUserSlideout} onClose={() => setShowUserSlideout(false)} />
     </>
   )

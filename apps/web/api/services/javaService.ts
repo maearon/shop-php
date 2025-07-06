@@ -14,6 +14,9 @@ import { ApiResponse } from "@/types/common"
 
 const javaService = {
   // Auth
+  checkEmail: (email: string): Promise<{ exists: boolean, user: { activated: boolean } }> =>
+    api.post("/check-email", { email }),
+
   login: (params: LoginParams): Promise<SessionResponse> =>
     api.post("/login", params),
 
