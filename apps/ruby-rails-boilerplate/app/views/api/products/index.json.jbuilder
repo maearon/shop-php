@@ -1,9 +1,8 @@
 json.products @products do |product|
   variant = product.variants.first
-  first_image = variant&.images&.first
 
   json.id product.id
-  json.jan_code product.jan_code
+  json.model_number product.model_number
   json.title product.name
   json.name product.name
   json.description product.description_p || product.description
@@ -13,7 +12,7 @@ json.products @products do |product|
 
   json.gender product.gender
   json.franchise product.franchise
-  json.producttype product.producttype
+  json.product_type product.product_type
   json.brand product.brand
   json.category product.category
   json.sport product.sport
@@ -22,28 +21,28 @@ json.products @products do |product|
   json.currencyFormat I18n.t("number.currency.format.unit", locale: locale.to_s)
   json.isFreeShipping true
 
-  json.availableSizes variant&.joins(:sizes).pluck('sizes.label').uniq || []
+  json.availableSizes variant&.sizes&.pluck(:label)&.uniq || []
   json.price variant&.price
-  json.original_price variant&.originalprice
+  json.compare_at_price variant&.compare_at_price
   json.installments variant&.stock
 
   json.created_at product.created_at
   json.updated_at product.updated_at
 
-  # 👇 Render tất cả variants
-  json.variants product.variants do |variant|
-    json.id variant.id
-    json.color variant.color
-    json.price variant.price
-    json.original_price variant.originalprice
-    json.sku variant.sku
-    json.stock variant.stock
-    json.sizes variant.joins(:sizes).pluck('sizes.label').uniq
-    json.product_id variant.product_id
-    json.created_at variant.created_at
-    json.updated_at variant.updated_at
+  # 🔁 Variants
+  json.variants product.variants do |v|
+    json.id v.id
+    json.color v.color
+    json.price v.price
+    json.compare_at_price v.compare_at_price
+    json.sku v.sku
+    json.stock v.stock
+    json.sizes v.sizes.pluck(:label).uniq
+    json.product_id v.product_id
+    json.created_at v.created_at
+    json.updated_at v.updated_at
 
-    json.images variant.images.map { |image|
+    json.images v.images.map { |image|
       begin
         url_for(image.variant(resize_to_limit: [500, 500]))
       rescue => e
@@ -54,10 +53,11 @@ json.products @products do |product|
       "#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{path}"
     }
 
+    # ✅ Variant avatar_url fallback
     avatar_path =
-      if variant.images.attached?
+      if v.avatar.attached?
         begin
-          url_for(variant.images.first.variant(resize_to_limit: [500, 500]))
+          url_for(v.avatar.variant(resize_to_limit: [500, 500]))
         rescue
           "/placeholder.svg?height=300&width=250"
         end
@@ -68,11 +68,11 @@ json.products @products do |product|
     json.avatar_url("#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{avatar_path}")
   end
 
-  # 👇 Ảnh đại diện là ảnh của variant đầu tiên
-  main_image_path =
-    if first_image.present?
+  # ✅ Product main image (from product.image)
+  image_path =
+    if product.image.attached?
       begin
-        url_for(first_image.variant(resize_to_limit: [500, 500]))
+        url_for(product.image.variant(resize_to_limit: [500, 500]))
       rescue
         "/placeholder.svg?height=300&width=250"
       end
@@ -80,9 +80,23 @@ json.products @products do |product|
       "/placeholder.svg?height=300&width=250"
     end
 
-  json.image_url("#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{main_image_path}")
+  # ✅ Hover image (from product.hover_image)
+  hover_path =
+    if product.hover_image.attached?
+      begin
+        url_for(product.hover_image.variant(resize_to_limit: [500, 500]))
+      rescue
+        "/placeholder.svg?height=300&width=250"
+      end
+    else
+      "/placeholder.svg?height=300&width=250"
+    end
+
+  json.image_url("#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{image_path}")
+  json.hover_image_url("#{request.ssl? ? 'https' : 'http'}://#{request.env['HTTP_HOST']}#{hover_path}")
 end
 
+# ✅ Meta block
 json.meta do
   json.current_page @products.current_page
   json.total_pages @products.total_pages

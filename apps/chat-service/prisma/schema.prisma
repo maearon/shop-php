@@ -63,37 +63,46 @@ model User {
 }
 
 model Product {
-  id               BigInt          @id @default(autoincrement())
-  name             String?         @db.VarChar
-  jan_code         String?         @db.VarChar
-  gender           String?         @db.VarChar
-  franchise        String?         @db.VarChar
-  producttype      String?         @db.VarChar
-  brand            String?         @db.VarChar
-  category         String?         @db.VarChar
-  sport            String?         @db.VarChar
-  description_h5   String?
-  description_p    String?
-  specifications   String?
-  care             String?
-  created_at       DateTime        @db.Timestamp(6)
-  updated_at       DateTime        @updatedAt @db.Timestamp(6)
-  cart_items       CartItem[]
-  guest_cart_items GuestCartItem[]
-  guest_wish_items GuestWishItem[]
-  order_items      OrderItem[]
-  reviews          Review[]
-  variants         Variant[]
-  wish_items       WishItem[]
+  id                      BigInt                    @id @default(autoincrement())
+  name                    String?                   @db.VarChar
+  model_number            String                    @unique(map: "index_products_on_model_number") @db.VarChar
+  gender                  String?                   @db.VarChar
+  franchise               String?                   @db.VarChar
+  product_type            String?                   @db.VarChar
+  brand                   String?                   @db.VarChar
+  category                String?                   @db.VarChar
+  sport                   String?                   @db.VarChar
+  description_h5          String?
+  description_p           String?
+  specifications          String?
+  care                    String?
+  created_at              DateTime                  @db.Timestamp(6)
+  updated_at              DateTime                  @updatedAt @db.Timestamp(6)
+  category_id             Int?
+  slug                    String?                   @unique(map: "index_products_on_slug") @db.VarChar
+  status                  String?                   @default("active") @db.VarChar
+  is_featured             Boolean?                  @default(false)
+  badge                   String?                   @db.VarChar
+  cart_items              CartItem[]
+  collaborations_products collaborations_products[]
+  guest_cart_items        GuestCartItem[]
+  guest_wish_items        GuestWishItem[]
+  order_items             OrderItem[]
+  categories              categories?               @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_products_category")
+  products_tags           products_tags[]
+  reviews                 Review[]
+  variants                Variant[]
+  wish_items              WishItem[]
 
+  @@index([category_id], map: "index_products_on_category_id")
   @@map("products")
 }
 
 model Variant {
   id               BigInt          @id @default(autoincrement())
   color            String?         @db.VarChar
-  price            Float?
-  originalprice    Float?
+  price            Float
+  compare_at_price Float?
   sku              String?
   stock            Int?
   product_id       BigInt
@@ -107,6 +116,7 @@ model Variant {
   product          Product         @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_19f8efee69")
   wish_items       WishItem[]
 
+  @@unique([product_id, color], map: "unique_product_color")
   @@index([product_id], map: "index_variants_on_product_id")
   @@map("variants")
 }
@@ -177,6 +187,9 @@ model Review {
   user_id    BigInt
   created_at DateTime @db.Timestamp(6)
   updated_at DateTime @updatedAt @db.Timestamp(6)
+  rating     Int?
+  status     String?  @default("approved") @db.VarChar
+  title      String?  @db.VarChar
   product    Product  @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_bedd9094d4")
 
   @@index([product_id], map: "index_reviews_on_product_id")
@@ -1041,6 +1054,84 @@ model users_for_mailer_tests {
   first_name                  String    @default("") @db.VarChar
   last_name                   String    @default("") @db.VarChar
   provider                    String?   @db.VarChar(50)
+}
+
+model categories {
+  id               Int          @id @default(autoincrement())
+  name             String       @db.VarChar
+  slug             String       @unique @db.VarChar
+  parent_id        Int?
+  created_at       DateTime?    @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?    @default(now()) @db.Timestamp(6)
+  categories       categories?  @relation("categoriesTocategories", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_categories categories[] @relation("categoriesTocategories")
+  products         Product[]
+}
+
+model collaborations {
+  id                      Int                       @id @default(autoincrement())
+  name                    String                    @unique @db.VarChar(100)
+  slug                    String                    @unique @db.VarChar(100)
+  description             String?
+  created_at              DateTime?                 @default(now()) @db.Timestamp(6)
+  updated_at              DateTime?                 @default(now()) @db.Timestamp(6)
+  collaborations_products collaborations_products[]
+}
+
+model collaborations_products {
+  product_id       Int
+  collaboration_id Int
+  collaborations   collaborations @relation(fields: [collaboration_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  products         Product        @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([product_id, collaboration_id])
+}
+
+model model_bases {
+  id          BigInt    @id @default(autoincrement())
+  name        String    @db.VarChar
+  slug        String    @unique @db.VarChar
+  description String?
+  image_url   String?   @db.VarChar
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
+  models      models[]
+
+  @@index([slug], map: "index_model_bases_on_slug")
+}
+
+model models {
+  id            BigInt      @id @default(autoincrement())
+  model_base_id BigInt
+  name          String      @db.VarChar
+  slug          String      @unique @db.VarChar
+  description   String?
+  release_date  DateTime?   @db.Date
+  hero_image    String?     @db.VarChar
+  tech_specs    Json?
+  created_at    DateTime?   @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?   @default(now()) @db.Timestamp(6)
+  model_bases   model_bases @relation(fields: [model_base_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([slug], map: "index_models_on_slug")
+}
+
+model products_tags {
+  id         Int       @id @default(autoincrement())
+  product_id Int
+  tag_id     Int
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  products   Product   @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tags       tags      @relation(fields: [tag_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model tags {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(255)
+  slug          String          @unique(map: "index_tags_on_slug") @db.VarChar(255)
+  created_at    DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?       @default(now()) @db.Timestamp(6)
+  products_tags products_tags[]
 }
 
 enum MessageType {

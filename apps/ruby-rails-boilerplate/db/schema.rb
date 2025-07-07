@@ -18,6 +18,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "GameType", ["mcq", "open_ended"]
   create_enum "MediaType", ["IMAGE", "VIDEO"]
+  create_enum "MessageType", ["TEXT", "IMAGE", "FILE"]
   create_enum "NotificationType", ["LIKE", "FOLLOW", "COMMENT"]
 
   create_table "Account", id: :text, force: :cascade do |t|
@@ -303,6 +304,32 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
     t.index ["user_id"], name: "idx_carts_user_id"
   end
 
+  create_table "categories", id: :serial, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.integer "parent_id"
+    t.datetime "created_at", default: -> { "now()" }
+    t.datetime "updated_at", default: -> { "now()" }
+
+    t.unique_constraint ["slug"], name: "categories_slug_key"
+  end
+
+  create_table "collaborations", id: :serial, force: :cascade do |t|
+    t.string "name", limit: 100, null: false
+    t.string "slug", limit: 100, null: false
+    t.text "description"
+    t.datetime "created_at", precision: nil, default: -> { "now()" }
+    t.datetime "updated_at", precision: nil, default: -> { "now()" }
+
+    t.unique_constraint ["name"], name: "collaborations_name_key"
+    t.unique_constraint ["slug"], name: "collaborations_slug_key"
+  end
+
+  create_table "collaborations_products", primary_key: ["product_id", "collaboration_id"], force: :cascade do |t|
+    t.integer "product_id", null: false
+    t.integer "collaboration_id", null: false
+  end
+
   create_table "comments", id: :text, force: :cascade do |t|
     t.text "content", null: false
     t.text "userId", null: false
@@ -406,12 +433,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
     t.index ["userId", "postId"], name: "likes_userId_postId_key", unique: true
   end
 
-  create_table "messages", force: :cascade do |t|
-    t.bigint "room_id", null: false
-    t.text "content"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "messages", id: :text, force: :cascade do |t|
+    t.text "content", null: false
+    t.enum "type", default: "TEXT", enum_type: "\"MessageType\""
+    t.text "room_id", null: false
+    t.text "user_id", null: false
+    t.timestamptz "created_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.timestamptz "updated_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.index ["room_id", "created_at"], name: "index_messages_on_room_id_and_created_at"
     t.index ["room_id"], name: "index_messages_on_room_id"
+    t.index ["user_id", "created_at"], name: "index_messages_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "microposts", force: :cascade do |t|
@@ -430,6 +462,31 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
     t.timestamptz "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "microposts_micropost_user_id_e146449e"
+  end
+
+  create_table "model_bases", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "description"
+    t.string "image_url"
+    t.datetime "created_at", precision: nil, default: -> { "now()" }
+    t.datetime "updated_at", precision: nil, default: -> { "now()" }
+    t.index ["slug"], name: "index_model_bases_on_slug"
+    t.unique_constraint ["slug"], name: "model_bases_slug_key"
+  end
+
+  create_table "models", force: :cascade do |t|
+    t.bigint "model_base_id", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "description"
+    t.date "release_date"
+    t.string "hero_image"
+    t.jsonb "tech_specs"
+    t.datetime "created_at", precision: nil, default: -> { "now()" }
+    t.datetime "updated_at", precision: nil, default: -> { "now()" }
+    t.index ["slug"], name: "index_models_on_slug"
+    t.unique_constraint ["slug"], name: "models_slug_key"
   end
 
   create_table "notifications", id: :text, force: :cascade do |t|
@@ -476,10 +533,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
 
   create_table "products", force: :cascade do |t|
     t.string "name"
-    t.string "jan_code"
+    t.string "model_number", null: false
     t.string "gender"
     t.string "franchise"
-    t.string "producttype"
+    t.string "product_type"
     t.string "brand"
     t.string "category"
     t.string "sport"
@@ -489,6 +546,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
     t.text "care"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "category_id"
+    t.string "slug"
+    t.string "status", default: "active"
+    t.boolean "is_featured", default: false
+    t.string "badge"
+    t.index ["category_id"], name: "index_products_on_category_id"
+    t.index ["model_number"], name: "index_products_on_model_number", unique: true
+    t.index ["slug"], name: "index_products_on_slug", unique: true
+    t.check_constraint "model_number::text ~ '^[A-Z0-9]+$'::text", name: "chk_model_number_format"
+    t.unique_constraint ["slug"], name: "products_slug_key"
+  end
+
+  create_table "products_tags", id: :serial, force: :cascade do |t|
+    t.integer "product_id", null: false
+    t.integer "tag_id", null: false
+    t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }
   end
 
   create_table "projects", force: :cascade do |t|
@@ -523,14 +596,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "rating"
+    t.string "status", default: "approved"
+    t.string "title"
     t.index ["product_id"], name: "index_reviews_on_product_id"
     t.index ["user_id"], name: "index_reviews_on_user_id"
+    t.check_constraint "rating >= 1 AND rating <= 5", name: "reviews_rating_check"
   end
 
-  create_table "rooms", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "rooms", id: :text, force: :cascade do |t|
+    t.text "name", null: false
+    t.text "type", default: "public", null: false
+    t.text "last_message"
+    t.timestamptz "last_message_at"
+    t.timestamptz "created_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.timestamptz "updated_at", default: -> { "CURRENT_TIMESTAMP" }
   end
 
   create_table "sessions", id: :text, force: :cascade do |t|
@@ -540,13 +620,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
   end
 
   create_table "sizes", id: :serial, force: :cascade do |t|
-    t.string "label", limit: 20, null: false
+    t.string "label", limit: 10, null: false
     t.string "system", limit: 20, null: false
+    t.string "location", limit: 10, null: false
     t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }
     t.datetime "updated_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }
-    t.string "location", limit: 10
-    t.index ["label", "system"], name: "idx_sizes_label_system"
-    t.unique_constraint ["label", "system", "location"], name: "sizes_label_system_location_key"
   end
 
   create_table "socialaccount_socialaccount", id: :integer, default: nil, force: :cascade do |t|
@@ -587,6 +665,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
     t.index ["account_id"], name: "socialaccount_socialtoken_account_id_951f210e"
     t.index ["app_id"], name: "socialaccount_socialtoken_app_id_636a42d7"
     t.unique_constraint ["app_id", "account_id"], name: "socialaccount_socialtoken_app_id_account_id_fca4e0ac_uniq"
+  end
+
+  create_table "tags", id: :serial, force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.string "slug", limit: 255, null: false
+    t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }
+    t.datetime "updated_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }
+    t.index ["slug"], name: "index_tags_on_slug", unique: true
+    t.unique_constraint ["slug"], name: "tags_slug_key"
   end
 
   create_table "tasks", force: :cascade do |t|
@@ -669,6 +756,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
     t.string "first_name", default: "", null: false
     t.string "last_name", default: "", null: false
     t.string "provider", limit: 50
+    t.text "avatar"
+    t.timestamptz "updatedAt", default: -> { "now()" }
     t.index ["email"], name: "index_admin_users_email_uniqueness", unique: true
     t.index ["googleId"], name: "users_googleId_key", unique: true
     t.index ["refresh_token"], name: "index_admin_users_refresh_token_uniqueness", unique: true
@@ -718,21 +807,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
     t.integer "stock", default: 0
     t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }
     t.datetime "updated_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }
-    t.index ["size_id"], name: "idx_variant_sizes_size_id"
-    t.index ["variant_id"], name: "idx_variant_sizes_variant_id"
-    t.unique_constraint ["variant_id", "size_id"], name: "variant_sizes_variant_id_size_id_key"
   end
 
   create_table "variants", force: :cascade do |t|
     t.string "color"
-    t.float "price"
-    t.float "originalprice"
+    t.float "price", null: false
+    t.float "compare_at_price"
     t.text "sku"
     t.integer "stock"
     t.bigint "product_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_variants_on_product_id"
+    t.unique_constraint ["product_id", "color"], name: "unique_product_color"
   end
 
   create_table "wish_items", force: :cascade do |t|
@@ -754,7 +841,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
   end
 
   add_foreign_key "Account", "users", column: "userId", name: "Account_userId_fkey", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "AspNetRoleClaims", "AspNetRoles", column: "RoleId", primary_key: "Id", name: "FK_AspNetRoleClaims_AspNetRoles_RoleId", on_delete: :cascade
   add_foreign_key "AspNetUserClaims", "AspNetUsers", column: "UserId", primary_key: "Id", name: "FK_AspNetUserClaims_AspNetUsers_UserId", on_delete: :cascade
   add_foreign_key "AspNetUserLogins", "AspNetUsers", column: "UserId", primary_key: "Id", name: "FK_AspNetUserLogins_AspNetUsers_UserId", on_delete: :cascade
   add_foreign_key "AspNetUserRoles", "AspNetRoles", column: "RoleId", primary_key: "Id", name: "FK_AspNetUserRoles_AspNetRoles_RoleId", on_delete: :cascade
@@ -781,6 +867,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
   add_foreign_key "cart_items", "products"
   add_foreign_key "cart_items", "variants"
   add_foreign_key "carts", "users", name: "fk_user", on_delete: :cascade
+  add_foreign_key "categories", "categories", column: "parent_id", name: "categories_parent_id_fkey"
+  add_foreign_key "collaborations_products", "collaborations", name: "collaborations_products_collaboration_id_fkey", on_delete: :cascade
+  add_foreign_key "collaborations_products", "products", name: "collaborations_products_product_id_fkey", on_delete: :cascade
   add_foreign_key "comments", "posts", column: "postId", name: "comments_postId_fkey", on_update: :cascade, on_delete: :cascade
   add_foreign_key "comments", "users", column: "userId", name: "comments_userId_fkey", on_update: :cascade, on_delete: :cascade
   add_foreign_key "django_admin_log", "accounts_user", column: "user_id", name: "django_admin_log_user_id_c564eba6_fk_accounts_user_id", deferrable: :deferred
@@ -795,9 +884,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
   add_foreign_key "guest_wish_items", "variants"
   add_foreign_key "likes", "posts", column: "postId", name: "likes_postId_fkey", on_update: :cascade, on_delete: :cascade
   add_foreign_key "likes", "users", column: "userId", name: "likes_userId_fkey", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "messages", "rooms"
+  add_foreign_key "messages", "rooms", name: "fk_room", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "messages", "users", name: "fk_user", on_update: :cascade, on_delete: :cascade
   add_foreign_key "microposts", "users"
   add_foreign_key "microposts_micropost", "accounts_user", column: "user_id", name: "microposts_micropost_user_id_e146449e_fk_accounts_user_id", deferrable: :deferred
+  add_foreign_key "models", "model_bases", column: "model_base_id", name: "models_model_base_id_fkey", on_delete: :cascade
   add_foreign_key "notifications", "posts", column: "postId", name: "notifications_postId_fkey", on_update: :cascade, on_delete: :cascade
   add_foreign_key "notifications", "users", column: "issuerId", name: "notifications_issuerId_fkey", on_update: :cascade, on_delete: :cascade
   add_foreign_key "notifications", "users", column: "recipientId", name: "notifications_recipientId_fkey", on_update: :cascade, on_delete: :cascade
@@ -806,6 +897,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
   add_foreign_key "order_items", "variants"
   add_foreign_key "post_media", "posts", column: "postId", name: "post_media_postId_fkey", on_update: :cascade, on_delete: :nullify
   add_foreign_key "posts", "users", column: "userId", name: "posts_userId_fkey", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "products", "categories", name: "fk_products_category"
+  add_foreign_key "products_tags", "products", name: "products_tags_product_id_fkey", on_delete: :cascade
+  add_foreign_key "products_tags", "tags", name: "products_tags_tag_id_fkey", on_delete: :cascade
   add_foreign_key "relationships_relationship", "accounts_user", column: "followed_id", name: "relationships_relati_followed_id_571ba2f9_fk_accounts_", deferrable: :deferred
   add_foreign_key "relationships_relationship", "accounts_user", column: "follower_id", name: "relationships_relati_follower_id_2f35aab6_fk_accounts_", deferrable: :deferred
   add_foreign_key "reviews", "products"

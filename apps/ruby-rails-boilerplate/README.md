@@ -1,5 +1,89 @@
 # Rails REST API + NextJS boilerplate 🇻🇳
 
+📋 PostgreSQL – Xem các cột trong bảng
+🔎 1. Cột trong bảng products
+```
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'products';
+```
+🧾 Tổng kết bảng products hiện có:
+```
+#	Column Name	Data Type
+1	id	bigint
+2	created_at	timestamp
+3	updated_at	timestamp
+4	gender	varchar
+5	franchise	varchar
+6	producttype	varchar
+7	brand	varchar
+8	category	varchar
+9	sport	varchar
+10	description_h5	text
+11	description_p	text
+12	specifications	text
+13	care	text
+14	name	varchar
+15	jan_code	varchar
+```
+🔎 2. Cột trong bảng variants
+```
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'variants';
+```
+🧾 Tổng kết bảng variants hiện có:
+```
+#	Column Name	Data Type
+1	id	bigint
+2	created_at	timestamp
+3	updated_at	timestamp
+4	price	double precision
+5	originalprice	double precision
+6	stock	integer
+7	product_id	bigint
+8	color	varchar
+9	sku	text
+```
+🔎 3. Cột trong bảng reviews
+```
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'reviews';
+```
+🧾 Tổng kết bảng reviews hiện có:
+```
+#	Column Name	Data Type
+1	id	bigint
+2	product_id	bigint
+3	user_id	bigint
+4	created_at	timestamp
+5	updated_at	timestamp
+6	content	text
+```
+🔎 4. Cột trong bảng variant_sizes (nếu bạn có bảng này)
+```
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'variant_sizes';
+```
+🧾 Tổng kết bảng variant_sizes hiện có:
+```
+#	Column Name	Data Type
+1	id	integer
+2	variant_id	bigint
+3	size_id	integer
+4	stock	integer
+5	created_at	timestamp
+6	updated_at	timestamp
+```
+🔎 5. Cột trong bảng categories (nếu có)
+```
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'categories';
+```
+
 
 https://guides.rubyonrails.org/association_basics.html
 https://stackoverflow.com/questions/11600928/when-to-use-a-has-many-through-relation-in-rails
@@ -69,7 +153,7 @@ maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails variants:assi
 maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:migrate:status | grep carts
 maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ bin/rails db:seed
 maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:migrate:status | grep carts
-maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ rails db:schema:dump
+maearon@maearon:~/code/shop-php/apps/ruby-rails-boilerplate$ bin/rails rails db:schema:dump
 
 RAILS_ENV=test rails db:drop db:create db:schema:load
 

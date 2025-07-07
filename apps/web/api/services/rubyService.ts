@@ -6,6 +6,7 @@ import { Product } from "@/types/product"
 export interface ProductQuery {
   slug: string
   page?: number       // 👈 đổi từ string => number
+  per_page?: number
   sort?: string
   gender?: string
   category?: string
