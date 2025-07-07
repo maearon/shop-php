@@ -67,7 +67,7 @@ export function useProducts(filters: ProductFilters = {}) {
       setError(null)
 
       const response = await rubyService.getProducts(filters as any)
-      setData(response.data)
+      setData(response)
     } catch (err) {
       console.error("Failed to fetch products:", err)
       setError(err instanceof Error ? err.message : "Failed to fetch products")

@@ -1,10 +1,7 @@
 module Api
   class ProductsController < Api::ApiController
-    include ResponsesHandler
-
-    before_action :authenticate!, except: %i[index show filters]
+    before_action :authenticate!, except: %i[index]
     before_action :set_product, only: %i[update destroy]
-    before_action :set_cors_headers
 
     PRODUCT_INCLUDES = {
       image_attachment: :blob,
@@ -18,15 +15,15 @@ module Api
 
     # GET /api/products
     def index
-      products = Product.includes(PRODUCT_INCLUDES)
-      products = Products::FilterService.new(products, params).apply
-      products = Products::SortService.new(products, params[:sort]).call
-      products = products.page(params[:page]).per(params[:per_page] || 20)
+      @products = Product.includes(PRODUCT_INCLUDES)
+      @products = Products::FilterService.new(@products, params).apply
+      @products = Products::SortService.new(@products, params[:sort]).call
+      @products = @products.page(params[:page]).per(params[:per_page] || 20)
 
-      render json: {
-        products: products,
-        meta: Products::MetaService.new(products, params).call
-      }
+      # render json: {
+      #   products: products,
+      #   meta: Products::MetaService.new(products, params).call
+      # }
     end
 
     # GET /api/products/:model_number
