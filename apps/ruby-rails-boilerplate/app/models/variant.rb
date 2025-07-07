@@ -45,7 +45,7 @@ class Variant < ApplicationRecord
   validates :compare_at_price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :stock, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
 
-  validates :sku, uniqueness: true, allow_blank: true
+  validates :variant_code, uniqueness: true, allow_blank: true
 
   validates :avatar,
             content_type: { in: %w[image/jpeg image/gif image/png],

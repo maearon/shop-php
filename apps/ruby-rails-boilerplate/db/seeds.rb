@@ -65,6 +65,12 @@ PRODUCTS_IMAGE_DIR = Rails.root.join("app/assets/images/products")
   category     = categories.sample
   name         = "#{brand} #{producttype} #{i + 1}"
 
+  model_base = ModelBase.order("RANDOM()").first
+
+  model = Model.find_or_create_by!(name: "#{brand} #{producttype} Model #{i + 1}") do |m|
+    m.model_base = model_base
+  end
+
   product = Product.create!(
     name: name,
     model_number: model_number,
@@ -74,8 +80,8 @@ PRODUCTS_IMAGE_DIR = Rails.root.join("app/assets/images/products")
     brand: brand,
     category: category,
     sport: sport,
-    model_base: ModelBase.order("RANDOM()").first,
-    model: Model.find_or_create_by!(name: "#{brand} #{producttype} Model #{i + 1}"),
+    model_base_id: model_base.id,
+    model: model,
     collaboration: Collaboration.order("RANDOM()").first,
     tag_ids: Tag.order("RANDOM()").limit(2).pluck(:id),
     description_h5: "#{producttype} for #{sport} by #{brand}",
@@ -96,7 +102,7 @@ PRODUCTS_IMAGE_DIR = Rails.root.join("app/assets/images/products")
       color: color,
       price: rand(40.0..150.0).round(2),
       compare_at_price: rand(160.0..250.0).round(2),
-      sku: "SKU#{i + 1}-#{color[0..1].upcase}",
+      variant_code: "VC#{i + 1}-#{color[0..1].upcase}-#{SecureRandom.hex(2)}",
       stock: rand(5..30)
     )
 

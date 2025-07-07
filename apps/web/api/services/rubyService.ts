@@ -47,6 +47,9 @@ export type ProductListResponse = ApiResponse<ProductListData>
 const rubyService = {
   getProducts: (params: ProductQuery): Promise<ProductListResponse> =>
     api.get("/products", { params }),
+
+  getProductDetail: (slug: string, modelNumber: string): Promise<ApiResponse<Product>> =>
+  api.get(`/products/${slug}/${modelNumber}`),
 }
 
 export default rubyService

@@ -27,7 +27,7 @@ json.variant do
   json.color          cart_item.variant.color
   json.price          cart_item.variant.price
   json.originalprice  cart_item.variant.originalprice
-  json.sku            cart_item.variant.sku
+  json.variant_code            cart_item.variant.variant_code
   json.stock          cart_item.variant.stock
   json.product_id     cart_item.variant.product_id
   json.images cart_item.variant.images.map { |image|

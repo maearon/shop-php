@@ -8,7 +8,10 @@ class Size < ApplicationRecord
 
   validates :label, presence: true
   validates :system, presence: true
-  validates :stock, presence: true, numericality: { greater_than_or_equal_to: 0 }
+
+  def total_stock
+    variant_sizes.sum(:stock)
+  end
 
   def self.ransackable_attributes(auth_object = nil)
     %w[id label system stock variant_id created_at updated_at]

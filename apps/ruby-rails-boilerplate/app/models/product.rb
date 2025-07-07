@@ -37,6 +37,11 @@ class Product < ApplicationRecord
   has_many :wish_items, dependent: :destroy
   has_many :order_items, dependent: :destroy
 
+  has_and_belongs_to_many :tags
+
+  belongs_to :model, optional: true
+  belongs_to :collaboration, optional: true # Thêm optional nếu không bắt buộc
+
   # Constants (based on seed usage)
   FRANCHISE     = %w[Alphabounce Tubular]
   BRAND         = %w[Adidas Nike Puma UnderArmour Reebok Asics Originals Athletics Essentials]

@@ -70,7 +70,7 @@
         <%= product.subcategory_id && !product.category_id  ?  'có subcategory nhưng ko có category' : '' %> 
     </td>
     <td><%= product.sport_id ? product.sport.sport_name: '' %></td>
-    <td><%= product.sku %></td>
+    <td><%= product.variant_code %></td>
     <td><%= product.stock %></td>
     <td><%= link_to 'Xem', product_path(product) %></td>
     <% if current_user.try(:admin?) %>

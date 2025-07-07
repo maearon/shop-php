@@ -35,7 +35,7 @@ json.products @products do |product|
     json.color v.color
     json.price v.price
     json.compare_at_price v.compare_at_price
-    json.sku v.sku
+    json.variant_code v.variant_code
     json.stock v.stock
     json.sizes v.sizes.pluck(:label).uniq
     json.product_id v.product_id

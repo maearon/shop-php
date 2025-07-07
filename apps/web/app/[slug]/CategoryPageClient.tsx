@@ -163,11 +163,13 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl font-bold mb-2">
+                
+                {formatSlugTitle(params.slug)}
                 {Object.keys(queryParams).length > 1
-                  ? generateAppliedFiltersTitle()
-                  : config.title !== "Products"
+                  ? "| " + generateAppliedFiltersTitle()
+                  : config.title !== "| Products"
                   ? config.title
-                  : formatSlugTitle(params.slug)}
+                  : "| " + formatSlugTitle(params.slug)}
                 <span className="text-gray-500 ml-2 text-lg font-normal">({meta.total_count})</span>
               </h1>
               {Object.keys(queryParams).length === 1 && (

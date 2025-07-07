@@ -308,10 +308,51 @@ ALTER TABLE variants RENAME COLUMN originalprice TO compare_at_price;
    bin/rails db:seed
 ```
 📌 Tổng kết:
-✅ 93 Product
+✅ 95 Product
 
-✅ Mỗi product có 4 Variant → 93 × 4 = 372 Variant
+✅ Mỗi product có 4 Variant → 93 × 4 + 4 + 4 = 380 Variant
 
 ✅ Mỗi variant có nhiều VariantSize tùy theo loại size
 
 Nếu bạn cần tính tổng số VariantSize hay ảnh được attach, mình cũng có thể thống kê.
+
+```
+ALTER TABLE products
+ADD COLUMN model_base_id BIGINT;
+
+-- Tùy chọn: thêm ràng buộc khóa ngoại nếu bạn muốn liên kết với bảng model_bases
+ALTER TABLE products
+ADD CONSTRAINT fk_products_model_base
+FOREIGN KEY (model_base_id)
+REFERENCES model_bases(id)
+ON DELETE SET NULL;
+
+```
+
+```
+
+
+ALTER TABLE products
+ADD COLUMN model_id BIGINT;
+
+ALTER TABLE products
+ADD CONSTRAINT fk_products_models
+FOREIGN KEY (model_id)
+REFERENCES models(id)
+ON DELETE SET NULL;
+```
+
+```
+ALTER TABLE products
+ADD COLUMN collaboration_id BIGINT;
+
+ALTER TABLE products
+ADD CONSTRAINT fk_products_collaborations
+FOREIGN KEY (collaboration_id)
+REFERENCES collaborations(id)
+ON DELETE SET NULL;
+```
+
+```
+ALTER TABLE variants RENAME COLUMN sku TO variant_code;
+```

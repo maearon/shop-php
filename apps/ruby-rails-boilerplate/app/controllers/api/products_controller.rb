@@ -1,7 +1,7 @@
 module Api
   class ProductsController < Api::ApiController
     before_action :authenticate!, except: %i[index show filters]
-    before_action :set_product, only: %i[show update destroy]
+    before_action :set_product, only: %i[update destroy]
     before_action :set_cors_headers
 
     def index
@@ -12,11 +12,18 @@ module Api
     end
 
     def show
-      product = Products::FindService.find_by_param(params[:id])
+      product = Product
+                  .includes(variants: [:sizes, images_attachments: :blob])
+                  .find_by!(model_number: params[:model_number])
+
       related_products = Products::RelatedProductsService.new(product).call
       breadcrumb = Products::BreadcrumbService.new(params[:slug]).call
 
-      render :show, locals: { product:, related_products:, breadcrumb: }
+      render json: {
+        data: product,
+        related_products: related_products,
+        breadcrumb: breadcrumb
+      }
     end
 
     def filters
@@ -51,7 +58,7 @@ module Api
     private
 
     def set_product
-      @product = Product.find(params[:id])
+      @product = Product.find_by!(model_number: params[:id])
     end
 
     def product_params

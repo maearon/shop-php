@@ -1,7 +1,7 @@
 json.products do
   json.array!(@products) do |product|
     json.id product.id
-    json.sku 12064273040195392
+    json.variant_code 12064273040195392
     json.title product.name
     json.description product.description_p
 

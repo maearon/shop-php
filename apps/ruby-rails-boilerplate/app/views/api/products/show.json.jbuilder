@@ -42,7 +42,7 @@ json.variants @product.variants do |variant|
   json.color variant.color
   json.price variant.price
   json.compare_at_price variant.compare_at_price
-  json.sku variant.sku
+  json.variant_code variant.variant_code
   json.stock variant.stock
   json.sizes variant.sizes.pluck(:label)
   json.product_id variant.product_id
