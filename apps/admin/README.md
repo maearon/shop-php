@@ -356,3 +356,10 @@ ON DELETE SET NULL;
 ```
 ALTER TABLE variants RENAME COLUMN sku TO variant_code;
 ```
+
+```
+ALTER TABLE products ADD COLUMN activity VARCHAR;
+ALTER TABLE products ADD COLUMN material VARCHAR;
+ALTER TABLE products ADD COLUMN collection VARCHAR;
+
+```

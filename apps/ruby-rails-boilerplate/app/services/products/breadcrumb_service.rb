@@ -3,26 +3,28 @@
 module Products
   class BreadcrumbService
     def initialize(slug)
-      @slug = slug
+      @slug = slug.to_s.strip
     end
 
     def call
-      return "Home" unless @slug.present?
+      return "Home" if @slug.blank?
 
-      predefined = {
-        'men-soccer-shoes' => "Home / Soccer / Shoes",
-        'women-running-shoes' => "Home / Women / Running / Shoes",
-        'men-tops' => "Home / Men / Clothing / Tops",
-        'women-tops' => "Home / Women / Clothing / Tops"
-      }
-
-      predefined[@slug] || default_breadcrumb
+      PREDEFINED_BREADCRUMBS.fetch(@slug, generate_fallback_breadcrumb)
     end
 
     private
 
-    def default_breadcrumb
-      "Home / " + @slug.to_s.split('-').map(&:capitalize).join(' / ')
+    PREDEFINED_BREADCRUMBS = {
+      'men-soccer-shoes'      => "Home / Men / Soccer / Shoes",
+      'women-running-shoes'   => "Home / Women / Running / Shoes",
+      'men-tops'              => "Home / Men / Apparel / Tops",
+      'women-tops'            => "Home / Women / Apparel / Tops",
+      'kids-running-cleats'   => "Home / Kids / Running / Cleats"
+    }.freeze
+
+    def generate_fallback_breadcrumb
+      segments = @slug.split('-').map(&:capitalize)
+      "Home / #{segments.join(' / ')}"
     end
   end
 end

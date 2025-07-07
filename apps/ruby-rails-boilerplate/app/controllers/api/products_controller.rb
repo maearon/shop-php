@@ -1,58 +1,77 @@
 module Api
   class ProductsController < Api::ApiController
+    include ResponsesHandler
+
     before_action :authenticate!, except: %i[index show filters]
     before_action :set_product, only: %i[update destroy]
     before_action :set_cors_headers
 
+    PRODUCT_INCLUDES = {
+      image_attachment: :blob,
+      hover_image_attachment: :blob,
+      variants: [
+        :sizes,
+        { images_attachments: :blob },
+        { avatar_attachment: :blob }
+      ]
+    }.freeze
+
+    # GET /api/products
     def index
-      products = Products::FindService.new(params).call
-      meta = Products::MetaService.new(products, params).call
-
-      render :index, locals: { products:, meta: }
-    end
-
-    def show
-      product = Product
-                  .includes(variants: [:sizes, images_attachments: :blob])
-                  .find_by!(model_number: params[:model_number])
-
-      related_products = Products::RelatedProductsService.new(product).call
-      breadcrumb = Products::BreadcrumbService.new(params[:slug]).call
+      products = Product.includes(PRODUCT_INCLUDES)
+      products = Products::FilterService.new(products, params).apply
+      products = Products::SortService.new(products, params[:sort]).call
+      products = products.page(params[:page]).per(params[:per_page] || 20)
 
       render json: {
-        data: product,
-        related_products: related_products,
-        breadcrumb: breadcrumb
+        products: products,
+        meta: Products::MetaService.new(products, params).call
       }
     end
 
-    def filters
-      base_products = Products::SlugFilterService.new(Product.includes(:variants), params[:slug]).call
-      filters = Products::FilterOptionsService.new(base_products).call
-      render json: filters
+    # GET /api/products/:model_number
+    def show
+      product = Product.includes(variants: [:sizes, images_attachments: :blob])
+                       .find_by!(model_number: params[:model_number])
+
+      render json: {
+        data: product,
+        related_products: Products::RelatedProductsService.new(product).call,
+        breadcrumb: Products::BreadcrumbService.new(params[:slug]).call
+      }
     end
 
+    # GET /api/products/filters?slug=...
+    def filters
+      base_scope = Products::SlugFilterService.new(Product.includes(:variants), params[:slug]).call
+      render json: Products::FilterOptionsService.new(base_scope).call
+    end
+
+    # POST /api/products
     def create
       product = Product.new(product_params)
+
       if product.save
         Rabbitmq::ProductEventPublisher.publish(product)
-        render json: product, status: :created
+        response201(option_data: { data: product })
       else
-        response422_with_error(product.errors.messages)
+        response422_with_error(product.errors.full_messages)
       end
     end
 
+    # PUT /api/products/:id
     def update
       if @product.update(product_params)
-        render json: @product, status: :ok
+        response200(option_data: { data: @product })
       else
-        response422_with_error(@product.errors.messages)
+        response422_with_error(@product.errors.full_messages)
       end
     end
 
+    # DELETE /api/products/:id
     def destroy
       @product.destroy
-      response200
+      response200(option_data: { message: "Deleted successfully" })
     end
 
     private
@@ -71,9 +90,9 @@ module Api
     end
 
     def set_cors_headers
-      response.headers['Access-Control-Allow-Origin'] = '*'
-      response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-      response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+      response.headers["Access-Control-Allow-Origin"] = "*"
+      response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+      response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     end
   end
 end

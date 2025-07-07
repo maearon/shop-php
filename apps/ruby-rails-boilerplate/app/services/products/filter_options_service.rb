@@ -8,12 +8,12 @@ module Products
 
     def call
       {
-        gender: count_for(:gender),
-        category: count_for(:category),
-        activity: count_for(:activity),
-        brand: count_for(:brand),
-        sport: count_for(:sport),
-        material: material_counts,
+        gender: generic_counts(:gender),
+        category: generic_counts(:category),
+        activity: generic_counts(:activity),
+        brand: generic_counts(:brand),
+        sport: generic_counts(:sport),
+        material: generic_counts(:material),
         colors: color_counts,
         sizes: size_counts,
         models: model_counts,
@@ -24,48 +24,67 @@ module Products
 
     private
 
-    def count_for(field)
-      @products.group(field).count.map do |value, count|
-        { value: value, label: value&.humanize, count: count }
-      end
-    end
-
-    def material_counts
-      @products.pluck(:material).compact.group_by(&:itself).transform_values(&:count).map do |material, count|
-        { value: material, label: material, count: count }
-      end
+    def generic_counts(field)
+      @products
+        .reorder(nil)
+        .group(field)
+        .count
+        .map do |value, count|
+          next if value.blank?
+          { value: value, label: value.to_s.humanize, count: count }
+        end
+        .compact
     end
 
     def color_counts
-      @products.joins(:variants).pluck('variants.color').compact.group_by(&:itself).transform_values(&:count).map do |color, count|
-        { value: color, label: color, count: count }
-      end
+      @products
+        .joins(:variants)
+        .pluck('variants.color')
+        .compact
+        .group_by(&:itself)
+        .transform_values(&:count)
+        .map { |color, count| { value: color, label: color, count: count } }
     end
 
     def size_counts
-      sizes = Hash.new(0)
-      @products.joins(:variants).pluck('variants.sizes').flatten.compact.each do |size|
-        sizes[size] += 1
-      end
-      sizes.map { |size, count| { value: size, label: size, count: count } }
+      size_labels = @products
+                      .joins(variants: :sizes)
+                      .pluck('sizes.label')
+                      .compact
+
+      size_labels
+        .group_by(&:itself)
+        .transform_values(&:count)
+        .map { |label, count| { value: label, label: label, count: count } }
     end
 
     def model_counts
-      @products.pluck(:model_number).compact.group_by(&:itself).transform_values(&:count).map do |model, count|
-        { value: model, label: model, count: count }
-      end
+      @products
+        .pluck(:model_number)
+        .compact
+        .group_by(&:itself)
+        .transform_values(&:count)
+        .map { |model, count| { value: model, label: model, count: count } }
     end
 
     def collection_counts
-      @products.pluck(:collection).compact.group_by(&:itself).transform_values(&:count).map do |col, count|
-        { value: col, label: col, count: count }
-      end
+      @products
+        .pluck(:collection)
+        .compact
+        .group_by(&:itself)
+        .transform_values(&:count)
+        .map { |c, count| { value: c, label: c, count: count } }
     end
 
     def price_range
+      prices = @products
+                 .joins(:variants)
+                 .pluck('variants.price')
+                 .compact
+
       {
-        min: @products.minimum(:price)&.to_i || 0,
-        max: @products.maximum(:price)&.to_i || 500
+        min: prices.min&.floor || 0,
+        max: prices.max&.ceil || 500
       }
     end
   end
