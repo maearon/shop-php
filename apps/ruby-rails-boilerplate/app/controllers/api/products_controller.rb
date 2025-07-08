@@ -1,6 +1,6 @@
 module Api
   class ProductsController < Api::ApiController
-    before_action :authenticate!, except: %i[index]
+    before_action :authenticate!, except: %i[index show]
     before_action :set_product, only: %i[update destroy]
 
     PRODUCT_INCLUDES = {
@@ -28,14 +28,23 @@ module Api
 
     # GET /api/products/:model_number
     def show
-      product = Product.includes(variants: [:sizes, images_attachments: :blob])
-                       .find_by!(model_number: params[:model_number])
+      raise ActiveRecord::RecordNotFound, "Missing variant_code" if params[:variant_code].blank?
 
-      render json: {
-        data: product,
-        related_products: Products::RelatedProductsService.new(product).call,
-        breadcrumb: Products::BreadcrumbService.new(params[:slug]).call
-      }
+      @variant = Variant.includes(:sizes, { images_attachments: :blob }, :product)
+                         .find_by!(variant_code: params[:variant_code])
+
+      # @product = Product.includes(variants: [:sizes, images_attachments: :blob])
+      #                  .find_by!(model_number: params[:model_number])
+
+      @product = @variant.product
+
+      @related_products = Products::RelatedProductsService.new(@product).call
+
+      # render json: {
+      #   data: product,
+      #   related_products: Products::RelatedProductsService.new(product).call,
+      #   breadcrumb: Products::BreadcrumbService.new(params[:slug]).call
+      # }
     end
 
     # GET /api/products/filters?slug=...

@@ -1,33 +1,27 @@
-import { notFound } from "next/navigation"
-import { soccerShoesData } from "@/data/soccer-shoes-data"
-import ProductDetailPageClient from "./ProductDetailPageClient"
+// app/[slug]/[model]/page.tsx
+
+import { notFound } from "next/navigation";
+import ProductDetailPageClient from "./ProductDetailPageClient";
 import { Suspense } from "react";
 import Loading from "@/components/loading";
-// import { fakeLastVisitedProducts } from "@/data/fake-last-visited-products"
 
 interface PageProps {
   params: {
     slug: string;
-    model: string;
+    variant_code: string;
   };
 }
 
 export default function ProductDetailPage({ params }: PageProps) {
-  const { slug, model } = params;
+  const { slug, variant_code } = params;
 
-  // Find product by model number
-  const product = soccerShoesData.find((p) => p.jan_code === params.model)
-  // const product = fakeLastVisitedProducts.find(
-  //   (item) => item.product.model_number === params.model
-  // )?.product
+  // Optional: fetch product data and return notFound() if invalid
+  // const product = await fetchProduct(slug, variant_code);
+  // if (!product) notFound();
 
-  if (!product) {
-    notFound()
-  }
-  
   return (
     <Suspense fallback={<Loading />}>
-      <ProductDetailPageClient product={product} />
+      <ProductDetailPageClient params={params} />
     </Suspense>
   );
 }

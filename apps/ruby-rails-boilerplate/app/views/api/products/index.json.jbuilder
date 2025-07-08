@@ -32,6 +32,7 @@ json.products @products do |product|
   # 🔁 Variants
   json.variants product.variants do |v|
     json.id v.id
+    json.variant_code v.variant_code
     json.color v.color
     json.price v.price
     json.compare_at_price v.compare_at_price

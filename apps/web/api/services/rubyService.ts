@@ -48,7 +48,7 @@ const rubyService = {
   getProducts: (params: ProductQuery): Promise<ProductListData> =>
     api.get("/products", { params }),
 
-  getProductDetail: (slug: string, modelNumber: string): Promise<ApiResponse<Product>> =>
+  getProductBySlugAndVariant: (slug: string, modelNumber: string): Promise<Product> =>
   api.get(`/products/${slug}/${modelNumber}`),
 }
 

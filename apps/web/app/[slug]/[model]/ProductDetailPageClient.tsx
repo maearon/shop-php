@@ -14,12 +14,19 @@ import { toggleWishlist } from "@/store/wishlistSlice"
 import ExpandableImageGallery from "@/components/expandable-image-gallery"
 import { soccerShoesData } from "@/data/soccer-shoes-data"
 import HistoryView from "@/components/HistoryView"
+import Loading from "@/components/loading"
+import rubyService from "@/api/services/rubyService"
+
+// ... other imports remain
 
 type Props = {
-  product: Product
+  params: {
+    slug: string
+    variant_code: string
+  }
 }
 
-export default function ProductDetailPageClient({ product }: Props) {
+export default function ProductDetailPageClient({ params }: Props) {
   const dispatch = useAppDispatch()
   const wishlistItems = useAppSelector((state) => state.wishlist.items)
   const [selectedSize, setSelectedSize] = useState("")
@@ -31,6 +38,28 @@ export default function ProductDetailPageClient({ product }: Props) {
   })
   const [sizeError, setSizeError] = useState("")
   const [isSticky, setIsSticky] = useState(false)
+  const [product, setProduct] = useState<Product | null>(null)
+  const [loading, setLoading] = useState(true)
+  
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await rubyService.getProductBySlugAndVariant(
+          params.slug,
+          params.variant_code,
+        )
+        setProduct(data)
+      } catch (err) {
+        console.error("Failed to load product", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [params.slug, params.variant_code])
+
+  if (loading || !product) return <Loading />
 
   const isWishlisted = wishlistItems.some((item) => Number(item.id) === Number(product.id.toString()))
   const currentVariant = product.variants[selectedVariant]

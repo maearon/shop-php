@@ -17,6 +17,7 @@ import type {
 import { Breadcrumb } from "@/types/bread-crumb/bread-crumb"
 import { mapProductToWishlistItem } from "@/lib/mappers/product-to-wishlist"
 import { slugify } from "@/utils/slugtify"
+import { Variant } from "@/types/product"
 
 interface ProductCardProps {
   slug?: string // 👈 Thêm dòng này vào
@@ -58,6 +59,7 @@ interface ProductCardProps {
     }
     variation_list?: ProductVariation[]
     view_list?: ProductAsset[]
+    variants: Variant[]
   }
   showAddToBag?: boolean
   minimalMobile?: boolean
@@ -86,7 +88,7 @@ export default function ProductCard({
     )
   }
 
-  const fallbackUrl = `/${slugify(product.name)}/${product.model_number}.html`
+  const fallbackUrl = `/${slugify(product.name)}/${product.variants[0].variant_code}.html`
 
   return (
     <Link href={product.url ?? fallbackUrl}>

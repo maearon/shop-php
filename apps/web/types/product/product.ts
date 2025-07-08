@@ -19,6 +19,7 @@ export interface Variant {
   color: string
   price: number
   original_price: number
+  variant_code?: string
   sku?: string
   stock?: number
   sizes: Size[] // ✅ Sử dụng size chuẩn ở trên

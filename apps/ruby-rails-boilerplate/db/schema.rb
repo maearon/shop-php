@@ -551,6 +551,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
     t.string "status", default: "active"
     t.boolean "is_featured", default: false
     t.string "badge"
+    t.bigint "model_base_id"
+    t.bigint "model_id"
+    t.bigint "collaboration_id"
+    t.string "activity"
+    t.string "material"
+    t.string "collection"
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["model_number"], name: "index_products_on_model_number", unique: true
     t.index ["slug"], name: "index_products_on_slug", unique: true
@@ -813,7 +819,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
     t.string "color"
     t.float "price", null: false
     t.float "compare_at_price"
-    t.text "sku"
+    t.text "variant_code"
     t.integer "stock"
     t.bigint "product_id", null: false
     t.datetime "created_at", null: false
@@ -898,6 +904,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
   add_foreign_key "post_media", "posts", column: "postId", name: "post_media_postId_fkey", on_update: :cascade, on_delete: :nullify
   add_foreign_key "posts", "users", column: "userId", name: "posts_userId_fkey", on_update: :cascade, on_delete: :cascade
   add_foreign_key "products", "categories", name: "fk_products_category"
+  add_foreign_key "products", "collaborations", name: "fk_products_collaborations", on_delete: :nullify
+  add_foreign_key "products", "models", name: "fk_products_models", on_delete: :nullify
   add_foreign_key "products_tags", "products", name: "products_tags_product_id_fkey", on_delete: :cascade
   add_foreign_key "products_tags", "tags", name: "products_tags_tag_id_fkey", on_delete: :cascade
   add_foreign_key "relationships_relationship", "accounts_user", column: "followed_id", name: "relationships_relati_followed_id_571ba2f9_fk_accounts_", deferrable: :deferred

@@ -87,7 +87,6 @@ Rails.application.routes.draw do
     namespace :v1 do
       get "users", to: "users#index"
       get "products", to: "products#index"
-      get "products/:slug/:model_number", to: "products#show"
       get "wish", to: "wish#index"
       get "cart", to: "cart#index"
     end
@@ -97,6 +96,8 @@ Rails.application.routes.draw do
         get :filters
       end
     end
+
+    get "products/:slug/:variant_code", to: "products#show"
 
     resources :reviews, only: [:create, :update, :destroy]
     resources :cart_items, only: [:create, :update, :destroy]
