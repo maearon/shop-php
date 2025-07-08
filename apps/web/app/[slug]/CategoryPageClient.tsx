@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, SlidersHorizontal, Loader2 } from "lucide-react"
+import { ArrowLeft, SlidersHorizontal } from "lucide-react"
 
 import { BaseButton } from "@/components/ui/base-button"
 import { Badge } from "@/components/ui/badge"
@@ -12,6 +12,7 @@ import { getCategoryConfig, categoryConfigs, formatSlugTitle } from "@/utils/cat
 import type { ProductQuery } from "@/api/services/rubyService"
 import { useProducts } from "@/api/hooks/useProducts"
 import Link from "next/link"
+import Loading from "@/components/loading"
 
 interface CategoryPageClientProps {
   params: { slug: string }
@@ -235,8 +236,8 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8 relative">
         {loading && (
-          <div className="absolute inset-0 bg-white/60 flex justify-center items-center z-10">
-            <Loader2 className="w-8 h-8 animate-spin text-gray-700" />
+          <div className="absolute inset-0 bg-white/60 flex justify-center items-start z-10">
+            <Loading />
           </div>
         )}
         <ProductGrid

@@ -16,6 +16,7 @@ import type {
 } from "@/types/product/product-adidas"
 import { Breadcrumb } from "@/types/bread-crumb/bread-crumb"
 import { mapProductToWishlistItem } from "@/lib/mappers/product-to-wishlist"
+import { slugify } from "@/utils/slugtify"
 
 interface ProductCardProps {
   slug?: string // 👈 Thêm dòng này vào
@@ -85,8 +86,10 @@ export default function ProductCard({
     )
   }
 
+  const fallbackUrl = `/${slugify(product.name)}/${product.model_number}.html`
+
   return (
-    <Link href={product.url ?? "/f50-messi-elite-firm-ground-cleats/JP5593.html"}>
+    <Link href={product.url ?? fallbackUrl}>
       <Card className="flex flex-col justify-between border border-transparent hover:border-black transition-all shadow-none cursor-pointer rounded-none">
         <CardContent className="p-0 flex flex-col h-full">
           {/* Image Section */}

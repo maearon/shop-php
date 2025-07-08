@@ -14,7 +14,6 @@ import { toggleWishlist } from "@/store/wishlistSlice"
 import ExpandableImageGallery from "@/components/expandable-image-gallery"
 import { soccerShoesData } from "@/data/soccer-shoes-data"
 import HistoryView from "@/components/HistoryView"
-import { Card, CardContent } from "@/components/ui/card"
 
 type Props = {
   product: Product

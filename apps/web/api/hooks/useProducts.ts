@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, cache } from "react"
 import rubyService from "@/api/services/rubyService"
 import { Nullable } from "@/types/common"
 import { ProductFilters, ProductsResponse, Product } from "@/types/product"
@@ -61,7 +61,7 @@ export function useProducts(filters: ProductFilters = {}) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Nullable<string>>(null)
 
-  const fetchProducts = async () => {
+  const fetchProducts = cache(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -86,7 +86,7 @@ export function useProducts(filters: ProductFilters = {}) {
     } finally {
       setLoading(false)
     }
-  }
+  })
 
   useEffect(() => {
     fetchProducts()

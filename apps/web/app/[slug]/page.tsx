@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 import CategoryPageClient from "./CategoryPageClient"
+import Loading from "@/components/loading"
 
 interface CategoryPageProps {
   params: {
@@ -26,7 +27,7 @@ interface CategoryPageProps {
 
 export default function CategoryPage({ params, searchParams }: CategoryPageProps) {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading />}>
       <CategoryPageClient params={params} searchParams={searchParams} />
     </Suspense>
   )

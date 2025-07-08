@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation"
 import { soccerShoesData } from "@/data/soccer-shoes-data"
 import ProductDetailPageClient from "./ProductDetailPageClient"
+import { Suspense } from "react";
+import Loading from "@/components/loading";
 // import { fakeLastVisitedProducts } from "@/data/fake-last-visited-products"
 
 interface PageProps {
@@ -22,6 +24,10 @@ export default function ProductDetailPage({ params }: PageProps) {
   if (!product) {
     notFound()
   }
-
-  return <ProductDetailPageClient product={product} />
+  
+  return (
+    <Suspense fallback={<Loading />}>
+      <ProductDetailPageClient product={product} />
+    </Suspense>
+  );
 }
