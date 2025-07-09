@@ -16,6 +16,8 @@ interface FallbackVariant {
   sizes: FallbackSize[]
   image_url?: string
   available?: boolean
+  variant_code?: string
+  compare_at_price?: string
 }
 
 interface FallbackProduct {
@@ -142,6 +144,8 @@ function generateFallbackProducts(slug: string, count: number): FallbackProduct[
           color: ["Black", "White", "Blue", "Red"][i % 4],
           price,
           original_price: price + 20,
+          compare_at_price: String(price + 20),
+          variant_code: "VC95-BL-9fc5",
           sizes: [
             { name: "S", stock: 10, isAvailable: true },
             { name: "M", stock: 5, isAvailable: true },
