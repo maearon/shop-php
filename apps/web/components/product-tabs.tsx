@@ -5,6 +5,7 @@ import { BaseButton } from "@/components/ui/base-button"
 import ProductCarousel from "@/components/product-carousel"
 import { Product } from "@/types/product"
 import { useProducts } from "@/api/hooks/useProducts"
+import Loading from "@/components/loading"
 
 type ProductTabsProps = {
   initialProductsByTab?: {
@@ -21,7 +22,7 @@ const tabs = [
 export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState("new-arrivals")
 
-  const { data, loading, error } = useProducts({
+  const { data, isLoading, error, refetch } = useProducts({
     category: activeTab,
     limit: 4,
   })
@@ -34,6 +35,8 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
   const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label
   const activeTabInfo = tabs.find((tab) => tab.id === activeTab)
   const viewMoreHref = activeTabInfo ? `/${activeTabInfo.endpoint}` : undefined
+
+  if (isLoading || !products) return <Loading />
 
   return (
     <section className="container  mx-auto px-2 py-0 mb-10">
@@ -70,7 +73,7 @@ export default function ProductTabs({ initialProductsByTab }: ProductTabsProps) 
       </div>
 
       {/* Products Carousel */}
-      {loading ? (
+      {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="animate-pulse">

@@ -12,4 +12,5 @@ export interface ProductFilters {
   color?: string;
   page?: number;
   per_page?: number;
+  limit?: number;
 }

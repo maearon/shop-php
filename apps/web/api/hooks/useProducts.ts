@@ -1,9 +1,6 @@
-"use client"
-
-import { useState, useEffect, cache } from "react"
+import { useQuery } from "@tanstack/react-query"
 import rubyService from "@/api/services/rubyService"
-import { Nullable } from "@/types/common"
-import { ProductFilters, ProductsResponse, Product } from "@/types/product"
+import { Product, ProductFilters, ProductsResponse } from "@/types/product"
 
 interface FallbackSize {
   name: string
@@ -56,50 +53,31 @@ interface FallbackProduct {
   variants: FallbackVariant[]
 }
 
+const CACHE_TTL = 1000 * 60 * 5 // 5 phút
+
 export function useProducts(filters: ProductFilters = {}) {
-  const [data, setData] = useState<ProductsResponse | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<Nullable<string>>(null)
-
-  const fetchProducts = cache(async () => {
-    try {
-      setLoading(true)
-      setError(null)
-
-      const response = await rubyService.getProducts(filters as any)
-      setData(response)
-    } catch (err) {
-      console.error("Failed to fetch products:", err)
-      setError(err instanceof Error ? err.message : "Failed to fetch products")
-
-      setData({
-        products: generateFallbackProducts(filters.slug || "", 20) as unknown as Product[],
-        meta: {
-          current_page: 1,
-          total_pages: 3,
-          total_count: 60,
-          per_page: 20,
-          filters_applied: filters,
-          category_info: getFallbackCategoryInfo(filters.slug || ""),
-        },
-      })
-    } finally {
-      setLoading(false)
-    }
+  return useQuery({
+    queryKey: ["products", filters],
+    queryFn: () => rubyService.getProducts(filters as any),
+    staleTime: CACHE_TTL,
+    gcTime: CACHE_TTL * 2,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    retry: 1,
+    placeholderData: {
+      products: generateFallbackProducts(filters.slug || "", 20) as Product[],
+      meta: {
+        current_page: 1,
+        total_pages: 3,
+        total_count: 60,
+        per_page: 20,
+        filters_applied: filters,
+        category_info: getFallbackCategoryInfo(filters.slug || ""),
+      },
+    },
   })
-
-  useEffect(() => {
-    fetchProducts()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(filters)]) // Re-fetch khi filter thay đổi
-
-  return {
-    data,
-    loading,
-    error,
-    refetch: fetchProducts,
-  }
 }
+
 
 // ✅ Fallback mock data
 function generateFallbackProducts(slug: string, count: number): FallbackProduct[] {

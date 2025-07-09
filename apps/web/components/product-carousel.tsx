@@ -55,23 +55,31 @@ export default function ProductCarousel({
     if (currentSlide > 0) setCurrentSlide((prev) => prev - 1)
   }
 
-  // 👉 Nếu là mobile và không cần carousel
   if (!carouselModeInMobile && itemsPerView >= 6 && viewMoreHref) {
     return (
-      <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
-        {products.slice(0, 6).map((product) => (
-          <ProductCard key={product.id} product={product} minimalMobile={minimalMobileForProductCard} />
-        ))}
-        <div className="col-span-full mt-4 flex justify-center">
-          <BaseButton
-            variant="outline"
-            className="rounded-none border-black text-black font-bold hover:bg-gray-100"
-            onClick={() => (window.location.href = viewMoreHref || "/new-arrivals")}
-          >
-            VIEW ALL
-          </BaseButton>
+      <section className="container mx-auto px-2 py-0 mb-10">
+        {title && (
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-xl sm:text-2xl md:text-3xl xl:text-3xl font-extrabold tracking-tight leading-tight break-words">
+              {title}
+            </h2>
+          </div>
+        )}
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
+          {products.slice(0, 6).map((product) => (
+            <ProductCard key={product.id} product={product} minimalMobile={minimalMobileForProductCard} />
+          ))}
+          <div className="col-span-full mt-4 flex justify-center">
+            <BaseButton
+              variant="outline"
+              className="rounded-none border-black text-black font-bold hover:bg-gray-100"
+              onClick={() => (window.location.href = viewMoreHref || "/new-arrivals")}
+            >
+              VIEW ALL
+            </BaseButton>
+          </div>
         </div>
-      </div>
+      </section>
     )
   }
 
@@ -80,65 +88,71 @@ export default function ProductCarousel({
   const offset = `-${(100 / products.length) * itemsPerView * currentSlide}%`
 
   return (
-    <div
-      className="group relative overflow-hidden"
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-    >
-      {title && <h2 className="text-xl font-bold mb-8">{title}</h2>}
-
-      <div className="relative">
-        <motion.div
-          ref={containerRef}
-          className="flex gap-6 transition-transform duration-700 ease-in-out will-change-transform"
-          style={{
-            width: trackWidth,
-            transform: `translateX(${offset})`,
-          }}
-        >
-          {products.map((product) => (
-            <div key={product.id} style={{ width: itemWidth }}>
-              <ProductCard product={product} showAddToBag={showAddToBag} />
-            </div>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* Navigation Arrows */}
-      {hovering && totalSlides > 1 && (
-        <>
-          {currentSlide > 0 && (
-            <BaseButton
-              variant="outline"
-              size="icon"
-              className="absolute left-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
-              onClick={prevSlide}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </BaseButton>
-          )}
-          {currentSlide < totalSlides - 1 && (
-            <BaseButton
-              variant="outline"
-              size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
-              onClick={nextSlide}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </BaseButton>
-          )}
-        </>
-      )}
-
-      {/* Slide indicator bar (desktop only) */}
-      {showIndicators && totalSlides > 1 && (
-        <div className="mt-6 mx-auto w-full max-w-md h-1 bg-gray-200 overflow-hidden hidden sm:block">
-          <div
-            className="h-full bg-black transition-all duration-300"
-            style={{ width: `${((currentSlide + 1) / totalSlides) * 100}%` }}
-          />
+    <section className="container mx-auto px-2 py-0 mb-10">
+      {title && (
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-xl sm:text-2xl md:text-3xl xl:text-3xl font-extrabold tracking-tight leading-tight break-words">
+            {title}
+          </h2>
         </div>
       )}
-    </div>
+
+      <div
+        className="group relative overflow-hidden"
+        onMouseEnter={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+      >
+        <div className="relative">
+          <motion.div
+            ref={containerRef}
+            className="flex gap-6 transition-transform duration-700 ease-in-out will-change-transform"
+            style={{
+              width: trackWidth,
+              transform: `translateX(${offset})`,
+            }}
+          >
+            {products.map((product) => (
+              <div key={product.id} style={{ width: itemWidth }}>
+                <ProductCard product={product} showAddToBag={showAddToBag} />
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {hovering && totalSlides > 1 && (
+          <>
+            {currentSlide > 0 && (
+              <BaseButton
+                variant="outline"
+                size="icon"
+                className="absolute left-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
+                onClick={prevSlide}
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </BaseButton>
+            )}
+            {currentSlide < totalSlides - 1 && (
+              <BaseButton
+                variant="outline"
+                size="icon"
+                className="absolute right-2 top-1/2 -translate-y-1/2 border border-black bg-gray-50 hover:bg-white rounded-none"
+                onClick={nextSlide}
+              >
+                <ChevronRight className="h-5 w-5" />
+              </BaseButton>
+            )}
+          </>
+        )}
+
+        {showIndicators && totalSlides > 1 && (
+          <div className="mt-6 mx-auto w-full max-w-md h-1 bg-gray-200 overflow-hidden hidden sm:block">
+            <div
+              className="h-full bg-black transition-all duration-300"
+              style={{ width: `${((currentSlide + 1) / totalSlides) * 100}%` }}
+            />
+          </div>
+        )}
+      </div>
+    </section>
   )
 }

@@ -88,7 +88,7 @@ export default function ProductCard({
     )
   }
 
-  const fallbackUrl = `/${slugify(product.name)}/${product.variants[0].variant_code}.html`
+  const fallbackUrl = `/${slugify(product.name)}/${product?.variants?.[0]?.variant_code}.html`
 
   return (
     <Link href={product.url ?? fallbackUrl}>

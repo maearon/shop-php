@@ -56,7 +56,8 @@ export default function ExpandableImageGallery({ images, productName }: Expandab
     <div className="space-y-4">
       {/* Image Grid - 2x2 for first 4, minimal gaps, then expand to show all 10 */}
       <div className="grid grid-cols-2 gap-1">
-        {displayImages.map((image, index) => (
+        {Array.isArray(displayImages) && displayImages.length > 0 ? (
+        displayImages?.map((image, index) => (
           <div
             key={index}
             className="aspect-square bg-gray-100 overflow-hidden rounded-none group relative"
@@ -73,7 +74,8 @@ export default function ExpandableImageGallery({ images, productName }: Expandab
               }`}
             />
           </div>
-        ))}
+        ))
+        ): null}
       </div>
 
       {/* Show More/Less Button - Toggle between 4 and 10 images */}

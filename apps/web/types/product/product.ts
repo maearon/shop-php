@@ -18,7 +18,7 @@ export interface Variant {
   id: number | string
   color: string
   price: number
-  original_price: number
+  compare_at_price?: number
   variant_code?: string
   sku?: string
   stock?: number
@@ -26,6 +26,7 @@ export interface Variant {
   product_id?: number
   created_at?: string
   updated_at?: string
+  image_urls?: string[]
   images?: string[]
   avatar_url?: string
   image_url?: string

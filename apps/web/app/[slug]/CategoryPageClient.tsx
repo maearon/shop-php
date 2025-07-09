@@ -81,7 +81,7 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
     return query as ProductQuery
   }, [searchParams, params.slug])
 
-  const { data, loading } = useProducts(queryParams)
+  const { data, isLoading, error, refetch } = useProducts(queryParams)
 
   const products = data?.products || []
   const meta = data?.meta || {
@@ -235,14 +235,14 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8 relative">
-        {loading && (
+        {isLoading && (
           <div className="absolute inset-0 bg-white/60 flex justify-center items-start z-10">
             <Loading />
           </div>
         )}
         <ProductGrid
           products={products}
-          loading={loading}
+          loading={isLoading}
           pagination={meta}
           onPageChange={handlePageChange}
           slug={params.slug}

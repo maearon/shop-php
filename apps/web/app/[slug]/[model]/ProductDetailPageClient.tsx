@@ -1,34 +1,38 @@
-// ProductDetailPageClient.tsx
+// ProductDetailPageClient.tsx (full version with fixed state and API bindings)
 "use client"
 
-import { Product } from "@/types/product"
+import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
-import { useState, useEffect } from "react"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { addToCart } from "@/store/cartSlice"
+import { toggleWishlist } from "@/store/wishlistSlice"
 import { MainButton } from "@/components/ui/main-button"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Star, ChevronDown, ChevronUp, Heart, ArrowLeft } from "lucide-react"
-import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { addToCart } from "@/store/cartSlice"
-import { toggleWishlist } from "@/store/wishlistSlice"
 import ExpandableImageGallery from "@/components/expandable-image-gallery"
-import { soccerShoesData } from "@/data/soccer-shoes-data"
-import HistoryView from "@/components/HistoryView"
 import Loading from "@/components/loading"
-import rubyService from "@/api/services/rubyService"
+import HistoryView from "@/components/HistoryView"
+import { useProductDetail } from "@/api/hooks/useProductDetail"
+import { Product, Variant } from "@/types/product"
+import { soccerShoesData } from "@/data/soccer-shoes-data"
+import { slugify } from "@/utils/slugtify"
+import { useRouter } from "next/navigation"
+import ProductCarousel from "@/components/product-carousel"
 
-// ... other imports remain
 
 type Props = {
   params: {
     slug: string
-    variant_code: string
+    model: string
   }
 }
 
 export default function ProductDetailPageClient({ params }: Props) {
+  const router = useRouter()
   const dispatch = useAppDispatch()
   const wishlistItems = useAppSelector((state) => state.wishlist.items)
+
   const [selectedSize, setSelectedSize] = useState("")
   const [selectedVariant, setSelectedVariant] = useState(0)
   const [expandedSections, setExpandedSections] = useState({
@@ -38,56 +42,38 @@ export default function ProductDetailPageClient({ params }: Props) {
   })
   const [sizeError, setSizeError] = useState("")
   const [isSticky, setIsSticky] = useState(false)
-  const [product, setProduct] = useState<Product | null>(null)
-  const [loading, setLoading] = useState(true)
-  
+  const [isWishlisted, setIsWishlisted] = useState(false)
+  const [currentVariant, setCurrentVariant] = useState<any>(null)
+
+  const { data: product, isLoading, isError, error, refetch } = useProductDetail(params.slug, params.model)
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const data = await rubyService.getProductBySlugAndVariant(
-          params.slug,
-          params.variant_code,
-        )
-        setProduct(data)
-      } catch (err) {
-        console.error("Failed to load product", err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
-  }, [params.slug, params.variant_code])
+    if (!product) return
+    setIsWishlisted(wishlistItems.some((item) => Number(item.id) === Number(product.id)))
+    setCurrentVariant(product.variants[selectedVariant])
+  }, [product, selectedVariant, wishlistItems])
 
-  if (loading || !product) return <Loading />
+  const variant = useMemo<Variant | undefined>(() => {
+    return product?.variants.find((v) => v.variant_code === params.model)
+  }, [product, params.model])
 
-  const isWishlisted = wishlistItems.some((item) => Number(item.id) === Number(product.id.toString()))
-  const currentVariant = product.variants[selectedVariant]
+  const sizes = useMemo(() => {
+    return variant?.sizes ?? []
+  }, [variant])
 
-  // Enhanced sticky sidebar logic
   useEffect(() => {
     const handleScroll = () => {
-      if (window.innerWidth < 1024) return // Only on desktop
+      if (window.innerWidth < 1024) return
 
       const scrollTop = window.scrollY
-      const windowHeight = window.innerHeight
-      const documentHeight = document.documentElement.scrollHeight
-
       const leftColumn = document.getElementById("left-column")
       const rightColumn = document.getElementById("right-column")
       const footer = document.querySelector("footer")
 
       if (leftColumn && rightColumn && footer) {
-        const leftColumnRect = leftColumn.getBoundingClientRect()
         const leftColumnBottom = leftColumn.offsetTop + leftColumn.offsetHeight
-        const footerTop = footer.offsetTop
-        const rightColumnHeight = rightColumn.offsetHeight
-
-        const startSticky = 200
-        const stopSticky = leftColumnBottom - rightColumnHeight - 100
-
-        // Make sticky when scrolled past start point and before left column ends
-        setIsSticky(scrollTop > startSticky && scrollTop < stopSticky)
+        const stopSticky = leftColumnBottom - rightColumn.offsetHeight - 100
+        setIsSticky(scrollTop > 200 && scrollTop < stopSticky)
       }
     }
 
@@ -104,28 +90,29 @@ export default function ProductDetailPageClient({ params }: Props) {
       setSizeError("Please select your size")
       return
     }
-
     setSizeError("")
+    if (!product || !currentVariant) return
     dispatch(
       addToCart({
-        id: Number(product.id.toString()),
+        id: Number(product.id),
         name: product.name,
-        price: `$${product.price}`,
-        image: currentVariant.images[0],
-        color: currentVariant.color,
+        price: `$${variant?.price}`,
+        image: variant?.image_urls?.[0] || "/placeholder.png",
+        color: variant?.color,
         size: selectedSize,
-      }),
+      })
     )
   }
 
   const handleToggleWishlist = () => {
+    if (!product || !currentVariant) return
     dispatch(
       toggleWishlist({
-        id: Number(product.id.toString()),
+        id: Number(product.id),
         name: product.name,
-        price: `$${product.price}`,
-        image: currentVariant.images[0],
-      }),
+        price: `$${variant?.price}`,
+        image: variant?.image_urls?.[0] || "/placeholder.png",
+      })
     )
   }
 
@@ -144,6 +131,14 @@ export default function ProductDetailPageClient({ params }: Props) {
   const handleSizeSelect = (size: string) => {
     setSelectedSize(size)
     setSizeError("")
+  }
+
+  if (isLoading || !product) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Loading />
+      </div>
+    )
   }
 
   const relatedProducts = soccerShoesData.filter((p) => p.id !== product.id).slice(0, 4)
@@ -165,8 +160,8 @@ export default function ProductDetailPageClient({ params }: Props) {
       "adidas PRIMEKNIT collar",
       "Sprintframe 360 firm ground outsole",
       "Imported",
-      `Product color: ${currentVariant.color}`,
-      `Product code: ${product.jan_code}`,
+      `Product color: ${variant?.color}`,
+      `Product code: ${variant?.variant_code}`,
     ],
     sizeGuide: "True to size. We recommend ordering your usual size.",
     breadcrumb: "Home / Soccer / Shoes",
@@ -194,6 +189,140 @@ export default function ProductDetailPageClient({ params }: Props) {
     ],
   }
 
+  const fallbackUrl = `/${slugify(product.name)}/${product?.variants?.[0]?.variant_code}.html`
+  
+    // return (
+    //   <Link href={product.url ?? fallbackUrl}></Link>
+
+  // return (
+  //   <main className="container mx-auto px-4 py-4 lg:py-8">
+  //     <div className="lg:flex lg:gap-0 lg:items-start">
+  //       {/* Left */}
+  //       <div id="left-column" className="lg:w-[60%] lg:pr-8 lg:border-r border-gray-200">
+  //         <ExpandableImageGallery
+  //           images={variant.image_urls}
+  //           productName={product.name}
+  //         />
+  //       </div>
+
+  //       {/* Right */}
+  //       <div id="right-column" className="lg:w-[40%] lg:pl-8">
+  //         <div
+  //           className={`lg:transition-all lg:duration-300 ${
+  //             isSticky ? "lg:fixed lg:top-4 lg:w-[calc(40%-4rem)]" : "lg:static"
+  //           }`}
+  //         >
+  //           <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
+  //           <p className="text-xl font-bold mb-4">${product.price}</p>
+
+  //           {/* Variants */}
+  //           <div className="mb-4">
+  //             <h3 className="font-bold mb-2">Color: {currentVariant?.color}</h3>
+  //             <div className="flex gap-2">
+  //               {product.variants.map((variant, index) => (
+  //                 <button
+  //                   key={variant.id}
+  //                   onClick={() => setSelectedVariant(index)}
+  //                   className={`w-12 h-12 border-2 overflow-hidden ${
+  //                     selectedVariant === index ? "border-black" : "border-gray-300"
+  //                   }`}
+  //                 >
+  //                   <img src={variant.avatar_url} alt={variant.color} className="w-full h-full object-cover" />
+  //                 </button>
+  //               ))}
+  //             </div>
+  //           </div>
+
+  //           {/* Sizes */}
+  //           <div className="mb-4">
+  //             <h3 className="font-bold mb-2">Sizes</h3>
+  //             <div className="grid grid-cols-5 gap-2">
+  //               {sizes.map((size) => (
+  //                 <button
+  //                   key={size}
+  //                   onClick={() => handleSizeSelect(size)}
+  //                   className={`py-2 border text-sm ${
+  //                     selectedSize === size ? "bg-black text-white" : "hover:border-black"
+  //                   }`}
+  //                 >
+  //                   {size}
+  //                 </button>
+  //               ))}
+  //             </div>
+  //             {sizeError && <p className="text-red-600 text-sm mt-2">{sizeError}</p>}
+  //           </div>
+
+  //           {/* Buttons */}
+  //           <div className="flex gap-4 mb-6">
+  //             <MainButton onClick={handleAddToBag} fullWidth>
+  //               ADD TO BAG
+  //             </MainButton>
+  //             <button onClick={handleToggleWishlist} className="w-12 h-12 border border-black">
+  //               <Heart size={20} className={isWishlisted ? "fill-current" : ""} />
+  //             </button>
+  //           </div>
+
+  //           {/* Features */}
+  //           {/* <div className="space-y-2">
+  //             {product.features.map((feature, i) => (
+  //               <p key={i} className="text-sm text-gray-600">📦 {feature}</p>
+  //             ))}
+  //           </div> */}
+  //         </div>
+  //       </div>
+  //     </div>
+
+  //     {/* Accordion */}
+  //     <div className="my-12 border-t">
+  //       <div className="border-b">
+  //         <button onClick={() => toggleSection("description")} className="py-4 w-full flex justify-between">
+  //           <span>Description</span>
+  //           {expandedSections.description ? <ChevronUp /> : <ChevronDown />}
+  //         </button>
+  //         {expandedSections.description && <p className="pb-4 text-gray-600">{product.description}</p>}
+  //       </div>
+
+  //       <div className="border-b">
+  //         <button onClick={() => toggleSection("details")} className="py-4 w-full flex justify-between">
+  //           <span>Details</span>
+  //           {expandedSections.details ? <ChevronUp /> : <ChevronDown />}
+  //         </button>
+  //         {expandedSections.details && (
+  //           <ul className="pb-4 text-gray-600 space-y-2">
+  //             {product.description}
+  //             <li>• Product code: {product.jan_code}</li>
+  //             <li>• Color: {currentVariant?.color}</li>
+  //           </ul>
+  //         )}
+  //       </div>
+
+  //       <div className="border-b">
+  //         <button onClick={() => toggleSection("reviews")} className="py-4 w-full flex justify-between">
+  //           <span>Reviews ({product.review_count})</span>
+  //           {expandedSections.reviews ? <ChevronUp /> : <ChevronDown />}
+  //         </button>
+  //         {expandedSections.reviews && (
+  //           <div className="pb-4">
+  //             <p className="font-bold text-lg">Rating: {product.rating}/5</p>
+  //             <div className="flex mb-2">
+  //               {[...Array(5)].map((_, i) => (
+  //                 <Star
+  //                   key={i}
+  //                   size={16}
+  //                   className={i < Math.floor(product.rating) ? "fill-green-500 text-green-500" : "text-gray-300"}
+  //                 />
+  //               ))}
+  //             </div>
+  //             <p className="text-gray-600">Customer reviews coming soon.</p>
+  //           </div>
+  //         )}
+  //       </div>
+  //     </div>
+
+  //     {/* History */}
+  //     <HistoryView title="RECENTLY VIEWED ITEMS" showIndicatorsInProductCarousel={false} />
+  //   </main>
+  // )
   return (
     <div className="min-h-screen bg-white">
       
@@ -226,7 +355,12 @@ export default function ProductDetailPageClient({ params }: Props) {
               </div>
             )}
 
-            <ExpandableImageGallery images={product.variants.map((v) => v.images[0])} productName={product.name} />
+            <ExpandableImageGallery images={variant?.image_urls || [
+              "/placeholder.svg", 
+              "/placeholder.svg",
+              "/placeholder.svg",
+              "/placeholder.svg"
+            ]} productName={product.name} />
           </div>
 
           {/* Right Column - 40% Width - Product Info with Enhanced Sticky */}
@@ -256,9 +390,9 @@ export default function ProductDetailPageClient({ params }: Props) {
                   <p className="text-sm text-gray-600 mb-2">Soccer</p>
                   <h1 className="text-3xl font-bold mb-4 leading-tight">{product.name}</h1>
                   <div className="flex items-center space-x-2 mb-6">
-                    <span className="text-2xl font-bold">${product.price}</span>
-                    {product.original_price && (
-                      <span className="text-lg text-gray-500 line-through">${product.original_price}</span>
+                    <span className="text-2xl font-bold">${variant?.price}</span>
+                    {variant?.compare_at_price && (
+                      <span className="text-lg text-gray-500 line-through">${variant?.compare_at_price}</span>
                     )}
                   </div>
                   <p className="text-sm text-gray-600 mb-6">Promo codes will not apply to this product.</p>
@@ -282,23 +416,26 @@ export default function ProductDetailPageClient({ params }: Props) {
 
                 {/* Colors */}
                 <div>
-                  <h3 className="font-bold mb-3">{currentVariant.color}</h3>
+                  <h3 className="font-bold mb-3">{variant?.color}</h3>
                   <div className="flex gap-2">
-                    {product.variants.map((variant, index) => (
-                      <button
-                        key={variant.id}
-                        onClick={() => setSelectedVariant(index)}
-                        className={`w-12 h-12 rounded-none border-2 overflow-hidden ${
-                          selectedVariant === index ? "border-black" : "border-gray-300"
-                        }`}
-                      >
-                        <img
-                          src={variant.avatar_url || "/placeholder.svg"}
-                          alt={variant.color}
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    ))}
+                    {product.variants.map((v) => {
+                      const isActive = v.variant_code === params.model
+                      return (
+                        <Link
+                          key={v.id}
+                          href={`/${slugify(product.name)}/${v.variant_code}.html`}
+                          className={`w-12 h-12 rounded-none border-2 overflow-hidden block ${
+                            isActive ? "border-black" : "border-gray-300"
+                          }`}
+                        >
+                          <img
+                            src={v.image_urls?.[0] || "/placeholder.svg"}
+                            alt={v.color}
+                            className="w-full h-full object-cover"
+                          />
+                        </Link>
+                      )
+                    })}
                   </div>
                 </div>
 
@@ -508,13 +645,21 @@ export default function ProductDetailPageClient({ params }: Props) {
               </Card>
             ))}
           </div> */}
-          <HistoryView
+          {/* <HistoryViewrelated_products
                   title={
                     <>
                       COMPLETE THE LOOK
                     </>
                   }
-                />
+                /> */}
+
+          <ProductCarousel
+                    products={product?.related_products}
+                    title={"COMPLETE THE LOOK"}
+                    carouselModeInMobile={true}
+                    // viewMoreHref={viewMoreHref}
+                    minimalMobileForProductCard={true}
+                  />
         </div>
 
         {/* You May Also Like */}
@@ -537,13 +682,20 @@ export default function ProductDetailPageClient({ params }: Props) {
               </Card>
             ))}
           </div> */}
-          <HistoryView
+          {/* <HistoryView
                   title={
                     <>
                       YOU MAY ALSO LIKE
                     </>
                   }
-                />
+                /> */}
+          <ProductCarousel
+                    products={product?.related_products}
+                    title={"YOU MAY ALSO LIKE"}
+                    carouselModeInMobile={true}
+                    // viewMoreHref={viewMoreHref}
+                    minimalMobileForProductCard={true}
+                  />
         </div>
 
         {/* Recently Viewed Items */}
