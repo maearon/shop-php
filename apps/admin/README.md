@@ -245,7 +245,7 @@ CREATE TABLE collaborations (
 
 -- Bảng nối: 1 product có thể có nhiều collaboration
 CREATE TABLE collaborations_products (
-  product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  product_id BIGINT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
   collaboration_id INTEGER NOT NULL REFERENCES collaborations(id) ON DELETE CASCADE,
   PRIMARY KEY (product_id, collaboration_id)
 );
@@ -288,7 +288,7 @@ VALUES
 ```
 CREATE TABLE products_tags (
   id SERIAL PRIMARY KEY,
-  product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  product_id BIGINT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
   tag_id INTEGER NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

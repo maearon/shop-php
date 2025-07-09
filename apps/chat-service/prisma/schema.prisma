@@ -9,462 +9,6 @@ datasource db {
   directUrl = env("DATABASE_URL")
 }
 
-model User {
-  id                          String           @id @default(cuid())
-  name                        String?          @db.VarChar
-  username                    String           @unique
-  displayName                 String
-  email                       String?          @unique(map: "index_admin_users_email_uniqueness") @db.VarChar
-  refresh_token               String?          @unique(map: "index_admin_users_refresh_token_uniqueness") @db.VarChar
-  refresh_token_expiration_at DateTime?        @db.Timestamp(6)
-  created_at                  DateTime         @db.Timestamp(6)
-  createdAt                   DateTime         @default(now())
-  updated_at                  DateTime         @updatedAt @db.Timestamp(6)
-  password_digest             String?          @db.VarChar
-  passwordHash                String?
-  googleId                    String?          @unique
-  avatarUrl                   String?
-  bio                         String?
-  remember_digest             String?          @db.VarChar
-  admin                       Boolean?         @default(false)
-  activation_digest           String?          @db.VarChar
-  activated                   Boolean?         @default(false)
-  activated_at                DateTime?        @db.Timestamp(6)
-  reset_digest                String?          @db.VarChar
-  reset_sent_at               DateTime?        @db.Timestamp(6)
-  is_staff                    Boolean          @default(false)
-  is_active                   Boolean          @default(true)
-  date_joined                 DateTime         @default(now()) @db.Timestamptz(6)
-  last_login                  DateTime?        @db.Timestamptz(6)
-  is_superuser                Boolean          @default(false)
-  password                    String           @default("pbkdf2_sha256$720000$mf7gOJi6b6lcClmMxd0UaY$JEXwqKpSjnuNmBE42U9DFtjLO6x2fIPCnOQ9oA59iHo=") @db.VarChar
-  first_name                  String           @default("") @db.VarChar
-  last_name                   String           @default("") @db.VarChar
-  provider                    String?          @db.VarChar(50)
-  avatar                      String?
-  updatedAt                   DateTime?        @default(now()) @db.Timestamptz(6)
-  Account                     Account[]
-  Game                        Game[]
-  bookmarks                   Bookmark[]
-  carts                       Cart[]
-  comments                    Comment[]
-  following                   Follow[]         @relation("Following")
-  followers                   Follow[]         @relation("Followers")
-  likes                       Like[]
-  messages                    Message[]
-  microposts                  Micropost[]
-  issuedNotifications         Notification[]   @relation("Issuer")
-  receivedNotifications       Notification[]   @relation("Recipient")
-  posts                       Post[]
-  sessions                    Session[]
-  user_providers              user_providers[]
-
-  @@map("users")
-}
-
-model Product {
-  id                      BigInt                    @id @default(autoincrement())
-  name                    String?                   @db.VarChar
-  model_number            String                    @unique(map: "index_products_on_model_number") @db.VarChar
-  gender                  String?                   @db.VarChar
-  franchise               String?                   @db.VarChar
-  product_type            String?                   @db.VarChar
-  brand                   String?                   @db.VarChar
-  category                String?                   @db.VarChar
-  sport                   String?                   @db.VarChar
-  description_h5          String?
-  description_p           String?
-  specifications          String?
-  care                    String?
-  created_at              DateTime                  @db.Timestamp(6)
-  updated_at              DateTime                  @updatedAt @db.Timestamp(6)
-  category_id             Int?
-  slug                    String?                   @unique(map: "index_products_on_slug") @db.VarChar
-  status                  String?                   @default("active") @db.VarChar
-  is_featured             Boolean?                  @default(false)
-  badge                   String?                   @db.VarChar
-  cart_items              CartItem[]
-  collaborations_products collaborations_products[]
-  guest_cart_items        GuestCartItem[]
-  guest_wish_items        GuestWishItem[]
-  order_items             OrderItem[]
-  categories              categories?               @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_products_category")
-  products_tags           products_tags[]
-  reviews                 Review[]
-  variants                Variant[]
-  wish_items              WishItem[]
-
-  @@index([category_id], map: "index_products_on_category_id")
-  @@map("products")
-}
-
-model Variant {
-  id               BigInt          @id @default(autoincrement())
-  color            String?         @db.VarChar
-  price            Float
-  compare_at_price Float?
-  sku              String?
-  stock            Int?
-  product_id       BigInt
-  created_at       DateTime        @db.Timestamp(6)
-  updated_at       DateTime        @updatedAt @db.Timestamp(6)
-  cart_items       CartItem[]
-  guest_cart_items GuestCartItem[]
-  guest_wish_items GuestWishItem[]
-  order_items      OrderItem[]
-  variant_sizes    variant_sizes[]
-  product          Product         @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_19f8efee69")
-  wish_items       WishItem[]
-
-  @@unique([product_id, color], map: "unique_product_color")
-  @@index([product_id], map: "index_variants_on_product_id")
-  @@map("variants")
-}
-
-model Cart {
-  id         String   @id @default(dbgenerated("gen_random_uuid()"))
-  user_id    String
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user")
-
-  @@index([user_id], map: "idx_carts_user_id")
-  @@map("carts")
-}
-
-model CartItem {
-  id         BigInt   @id @default(autoincrement())
-  quantity   Int?
-  cart_id    BigInt
-  product_id BigInt
-  variant_id BigInt
-  created_at DateTime @db.Timestamp(6)
-  updated_at DateTime @updatedAt @db.Timestamp(6)
-  size       String?  @db.VarChar(255)
-  variant    Variant  @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_5e1fd37f08")
-  product    Product  @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_681a180e84")
-
-  @@index([size], map: "idx_cart_items_size")
-  @@index([cart_id], map: "index_cart_items_on_cart_id")
-  @@index([product_id], map: "index_cart_items_on_product_id")
-  @@index([variant_id], map: "index_cart_items_on_variant_id")
-  @@map("cart_items")
-}
-
-model Order {
-  id          BigInt      @id @default(autoincrement())
-  user_id     BigInt
-  created_at  DateTime    @db.Timestamp(6)
-  updated_at  DateTime    @updatedAt @db.Timestamp(6)
-  order_items OrderItem[]
-
-  @@index([user_id], map: "index_orders_on_user_id")
-  @@map("orders")
-}
-
-model OrderItem {
-  id         BigInt   @id @default(autoincrement())
-  quantity   Int?
-  order_id   BigInt
-  product_id BigInt
-  variant_id BigInt
-  created_at DateTime @db.Timestamp(6)
-  updated_at DateTime @updatedAt @db.Timestamp(6)
-  variant    Variant  @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_476172d337")
-  order      Order    @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_e3cb28f071")
-  product    Product  @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_f1a29ddd47")
-
-  @@index([order_id], map: "index_order_items_on_order_id")
-  @@index([product_id], map: "index_order_items_on_product_id")
-  @@index([variant_id], map: "index_order_items_on_variant_id")
-  @@map("order_items")
-}
-
-model Review {
-  id         BigInt   @id @default(autoincrement())
-  content    String?
-  product_id BigInt
-  user_id    BigInt
-  created_at DateTime @db.Timestamp(6)
-  updated_at DateTime @updatedAt @db.Timestamp(6)
-  rating     Int?
-  status     String?  @default("approved") @db.VarChar
-  title      String?  @db.VarChar
-  product    Product  @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_bedd9094d4")
-
-  @@index([product_id], map: "index_reviews_on_product_id")
-  @@index([user_id], map: "index_reviews_on_user_id")
-  @@map("reviews")
-}
-
-model Wishlist {
-  id         BigInt     @id @default(autoincrement())
-  user_id    BigInt
-  created_at DateTime   @db.Timestamp(6)
-  updated_at DateTime   @updatedAt @db.Timestamp(6)
-  wish_items WishItem[]
-
-  @@index([user_id], map: "index_wishes_on_user_id")
-  @@map("wishes")
-}
-
-model WishItem {
-  id         BigInt   @id @default(autoincrement())
-  wish_id    BigInt
-  product_id BigInt
-  variant_id BigInt
-  created_at DateTime @db.Timestamp(6)
-  updated_at DateTime @updatedAt @db.Timestamp(6)
-  variant    Variant  @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_5fe4dae293")
-  wishlist   Wishlist @relation(fields: [wish_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_6357d5ef81")
-  product    Product  @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_f4c6b03fcc")
-
-  @@index([product_id], map: "index_wish_items_on_product_id")
-  @@index([variant_id], map: "index_wish_items_on_variant_id")
-  @@index([wish_id], map: "index_wish_items_on_wish_id")
-  @@map("wish_items")
-}
-
-model GuestCart {
-  id               BigInt          @id @default(autoincrement())
-  created_at       DateTime        @db.Timestamp(6)
-  updated_at       DateTime        @updatedAt @db.Timestamp(6)
-  guest_cart_items GuestCartItem[]
-
-  @@map("guest_carts")
-}
-
-model GuestCartItem {
-  id            BigInt    @id @default(autoincrement())
-  quantity      Int?
-  guest_cart_id BigInt
-  product_id    BigInt
-  variant_id    BigInt
-  created_at    DateTime  @db.Timestamp(6)
-  updated_at    DateTime  @updatedAt @db.Timestamp(6)
-  size          String?   @db.VarChar(255)
-  guest_cart    GuestCart @relation(fields: [guest_cart_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_3bdfea312e")
-  product       Product   @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_4ba9457f5f")
-  variant       Variant   @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_603cdced22")
-
-  @@index([size], map: "idx_guest_cart_items_size")
-  @@index([guest_cart_id], map: "index_guest_cart_items_on_guest_cart_id")
-  @@index([product_id], map: "index_guest_cart_items_on_product_id")
-  @@index([variant_id], map: "index_guest_cart_items_on_variant_id")
-  @@map("guest_cart_items")
-}
-
-model GuestWishlist {
-  id               BigInt          @id @default(autoincrement())
-  created_at       DateTime        @db.Timestamp(6)
-  updated_at       DateTime        @updatedAt @db.Timestamp(6)
-  guest_wish_items GuestWishItem[]
-
-  @@map("guest_wishes")
-}
-
-model GuestWishItem {
-  id             BigInt        @id @default(autoincrement())
-  guest_wish_id  BigInt
-  product_id     BigInt
-  variant_id     BigInt
-  created_at     DateTime      @db.Timestamp(6)
-  updated_at     DateTime      @updatedAt @db.Timestamp(6)
-  variant        Variant       @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_5004853ca5")
-  guest_wishlist GuestWishlist @relation(fields: [guest_wish_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_df1d3a30db")
-  product        Product       @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_ed1f2f0948")
-
-  @@index([guest_wish_id], map: "index_guest_wish_items_on_guest_wish_id")
-  @@index([product_id], map: "index_guest_wish_items_on_product_id")
-  @@index([variant_id], map: "index_guest_wish_items_on_variant_id")
-  @@map("guest_wish_items")
-}
-
-model Session {
-  id        String   @id @default(cuid())
-  userId    String
-  expiresAt DateTime
-  payload   Json?
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
-}
-
-model TopicCount {
-  id    String @id @default(cuid())
-  topic String @unique
-  count Int
-
-  @@map("topic_count")
-}
-
-model Follow {
-  followerId  String
-  followingId String
-  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
-  following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
-
-  @@unique([followerId, followingId])
-  @@map("follows")
-}
-
-model Post {
-  id                  String         @id @default(cuid())
-  content             String
-  userId              String
-  createdAt           DateTime       @default(now())
-  expiresAt           DateTime?      @default(now()) @db.Timestamp(6)
-  bookmarks           Bookmark[]
-  comments            Comment[]
-  likes               Like[]
-  linkedNotifications Notification[]
-  attachments         Media[]
-  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("posts")
-}
-
-model Media {
-  id         String    @id @default(cuid())
-  postId     String?
-  media_type MediaType
-  url        String
-  createdAt  DateTime  @default(now())
-  post       Post?     @relation(fields: [postId], references: [id])
-
-  @@map("post_media")
-}
-
-model Comment {
-  id        String   @id @default(cuid())
-  content   String
-  userId    String
-  postId    String
-  createdAt DateTime @default(now())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("comments")
-}
-
-model Like {
-  userId String
-  postId String
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, postId])
-  @@map("likes")
-}
-
-model Bookmark {
-  id        String   @id @default(cuid())
-  userId    String
-  postId    String
-  createdAt DateTime @default(now())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, postId])
-  @@map("bookmarks")
-}
-
-model Notification {
-  id          String           @id @default(cuid())
-  recipientId String
-  issuerId    String
-  postId      String?
-  type        NotificationType
-  read        Boolean          @default(false)
-  createdAt   DateTime         @default(now())
-  issuer      User             @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
-  post        Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
-  recipient   User             @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
-
-  @@map("notifications")
-}
-
-model Micropost {
-  id         BigInt   @id @default(autoincrement())
-  content    String?
-  user_id    String
-  created_at DateTime @db.Timestamp(6)
-  updated_at DateTime @updatedAt @db.Timestamp(6)
-  user       User     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_558c81314b")
-
-  @@index([user_id], map: "index_microposts_on_user_id")
-  @@index([user_id, created_at], map: "index_microposts_on_user_id_and_created_at")
-  @@map("microposts")
-}
-
-model Room {
-  id              String    @id
-  name            String
-  type            String    @default("public")
-  last_message    String?
-  last_message_at DateTime? @db.Timestamptz(6)
-  created_at      DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime? @default(now()) @db.Timestamptz(6)
-  messages        Message[]
-
-  @@map("rooms")
-}
-
-model Message {
-  id         String       @id @default(cuid())
-  content    String
-  type       MessageType? @default(TEXT)
-  room_id    String
-  user_id    String
-  created_at DateTime?    @default(now()) @db.Timestamptz(6)
-  updated_at DateTime?    @default(now()) @db.Timestamptz(6)
-  room       Room         @relation(fields: [room_id], references: [id], onDelete: Cascade, map: "fk_room")
-  user       User         @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_user")
-
-  @@index([room_id], map: "index_messages_on_room_id")
-  @@index([room_id, created_at], map: "index_messages_on_room_id_and_created_at")
-  @@index([user_id], map: "index_messages_on_user_id")
-  @@index([user_id, created_at], map: "index_messages_on_user_id_and_created_at")
-  @@map("messages")
-}
-
-model Project {
-  id          BigInt   @id @default(autoincrement())
-  name        String?  @db.VarChar
-  description String?  @db.VarChar
-  created_at  DateTime @db.Timestamp(6)
-  updated_at  DateTime @updatedAt @db.Timestamp(6)
-  tasks       Task[]
-
-  @@map("projects")
-}
-
-model Task {
-  id          BigInt   @id @default(autoincrement())
-  description String?  @db.VarChar
-  done        Boolean?
-  project_id  BigInt?
-  created_at  DateTime @db.Timestamp(6)
-  updated_at  DateTime @updatedAt @db.Timestamp(6)
-  project     Project? @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_02e851e3b7")
-
-  @@index([project_id], map: "index_tasks_on_project_id")
-  @@map("tasks")
-}
-
-model Relationship {
-  id          BigInt   @id @default(autoincrement())
-  follower_id String?
-  followed_id String?
-  created_at  DateTime @db.Timestamp(6)
-  updated_at  DateTime @updatedAt @db.Timestamp(6)
-
-  @@unique([follower_id, followed_id], map: "index_relationships_on_follower_id_and_followed_id")
-  @@index([followed_id], map: "index_relationships_on_followed_id")
-  @@index([follower_id], map: "index_relationships_on_follower_id")
-  @@map("relationships")
-}
-
 model Account {
   id                String  @id
   userId            String
@@ -478,7 +22,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-  users             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  users             users   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -586,7 +130,7 @@ model Game {
   topic       String
   timeEnded   DateTime?
   gameType    GameType
-  users       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  users       users      @relation(fields: [userId], references: [id], onDelete: Cascade)
   Question    Question[]
 
   @@index([userId])
@@ -808,6 +352,87 @@ model auth_permission {
   @@index([content_type_id], map: "auth_permission_content_type_id_2f476e4b")
 }
 
+model bookmarks {
+  id        String   @id
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  posts     posts    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+model cart_items {
+  id         BigInt   @id @default(autoincrement())
+  quantity   Int?
+  cart_id    BigInt
+  product_id BigInt
+  variant_id BigInt
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+  size       String?  @db.VarChar(255)
+  variants   variants @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_5e1fd37f08")
+  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_681a180e84")
+
+  @@index([size], map: "idx_cart_items_size")
+  @@index([cart_id], map: "index_cart_items_on_cart_id")
+  @@index([product_id], map: "index_cart_items_on_product_id")
+  @@index([variant_id], map: "index_cart_items_on_variant_id")
+}
+
+model carts {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  user_id    String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user")
+
+  @@index([user_id], map: "idx_carts_user_id")
+}
+
+model categories {
+  id               Int          @id @default(autoincrement())
+  name             String       @db.VarChar
+  slug             String       @unique @db.VarChar
+  parent_id        Int?
+  created_at       DateTime?    @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?    @default(now()) @db.Timestamp(6)
+  categories       categories?  @relation("categoriesTocategories", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_categories categories[] @relation("categoriesTocategories")
+  products         products[]
+}
+
+model collaborations {
+  id                      Int                       @id @default(autoincrement())
+  name                    String                    @unique @db.VarChar(100)
+  slug                    String                    @unique @db.VarChar(100)
+  description             String?
+  created_at              DateTime?                 @default(now()) @db.Timestamp(6)
+  updated_at              DateTime?                 @default(now()) @db.Timestamp(6)
+  collaborations_products collaborations_products[]
+  products                products[]
+}
+
+model collaborations_products {
+  product_id       BigInt
+  collaboration_id Int
+  collaborations   collaborations @relation(fields: [collaboration_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  products         products       @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([product_id, collaboration_id])
+}
+
+model comments {
+  id        String   @id
+  content   String
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  posts     posts    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model django_admin_log {
@@ -871,6 +496,102 @@ model events_event {
   timestamp   DateTime @db.Timestamptz(6)
 }
 
+model follows {
+  followerId                       String
+  followingId                      String
+  users_follows_followerIdTousers  users  @relation("follows_followerIdTousers", fields: [followerId], references: [id], onDelete: Cascade)
+  users_follows_followingIdTousers users  @relation("follows_followingIdTousers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+}
+
+model guest_cart_items {
+  id            BigInt      @id @default(autoincrement())
+  quantity      Int?
+  guest_cart_id BigInt
+  product_id    BigInt
+  variant_id    BigInt
+  created_at    DateTime    @db.Timestamp(6)
+  updated_at    DateTime    @db.Timestamp(6)
+  size          String?     @db.VarChar(255)
+  guest_carts   guest_carts @relation(fields: [guest_cart_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_3bdfea312e")
+  products      products    @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_4ba9457f5f")
+  variants      variants    @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_603cdced22")
+
+  @@index([size], map: "idx_guest_cart_items_size")
+  @@index([guest_cart_id], map: "index_guest_cart_items_on_guest_cart_id")
+  @@index([product_id], map: "index_guest_cart_items_on_product_id")
+  @@index([variant_id], map: "index_guest_cart_items_on_variant_id")
+}
+
+model guest_carts {
+  id               BigInt             @id @default(autoincrement())
+  created_at       DateTime           @db.Timestamp(6)
+  updated_at       DateTime           @db.Timestamp(6)
+  guest_cart_items guest_cart_items[]
+}
+
+model guest_wish_items {
+  id            BigInt       @id @default(autoincrement())
+  guest_wish_id BigInt
+  product_id    BigInt
+  variant_id    BigInt
+  created_at    DateTime     @db.Timestamp(6)
+  updated_at    DateTime     @db.Timestamp(6)
+  variants      variants     @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_5004853ca5")
+  guest_wishes  guest_wishes @relation(fields: [guest_wish_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_df1d3a30db")
+  products      products     @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_ed1f2f0948")
+
+  @@index([guest_wish_id], map: "index_guest_wish_items_on_guest_wish_id")
+  @@index([product_id], map: "index_guest_wish_items_on_product_id")
+  @@index([variant_id], map: "index_guest_wish_items_on_variant_id")
+}
+
+model guest_wishes {
+  id               BigInt             @id @default(autoincrement())
+  created_at       DateTime           @db.Timestamp(6)
+  updated_at       DateTime           @db.Timestamp(6)
+  guest_wish_items guest_wish_items[]
+}
+
+model likes {
+  userId String
+  postId String
+  posts  posts  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  users  users  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+model messages {
+  id         String       @id
+  content    String
+  type       MessageType? @default(TEXT)
+  room_id    String
+  user_id    String
+  created_at DateTime?    @default(now()) @db.Timestamptz(6)
+  updated_at DateTime?    @default(now()) @db.Timestamptz(6)
+  rooms      rooms        @relation(fields: [room_id], references: [id], onDelete: Cascade, map: "fk_room")
+  users      users        @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_user")
+
+  @@index([room_id], map: "index_messages_on_room_id")
+  @@index([room_id, created_at], map: "index_messages_on_room_id_and_created_at")
+  @@index([user_id], map: "index_messages_on_user_id")
+  @@index([user_id, created_at], map: "index_messages_on_user_id_and_created_at")
+}
+
+model microposts {
+  id         BigInt   @id @default(autoincrement())
+  content    String?
+  user_id    String
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_558c81314b")
+
+  @@index([user_id], map: "index_microposts_on_user_id")
+  @@index([user_id, created_at], map: "index_microposts_on_user_id_and_created_at")
+}
+
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model microposts_micropost {
   id            BigInt        @id
@@ -882,6 +603,173 @@ model microposts_micropost {
   accounts_user accounts_user @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "microposts_micropost_user_id_e146449e_fk_accounts_user_id")
 
   @@index([user_id], map: "microposts_micropost_user_id_e146449e")
+}
+
+model model_bases {
+  id          BigInt    @id @default(autoincrement())
+  name        String    @db.VarChar
+  slug        String    @unique @db.VarChar
+  description String?
+  image_url   String?   @db.VarChar
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
+  models      models[]
+
+  @@index([slug], map: "index_model_bases_on_slug")
+}
+
+model models {
+  id            BigInt      @id @default(autoincrement())
+  model_base_id BigInt
+  name          String      @db.VarChar
+  slug          String      @unique @db.VarChar
+  description   String?
+  release_date  DateTime?   @db.Date
+  hero_image    String?     @db.VarChar
+  tech_specs    Json?
+  created_at    DateTime?   @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?   @default(now()) @db.Timestamp(6)
+  model_bases   model_bases @relation(fields: [model_base_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  products      products[]
+
+  @@index([slug], map: "index_models_on_slug")
+}
+
+model notifications {
+  id                                     String           @id
+  recipientId                            String
+  issuerId                               String
+  postId                                 String?
+  type                                   NotificationType
+  read                                   Boolean          @default(false)
+  createdAt                              DateTime         @default(now())
+  users_notifications_issuerIdTousers    users            @relation("notifications_issuerIdTousers", fields: [issuerId], references: [id], onDelete: Cascade)
+  posts                                  posts?           @relation(fields: [postId], references: [id], onDelete: Cascade)
+  users_notifications_recipientIdTousers users            @relation("notifications_recipientIdTousers", fields: [recipientId], references: [id], onDelete: Cascade)
+}
+
+model order_items {
+  id         BigInt   @id @default(autoincrement())
+  quantity   Int?
+  order_id   BigInt
+  product_id BigInt
+  variant_id BigInt
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+  variants   variants @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_476172d337")
+  orders     orders   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_e3cb28f071")
+  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_f1a29ddd47")
+
+  @@index([order_id], map: "index_order_items_on_order_id")
+  @@index([product_id], map: "index_order_items_on_product_id")
+  @@index([variant_id], map: "index_order_items_on_variant_id")
+}
+
+model orders {
+  id          BigInt        @id @default(autoincrement())
+  user_id     BigInt
+  created_at  DateTime      @db.Timestamp(6)
+  updated_at  DateTime      @db.Timestamp(6)
+  order_items order_items[]
+
+  @@index([user_id], map: "index_orders_on_user_id")
+}
+
+model post_media {
+  id         String    @id
+  postId     String?
+  media_type MediaType
+  url        String
+  createdAt  DateTime  @default(now())
+  posts      posts?    @relation(fields: [postId], references: [id])
+}
+
+model posts {
+  id            String          @id
+  content       String
+  userId        String
+  createdAt     DateTime        @default(now())
+  expiresAt     DateTime?       @default(now()) @db.Timestamp(6)
+  bookmarks     bookmarks[]
+  comments      comments[]
+  likes         likes[]
+  notifications notifications[]
+  post_media    post_media[]
+  users         users           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model products {
+  id                      BigInt                    @id @default(autoincrement())
+  name                    String?                   @db.VarChar
+  model_number            String                    @unique(map: "index_products_on_model_number") @db.VarChar
+  gender                  String?                   @db.VarChar
+  franchise               String?                   @db.VarChar
+  product_type            String?                   @db.VarChar
+  brand                   String?                   @db.VarChar
+  category                String?                   @db.VarChar
+  sport                   String?                   @db.VarChar
+  description_h5          String?
+  description_p           String?
+  specifications          String?
+  care                    String?
+  created_at              DateTime                  @db.Timestamp(6)
+  updated_at              DateTime                  @db.Timestamp(6)
+  category_id             Int?
+  slug                    String?                   @unique(map: "index_products_on_slug") @db.VarChar
+  status                  String?                   @default("active") @db.VarChar
+  is_featured             Boolean?                  @default(false)
+  badge                   String?                   @db.VarChar
+  model_base_id           BigInt?
+  model_id                BigInt?
+  collaboration_id        BigInt?
+  activity                String?                   @db.VarChar
+  material                String?                   @db.VarChar
+  collection              String?                   @db.VarChar
+  cart_items              cart_items[]
+  collaborations_products collaborations_products[]
+  guest_cart_items        guest_cart_items[]
+  guest_wish_items        guest_wish_items[]
+  order_items             order_items[]
+  categories              categories?               @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_products_category")
+  collaborations          collaborations?           @relation(fields: [collaboration_id], references: [id], onUpdate: NoAction, map: "fk_products_collaborations")
+  models                  models?                   @relation(fields: [model_id], references: [id], onUpdate: NoAction, map: "fk_products_models")
+  products_tags           products_tags[]
+  reviews                 reviews[]
+  variants                variants[]
+  wish_items              wish_items[]
+
+  @@index([category_id], map: "index_products_on_category_id")
+}
+
+model products_tags {
+  id         Int       @id @default(autoincrement())
+  product_id BigInt
+  tag_id     Int
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  products   products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tags       tags      @relation(fields: [tag_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model projects {
+  id          BigInt   @id @default(autoincrement())
+  name        String?  @db.VarChar
+  description String?  @db.VarChar
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+  tasks       tasks[]
+}
+
+model relationships {
+  id          BigInt   @id @default(autoincrement())
+  follower_id String?
+  followed_id String?
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+
+  @@unique([follower_id, followed_id], map: "index_relationships_on_follower_id_and_followed_id")
+  @@index([followed_id], map: "index_relationships_on_followed_id")
+  @@index([follower_id], map: "index_relationships_on_follower_id")
 }
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
@@ -898,8 +786,44 @@ model relationships_relationship {
   @@index([follower_id], map: "relationships_relationship_follower_id_2f35aab6")
 }
 
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model reviews {
+  id         BigInt   @id @default(autoincrement())
+  content    String?
+  product_id BigInt
+  user_id    BigInt
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+  rating     Int?
+  status     String?  @default("approved") @db.VarChar
+  title      String?  @db.VarChar
+  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_bedd9094d4")
+
+  @@index([product_id], map: "index_reviews_on_product_id")
+  @@index([user_id], map: "index_reviews_on_user_id")
+}
+
+model rooms {
+  id              String     @id
+  name            String
+  type            String     @default("public")
+  last_message    String?
+  last_message_at DateTime?  @db.Timestamptz(6)
+  created_at      DateTime?  @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime?  @default(now()) @db.Timestamptz(6)
+  messages        messages[]
+}
+
 model schema_migrations {
   version String @id @db.VarChar
+}
+
+model sessions {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  payload   Json?
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model sizes {
@@ -970,6 +894,27 @@ model socialaccount_socialtoken {
   @@index([app_id], map: "socialaccount_socialtoken_app_id_636a42d7")
 }
 
+model tags {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(255)
+  slug          String          @unique(map: "index_tags_on_slug") @db.VarChar(255)
+  created_at    DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?       @default(now()) @db.Timestamp(6)
+  products_tags products_tags[]
+}
+
+model tasks {
+  id          BigInt    @id @default(autoincrement())
+  description String?   @db.VarChar
+  done        Boolean?
+  project_id  BigInt?
+  created_at  DateTime  @db.Timestamp(6)
+  updated_at  DateTime  @db.Timestamp(6)
+  projects    projects? @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_02e851e3b7")
+
+  @@index([project_id], map: "index_tasks_on_project_id")
+}
+
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model token_blacklist_blacklistedtoken {
   id                               BigInt                           @id
@@ -993,15 +938,10 @@ model token_blacklist_outstandingtoken {
   @@index([user_id], map: "token_blacklist_outstandingtoken_user_id_83bc629a")
 }
 
-model variant_sizes {
-  id         Int       @id @default(autoincrement())
-  variant_id BigInt
-  size_id    Int
-  stock      Int?      @default(0)
-  created_at DateTime? @default(now()) @db.Timestamp(6)
-  updated_at DateTime? @default(now()) @db.Timestamp(6)
-  sizes      sizes     @relation(fields: [size_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_size")
-  variants   Variant   @relation(fields: [variant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_variant")
+model topic_count {
+  id    String @id
+  topic String @unique
+  count Int
 }
 
 model user_providers {
@@ -1017,9 +957,60 @@ model user_providers {
   raw_data         Json?
   created_at       DateTime? @default(now()) @db.Timestamp(6)
   updated_at       DateTime? @default(now()) @db.Timestamp(6)
-  users            User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users            users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([provider, provider_user_id])
+}
+
+model users {
+  id                                             String           @id
+  name                                           String?          @db.VarChar
+  username                                       String           @unique
+  displayName                                    String
+  email                                          String?          @unique(map: "index_admin_users_email_uniqueness") @db.VarChar
+  refresh_token                                  String?          @unique(map: "index_admin_users_refresh_token_uniqueness") @db.VarChar
+  refresh_token_expiration_at                    DateTime?        @db.Timestamp(6)
+  created_at                                     DateTime         @db.Timestamp(6)
+  createdAt                                      DateTime         @default(now())
+  updated_at                                     DateTime         @db.Timestamp(6)
+  password_digest                                String?          @db.VarChar
+  passwordHash                                   String?
+  googleId                                       String?          @unique
+  avatarUrl                                      String?
+  bio                                            String?
+  remember_digest                                String?          @db.VarChar
+  admin                                          Boolean?         @default(false)
+  activation_digest                              String?          @db.VarChar
+  activated                                      Boolean?         @default(false)
+  activated_at                                   DateTime?        @db.Timestamp(6)
+  reset_digest                                   String?          @db.VarChar
+  reset_sent_at                                  DateTime?        @db.Timestamp(6)
+  is_staff                                       Boolean          @default(false)
+  is_active                                      Boolean          @default(true)
+  date_joined                                    DateTime         @default(now()) @db.Timestamptz(6)
+  last_login                                     DateTime?        @db.Timestamptz(6)
+  is_superuser                                   Boolean          @default(false)
+  password                                       String           @default("pbkdf2_sha256$720000$mf7gOJi6b6lcClmMxd0UaY$JEXwqKpSjnuNmBE42U9DFtjLO6x2fIPCnOQ9oA59iHo=") @db.VarChar
+  first_name                                     String           @default("") @db.VarChar
+  last_name                                      String           @default("") @db.VarChar
+  provider                                       String?          @db.VarChar(50)
+  avatar                                         String?
+  updatedAt                                      DateTime?        @default(now()) @db.Timestamptz(6)
+  Account                                        Account[]
+  Game                                           Game[]
+  bookmarks                                      bookmarks[]
+  carts                                          carts[]
+  comments                                       comments[]
+  follows_follows_followerIdTousers              follows[]        @relation("follows_followerIdTousers")
+  follows_follows_followingIdTousers             follows[]        @relation("follows_followingIdTousers")
+  likes                                          likes[]
+  messages                                       messages[]
+  microposts                                     microposts[]
+  notifications_notifications_issuerIdTousers    notifications[]  @relation("notifications_issuerIdTousers")
+  notifications_notifications_recipientIdTousers notifications[]  @relation("notifications_recipientIdTousers")
+  posts                                          posts[]
+  sessions                                       sessions[]
+  user_providers                                 user_providers[]
 }
 
 model users_for_mailer_tests {
@@ -1056,88 +1047,63 @@ model users_for_mailer_tests {
   provider                    String?   @db.VarChar(50)
 }
 
-model categories {
-  id               Int          @id @default(autoincrement())
-  name             String       @db.VarChar
-  slug             String       @unique @db.VarChar
-  parent_id        Int?
-  created_at       DateTime?    @default(now()) @db.Timestamp(6)
-  updated_at       DateTime?    @default(now()) @db.Timestamp(6)
-  categories       categories?  @relation("categoriesTocategories", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  other_categories categories[] @relation("categoriesTocategories")
-  products         Product[]
-}
-
-model collaborations {
-  id                      Int                       @id @default(autoincrement())
-  name                    String                    @unique @db.VarChar(100)
-  slug                    String                    @unique @db.VarChar(100)
-  description             String?
-  created_at              DateTime?                 @default(now()) @db.Timestamp(6)
-  updated_at              DateTime?                 @default(now()) @db.Timestamp(6)
-  collaborations_products collaborations_products[]
-}
-
-model collaborations_products {
-  product_id       Int
-  collaboration_id Int
-  collaborations   collaborations @relation(fields: [collaboration_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  products         Product        @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([product_id, collaboration_id])
-}
-
-model model_bases {
-  id          BigInt    @id @default(autoincrement())
-  name        String    @db.VarChar
-  slug        String    @unique @db.VarChar
-  description String?
-  image_url   String?   @db.VarChar
-  created_at  DateTime? @default(now()) @db.Timestamp(6)
-  updated_at  DateTime? @default(now()) @db.Timestamp(6)
-  models      models[]
-
-  @@index([slug], map: "index_model_bases_on_slug")
-}
-
-model models {
-  id            BigInt      @id @default(autoincrement())
-  model_base_id BigInt
-  name          String      @db.VarChar
-  slug          String      @unique @db.VarChar
-  description   String?
-  release_date  DateTime?   @db.Date
-  hero_image    String?     @db.VarChar
-  tech_specs    Json?
-  created_at    DateTime?   @default(now()) @db.Timestamp(6)
-  updated_at    DateTime?   @default(now()) @db.Timestamp(6)
-  model_bases   model_bases @relation(fields: [model_base_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([slug], map: "index_models_on_slug")
-}
-
-model products_tags {
+model variant_sizes {
   id         Int       @id @default(autoincrement())
-  product_id Int
-  tag_id     Int
+  variant_id BigInt
+  size_id    Int
+  stock      Int?      @default(0)
   created_at DateTime? @default(now()) @db.Timestamp(6)
-  products   Product   @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  tags       tags      @relation(fields: [tag_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+  sizes      sizes     @relation(fields: [size_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_size")
+  variants   variants  @relation(fields: [variant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_variant")
 }
 
-model tags {
-  id            Int             @id @default(autoincrement())
-  name          String          @db.VarChar(255)
-  slug          String          @unique(map: "index_tags_on_slug") @db.VarChar(255)
-  created_at    DateTime?       @default(now()) @db.Timestamp(6)
-  updated_at    DateTime?       @default(now()) @db.Timestamp(6)
-  products_tags products_tags[]
+model variants {
+  id               BigInt             @id @default(autoincrement())
+  color            String?            @db.VarChar
+  price            Float
+  compare_at_price Float?
+  variant_code     String?
+  stock            Int?
+  product_id       BigInt
+  created_at       DateTime           @db.Timestamp(6)
+  updated_at       DateTime           @db.Timestamp(6)
+  cart_items       cart_items[]
+  guest_cart_items guest_cart_items[]
+  guest_wish_items guest_wish_items[]
+  order_items      order_items[]
+  variant_sizes    variant_sizes[]
+  products         products           @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_19f8efee69")
+  wish_items       wish_items[]
+
+  @@unique([product_id, color], map: "unique_product_color")
+  @@index([product_id], map: "index_variants_on_product_id")
 }
 
-enum MessageType {
-  TEXT
-  IMAGE
-  FILE
+model wish_items {
+  id         BigInt   @id @default(autoincrement())
+  wish_id    BigInt
+  product_id BigInt
+  variant_id BigInt
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+  variants   variants @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_5fe4dae293")
+  wishes     wishes   @relation(fields: [wish_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_6357d5ef81")
+  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_f4c6b03fcc")
+
+  @@index([product_id], map: "index_wish_items_on_product_id")
+  @@index([variant_id], map: "index_wish_items_on_variant_id")
+  @@index([wish_id], map: "index_wish_items_on_wish_id")
+}
+
+model wishes {
+  id         BigInt       @id @default(autoincrement())
+  user_id    BigInt
+  created_at DateTime     @db.Timestamp(6)
+  updated_at DateTime     @db.Timestamp(6)
+  wish_items wish_items[]
+
+  @@index([user_id], map: "index_wishes_on_user_id")
 }
 
 enum GameType {
@@ -1148,6 +1114,12 @@ enum GameType {
 enum MediaType {
   IMAGE
   VIDEO
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
 }
 
 enum NotificationType {

@@ -17,6 +17,8 @@ export interface ProductData {
   display_name: string;
   name: string;
   price: string;
+  compare_at_price?: string;
+  variant_code?: string;
   price_information: PriceInfo[];
   pricing_information: {
     currentPrice: number;

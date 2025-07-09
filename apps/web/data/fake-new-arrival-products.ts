@@ -7,7 +7,9 @@ export const newArrivalProducts: Product[] = [
       id: 1,
       display_name: "Soft Lux Mesh Full-Zip Hoodie",
       name: "Soft Lux Mesh Full-Zip Hoodie",
-      price: "$70",
+      price: 70,
+      compare_at_price: "90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Sportswear"
       },
@@ -39,7 +41,9 @@ export const newArrivalProducts: Product[] = [
       id: 2,
       display_name: "adicolor Firebird Oversized Track Pants",
       name: "adicolor Firebird Oversized Track Pants",
-      price: "$80",
+      price: 80,
+      compare_at_price: "90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -71,7 +75,9 @@ export const newArrivalProducts: Product[] = [
       id: 3,
       display_name: "Adicolor Firebird Oversized Track Pants",
       name: "Adicolor Firebird Oversized Track Pants",
-      price: "$70",
+      price: 70,
+      compare_at_price: "90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -103,7 +109,9 @@ export const newArrivalProducts: Product[] = [
       id: 4,
       display_name: "Adifom Stan Smith Mule Shoes",
       name: "Adifom Stan Smith Mule Shoes",
-      price: "$70",
+      price: 70,
+      compare_at_price: "90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -135,7 +143,9 @@ export const newArrivalProducts: Product[] = [
       id: 5,
       display_name: "Soft Lux Mesh Tee",
       name: "Soft Lux Mesh Tee",
-      price: "$35",
+      price: 35,
+      compare_at_price: "90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -167,7 +177,9 @@ export const newArrivalProducts: Product[] = [
       id: 6,
       display_name: "Superstar 82 Roller Skates",
       name: "Superstar 82 Roller Skates",
-      price: "$200",
+      price: 200,
+      compare_at_price: "90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -199,7 +211,9 @@ export const newArrivalProducts: Product[] = [
       id: 7,
       display_name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
-      price: "$60",
+      price: 60,
+      compare_at_price: "90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -231,7 +245,9 @@ export const newArrivalProducts: Product[] = [
       id: 8,
       display_name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
-      price: "$60",
+      price: 60,
+      compare_at_price: "90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -263,7 +279,9 @@ export const newArrivalProducts: Product[] = [
       id: 9,
       display_name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
-      price: "$60",
+      price: 60,
+      compare_at_price: "90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -295,7 +313,9 @@ export const newArrivalProducts: Product[] = [
       id: 10,
       display_name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
-      price: "$60",
+      price: 60,
+      compare_at_price: "90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },

@@ -24,6 +24,8 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       display_name: "Soft Lux Mesh Full-Zip Hoodie",
       name: "Soft Lux Mesh Full-Zip Hoodie",
       price: "$70",
+      compare_at_price: "$90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Sportswear"
       },
@@ -56,6 +58,8 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       display_name: "adicolor Firebird Oversized Track Pants",
       name: "adicolor Firebird Oversized Track Pants",
       price: "$80",
+      compare_at_price: "$90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -88,6 +92,8 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       display_name: "adicolor Teamgeist Cropped Track Top Blue",
       name: "adicolor Teamgeist Cropped Track Top Blue",
       price: "$70",
+      compare_at_price: "$90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -120,6 +126,8 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       display_name: "Adifom Stan Smith Mule Shoes",
       name: "Adifom Stan Smith Mule Shoes",
       price: "$70",
+      compare_at_price: "$90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -152,6 +160,8 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       display_name: "Soft Lux Mesh Tee",
       name: "Soft Lux Mesh Tee",
       price: "$35",
+      compare_at_price: "$90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -184,6 +194,8 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       display_name: "Superstar 82 Roller Skates",
       name: "Superstar 82 Roller Skates",
       price: "$200",
+      compare_at_price: "$90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -216,6 +228,8 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       display_name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       name: "Tiro Cut 3-Stripes Soft Mesh Long Dress",
       price: "$60",
+      compare_at_price: "$90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -248,6 +262,8 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       display_name: "adidas Originals X Minecraft Jersey Kids",
       name: "adidas Originals X Minecraft Jersey Kids",
       price: "$40",
+      compare_at_price: "$90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -280,6 +296,8 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       display_name: "Samba OG X Liberty London Shoes",
       name: "Samba OG X Liberty London Shoes",
       price: "$105",
+      compare_at_price: "$90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },
@@ -312,6 +330,8 @@ export const fakeLastVisitedProducts: LastVisitedProduct[] = [
       display_name: "Samba OG Shoes",
       name: "Samba OG Shoes",
       price: "$100",
+      compare_at_price: "$90",
+      variant_code: "VC95-BL-9fc5",
       attribute_list: {
         brand: "Originals"
       },

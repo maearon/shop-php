@@ -326,7 +326,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
   end
 
   create_table "collaborations_products", primary_key: ["product_id", "collaboration_id"], force: :cascade do |t|
-    t.integer "product_id", null: false
+    t.bigint "product_id", null: false
     t.integer "collaboration_id", null: false
   end
 
@@ -565,7 +565,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_29_054502) do
   end
 
   create_table "products_tags", id: :serial, force: :cascade do |t|
-    t.integer "product_id", null: false
+    t.bigint "product_id", null: false
     t.integer "tag_id", null: false
     t.datetime "created_at", precision: nil, default: -> { "CURRENT_TIMESTAMP" }
   end
