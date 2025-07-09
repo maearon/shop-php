@@ -13,12 +13,13 @@ import { Star, ChevronDown, ChevronUp, Heart, ArrowLeft } from "lucide-react"
 import ExpandableImageGallery from "@/components/expandable-image-gallery"
 import Loading from "@/components/loading"
 import HistoryView from "@/components/HistoryView"
-import { useProductDetail } from "@/api/hooks/useProductDetail"
+// import { useProductDetail } from "@/api/hooks/useProductDetail"
 import { Product, Variant } from "@/types/product"
 import { soccerShoesData } from "@/data/soccer-shoes-data"
 import { slugify } from "@/utils/slugtify"
 import { useRouter } from "next/navigation"
 import ProductCarousel from "@/components/product-carousel"
+import { useProductDetail } from "@/api/hooks/useProducts"
 
 
 type Props = {
