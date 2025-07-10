@@ -43,7 +43,7 @@ export default function RootLayout({
                 <LocationModalProvider />
                 <ChatWidget />
                 <FeedbackWidget />
-                <ScrollToTop />
+                {/* <ScrollToTop /> */}
               </ReactQueryProvider>
             </AuthProvider>
           </Providers>
