@@ -47,35 +47,6 @@ export default function ProductDetailPageClient({ params }: { params: { slug: st
   const variant = useMemo<Variant | undefined>(() => product?.variants.find((v) => v.variant_code === params.model), [product, params.model])
   const sizes = useMemo(() => variant?.sizes ?? [], [variant])
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerWidth < 1024 || !rightColumnRef.current || !leftColumnRef.current) return
-
-      const leftBottom = leftColumnRef.current.offsetTop + leftColumnRef.current.offsetHeight
-      const rightHeight = rightColumnRef.current.offsetHeight
-      const scrollTop = window.scrollY
-      const stopSticky = leftBottom - rightHeight - 100
-
-      setIsSticky(scrollTop > 200 && scrollTop < stopSticky)
-
-      // Tính chiều cao tối đa của cột phải khi sticky
-      const viewportHeight = window.innerHeight
-      const distanceFromTop = 32 // sm:top-4 = 1rem = 16px * 2 = 32px
-      const footerOffset = document.body.scrollHeight - leftBottom
-      const maxHeight = Math.min(viewportHeight - distanceFromTop, leftBottom - scrollTop - distanceFromTop)
-      setStickyMaxHeight(maxHeight > 0 ? maxHeight : undefined)
-    }
-
-    window.addEventListener("scroll", handleScroll)
-    window.addEventListener("resize", handleScroll)
-    handleScroll()
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll)
-      window.removeEventListener("resize", handleScroll)
-    }
-  }, [])
-
   const handleSizeSelect = (size: string) => {
     setSelectedSize(size)
     setSizeError("")
@@ -158,62 +129,10 @@ export default function ProductDetailPageClient({ params }: { params: { slug: st
   if (isLoading || !product) return <div className="min-h-screen bg-white"><Loading /></div>
 
   return (
-    <main className="container mx-auto px-4 py-4 sm:py-8">
-      <div className="sm:flex sm:items-start">
+    <main className="w-full max-w-[1600px] mx-auto px-6 py-6 lg:flex gap-12">
+      {/* <div className="flex flex-col lg:flex-row gap-8 items-start"> */}
         {/* Left Column */}
-        <div id="left-column" ref={leftColumnRef} className="sm:w-[70%] sm:pr-8 sm:border-r sm:border-gray-200 relative">
-
-          {/* Desktop BEST SELLER badge (rotate) */}
-          {/* {product.badge === "Best seller" && (
-            <div className="hidden sm:block absolute top-4 right-4 z-20">
-              <div className="bg-gray-300 text-black text-xs font-bold px-3 py-2 transform -rotate-90 origin-center rounded-none">
-                BEST SELLER
-              </div>
-            </div>
-          )} */}
-
-          {/* Breadcrumb - Mobile & Desktop */} 
-          <nav
-            className={`
-              text-sm mb-4 flex items-center
-              ${isSticky ? "hidden" : ""}
-              text-gray-600 sm:text-gray-700
-              ${!isSticky ? "sm:absolute sm:top-4 sm:left-4 sm:z-20 sm:bg-white/80 sm:backdrop-blur-sm sm:px-3 sm:py-1" : ""}
-            `}
-          >
-            <Link href="/women-shoes" className="flex items-center hover:underline">
-              {/* Arrow only on mobile */}
-              <ArrowLeft className="h-4 w-4 mr-2 sm:hidden" />
-              <span>{productDetails.breadcrumb}</span>
-            </Link>
-          </nav>
-
-          {/* Desktop BEST SELLER badge (rotate) */}
-          {/* {!isSticky && (
-            <div className="sm:hidden">
-              <h1 className="text-xl font-bold mb-2">{product.name}</h1>
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="text-xl font-bold">${product.price}</span>
-                {product.badge === "Best seller" && (
-                  <Badge className="bg-gray-300 text-black text-xs rounded-none">BEST SELLER</Badge>
-                )}
-              </div>
-            </div>
-          )} */}
-          {/* {product.badge === "Best seller" && ( */}
-          <div
-            className={`
-              absolute top-14 right-3 z-20
-              text-[10px] sm:text-xs
-              bg-gray-300 text-black font-bold px-3 py-3
-              transform -rotate-90 origin-center
-              rounded-none
-            `}
-          >
-            BEST SELLER
-          </div>
-          {/* )} */}
-
+        <div className="w-full lg:w-2/3">
           {/* Image Gallery */}
           <ExpandableImageGallery images={variant?.image_urls || []} productName={product.name} />
 
@@ -343,12 +262,9 @@ export default function ProductDetailPageClient({ params }: { params: { slug: st
         </div>
 
         {/* Right Column */}
-        <div id="right-column" ref={rightColumnRef} className="sm:w-[30%] sm:pl-8">
+        <aside className="w-full lg:w-1/3">
 
-          <div
-            className={`${isSticky ? "sm:fixed sm:top-4 sm:w-[calc(30%-2rem)] bg-white z-[5]" : "sm:static"}`}
-            style={isSticky ? { maxHeight: stickyMaxHeight, overflowY: 'auto' } : undefined}
-          >
+          <div className="sticky top-4 bg-white p-4 rounded-none shadow">
 
             {/* Mobile Product Title */}
             <div className="sm:hidden">
@@ -497,8 +413,8 @@ export default function ProductDetailPageClient({ params }: { params: { slug: st
 
           </div>
 
-        </div>
-      </div>
+        </aside>
+      {/* </div> */}
     </main>
   )
 }
