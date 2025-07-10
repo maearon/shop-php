@@ -145,7 +145,7 @@ function generateFallbackProducts(slug: string, count: number): FallbackProduct[
           price,
           original_price: price + 20,
           compare_at_price: String(price + 20),
-          variant_code: "VC95-BL-9fc5",
+          variant_code: "VC93-BL-b8e2",
           sizes: [
             { name: "S", stock: 10, isAvailable: true },
             { name: "M", stock: 5, isAvailable: true },

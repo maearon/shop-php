@@ -165,7 +165,7 @@ export default function ProductDetailPageClient({ params }: Props) {
       `Product code: ${variant?.variant_code}`,
     ],
     sizeGuide: "True to size. We recommend ordering your usual size.",
-    breadcrumb: "Home / Soccer / Shoes",
+    breadcrumb: "Home / Women / Soccer",
     sizes: [
       "4",
       "4.5",
@@ -330,7 +330,7 @@ export default function ProductDetailPageClient({ params }: Props) {
       <main className="container mx-auto px-4 py-4 lg:py-8">
         {/* Mobile Breadcrumb */}
         <nav className="lg:hidden text-sm text-gray-600 mb-4 flex items-center">
-          <Link href="/men-soccer-shoes" className="flex items-center">
+          <Link href="/women-shoes" className="flex items-center">
             <ArrowLeft className="h-4 w-4 mr-2" />
             <span>{productDetails.breadcrumb}</span>
           </Link>
@@ -388,7 +388,7 @@ export default function ProductDetailPageClient({ params }: Props) {
 
                 {/* Desktop Product Title */}
                 <div className="hidden lg:block">
-                  <p className="text-sm text-gray-600 mb-2">Soccer</p>
+                  <p className="text-sm text-gray-600 mb-2">{product.sport}</p>
                   <h1 className="text-3xl font-bold mb-4 leading-tight">{product.name}</h1>
                   <div className="flex items-center space-x-2 mb-6">
                     <span className="text-2xl font-bold">${variant?.price}</span>
@@ -417,7 +417,7 @@ export default function ProductDetailPageClient({ params }: Props) {
 
                 {/* Colors */}
                 <div>
-                  <h3 className="font-bold mb-3">{variant?.color}</h3>
+                  <h3 className="mb-3">{variant?.color}</h3>
                   <div className="flex gap-2">
                     {product.variants.map((v) => {
                       const isActive = v.variant_code === params.model
@@ -425,9 +425,11 @@ export default function ProductDetailPageClient({ params }: Props) {
                         <Link
                           key={v.id}
                           href={`/${slugify(product.name)}/${v.variant_code}.html`}
-                          className={`w-12 h-12 rounded-none border-2 overflow-hidden block ${
-                            isActive ? "border-black" : "border-gray-300"
-                          }`}
+                          className={`
+                            w-12 h-12 overflow-hidden block
+                            border-b-4
+                            ${isActive ? "border-black" : "border-transparent hover:border-black"}
+                          `}
                         >
                           <img
                             src={v.image_urls?.[0] || "/placeholder.svg"}
@@ -450,9 +452,9 @@ export default function ProductDetailPageClient({ params }: Props) {
                     </button>
                   </div>
                   <div className="grid grid-cols-5 gap-2">
-                    {productDetails.sizes.map((size) => (
+                    {sizes.map((size, index) => (
                       <button
-                        key={size}
+                        key={`${size}-${index}`}
                         onClick={() => handleSizeSelect(size)}
                         className={`py-3 border text-center font-medium text-sm rounded-none ${
                           selectedSize === size

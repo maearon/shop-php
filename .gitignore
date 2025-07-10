@@ -154,6 +154,7 @@ Thumbs.db
 obj/
 *.user
 *.suo
+/apps/DotNetBoilerplate/bin/*
 *.cache
 *.docstates
 *.userprefs

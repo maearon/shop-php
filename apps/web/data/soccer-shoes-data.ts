@@ -32,7 +32,7 @@ import { Product } from "@/types/product"
 export const soccerShoesData: Product[] = [
 {
 "id": 9,
-"jan_code": "JP5593",
+"jan_code": "VC93-BL-b8e2",
 "title": "F50 Messi Elite Firm Ground Cleats",
 "name": "F50 Messi Elite Firm Ground Cleats",
 "description": "Experience comfort and performance with the new Adidas TankTop 9.",

@@ -1,3 +1,7 @@
+```
+http://localhost:3001/adidas-tubular-shadow/VC93-BL-b8e2.html
+```
+
 Rõ rồi! Vì bạn không dùng migration, mà sửa trực tiếp DB và sync lại bằng prisma introspect hoặc bin/rails db:schema:dump, nên mình sẽ cung cấp toàn bộ SQL thuần (PostgreSQL) để:
 Tuyệt vời, nhờ bạn chia sẻ schema.prisma, giờ mình có thể viết các lệnh SQL thuần một cách chính xác, phù hợp với phong cách hiện tại bạn đang dùng (PostgreSQL + Prisma + Rails mapping). Dưới đây là các lệnh SQL được thiết kế khớp 100% với schema thực tế của bạn:
 
@@ -155,7 +159,7 @@ ALTER TABLE products ADD COLUMN model_id BIGINT REFERENCES models(id) ON DELETE 
 ✅ jan_code bằng một field mới trong bảng products bằng SQL thuần, bạn cần xác định:
 
 ✅ 1. Bạn muốn thay thế bằng cái gì?
-Giả sử bạn muốn đổi jan_code → model_number để dùng đúng cách gọi phổ biến hơn (như adidas dùng JP5593, IE4073, v.v.)
+Giả sử bạn muốn đổi jan_code → model_number để dùng đúng cách gọi phổ biến hơn (như adidas dùng VC93-BL-b8e2, IE4073, v.v.)
 
 ✅ 2. Các bước thao tác SQL thuần (PostgreSQL)
 🔸 Nếu bạn chỉ đổi tên cột:
@@ -214,9 +218,9 @@ EXECUTE FUNCTION upcase_model_number();
 ```
 ✅ Test
 ```
-INSERT INTO products (name, model_number) VALUES ('Test Shoe', 'jp5593');
+INSERT INTO products (name, model_number) VALUES ('Test Shoe', 'VC93-BL-b8e2');
 ```
--- → sẽ tự lưu thành 'JP5593'
+-- → sẽ tự lưu thành 'VC93-BL-b8e2'
 ✅ Gợi ý bổ sung
 Đảm bảo không có model trùng bằng cách thêm unique index:
 ```

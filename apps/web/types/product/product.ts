@@ -22,7 +22,7 @@ export interface Variant {
   variant_code?: string
   sku?: string
   stock?: number
-  sizes: Size[] // ✅ Sử dụng size chuẩn ở trên
+  sizes: string[] // ✅ Sử dụng size chuẩn ở trên
   product_id?: number
   created_at?: string
   updated_at?: string
