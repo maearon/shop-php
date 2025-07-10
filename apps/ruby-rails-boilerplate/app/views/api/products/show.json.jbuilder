@@ -30,6 +30,7 @@ json.hover_image_url "#{request.base_url}#{hover_image}"
 # --- Variants for sale display ---
 json.variants @product.variants do |variant|
   json.id variant.id
+  json.tags @product.tags.pluck(:name)
   json.color variant.color
   json.price variant.price
   json.compare_at_price variant.compare_at_price

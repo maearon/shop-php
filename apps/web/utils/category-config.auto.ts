@@ -71,7 +71,7 @@ function buildConfigsFromMenu(menu: MenuCategory[]) {
 
     categoryConfigs[categorySlug] = {
       title: category.title,
-      breadcrumb: category.title,
+      breadcrumb: formatSlugTitle(categorySlug),
       href: categoryHref,
       description: defaultDescription(category.title),
       tabs,
@@ -82,7 +82,7 @@ function buildConfigsFromMenu(menu: MenuCategory[]) {
       if (!categoryConfigs[itemSlug]) {
         categoryConfigs[itemSlug] = {
           title: item.name,
-          breadcrumb: item.name,
+          breadcrumb: formatSlugTitle(itemSlug),
           href: `/${itemSlug}`,
           description: defaultDescription(item.name),
           tabs: [],

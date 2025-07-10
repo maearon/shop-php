@@ -36,6 +36,7 @@ export interface Variant {
 // 🛍 Product entity (thông tin đầy đủ)
 export interface Product {
   id: number | string
+  tags?: string[]
   jan_code: string
   title: string
   name: string

@@ -4,14 +4,17 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import ImageLightbox from "@/components/image-lightbox"
 import { ArrowLeft } from "lucide-react"
+import { getBreadcrumbTrail } from "@/utils/breadcrumb"
 import Link from "next/link"
 
 interface ExpandableImageGalleryProps {
   images: string[]
   productName: string
+  slug: string
+  tags: string[]
 }
 
-export default function ExpandableImageGallery({ images, productName }: ExpandableImageGalleryProps) {
+export default function ExpandableImageGallery({ images, productName, slug, tags }: ExpandableImageGalleryProps) {
   const [showAllImages, setShowAllImages] = useState(false)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
@@ -53,16 +56,37 @@ export default function ExpandableImageGallery({ images, productName }: Expandab
       <div className="relative space-y-4">
 
         {/* ✅ Breadcrumb (cứng) */}
-        <nav className="absolute top-4 left-4 z-20 bg-white/80 backdrop-blur-sm px-3 py-1 text-sm text-gray-700 hidden sm:flex items-center">
+        {/* <nav className="absolute top-4 left-4 z-20 bg-white/80 backdrop-blur-sm px-3 py-1 text-sm text-gray-700 hidden sm:flex items-center">
           <Link href="/women-shoes" className="flex items-center hover:underline">
             <ArrowLeft className="h-4 w-4 mr-2" />
             <span>Home / Women / Soccer</span>
           </Link>
+        </nav> */}
+        <nav className="absolute top-4 left-4 z-20 text-sm hidden sm:flex items-center gap-2 bg-white/50 backdrop-blur-md px-2 py-1 rounded">
+        <Link
+          href="/"
+          className="flex items-center bg-transparent text-gray-700 px-2 py-1 hover:bg-black hover:text-white transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          <span className="underline-offset-2">Back</span>
+        </Link>
+
+        {getBreadcrumbTrail(slug).slice(1).map((crumb, index) => (
+          <span key={index} className="flex items-center text-gray-700">
+            <span className="mx-1 text-gray-500">/</span>
+            <Link
+              href={crumb.href}
+              className="hover:bg-black hover:text-white hover:underline transition-colors px-2 py-1 rounded"
+            >
+              {crumb.label}
+            </Link>
+          </span>
+        ))}
         </nav>
 
         {/* ✅ Badge "BEST SELLER" (cứng) */}
         <div className="absolute top-14 right-3 z-20 text-[10px] sm:text-xs bg-gray-300 text-black font-bold px-3 py-3 transform -rotate-90 origin-center rounded-none">
-          BEST SELLER
+          {tags?.[0] || "BEST SELLER"}
         </div>
 
         {/* Image Grid */}

@@ -134,7 +134,7 @@ export default function ProductDetailPageClient({ params }: { params: { slug: st
         {/* Left Column */}
         <div className="w-full lg:w-2/3">
           {/* Image Gallery */}
-          <ExpandableImageGallery images={variant?.image_urls || []} productName={product.name} />
+          <ExpandableImageGallery images={variant?.image_urls || []} productName={product.name} slug="women-shoes" tags={product?.tags || []}/>
 
           {/* Expandable Sections */}
           <div className="space-y-8 mt-12">
