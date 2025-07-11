@@ -18,6 +18,8 @@ import HistoryView from "@/components/HistoryView"
 import { useProductDetail } from "@/api/hooks/useProducts"
 import { slugify } from "@/utils/slugtify"
 import { Variant } from "@/types/product"
+import ProductDetailSkeleton from "@/components/skeleton/ProductDetailSkeleton"
+import FullScreenLoader from "@/components/ui/FullScreenLoader"
 
 export default function ProductDetailPageClient({ params }: { params: { slug: string; model: string } }) {
   const router = useRouter()
@@ -126,7 +128,7 @@ export default function ProductDetailPageClient({ params }: { params: { slug: st
     ],
   }
 
-  if (isLoading || !product) return <div className="min-h-screen bg-white"><Loading /></div>
+  if (isLoading || !product) return <FullScreenLoader />
 
   return (
     <main className="w-full max-w-[1600px] mx-auto px-6 py-6 lg:flex gap-12">

@@ -12,9 +12,9 @@ import { getCategoryConfig, categoryConfigs, formatSlugTitle } from "@/utils/cat
 import type { ProductQuery } from "@/api/services/rubyService"
 import { useProducts } from "@/api/hooks/useProducts"
 import Link from "next/link"
-import Loading from "@/components/loading"
-import Breadcrumb from "@/components/Breadcrumb"
 import { buildBreadcrumbFromProductItem } from "@/utils/breadcrumb"
+import BreadcrumbSkeleton from "@/components/BreadcrumbSkeleton"
+import FullScreenLoader from "@/components/ui/FullScreenLoader"
 
 interface CategoryPageClientProps {
   params: { slug: string }
@@ -83,7 +83,7 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
     return query as ProductQuery
   }, [searchParams, params.slug])
 
-  const { data, isLoading, error, refetch } = useProducts(queryParams)
+  const { data, isLoading, isPlaceholderData, error, refetch } = useProducts(queryParams)
 
   const products = data?.products || []
   const meta = data?.meta || {
@@ -139,7 +139,12 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
   }
 
   // getBreadcrumbTrail(params.slug)
-  const breadcrumbs = buildBreadcrumbFromProductItem(products[0])
+  const breadcrumbs =
+  !isLoading && products.length > 0
+    ? buildBreadcrumbFromProductItem(products[0])
+    : getBreadcrumbTrail(params.slug)
+
+  if (isLoading || isPlaceholderData) return <FullScreenLoader />
 
   return (
     <div className="min-h-screen bg-white">
@@ -149,19 +154,20 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
           <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
             <BaseButton variant="ghost" size="sm" onClick={() => router.back()} className="p-0 h-auto font-normal">
               <ArrowLeft className="w-4 h-4 mr-1" />
-              BACK
+              Back
             </BaseButton>
-            {breadcrumbs.map((crumb, index) => (
-              <span key={index} className="flex items-center">
-                {index > 0 && <span className="mx-2">/</span>}
-                {/* <button onClick={() => router.push(crumb.href)} className="hover:underline">
-                  {crumb.label}
-                </button> */}
-                <Link href={crumb.href} className="hover:underline">
-                  {crumb.label}
-                </Link>
-              </span>
-            ))}
+            {breadcrumbs ? (
+              breadcrumbs.map((crumb, index) => (
+                <span key={index} className="flex items-center">
+                  {index > 0 && <span className="mx-2">/</span>}
+                  <Link href={crumb.href} className="hover:underline">
+                    {crumb.label}
+                  </Link>
+                </span>
+              ))
+            ) : (
+              <BreadcrumbSkeleton />
+            )}
           </div>
           {/* <Breadcrumb items={buildBreadcrumbFromProductItem(products[0])} /> */}
           <div className="flex items-center justify-between mb-6">
@@ -238,11 +244,11 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8 relative">
-        {isLoading && (
+        {/* {isLoading && (
           <div className="absolute inset-0 bg-white/60 flex justify-center items-start z-10">
             <Loading />
           </div>
-        )}
+        )} */}
         <ProductGrid
           products={products}
           loading={isLoading}

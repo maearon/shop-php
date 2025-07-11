@@ -55,7 +55,7 @@ export interface Product {
   currencyFormat: string
   isFreeShipping: boolean
   price: number
-  original_price: number
+  compare_at_price: number
   installments: number
   created_at: string
   updated_at: string

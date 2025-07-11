@@ -20,12 +20,12 @@ import { slugify } from "@/utils/slugtify"
 import { Variant } from "@/types/product"
 
 interface ProductCardProps {
-  slug?: string // 👈 Thêm dòng này vào
+  slug?: string
   product: {
     id: number
-    name: string
-    price: string
-    original_price?: string
+    name?: string
+    price?: string
+    compare_at_price?: string
     image?: string
     image_url?: string
     category?: string
@@ -33,8 +33,7 @@ interface ProductCardProps {
     base_model_number?: string
     product_type?: string
     url?: string
-    price_information?: PriceInfo[]
-    pricing_information?: {
+    price_information?: {
       currentPrice: number
       standard_price: number
       standard_price_no_vat: number
@@ -60,6 +59,7 @@ interface ProductCardProps {
     variation_list?: ProductVariation[]
     view_list?: ProductAsset[]
     variants: Variant[]
+    __isPlaceholder?: boolean
   }
   showAddToBag?: boolean
   minimalMobile?: boolean
@@ -72,6 +72,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const dispatch = useAppDispatch()
   const image = product.image ?? product.image_url ?? "/placeholder.png"
+  const isPlaceholder = product.__isPlaceholder || !product.name
 
   const handleAddToBag = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -79,8 +80,8 @@ export default function ProductCard({
     dispatch(
       addToCart({
         id: product.id,
-        name: product.name,
-        price: product.price,
+        name: product.name || "Unknown Product",
+        price: product.price || "0",
         image: image,
         color: "Default",
         size: "M"
@@ -88,7 +89,21 @@ export default function ProductCard({
     )
   }
 
-  const fallbackUrl = `/${slugify(product.name)}/${product?.variants?.[0]?.variant_code}.html`
+  const fallbackUrl = `/${slugify(product.name || "product")}/${product?.variants?.[0]?.variant_code}.html`
+
+  if (isPlaceholder) {
+    return (
+      <div className="border border-gray-200 rounded shadow-sm p-2 animate-pulse">
+        <div className="relative aspect-square bg-gray-200 rounded mb-4" />
+        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+        <div className="h-4 bg-gray-200 rounded w-1/2 mb-2" />
+        <div className="h-4 bg-gray-200 rounded w-1/4 mb-4" />
+        {showAddToBag && (
+          <div className="h-10 bg-gray-300 rounded w-full" />
+        )}
+      </div>
+    )
+  }
 
   return (
     <Link href={product.url ?? fallbackUrl}>
@@ -98,7 +113,7 @@ export default function ProductCard({
           <div className={`relative aspect-square overflow-hidden ${!minimalMobile ? "mb-4" : ""}`}>
             <Image
               src={image}
-              alt={product.name}
+              alt={product?.name || ""} 
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
@@ -116,19 +131,19 @@ export default function ProductCard({
 
           {/* Info Section */}
           <div
-            className={`space-y-2 px-2 pb-2 mt-auto ${
-              minimalMobile ? "hidden sm:block" : ""
-            }`}
+            className={`space-y-2 px-2 pb-2 mt-auto ${minimalMobile ? "hidden sm:block" : ""}`}
           >
             {product.category && (
               <p className="text-sm text-gray-600">{product.category}</p>
             )}
             <p className="font-bold">
-              ${product.pricing_information?.currentPrice ?? product.price}
+              ${product?.compare_at_price ?? product.price}
             </p>
             <h3 className="font-medium h-[3rem] overflow-hidden">{product.name}</h3>
             {product.attribute_list?.brand && (
-              <p className="text-sm text-gray-600 min-h-[1.25rem]">{product.attribute_list.brand}</p>
+              <p className="text-sm text-gray-600 min-h-[1.25rem]">
+                {product.attribute_list.brand}
+              </p>
             )}
             {showAddToBag && (
               <Button
