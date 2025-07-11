@@ -138,7 +138,8 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
     return parts.length ? parts.join(" · ") : config.title
   }
 
-  const breadcrumbs = getBreadcrumbTrail(params.slug)
+  // getBreadcrumbTrail(params.slug)
+  const breadcrumbs = buildBreadcrumbFromProductItem(products[0])
 
   return (
     <div className="min-h-screen bg-white">
