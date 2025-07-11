@@ -106,7 +106,7 @@ export default function Header() {
     else
     {
       setShowLoginModal(true)
-      router.push("/account-login")
+      // router.push("/account-login")
     }
   }
 
