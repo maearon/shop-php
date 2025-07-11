@@ -722,7 +722,7 @@ model products {
   badge                   String?                   @db.VarChar
   model_base_id           BigInt?
   model_id                BigInt?
-  collaboration_id        BigInt?
+  collaboration_id        Int?
   activity                String?                   @db.VarChar
   material                String?                   @db.VarChar
   collection              String?                   @db.VarChar

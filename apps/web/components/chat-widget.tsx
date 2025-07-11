@@ -8,6 +8,7 @@ import { useAppSelector } from "@/store/hooks"
 import { io, Socket } from "socket.io-client"
 import { getGravatarUrl } from "@/utils/gravatar"
 import { useCurrentUser } from "@/api/hooks/useCurrentUser";
+import { playSound } from "@/utils/play-sound"
 
 interface ChatMessage {
   id: string
@@ -110,6 +111,10 @@ export default function ChatWidget() {
         }
 
         setMessages(prev => [...prev, formattedMessage])
+
+        if (message.user?.email !== sessionState?.value?.email) {
+          playSound('/sounds/receive.wav')
+        }
       })
 
 
@@ -150,6 +155,7 @@ export default function ChatWidget() {
     })
 
     setInputMessage("")
+    playSound('/sounds/send.wav')
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
