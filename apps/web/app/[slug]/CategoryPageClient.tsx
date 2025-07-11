@@ -13,6 +13,8 @@ import type { ProductQuery } from "@/api/services/rubyService"
 import { useProducts } from "@/api/hooks/useProducts"
 import Link from "next/link"
 import Loading from "@/components/loading"
+import Breadcrumb from "@/components/Breadcrumb"
+import { buildBreadcrumbFromProductItem } from "@/utils/breadcrumb"
 
 interface CategoryPageClientProps {
   params: { slug: string }
@@ -160,7 +162,7 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
               </span>
             ))}
           </div>
-
+          {/* <Breadcrumb items={buildBreadcrumbFromProductItem(products[0])} /> */}
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl font-bold mb-2">

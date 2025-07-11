@@ -37,6 +37,7 @@ export interface Variant {
 export interface Product {
   id: number | string
   tags?: string[]
+  breadcrumb?: string
   jan_code: string
   title: string
   name: string
