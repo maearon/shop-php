@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { MessageCircle, X, Minus, Send } from 'lucide-react'
+import { MessageCircle, X, Minus, Square, Send } from 'lucide-react'
 import { BaseButton } from "@/components/ui/base-button"
 import { Input } from "@/components/ui/input"
 import { useAppSelector } from "@/store/hooks"
@@ -58,7 +58,7 @@ export default function ChatWidget() {
         : "https://adidas-chat-service.onrender.com"
       // Replace with your deployed chat service URL
       // const CHAT_SERVICE_URL = "https://your-chat-service.onrender.com"
-      
+
       socketRef.current = io(CHAT_SERVICE_URL, {
         query: { token: userToken },
         transports: ['websocket', 'polling']
@@ -138,7 +138,7 @@ export default function ChatWidget() {
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!inputMessage.trim() || !socketRef.current || !isConnected) {
       return
     }
@@ -169,8 +169,8 @@ export default function ChatWidget() {
     setIsMinimized(false)
   }
 
-  const minimizeChat = () => {
-    setIsMinimized(true)
+  const toggleMinimize = () => {
+    setIsMinimized(prev => !prev)
   }
 
   return (
@@ -179,7 +179,7 @@ export default function ChatWidget() {
       {!isOpen && (
         <button
           onClick={toggleChat}
-          className="fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition-colors z-50"
+          className="fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition z-50"
         >
           <MessageCircle className="h-6 w-6" />
         </button>
@@ -188,24 +188,30 @@ export default function ChatWidget() {
       {/* Chat Window */}
       {isOpen && (
         <div
-          className={`fixed bottom-6 right-6 w-96 bg-white border border-gray-200 shadow-xl z-50 ${isMinimized ? "h-16" : "h-96"} transition-all duration-300`}
+          className={`
+            fixed z-50 bg-white border border-gray-200 shadow-xl transition-all duration-300
+            ${isMinimized
+              ? "w-96 h-16 sm:w-96 sm:h-16 bottom-6 right-6"
+              : "w-screen h-screen bottom-0 right-0 sm:w-96 sm:h-96 sm:bottom-6 sm:right-6"
+            }
+          `}
         >
           {/* Chat Header */}
-          <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+          <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between h-16">
+            <div className="flex items-center space-x-2 overflow-hidden">
               <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-bold">A</span>
               </div>
-              <div>
-                <h3 className="font-bold text-sm">CHAT</h3>
-                <p className="text-xs text-gray-500">
+              <div className="truncate">
+                <h3 className="font-bold text-sm leading-none truncate">CHAT</h3>
+                <p className="text-xs text-gray-500 truncate">
                   adiclub {userLevel} • {isConnected ? 'Online' : 'Connecting...'}
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <button onClick={minimizeChat} className="p-1 hover:bg-gray-100 rounded">
-                <Minus className="h-4 w-4" />
+              <button onClick={toggleMinimize} className="p-1 hover:bg-gray-100 rounded">
+                {isMinimized ? <Square className="h-4 w-4" /> : <Minus className="h-4 w-4" />}
               </button>
               <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-gray-100 rounded">
                 <X className="h-4 w-4" />
@@ -215,7 +221,7 @@ export default function ChatWidget() {
 
           {/* Chat Content */}
           {!isMinimized && (
-            <div className="flex flex-col h-80">
+            <div className="flex flex-col h-[calc(100%-4rem)] sm:h-[calc(24rem-4rem)]">
               {/* Messages */}
               <div className="flex-1 p-4 overflow-y-auto space-y-4">
                 {messages.map((message) => (
@@ -226,7 +232,7 @@ export default function ChatWidget() {
                           src={getGravatarUrl(message.user?.email)}
                           alt={message.user?.name || "User"}
                           title={message.user?.email} // 👈 show email when hover
-                          className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                          className="w-8 h-8 rounded-full"
                         />
                         {!message.user ? (
                           <div className="bg-gray-100 rounded-lg p-3 max-w-xs">
@@ -259,17 +265,17 @@ export default function ChatWidget() {
                           src={getGravatarUrl(message.user?.email)}
                           title={message.user?.email} // 👈 show email when hover
                           alt={message.user?.name || "User"}
-                          className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                          className="w-8 h-8 rounded-full"
                         />
                       </div>
                     )}
                   </div>
                 ))}
-                
+
                 {/* Typing indicator */}
                 {isTyping && (
                   <div className="flex items-start space-x-2">
-                    <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
                       <span className="text-white text-xs font-bold">A</span>
                     </div>
                     <div className="bg-gray-100 rounded-lg p-3">
@@ -277,7 +283,7 @@ export default function ChatWidget() {
                     </div>
                   </div>
                 )}
-                
+
                 <div ref={messagesEndRef} />
               </div>
 
@@ -292,7 +298,7 @@ export default function ChatWidget() {
                     className="flex-1"
                   />
                   <BaseButton
-                    type="submit" 
+                    type="submit"
                     disabled={!inputMessage.trim() || !isConnected}
                     size="sm"
                   >
