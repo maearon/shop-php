@@ -193,7 +193,7 @@ export default function ChatWidget() {
             ${isMinimized
               // ? "w-96 h-16 sm:w-96 sm:h-16 bottom-6 right-6" 
               // iPhone 15 Pro Max: w-96 = 384px → Exceeds 375px → Overflows off the left screen if you use right-6.
-              ? "w-full max-w-[360px] h-16 bottom-6 right-6 left-auto ml-auto sm:w-96 sm:h-16"
+              ? "w-80 h-16 sm:w-96 sm:h-16 bottom-6 right-6" 
               : "w-screen h-screen bottom-0 right-0 sm:w-96 sm:h-96 sm:bottom-6 sm:right-6"
             }
           `}
