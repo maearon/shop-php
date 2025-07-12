@@ -15,6 +15,7 @@ import Link from "next/link"
 import { buildBreadcrumbFromProductItem } from "@/utils/breadcrumb"
 import BreadcrumbSkeleton from "@/components/BreadcrumbSkeleton"
 import FullScreenLoader from "@/components/ui/FullScreenLoader"
+import { notFound } from "next/navigation"
 
 interface CategoryPageClientProps {
   params: { slug: string }
@@ -57,6 +58,10 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
   const [showFilters, setShowFilters] = useState(false)
 
   const config = getCategoryConfig(params.slug)
+
+  if (!config) {
+    notFound()
+  }
 
   const allowedKeys: (keyof ProductQuery)[] = [
     "page", "sort", "gender", "category", "activity", "sport",
