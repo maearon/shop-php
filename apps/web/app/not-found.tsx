@@ -1,12 +1,21 @@
-// app/not-found.tsx
 "use client"
 
+import { useEffect } from "react"
 import Image from "next/image"
 
 export default function NotFound() {
+  useEffect(() => {
+    // Vô hiệu hóa scroll khi mount
+    document.body.style.overflow = "hidden"
+    return () => {
+      // Khôi phục lại scroll khi unmount
+      document.body.style.overflow = ""
+    }
+  }, [])
+
   return (
-    <div className="fixed inset-0 z-[1000] w-screen h-screen overflow-hidden bg-black text-white">
-      {/* Background Image - mờ nhẹ phía sau */}
+    <div className="fixed inset-0 z-[1000] w-screen h-screen bg-black text-white overflow-hidden">
+      {/* Background image mờ */}
       <Image
         src="/assets/not-found/download.png"
         alt="background"
@@ -15,7 +24,7 @@ export default function NotFound() {
         priority
       />
 
-      {/* Nội dung chính */}
+      {/* Nội dung trung tâm */}
       <div className="absolute inset-0 z-10 flex flex-col justify-center items-center px-6 text-center max-w-2xl mx-auto">
         <Image
           src="/assets/not-found/download (1).png"
