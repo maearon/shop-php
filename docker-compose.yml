@@ -115,16 +115,19 @@ services:
     env_file:
       - ./apps/ruby-rails-boilerplate/.env
     environment:
+      - CLOUDINARY_CLOUD_NAME=dq7vadalc
+      - CLOUDINARY_API_KEY=187798825221671
+      - CLOUDINARY_API_SECRET=kmp0PPFsOU5CleAINeUFU0ZBbcU
       - CRON_SECRET=0c063e23e6ded6e0483f7107a3337b50
       - NEXT_PUBLIC_STREAM_KEY=6cqupfrs4qh3
       - NEXT_PUBLIC_UPLOADTHING_APP_ID=4ccb128760a9b12e757ee0cc267c4a4f
-      - POSTGRES_DATABASE=verceldb
+      - POSTGRES_DATABASE=adidas_product_prod
       - POSTGRES_HOST=ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
       - POSTGRES_PASSWORD=z9GYTlrXa8Qx
-      - POSTGRES_PRISMA_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require&pgbouncer=true&connect_timeout=15
-      - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require
-      - POSTGRES_URL_NO_SSL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb
-      - POSTGRES_URL_NON_POOLING=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require
+      - POSTGRES_PRISMA_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/adidas_product_prod?sslmode=require&pgbouncer=true&connect_timeout=15
+      - POSTGRES_URL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/adidas_product_prod?sslmode=require
+      - POSTGRES_URL_NO_SSL=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/adidas_product_prod
+      - POSTGRES_URL_NON_POOLING=postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9.us-east-1.aws.neon.tech:5432/adidas_product_prod?sslmode=require
       - POSTGRES_USER=default
       - RAILS_MASTER_KEY=6a31ee167b28ab32ab171795d2eff778
       - STREAM_SECRET=djkppj5rnre3bfqvraufhv8asfkbtngjpx8np7xhnumnege5542sg4vvcx7wx5xq

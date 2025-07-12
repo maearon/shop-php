@@ -342,7 +342,7 @@ npx prisma migrate dev (rails db:migrate)
 manhpc@manhpc-B660M-D3H-DDR4:~/code/ruby-rails-boilerplate/client$ npx prisma migrate dev
 Environment variables loaded from .env
 Prisma schema loaded from prisma/schema.prisma
-Datasource "db": PostgreSQL database "verceldb", schema "public" at "ep-bold-voice-a4yp8xc9.us-east-1.aws.neon.tech:5432"
+Datasource "db": PostgreSQL database "adidas_product_prod", schema "public" at "ep-bold-voice-a4yp8xc9.us-east-1.aws.neon.tech:5432"
 
 Applying migration `20240722050134_ruby_rails_boilerplate_development`
 

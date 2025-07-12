@@ -11,6 +11,7 @@
     "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.9.0",
     "@prisma/client": "^6.10.1"
   },
   "devDependencies": {

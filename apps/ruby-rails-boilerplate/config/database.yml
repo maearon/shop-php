@@ -21,7 +21,7 @@ default: &default
 
 development:
   <<: *default
-  database: verceldb
+  database: adidas_product_prod
   username: default
   password: z9GYTlrXa8Qx
   host: ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech
@@ -87,4 +87,4 @@ test:
 #
 production:
   <<: *default
-  url: postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require
+  url: postgres://default:z9GYTlrXa8Qx@ep-bold-voice-a4yp8xc9-pooler.us-east-1.aws.neon.tech:5432/adidas_product_prod?sslmode=require

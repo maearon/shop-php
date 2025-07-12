@@ -1,5 +1,0 @@
-Hi <%= @user.name %>,
-
-Welcome to the Adidas App! Click on the link below to activate your account:
-
-<a href="https://adidas-mocha.vercel.app/account_activations/<%= @user.activation_token %>/<%= CGI.escape(@user.email) %>" target="_blank">Activate</a>

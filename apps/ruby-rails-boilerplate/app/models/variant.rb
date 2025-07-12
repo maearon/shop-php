@@ -14,8 +14,6 @@
 #
 
 class Variant < ApplicationRecord
-  include CheckVariant
-
   COLOR = %w[
     Black Grey White Red Pink Orange Yellow Green Blue Purple
     Beige Brown Gold Silver Multicolor

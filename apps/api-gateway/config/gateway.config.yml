@@ -9,7 +9,10 @@ http:
       - name: cors
         action:
           origin:
-            - https://adidas-mocha.vercel.app
+          - https://adidas-mocha.vercel.app
+          - http://localhost:3001
+          - https://ruby-rails-boilerplate-3s9t.onrender.com
+          - http://localhost:3000
           methods:
             - GET
             - POST

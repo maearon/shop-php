@@ -31,14 +31,38 @@ class Api::ApiController < ActionController::API
   end
 
   def current_user
-    user_id = Jwt::User::DecodeTokenService.call(request.headers['Authorization'])
-    User.find_by(id: user_id) if user_id
+    return @current_user if defined?(@current_user)
+
+    token = request.headers['Authorization']
+    return nil unless token.present?
+
+    begin
+      response = Faraday.get("http://localhost:9000/api/sessions") do |req|
+        req.headers['Authorization'] = token
+        req.headers['Content-Type'] = 'application/json'
+      end
+
+      return @current_user = nil unless response.success?
+
+      json = JSON.parse(response.body)
+      @current_user = OpenStruct.new(
+        id: json['id'],
+        email: json['email'],
+        name: json['name'],
+        admin: json['admin']
+      )
+    rescue Faraday::Error => e
+      Rails.logger.error("Auth Service error: #{e.message}")
+      @current_user = nil
+    end
   end
+
 
   def current_cart
     if current_user
       # Logged-in user
-      cart = current_user.reload.cart || Cart.create(user_id: current_user.id)
+      # cart = current_user.reload.cart || Cart.create(user_id: current_user.id)
+      cart = Cart.find_by(user_id: current_user.id) || Cart.create(user_id: current_user.id)
 
       if params[:guest_cart_id].present?
         guest_cart = GuestCart.find_by(id: params[:guest_cart_id])
@@ -78,7 +102,8 @@ class Api::ApiController < ActionController::API
   def current_wish
     if current_user
       # Logged-in user
-      wish = current_user.reload.wish || Wish.create(user_id: current_user.id)
+      # wish = current_user.reload.wish || Wish.create(user_id: current_user.id)
+      wish = Wish.find_by(user_id: current_user.id) || Wish.create(user_id: current_user.id)
 
       if params[:guest_wish_id].present?
         guest_wish = GuestWish.find_by(id: params[:guest_wish_id])
