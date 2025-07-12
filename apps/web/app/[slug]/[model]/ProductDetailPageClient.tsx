@@ -38,7 +38,7 @@ export default function ProductDetailPageClient({ params }: { params: { slug: st
   const rightColumnRef = useRef<HTMLDivElement>(null)
   const [stickyMaxHeight, setStickyMaxHeight] = useState<number | undefined>(undefined)
 
-  const { data: product, isLoading } = useProductDetail(params.slug, params.model)
+  const { data: product, isLoading, isError } = useProductDetail(params.slug, params.model)
 
   useEffect(() => {
     if (!product) return
@@ -129,7 +129,7 @@ export default function ProductDetailPageClient({ params }: { params: { slug: st
   }
 
   if (isLoading) return <FullScreenLoader />
-  if (!product) notFound()
+  if (!product || isError) notFound()
 
   return (
     <main className="w-full max-w-[1600px] mx-auto px-6 py-6 lg:flex gap-12">
