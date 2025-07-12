@@ -6,7 +6,7 @@ A production-ready microservices e-commerce platform built with modern technolog
 
 ## 📸 Screenshots
 
-![thumbnail 7](https://github.com/maearon/adidas-microservices/blob/main/figma/Screenshot%20From%202025-07-12%20120348.png)
+![thumbnail 7](https://github.com/maearon/adidas-microservices/blob/main/figma/Screenshot%202025-07-12%20120348.png)
 
 ---
 
