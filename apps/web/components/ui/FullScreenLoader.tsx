@@ -2,21 +2,25 @@
 
 import React from "react"
 import Image from "next/image"
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll"
 
 export default function FullScreenLoader() {
+  useLockBodyScroll()
   return (
     <div
-      className="fixed inset-0 z-[9999] bg-white flex items-center justify-center"
+      className="fixed inset-0 z-[9999] bg-white flex justify-center"
       data-auto-id="loading-screen"
     >
-      <div className="relative w-28 h-28 animate-pulse opacity-80 -translate-y-6">
-        <Image
-          src="/logo.png"
-          alt="Loading"
-          fill
-          className="object-contain"
-          priority
-        />
+      <div className="flex flex-col items-center justify-center w-full transform -translate-y-20">
+        <div className="relative w-28 h-28 animate-pulse opacity-80">
+          <Image
+            src="/logo.png"
+            alt="Loading"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
       </div>
     </div>
   )

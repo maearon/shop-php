@@ -1,46 +1,25 @@
 "use client"
 
-import { useEffect } from "react"
 import Image from "next/image"
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll"
 
-export default function NotFound() {
-  useEffect(() => {
-    document.documentElement.classList.add("no-scroll")
-    document.body.classList.add("no-scroll")
-    return () => {
-      document.documentElement.classList.remove("no-scroll")
-      document.body.classList.remove("no-scroll")
-    }
-  }, [])
-
-
+export default function FullScreenLoader() {
+  useLockBodyScroll()
   return (
-    <div className="fixed inset-0 z-[1000] w-screen h-screen bg-black text-white overflow-hidden">
-      {/* Background image mờ */}
-      <Image
-        src="/assets/not-found/download.png"
-        alt="background"
-        fill
-        className="object-cover opacity-10"
-        priority
-      />
-
-      {/* Nội dung trung tâm */}
-      <div className="absolute inset-0 z-10 flex flex-col justify-center items-center px-6 text-center max-w-2xl mx-auto">
-        <Image
-          src="/assets/not-found/download (1).png"
-          alt="logo"
-          width={100}
-          height={50}
-          className="mb-8"
-        />
-        <p className="text-lg md:text-xl mb-4 font-medium">
-          Sorry for slowing down your shopping experience.
-          <br className="hidden md:inline" /> Our site is down for maintenance and we need a minute to walk it off.
-        </p>
-        <p className="text-lg md:text-xl font-semibold">
-          We will be up and running shortly!
-        </p>
+    <div
+      className="fixed inset-0 z-[9999] bg-white flex justify-center"
+      data-auto-id="loading-screen"
+    >
+      <div className="flex flex-col items-center justify-center w-full transform -translate-y-20">
+        <div className="relative w-28 h-28 animate-pulse opacity-80">
+          <Image
+            src="/logo.png"
+            alt="Loading"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
       </div>
     </div>
   )
