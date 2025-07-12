@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   description: "Shop the latest adidas shoes, clothing and accessories",
 }
 
-const isMaintenance = true
+const isMaintenance = false
 
 export default function RootLayout({
   children,
