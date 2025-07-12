@@ -2,10 +2,10 @@
 
 import React from "react"
 import Image from "next/image"
-import { useLockBodyScroll } from "@/hooks/useLockBodyScroll"
+import { useScrollLock } from "@/hooks/useLockBodyScroll"
 
 export default function FullScreenLoader() {
-  useLockBodyScroll()
+  useScrollLock(true)
   return (
     <div
       className="fixed inset-0 z-[9999] bg-white flex justify-center"
