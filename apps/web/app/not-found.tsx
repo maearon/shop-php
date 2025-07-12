@@ -1,11 +1,12 @@
+// app/not-found.tsx
 "use client"
 
 import Image from "next/image"
 
 export default function NotFound() {
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-black text-white">
-      {/* Optional Background image */}
+    <div className="fixed inset-0 z-[1000] w-screen h-screen overflow-hidden bg-black text-white">
+      {/* Background Image - mờ nhẹ phía sau */}
       <Image
         src="/assets/not-found/download.png"
         alt="background"
@@ -14,20 +15,20 @@ export default function NotFound() {
         priority
       />
 
-      {/* Overlay content */}
-      <div className="absolute inset-0 z-10 flex flex-col justify-center items-start p-10 max-w-xl">
+      {/* Nội dung chính */}
+      <div className="absolute inset-0 z-10 flex flex-col justify-center items-center px-6 text-center max-w-2xl mx-auto">
         <Image
           src="/assets/not-found/download (1).png"
           alt="logo"
           width={100}
           height={50}
-          className="mb-6"
+          className="mb-8"
         />
-        <p className="text-xl mb-4 font-medium">
-          Sorry for slowing down your shopping experience. Our site is down for maintenance and we
-          need a minute to walk it off.
+        <p className="text-lg md:text-xl mb-4 font-medium">
+          Sorry for slowing down your shopping experience.
+          <br className="hidden md:inline" /> Our site is down for maintenance and we need a minute to walk it off.
         </p>
-        <p className="text-xl font-semibold">
+        <p className="text-lg md:text-xl font-semibold">
           We will be up and running shortly!
         </p>
       </div>
