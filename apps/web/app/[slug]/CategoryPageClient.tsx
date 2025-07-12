@@ -158,6 +158,7 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
     : formatSlugTitle(params.slug)
 
   if (isLoading || isPlaceholderData) return <FullScreenLoader />
+  if (error || !data || data.products.length === 0) notFound()
 
   return (
     <div className="min-h-screen bg-white">
