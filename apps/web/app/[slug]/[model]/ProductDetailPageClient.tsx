@@ -19,6 +19,7 @@ import { slugify } from "@/utils/slugtify"
 import { upperWords } from "@/utils/upper-words"
 import { Variant } from "@/types/product"
 import FullScreenLoader from "@/components/ui/FullScreenLoader"
+import { notFound } from "next/navigation"
 
 export default function ProductDetailPageClient({ params }: { params: { slug: string; model: string } }) {
   const router = useRouter()
@@ -127,7 +128,8 @@ export default function ProductDetailPageClient({ params }: { params: { slug: st
     ],
   }
 
-  if (isLoading || !product) return <FullScreenLoader />
+  if (isLoading) return <FullScreenLoader />
+  if (!product) notFound()
 
   return (
     <main className="w-full max-w-[1600px] mx-auto px-6 py-6 lg:flex gap-12">
