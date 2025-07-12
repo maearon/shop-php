@@ -1,6 +1,5 @@
-import { Suspense } from "react"
+import { notFound } from "next/navigation";
 import CategoryPageClient from "./CategoryPageClient"
-import FullScreenLoader from "@/components/ui/FullScreenLoader"
 
 interface CategoryPageProps {
   params: {
@@ -26,9 +25,6 @@ interface CategoryPageProps {
 }
 
 export default function CategoryPage({ params, searchParams }: CategoryPageProps) {
-  return (
-    <Suspense fallback={<FullScreenLoader />}>
-      <CategoryPageClient params={params} searchParams={searchParams} />
-    </Suspense>
-  )
+  if (!params?.slug) notFound();
+  return <CategoryPageClient params={params} searchParams={searchParams} />
 }

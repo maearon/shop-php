@@ -11,7 +11,7 @@ import {
   LocationModalProvider 
 } from "@/components/modal-providers"
 import FeedbackWidget from "@/components/feedback-widget"
-// import ScrollToTop from "@/components/scroll-to-top"
+import ScrollToTop from "@/components/scroll-to-top"
 import { AuthProvider } from "@/context/AuthContext"
 import { GoogleOAuthProvider } from "@react-oauth/google"
 import ReactQueryProvider from "./ReactQueryProvider"
@@ -49,7 +49,7 @@ export default function RootLayout({
                 <LocationModalProvider />
                 <ChatWidget />
                 <FeedbackWidget />
-                {/* <ScrollToTop /> */}
+                <ScrollToTop />
               </ReactQueryProvider>
             </AuthProvider>
           </Providers>

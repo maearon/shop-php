@@ -2,8 +2,6 @@
 
 import { notFound } from "next/navigation";
 import ProductDetailPageClient from "./ProductDetailPageClient";
-import { Suspense } from "react";
-import FullScreenLoader from "@/components/ui/FullScreenLoader";
 
 interface PageProps {
   params: {
@@ -13,9 +11,6 @@ interface PageProps {
 }
 
 export default function ProductDetailPage({ params }: PageProps) {
-  return (
-    <Suspense fallback={<FullScreenLoader />}>
-      <ProductDetailPageClient params={params} />
-    </Suspense>
-  );
+  if (!params?.model) notFound();
+  return <ProductDetailPageClient params={params} />
 }
