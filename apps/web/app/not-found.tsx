@@ -5,13 +5,14 @@ import Image from "next/image"
 
 export default function NotFound() {
   useEffect(() => {
-    // Vô hiệu hóa scroll khi mount
-    document.body.style.overflow = "hidden"
+    document.documentElement.classList.add("no-scroll")
+    document.body.classList.add("no-scroll")
     return () => {
-      // Khôi phục lại scroll khi unmount
-      document.body.style.overflow = ""
+      document.documentElement.classList.remove("no-scroll")
+      document.body.classList.remove("no-scroll")
     }
   }, [])
+
 
   return (
     <div className="fixed inset-0 z-[1000] w-screen h-screen bg-black text-white overflow-hidden">
