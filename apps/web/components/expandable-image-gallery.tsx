@@ -56,7 +56,7 @@ export default function ExpandableImageGallery({ images, productName, product, t
       <div className="relative space-y-4">
         <Breadcrumb items={buildBreadcrumbFromProductDetail(product)} />
 
-        <div className="absolute top-14 right-3 z-20 text-[10px] sm:text-xs bg-gray-300 text-black font-bold px-3 py-3 transform -rotate-90 origin-center rounded-none">
+        <div className="absolute top-14 right-0 z-20 text-[10px] sm:text-xs text-black font-normal px-3 py-3 transform -rotate-90 origin-center bg-white rounded-none tracking-wider uppercase">
           {tags?.[0] || "BEST SELLER"}
         </div>
 

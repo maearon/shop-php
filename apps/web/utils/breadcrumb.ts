@@ -44,9 +44,9 @@ export function buildBreadcrumbFromProductItem(product: Product) {
 export function buildBreadcrumbFromProductDetail(product: Product) {
   return [
     { label: "Home", href: "/" },
-    { label: product.gender, href: `/${slugify(product.gender)}` },
-    // { label: product.sport, href: `/category/${slugify(product.gender)}/${slugify(product.sport)}` },
-    { label: product.category, href: `/${slugify(product.gender)}-${slugify(product.category)}` },
-    // { label: product.name, href: `/product/${product.slug || product.id}` },
+    product.sport
+      ? { label: product.sport, href: `/${slugify(product.sport)}` }
+      : { label: product.gender, href: `/${slugify(product.gender)}` },
+    { label: product.category, href: `/${slugify(product.sport)}-${slugify(product.category)}` },
   ];
 }

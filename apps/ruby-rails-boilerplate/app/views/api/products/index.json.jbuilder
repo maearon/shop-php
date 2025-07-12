@@ -14,7 +14,7 @@ json.products @products do |product|
   json.franchise product.franchise
   json.product_type product.product_type
   json.brand product.brand
-  json.category product.category
+  json.category product.category&.name
   json.sport product.sport
 
   json.currencyId currency_code(locale.to_s)

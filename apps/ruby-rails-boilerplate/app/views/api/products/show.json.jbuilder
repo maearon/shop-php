@@ -1,8 +1,10 @@
 # app/views/api/products/show.json.jbuilder
 
 json.extract! @product, :id, :name, :model_number, :gender, :franchise, :product_type,
-                         :brand, :category, :sport, :description_h5, :description_p,
+                         :brand, :sport, :description_h5, :description_p,
                          :specifications, :care, :created_at, :updated_at
+json.category @product.category&.name.to_s
+json.tags @product.tags.pluck(:name)
 
 json.variant_code @variant.variant_code
 json.title @product.name
@@ -30,7 +32,6 @@ json.hover_image_url "#{request.base_url}#{hover_image}"
 # --- Variants for sale display ---
 json.variants @product.variants do |variant|
   json.id variant.id
-  json.tags @product.tags.pluck(:name)
   json.color variant.color
   json.price variant.price
   json.compare_at_price variant.compare_at_price

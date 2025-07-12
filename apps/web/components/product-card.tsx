@@ -28,6 +28,7 @@ interface ProductCardProps {
     compare_at_price?: string
     image?: string
     image_url?: string
+    hover_image_url?: string
     category?: string
     model_number?: string
     base_model_number?: string
@@ -110,16 +111,29 @@ export default function ProductCard({
       <Card className="flex flex-col justify-between border border-transparent hover:border-black transition-all shadow-none cursor-pointer rounded-none">
         <CardContent className="p-0 flex flex-col h-full">
           {/* Image Section */}
-          <div className={`relative aspect-square overflow-hidden ${!minimalMobile ? "mb-4" : ""}`}>
+          <div className={`relative aspect-square overflow-hidden group ${!minimalMobile ? "mb-4" : ""}`}>
+            {/* Main image (hiện mặc định, ẩn khi hover) */}
             <Image
               src={image}
-              alt={product?.name || ""} 
+              alt={product?.name || ""}
               fill
-              className="object-cover"
+              className="object-cover transition-opacity duration-300 group-hover:opacity-0"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
             />
+
+            {/* Hover image (ẩn mặc định, hiện khi hover) */}
+            {product.hover_image_url && (
+              <Image
+                src={product.hover_image_url}
+                alt={product?.name || ""}
+                fill
+                className="object-cover absolute top-0 left-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
+              />
+            )}
+
             <div
-              className="absolute top-4 right-4"
+              className="absolute top-4 right-4 z-10"
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
@@ -134,7 +148,9 @@ export default function ProductCard({
             className={`space-y-2 px-2 pb-2 mt-auto ${minimalMobile ? "hidden sm:block" : ""}`}
           >
             {product.category && (
-              <p className="text-sm text-gray-600">{product.category}</p>
+              <p className="text-sm text-gray-600">
+                {typeof product.category === "string" ? product.category : String(product.category?.name ?? "")}
+              </p>
             )}
             <p className="font-bold">
               ${product?.compare_at_price ?? product.price}

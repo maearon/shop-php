@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import CategoryPageClient from "./CategoryPageClient"
-import Loading from "@/components/loading"
+import FullScreenLoader from "@/components/ui/FullScreenLoader"
 
 interface CategoryPageProps {
   params: {
@@ -27,7 +27,7 @@ interface CategoryPageProps {
 
 export default function CategoryPage({ params, searchParams }: CategoryPageProps) {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<FullScreenLoader />}>
       <CategoryPageClient params={params} searchParams={searchParams} />
     </Suspense>
   )

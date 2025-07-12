@@ -3,24 +3,18 @@
 import { notFound } from "next/navigation";
 import ProductDetailPageClient from "./ProductDetailPageClient";
 import { Suspense } from "react";
-import Loading from "@/components/loading";
+import FullScreenLoader from "@/components/ui/FullScreenLoader";
 
 interface PageProps {
   params: {
     slug: string;
-    variant_code: string;
+    model: string;
   };
 }
 
 export default function ProductDetailPage({ params }: PageProps) {
-  const { slug, variant_code } = params;
-
-  // Optional: fetch product data and return notFound() if invalid
-  // const product = await fetchProduct(slug, variant_code);
-  // if (!product) notFound();
-
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<FullScreenLoader />}>
       <ProductDetailPageClient params={params} />
     </Suspense>
   );

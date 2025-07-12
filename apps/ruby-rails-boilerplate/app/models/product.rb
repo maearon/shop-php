@@ -45,6 +45,7 @@ class Product < ApplicationRecord
 
   has_and_belongs_to_many :tags
 
+  belongs_to :category, optional: true
   belongs_to :model, optional: true
   belongs_to :collaboration, optional: true
 

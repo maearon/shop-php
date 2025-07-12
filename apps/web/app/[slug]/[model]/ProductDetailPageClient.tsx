@@ -10,15 +10,14 @@ import { toggleWishlist } from "@/store/wishlistSlice"
 import { MainButton } from "@/components/ui/main-button"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Star, ChevronDown, ChevronUp, Heart, ArrowLeft } from "lucide-react"
+import { Star, ChevronDown, ChevronUp, Heart } from "lucide-react"
 import ExpandableImageGallery from "@/components/expandable-image-gallery"
-import Loading from "@/components/loading"
 import ProductCarousel from "@/components/product-carousel"
 import HistoryView from "@/components/HistoryView"
 import { useProductDetail } from "@/api/hooks/useProducts"
 import { slugify } from "@/utils/slugtify"
+import { upperWords } from "@/utils/upper-words"
 import { Variant } from "@/types/product"
-import ProductDetailSkeleton from "@/components/skeleton/ProductDetailSkeleton"
 import FullScreenLoader from "@/components/ui/FullScreenLoader"
 
 export default function ProductDetailPageClient({ params }: { params: { slug: string; model: string } }) {
@@ -306,7 +305,7 @@ export default function ProductDetailPageClient({ params }: { params: { slug: st
                 </div>
               </div>
 
-              <h1 className="text-3xl font-bold mb-4 leading-tight">{product.name}</h1>
+              <h1 className="text-3xl font-bold mb-4 leading-tight">{upperWords(product.name)}</h1>
 
               <div className="flex items-center space-x-2 mb-6">
                 <span className="text-2xl font-bold">${variant?.price}</span>
@@ -322,7 +321,7 @@ export default function ProductDetailPageClient({ params }: { params: { slug: st
             {/* Colors */}
             <div>
               <h3 className="mb-3">{variant?.color}</h3>
-              <div className="flex gap-2">
+              <div className="flex gap-2 mb-6">
                 {product.variants.map((v) => {
                   const isActive = v.variant_code === params.model
                   return (

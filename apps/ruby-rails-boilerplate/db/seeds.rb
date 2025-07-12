@@ -1,6 +1,20 @@
+puts "🧼 Purging images before destroying models..."
+
+Product.find_each do |product|
+  product.image.purge if product.image.attached?
+  product.hover_image.purge if product.hover_image.attached?
+end
+
+Variant.find_each do |variant|
+  variant.avatar.purge if variant.avatar.attached?
+  variant.hover.purge if variant.hover.attached?
+  variant.images.each { |img| img.purge }
+end
+
+# Now is the right time to destroy
 puts "🧼 Clearing existing data..."
-[Product, Variant, VariantSize, Size, Tag, ModelBase, Model, Collaboration].each(&:destroy_all)
-[Product, Variant, VariantSize, Size, Tag, ModelBase, Model, Collaboration].each do |model|
+[Product, Variant, VariantSize, Size, Tag, ModelBase, Model, Collaboration, Category].each(&:destroy_all)
+[Product, Variant, VariantSize, Size, Tag, ModelBase, Model, Collaboration, Category].each do |model|
   ActiveRecord::Base.connection.reset_pk_sequence!(model.table_name)
 end
 
@@ -8,6 +22,11 @@ puts "📦 Seeding sizes..."
 ALPHA_SIZES   = %w[XS S M L XL XXL]
 NUMERIC_SIZES = (36..45).flat_map { |n| ["#{n}", "#{n}.5"] }
 LOCATIONS     = %w[US VN]
+
+puts "📁 Seeding categories..."
+categories = %w[Shoes Apparel Accessories].map do |name|
+  Category.find_or_create_by!(name: name)
+end
 
 LOCATIONS.each do |loc|
   ALPHA_SIZES.each do |label|
@@ -81,6 +100,7 @@ PRODUCTS_IMAGE_DIR = Rails.root.join("app/assets/images/products")
     category: category,
     sport: sport,
     model_base_id: model_base.id,
+    category_id: category.id,
     model: model,
     collaboration: Collaboration.order("RANDOM()").first,
     tag_ids: Tag.order("RANDOM()").limit(2).pluck(:id),
