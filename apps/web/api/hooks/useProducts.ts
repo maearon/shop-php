@@ -14,6 +14,7 @@ export function useProductDetail(slug: string, model: string): UseQueryResult<Pr
   return useQuery<Product, Error>({
     queryKey: ["productDetail", slug, model],
     queryFn: () => fetchProduct(slug, model),
+    retry: false,
     staleTime: CACHE_TTL,
     gcTime: CACHE_TTL * 2,
     refetchOnWindowFocus: false,
@@ -26,10 +27,10 @@ export function useProducts(filters: ProductFilters = {}) {
   return useQuery<ProductsResponse, Error>({
     queryKey: ["products", filters],
     queryFn: () => rubyService.getProducts(filters as any),
+    retry: false,
     staleTime: CACHE_TTL,
     gcTime: CACHE_TTL * 2,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    retry: 1,
   })
 }
