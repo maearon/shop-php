@@ -59,7 +59,7 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
 
   const config = getCategoryConfig(params.slug)
 
-  if (!config) {
+  if (config.title === "Products" && config.tabs.length === 0) {
     notFound()
   }
 
