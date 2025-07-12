@@ -17,6 +17,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google"
 import ReactQueryProvider from "./ReactQueryProvider"
 import RedirectListener from "@/components/RedirectListener" // ✅ THÊM DÒNG NÀY
 import { ToastContainer } from "react-toastify"
+import MaintenancePage from "@/_components/MaintenancePage"
 
 const barlow = Barlow({
   subsets: ["latin"],
@@ -27,6 +28,8 @@ export const metadata: Metadata = {
   title: "adidas Online Shop | adidas US",
   description: "Shop the latest adidas shoes, clothing and accessories",
 }
+
+const isMaintenance = true
 
 export default function RootLayout({
   children,
@@ -43,7 +46,7 @@ export default function RootLayout({
                 <RedirectListener /> {/* ✅ THÊM VÀO BODY */}
                 <Header />
                 <ToastContainer position="top-right" autoClose={3000} />
-                <main>{children}</main>
+                <main>{isMaintenance ? <MaintenancePage /> : children}</main>
                 <Footer />
                 <ChatWidget />
                 <LocationModalProvider />
