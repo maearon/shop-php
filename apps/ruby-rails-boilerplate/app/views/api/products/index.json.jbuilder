@@ -5,6 +5,7 @@ json.products @products do |product|
   json.model_number product.model_number
   json.title product.name
   json.name product.name
+  json.tags product.tags.pluck(:name)
   json.description product.description_p || product.description
   json.description_h5 product.description_h5
   json.specifications product.specifications

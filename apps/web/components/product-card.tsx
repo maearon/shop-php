@@ -25,6 +25,8 @@ interface ProductCardProps {
     id: number
     name?: string
     price?: string
+    sport?: string;
+    tags?: string[]
     compare_at_price?: string
     image?: string
     image_url?: string
@@ -92,6 +94,11 @@ export default function ProductCard({
 
   const fallbackUrl = `/${slugify(product.name || "product")}/${product?.variants?.[0]?.variant_code}.html`
 
+  const hasHoverImage =
+    product.hover_image_url !== undefined &&
+    product.hover_image_url !== null &&
+    product.hover_image_url.trim?.() !== ""
+
   if (isPlaceholder) {
     return (
       <div className="border border-gray-200 rounded shadow-sm p-2 animate-pulse">
@@ -111,20 +118,26 @@ export default function ProductCard({
       <Card className="flex flex-col justify-between border border-transparent hover:border-black transition-all shadow-none cursor-pointer rounded-none">
         <CardContent className="p-0 flex flex-col h-full">
           {/* Image Section */}
-          <div className={`relative aspect-square overflow-hidden group ${!minimalMobile ? "mb-4" : ""}`}>
-            {/* Main image (hiện mặc định, ẩn khi hover) */}
+          <div
+            className={`relative aspect-square overflow-hidden ${
+              hasHoverImage ? "group" : ""
+            } ${!minimalMobile ? "mb-4" : ""}`}
+          >
+            {/* Main image (hiện mặc định, ẩn khi hover nếu có hover image) */}
             <Image
               src={image}
               alt={product?.name || ""}
               fill
-              className="object-cover transition-opacity duration-300 group-hover:opacity-0"
+              className={`object-cover transition-opacity duration-300 ${
+                hasHoverImage ? "group-hover:opacity-0" : ""
+              }`}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
             />
 
             {/* Hover image (ẩn mặc định, hiện khi hover) */}
-            {product.hover_image_url && (
+            {hasHoverImage && (
               <Image
-                src={product.hover_image_url}
+                src={product?.hover_image_url || ""}
                 alt={product?.name || ""}
                 fill
                 className="object-cover absolute top-0 left-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
@@ -147,18 +160,25 @@ export default function ProductCard({
           <div
             className={`space-y-2 px-2 pb-2 mt-auto ${minimalMobile ? "hidden sm:block" : ""}`}
           >
-            {product.category && (
+            {/* {product.category && (
               <p className="text-sm text-gray-600">
-                {typeof product.category === "string" ? product.category : String(product.category?.name ?? "")}
+                {typeof product.category === "string"
+                  ? product.category
+                  : String(product?.category ?? "")}
               </p>
-            )}
-            <p className="font-bold">
+            )} */}
+            <p className="font-bold h-[1.25rem]">
               ${product?.compare_at_price ?? product.price}
             </p>
-            <h3 className="font-medium h-[3rem] overflow-hidden">{product.name}</h3>
-            {product.attribute_list?.brand && (
+            <h3 className="font-medium h-[1.25rem] overflow-hidden">{product.name}</h3>
+            {product?.sport && (
               <p className="text-sm text-gray-600 min-h-[1.25rem]">
-                {product.attribute_list.brand}
+                {product?.sport || product?.attribute_list?.brand}
+              </p>
+            )}
+            {product?.tags && (
+              <p className="text-sm text-black min-h-[1.25rem]">
+                {product?.tags?.[0] || "BEST SELLER"}
               </p>
             )}
             {showAddToBag && (
