@@ -88,7 +88,7 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
     return query as ProductQuery
   }, [searchParams, params.slug])
 
-  const { data, isLoading, isPlaceholderData, error, refetch } = useProducts(queryParams)
+  const { data, isLoading, isPlaceholderData, isError, refetch } = useProducts(queryParams)
 
   const products = data?.products || []
   const meta = data?.meta || {
@@ -157,8 +157,9 @@ export default function CategoryPageClient({ params, searchParams }: CategoryPag
     ? `${formatSlugTitle(params.slug)} | ${generateAppliedFiltersTitle()}`
     : formatSlugTitle(params.slug)
 
-  if (isLoading || isPlaceholderData) return <FullScreenLoader />
-  if (error || !data || data.products.length === 0) notFound()
+  if (isError || !data || !data.products || data.products.length === 0) {
+   notFound()
+  }
 
   return (
     <div className="min-h-screen bg-white">
