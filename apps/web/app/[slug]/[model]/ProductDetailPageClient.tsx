@@ -128,8 +128,9 @@ export default function ProductDetailPageClient({ params }: { params: { slug: st
     ],
   }
 
-  if (isLoading) return <FullScreenLoader />
-  if (!product || isError) notFound()
+  if (isError || !product) {
+    notFound()
+  }
 
   return (
     <main className="w-full max-w-[1600px] mx-auto px-6 py-6 lg:flex gap-12">
